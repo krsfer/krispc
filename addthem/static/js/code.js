@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const userInput = document.getElementById("userInput");
     const question = document.getElementById("question");
 
+    const incorrect = document.getElementById("incorrect");
+
     let startTime = Date.now();
 
 
@@ -65,6 +67,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let is_correct = false;
             is_correct = parseInt(guess) === sum;
+
+            if (is_correct) {
+                incorrect.innerHTML = "";
+            } else {
+                incorrect.innerHTML = sum;
+            }
 
             addLog(count + 1, numbers, guess, is_correct, elapsedTime, new Date().toISOString(), sum);
 
