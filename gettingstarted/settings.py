@@ -42,6 +42,7 @@ SECRET_KEY = os.environ.get(
 # https://devcenter.heroku.com/articles/heroku-ci#immutable-environment-variables
 IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
 
+DEBUG = False
 # SECURITY WARNING: don't run with debug turned on in production!
 if not IS_HEROKU_APP:
     DEBUG = True
@@ -92,7 +93,7 @@ ROOT_URLCONF = "gettingstarted.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "addthem/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -171,6 +172,10 @@ USE_TZ = True
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    "addthem/static",
+]
 
 STORAGES = {
     # Enable WhiteNoise's GZip and Brotli compression of static assets:
@@ -189,3 +194,9 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+if __name__ == "__main__":
+    print(f"IS_HEROKU_APP: {IS_HEROKU_APP}")
+    print(f"DEBUG: {DEBUG}")
+    print(f"BASE_DIR: {BASE_DIR}")
+    print(f"STATIC_ROOT: {STATIC_ROOT}")
+    print(f"STATIC_URL: {STATIC_URL}")

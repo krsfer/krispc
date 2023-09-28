@@ -1,6 +1,9 @@
+import os
 from django.shortcuts import render
 
 from .models import Greeting
+import requests
+from django.http import HttpResponse
 
 # Create your views here.
 
