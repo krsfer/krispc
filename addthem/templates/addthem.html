@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Them</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/code.js' %}"></script>
+</head>
+<body>
+<table id="logTable">
+    <tr>
+        <th>Question</th>
+        <th>Numbers</th>
+        <th>Guess</th>
+        <th>Elapsed Time(s)</th>
+        <th>Date</th>
+    </tr>
+</table>
+
+<div id="question"></div>
+<input type="text" id="userInput" placeholder="xEnter your guess" autocomplete="off">
+
+<div id="buttons">
+    <button onclick="submitGuess()">Submit</button>
+    <button onclick="clearLog()">Clear Log</button>
+    <button onclick="newSession()">New Session</button>
+</div>
+
+</body>
+</html>
