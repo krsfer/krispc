@@ -1,4 +1,4 @@
-web: gunicorn gettingstarted.wsgi
+web2: gunicorn gettingstarted.wsgi
 
 # Uncomment this `release` process if you are using a database, so that Django's model
 # migrations are run as part of app deployment, using Heroku's Release Phase feature:
@@ -6,5 +6,5 @@ web: gunicorn gettingstarted.wsgi
 # https://devcenter.heroku.com/articles/release-phase
 release: ./manage.py migrate --no-input
 
-web2: daphne gettingstarted.asgi:application --port $PORT --bind 0.0.0.0 -v2
+web: daphne gettingstarted.asgi:application --port $PORT --bind 0.0.0.0 -v2
 worker: python manage.py runworker channel_layer -v2
