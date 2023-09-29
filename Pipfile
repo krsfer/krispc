@@ -17,6 +17,8 @@ channels = "*"
 channels-redis = "*"
 daphne = "*"
 psycopg2-binary = "*"
+psycopg-c = "*"
+psycopg-binary = "*"
 
 [dev-packages]
 
