@@ -7,7 +7,7 @@
 release: ./manage.py migrate --no-input
 
 # receives web traffic. Listens on $PORT and handle our https:// and wss:// requests.
-web: daphne gettingstarted.asgi:application --port $PORT --bind 0.0.0.0 -v2
+web: daphne _main.asgi:application --port $PORT --bind 0.0.0.0 -v2
 
 # keeps processing tasks/queues in the background
 worker: python manage.py runworker channel_layer -v2
