@@ -23,18 +23,10 @@
         wsProtocol = 'wss://';
     }
 
-    console.log('Hello world')
-    console.log('Host:', window.location.host)
-    console.log('Protocol:', window.location.protocol)
-    console.log('WS Protocol:', wsProtocol)
 
     let url = wsProtocol +`${window.location.host}/ws/`
 
-    console.log('URL:', url)
-
     const chatSocket = new WebSocket(url)
-    console.log('URL:', url)
-    console.log('Chat socket:', chatSocket)
 
     chatSocket.onmessage = function (e) {
         console.log('Message:', e.data)
