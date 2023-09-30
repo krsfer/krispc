@@ -21,7 +21,8 @@ import addthem.views
 import hello.views
 
 urlpatterns = [
-    path("", hello.views.index, name="index"),
+
+    path("start", hello.views.index, name="index"),
     path("db/", hello.views.db, name="db"),
     path("addthem/", addthem.views.index, name="addthem"),
     path('chat/', include('chat.urls'))
