@@ -87,7 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.clearLog = () => {
         localStorage.clear();
-        logTable.innerHTML = "<tr><th>Question</th><th>Numbers</th><th>Guess</th><th>Elapsed Time(s)</th><th>Date</th></tr>";
+        logTable.innerHTML = "<tr><th>Question</th><th>Numbers</th><th>Guess</th><th>Elapsed" +
+            " Time(s)</th><th><span class='hidden'>Date</span></th></tr>";
     };
 
     window.newSession = () => {
@@ -111,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("couleur", couleur);
 
         const newRow = logTable.insertRow(-1);
-        newRow.innerHTML = `<td bgcolor=${couleur}>${question}</td><td>${numbers.join(" ")}</td><td>${guess}</td><td>${elapsedTime.toFixed(2)}</td><td>${date}</td>`;
+        newRow.innerHTML = `<td bgcolor=${couleur}>${question}</td><td>${numbers.join(" ")}</td><td>${guess}</td><td>${elapsedTime.toFixed(2)}</td><td><span class="hidden">{date}</span></td>`;
         localStorage.setItem('log', logTable.innerHTML);
 
         if (parseInt(guess) === sum) {
