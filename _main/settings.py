@@ -201,10 +201,12 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    "addthem/static",
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",
+#     "addthem/static",
+#     "krispc/static",
+#
+# ]
 
 LANGUAGES = [
     ("fr", _("French")),
@@ -223,6 +225,8 @@ STORAGES = {
 # Don't store the original (un-hashed filename) version of static files, to reduce slug size:
 # https://whitenoise.readthedocs.io/en/latest/django.html#WHITENOISE_KEEP_ONLY_HASHED_FILES
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
+
+WHITENOISE_MANIFEST_STRICT = False
 
 # CACHES = {
 #     "default": {
