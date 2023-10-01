@@ -15,6 +15,9 @@ import secrets
 from pathlib import Path
 
 import dj_database_url
+import semver
+
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -70,10 +73,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "crispy_forms",
     "channels",
     "hello",
     "chat",
     "addthem",
+    "krispc",
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'
@@ -174,13 +179,21 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "fr-fr"
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_FAIL_SILENTLY = not DEBUG
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -192,6 +205,12 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     "addthem/static",
 ]
+
+LANGUAGES = [
+    ("fr", _("French")),
+    ("en", _("English")),
+]
+
 
 STORAGES = {
     # Enable WhiteNoise's GZip and Brotli compression of static assets:
@@ -227,6 +246,9 @@ CACHES = {
         }
     }
 }
+
+VER = semver.VersionInfo.parse("2.2.0")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

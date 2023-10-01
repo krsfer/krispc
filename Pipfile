@@ -19,6 +19,10 @@ daphne = "*"
 psycopg2-binary = "*"
 psycopg-c = "*"
 psycopg-binary = "*"
+coloredlogs = "*"
+django-crispy-forms = "*"
+semver = "*"
+crispy-bootstrap5 = "*"
 
 [dev-packages]
 

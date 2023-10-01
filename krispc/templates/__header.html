@@ -1,0 +1,27 @@
+{% load static %}
+{% load i18n %}
+
+<header id="header" class="fixed-top ">
+    <div class="container d-flex flex-row align-items-center">
+
+        <div class="flex-grow-1 p-0 m-0">
+            <a href="/"><span
+                    style="font-size: 32px; color:#ffc451 !important; font-family: 'Lobster', cursive;">KrisPC.</span></a>
+        </div>
+
+        {# begin. lang selection form #}
+        {# {% include "___lv_form.html" %}#}
+        {# end. lang selection form #}
+
+        <nav id="navbar" class="navbar order-last order-lg-0">
+            <ul>
+                <li><a class="nav-link scrollto active" href="#hero">{% trans 'PTR_0160' %}</a></li>
+                <li><a class="nav-link scrollto" href="#about">{% trans 'PTR_0190' %}</a></li>
+                <li><a class="nav-link scrollto" href="#services">{% trans 'PTR_0120' %}</a></li>
+                <li><a class="nav-link scrollto" href="#team">{% trans 'PTR_0800' %}</a></li>
+                <li><a class="nav-link scrollto" href="#contact_section">Contact</a></li>
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav>
+    </div>
+</header>

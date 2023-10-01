@@ -1,0 +1,510 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-25 19:50+0100\n"
+"PO-Revision-Date: 2022-11-06 22:12+0000\n"
+"Last-Translator:   <>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.9.8\n"
+
+#: djangodocker/settings.py:243
+msgid "French"
+msgstr ""
+
+#: djangodocker/settings.py:244
+msgid "English"
+msgstr ""
+
+msgid "French English"
+msgstr "Français &middot; Anglais"
+
+#: djangodocker/templates/krispc/____contact_form_checker.html:16
+msgid "PTR_0010"
+msgstr "Merci "
+
+#: djangodocker/templates/krispc/____contact_form_checker.html:20
+msgid "PTR_0130"
+msgstr "Votre projet sera examiné, et nous reviendrons vers vous aussi rapidement que possible."
+
+#: djangodocker/templates/krispc/___contact_form.html:8
+msgid "Awaiting interaction"
+msgstr "En attente de votre input"
+
+#: djangodocker/templates/krispc/__about.html:15
+msgid "PTR_0180"
+msgstr "Faire connaissance"
+
+#: djangodocker/templates/krispc/__about.html:18
+#: djangodocker/templates/krispc/__header.html:19
+msgid "PTR_0190"
+msgstr "À propos"
+
+#: djangodocker/templates/krispc/__about.html:21
+msgid "PTR_1990"
+msgstr "Je suis passionné dʼinformatique dans tous ses aspects. Avec plus de 20 ans dʼexpérience, je maintiens une vision de précision et dʼexcellence."
+
+#: djangodocker/templates/krispc/__about.html:22
+msgid "PTR_1995"
+msgstr "N’hésitez pas à réaliser votre demande, même si elle vous paraît non justifiée&nbsp;: je suis là pour vous aider, et on va regarder ensemble ce qui vous crée problème et je vais trouver la solution. Je serais à votre écoute, mes qualités humaines, mon calme et ma patience seront des atouts précieux pour vous aider."
+
+#: djangodocker/templates/krispc/__cta.html:7
+msgid "PTR_7000"
+msgstr "Contactez-nous maintenant"
+
+#: djangodocker/templates/krispc/__cta.html:8
+msgid "PTR_7010"
+msgstr "Discutons de votre projet et voyons ensemble comment KrisPC peut vous accompagner.."
+
+#: djangodocker/templates/krispc/__footer.html:21
+msgid "PTR_5040"
+msgstr "Tél"
+
+#: djangodocker/templates/krispc/__footer.html:21
+msgid "PTR_5030"
+msgstr "06 19 67 03 56"
+
+#: djangodocker/templates/krispc/__footer.html:29
+#: djangodocker/templates/krispc/__services.html:10
+msgid "PTR_0170"
+msgstr "Nos services"
+
+#: djangodocker/templates/krispc/__footer.html:75
+msgid "PTR_2050"
+msgstr "Tous droits réservés"
+
+#: djangodocker/templates/krispc/__footer.html:79
+msgid "PTR_2052"
+msgstr "Faite avec"
+
+#: djangodocker/templates/krispc/__footer.html:83
+msgid "PTR_2060"
+msgstr "par"
+
+#: djangodocker/templates/krispc/__header.html:18
+msgid "PTR_0160"
+msgstr "Accueil"
+
+#: djangodocker/templates/krispc/__header.html:20
+#: djangodocker/templates/krispc/__hero.html:7
+msgid "PTR_0120"
+msgstr "Services Informatiques"
+
+#: djangodocker/templates/krispc/__header.html:21
+#: djangodocker/templates/krispc/__team.html:7
+msgid "PTR_0800"
+msgstr "Voici lʼéquipe"
+
+#: djangodocker/templates/krispc/__hero.html:8
+msgid "PTR_0040"
+msgstr "À Domicile &middot; Aux Particuliers"
+
+#: djangodocker/templates/krispc/__hero.html:9
+msgid "PTR_0220"
+msgstr "Linux&nbsp;&middot;&nbsp;Windows&nbsp;&middot;&nbsp;macOS | Dépannage&nbsp;&middot;&nbsp;Montage | Matériel&nbsp;&middot;&nbsp;Logiciel | Formation&nbsp;&middot;&nbsp;Conseil"
+
+#: djangodocker/templates/krispc/__hero.html:12
+msgid "PTR_2055"
+msgstr "Réparations uniquement — Pas de vente de matériel"
+
+#: djangodocker/templates/krispc/__hero.html:13
+msgid "PTR_2057"
+msgstr "Mais, conseils gratuits pour la sélection."
+
+#: djangodocker/templates/krispc/__services.html:4
+msgid "PTR_6010"
+msgstr "Bonjour, je souhaiterais des informations complémentaires concernant votre annonce "
+
+#: djangodocker/templates/krispc/__services.html:31
+msgid "PTR_0050"
+msgstr "Commander"
+
+#: djangodocker/templates/krispc/__services.html:55
+msgid "Call"
+msgstr "Téléphone&nbsp;:"
+
+#: djangodocker/templates/krispc/__services.html:77
+msgid "PTR_0150"
+msgstr "En savoir plus&nbsp;&euro;"
+
+#: djangodocker/templates/krispc/__team.html:8
+msgid "PTR_0210"
+msgstr "Notre talent&nbsp;: dévouement à votre solution"
+
+#: djangodocker/templates/krispc/__team.html:20
+msgid "PTR_0710"
+msgstr "Technicien"
+
+#: djangodocker/templates/krispc/__team.html:22
+msgid "PTR_0720"
+msgstr "Expérience"
+
+#: djangodocker/templates/krispc/__team.html:22
+msgid "PTR_0730"
+msgstr "Compétence"
+
+#: djangodocker/templates/krispc/__team.html:35
+msgid "PTR_0740"
+msgstr "Rélations publiques"
+
+#: djangodocker/templates/krispc/__team.html:37
+msgid "PTR_0750"
+msgstr "Bienveillance"
+
+#: djangodocker/templates/krispc/__team.html:37
+msgid "PTR_0760"
+msgstr "Professionnalisme"
+
+#: djangodocker/templates/watapp/home.html:15
+msgid "Where Are They"
+msgstr "fr where are they"
+
+#: djangodocker/templates/watapp/home.html:19
+msgid "See where THEY are"
+msgstr ""
+
+#: djangodocker/templates/watapp/home.html:23
+msgid "Annonce where WE are"
+msgstr ""
+
+#: djangodocker/templates/watapp/reader.html:9
+msgid "Displaying where THEY are"
+msgstr ""
+
+#: djangodocker/templates/watapp/reader.html:40
+msgid "Display where THEY are"
+msgstr ""
+
+#: djangodocker/templates/watapp/reader.html:41
+#: djangodocker/templates/watapp/writer.html:26
+msgid "To WAT main"
+msgstr ""
+
+#: djangodocker/templates/watapp/writer.html:10
+msgid "Announcing where WE are"
+msgstr ""
+
+#: djangodocker/templates/watapp/writer.html:24
+msgid "Announce where WE are"
+msgstr ""
+
+#: krispc/colophon.py:9
+msgid "py_lnk"
+msgstr "https://fr.wikipedia.org/wiki/Python_(langage)"
+
+#: krispc/colophon.py:10
+msgid "dj_lnk"
+msgstr "https://docs.djangoproject.com/fr/"
+
+#: krispc/colophon.py:11
+msgid "bs_lnk"
+msgstr "https://fr.wikipedia.org/wiki/Bootstrap_(framework)"
+
+#: krispc/colophon.py:12
+msgid "js_lnk"
+msgstr "https://fr.wikipedia.org/wiki/JavaScript"
+
+#: krispc/colophon.py:13
+msgid "pg_lnk"
+msgstr "https://www.postgresql.fr/"
+
+#: krispc/colophon.py:14
+msgid "gm_lnk"
+msgstr "http://www.gimpfr.org/"
+
+#: krispc/colophon.py:16
+msgid "pc_lnk"
+msgstr "https://www.jetbrains.com/fr-fr/pycharm/"
+
+#: krispc/forms.py:76
+msgid "PTR_0810"
+msgstr "Prenom"
+
+#: krispc/forms.py:77
+msgid "PTR_0820"
+msgstr "Nom"
+
+#: krispc/forms.py:78
+msgid "PTR_0830"
+msgstr "Adresse e-mail"
+
+#: krispc/forms.py:79
+msgid "PTR_0840"
+msgstr "Message"
+
+#: krispc/forms.py:124
+msgid "Submit"
+msgstr "Envoyer"
+
+#: krispc/lst_products.py:23
+msgid "PTR_0370"
+msgstr "Smartphones&hellip; Remplacement écran ou batterie. Réglage. Configuration. Dépannage"
+
+#: krispc/lst_products.py:24
+msgid "PTR_0380"
+msgstr "Je peux remplacer lʼécran cassé ou la batterie affaiblie de votre téléphone. Ou bien vous aider à installer et ajuster toutes les applications, configurer les paramètres et activer les fonctionnalités spéciales de vos combinés mobiles, que vous utilisiez Android, iOS ou même Blackberry."
+
+#: krispc/lst_products.py:25
+msgid "PTR_3330"
+msgstr "Les smartphones plus anciens sont généralement moins chers à réparer que les modèles plus récents et les réparations générales telles que le remplacement dʼécran ou de batterie peuvent généralement être effectuées.Les téléphones endommagés par lʼeau sont un peu plus délicats et nécessiteront, avant dʼobtenir un devis, un diagnostic plus approfondi pour déterminer lʼétendue des dommages. {0} de lʼheure. Toute heure commencée est due."
+
+#: krispc/lst_products.py:29
+msgid "PTR_0230"
+msgstr "Réparation PC de bureau et mise à jour de matériel"
+
+#: krispc/lst_products.py:30
+msgid "PTR_0240"
+msgstr "Pourquoi dépenser des centaines –&nbsp;voire des milliers&nbsp– dʼeuros pour un nouvel ordinateur, alors que tout ce dont vous avez vraiment besoin est une simple mise à niveau ou deux? Améliorer les performances de votre ordinateur de bureau et prolonger sa durée de vie pour les années à venir."
+
+#: krispc/lst_products.py:31
+msgid "PTR_3000"
+msgstr "Mise à jour&nbsp;/&nbsp;tune-up PC {0} Installation du système dʼexploitation (Windows&nbsp;/&nbsp;Linux) {1} Suppression des virus&nbsp;/&nbsp;logiciels espions {2} "
+
+#: krispc/lst_products.py:35
+msgid "PTR_0310"
+msgstr "Réparations portables et entretien informatique"
+
+#: krispc/lst_products.py:36
+msgid "PTR_0320"
+msgstr "Votre ordinateur portable est-il devenu extrêmement lent ? Et si vous le mettiez à jour au lieu de le remplacer ? De nombreuses améliorations sont possibles&nbsp;: batterie, RAM, disque dur, SSD, connexion WiFi, CPU, lecteur optique, carte graphique&hellip;"
+
+#: krispc/lst_products.py:37
+msgid "PTR_0200"
+msgstr "Par heure : {0}. Toute heure commencée est due."
+
+#: krispc/lst_products.py:41
+msgid "PTR_0400"
+msgstr "Configuration et dépannage dʼimprimante"
+
+#: krispc/lst_products.py:42
+msgid "PTR_0410"
+msgstr "Avez-vous remarqué que chaque magasin et fournisseur en ligne vend des imprimantes, mais que personne ne les répare? Cela nʼa pas changé depuis des années. Il est plus facile de vendre et dʼoublier que de sʼoccuper dʼun client et dʼun service. Ne jetez pas votre équipement cassé, il suffit de le faire réparer à moindre coût."
+
+#: krispc/lst_products.py:43
+msgid "PTR_0420"
+msgstr "Les imprimantes à jet dʼencre, thermiques, matricielles et dʼautres types : leurs problèmes courants incluent des bourrages papier répétés, lʼimpression de pages blanches, des problèmes de connexion réseau, des problèmes de courroie dʼimprimante et dʼautres dysfonctionnements. Plusieurs facteurs affectent le coût de la réparation dʼimprimante. {0} par heure. Toute heure commencée est due."
+
+#: krispc/lst_products.py:47
+msgid "PTR_0480"
+msgstr "Conseil, formation personnalisé"
+
+#: krispc/lst_products.py:48
+msgid "PTR_0490"
+msgstr "La vie à lʼère moderne pourrait être un défi pour les adultes qui ne maîtrisent pas forcément les ordinateurs. La technologie est impliquée dans presque tous les aspects de notre vie&nbsp;: nous en avons besoin pour le travail, lʼécole, le contact, la gestion des tâches quotidiennes, lʼenseignement à distance et même les achats en ligne."
+
+#: krispc/lst_products.py:49
+msgid "PTR_0500"
+msgstr "Je vous aide à acquérir la maîtrise de la technologie dont vous avez besoin pour vous sentir plus à lʼaise avec votre ordinateur, tablette etc. {0} de lʼheure. Toute heure commencée est due."
+
+#: krispc/lst_products.py:53
+msgid "PTR_0510"
+msgstr "Identification et suppression des logiciels malveillants"
+
+#: krispc/lst_products.py:54
+msgid "PTR_0520"
+msgstr "Leur dessein est dʼaccéder à lʼappareil dʼun utilisateur à son insu. Ces types de logiciels incluent les logiciels espions, les logiciels publicitaires, les virus, les chevaux de Troie, les vers informatiques, les rootkits, les logiciels de ran&ccedil;on, ou bien les détourneurs de navigateur."
+
+#: krispc/lst_products.py:55
+msgid "PTR_0540"
+msgstr "Je peux supprimer pour vous tous les virus, les logiciels publicitaires et les logiciels espions.Le service de suppression de logiciels malveillants coûte {0} par appareil."
+
+#: krispc/lst_products.py:59
+msgid "PTR_0560"
+msgstr "Connexions et Sécurité Internet"
+
+#: krispc/lst_products.py:60
+msgid "PTR_0570"
+msgstr "Protégez-vous et votre famille. Votre ordinateur est-il sécurisé? Avez-vous téléchargé les derniers correctifs et mises à jour pour Windows? Les menaces à la sécurité ont augmentées avec lʼaugmentation de lʼutilisation dʼinternet."
+
+#: krispc/lst_products.py:61
+msgid "PTR_0580"
+msgstr "Configuration du contrôle parental coûte {0}.Le support technique est à {1} de lʼheure. Toute heure commencée est due."
+
+#: krispc/lst_products.py:65
+msgid "PTR_0600"
+msgstr "Configuration de box internet"
+
+#: krispc/lst_products.py:66
+msgid "PTR_0610"
+msgstr "Vous venez de changer dʼopérateur Internet et vous souhaitez régler le réseau WiFi de votre nouvelle Box ? Pas de panique ! Je réalise pour vous, pas à pas, la procédure de configuration du réseau sans fil de votre modem (mot de passe wifi, canal, clé de sécurité, filtrage MAC&hellip;)."
+
+#: krispc/lst_products.py:67
+msgid "PTR_1980"
+msgstr "Je peux vous aider à changer le nom de réseau (SSID) et le mot de passe, régler le mode de sécurité (WPA/WEP), faire le filtrage MAC ou bien choisir le meilleur canal de votre réseau sans fil. {0}."
+
+#: krispc/lst_products.py:71
+msgid "PTR_0670"
+msgstr "Prise en main à distance de vos appareils"
+
+#: krispc/lst_products.py:72
+msgid "PTR_0680"
+msgstr "Une prise en main à distance me donnera une vue générale de votre ordinateur afin de vous proposer un service de maintenance logiciel. Cʼest un outil vraiment très important dans le but de réparer les PC où les bogues informatiques."
+
+#: krispc/lst_products.py:73
+msgid "PTR_0690"
+msgstr "Voici quelques exemples dʼactions informatiques possibles à distance&nbsp;: suppression de virus, installation de matériel (imprimante, clavier, webcam, etc.), mises à jour ou lʼinstallation de logiciels et de pilotes. {0} de lʼheure. Toute heure commencée est due."
+
+#~ msgid "PTR_0020"
+#~ msgstr "Fran&ccedil;ais"
+
+#~ msgid "PTR_0030"
+#~ msgstr "Anglais"
+
+#~ msgid "PTR_0041"
+#~ msgstr "Votre message a été envoyé. Merci&mbsp;!"
+
+#~ msgid "PTR_0060"
+#~ msgstr "Appeler maintenant"
+
+#~ msgid "PTR_0070"
+#~ msgstr "Envoyer un SMS"
+
+#~ msgid "PTR_0080"
+#~ msgstr "Envoyer un message"
+
+#~ msgid "PTR_0090"
+#~ msgstr "Appelez-nous"
+
+#~ msgid "PTR_0100"
+#~ msgstr "Solliciter un devis"
+
+#~ msgid "PTR_0110"
+#~ msgstr "Réparations et dépannages Informatiques"
+
+#~ msgid "PTR_0300"
+#~ msgstr "Diagnostic et réparation {0}"
+
+#~ msgid "PTR_0640"
+#~ msgstr "Support technique informatique"
+
+#~ msgid "PTR_0650"
+#~ msgstr ""
+#~ "Service dʼassistance technique et informatique. La garantie que vous "
+#~ "puissiez continuer à profiter de la disponibilité de lʼensemble de ses "
+#~ "composants pour lʼaccomplissement de vos tâches."
+
+#~ msgid "PTR_0660"
+#~ msgstr "Entre 25 et {0} par heure"
+
+#~ msgid "PTR_0765"
+#~ msgstr "Nous suivre:"
+
+#~ msgid "PTR_0768"
+#~ msgstr "Réseaux sociaux"
+
+#~ msgid "PTR_0770"
+#~ msgstr "Dites-nous tout"
+
+#~ msgid "PTR_0775"
+#~ msgstr "Contact…"
+
+#~ msgid "PTR_0780"
+#~ msgstr "Suivez-moi :"
+
+#~ msgid "PTR_0790"
+#~ msgstr ""
+#~ "Nous possédons le dévouement et lʼenthousiasme qui conduisent "
+#~ "naturellemen à la résolution des difficultés techniques et non techniques "
+#~ "de manière efficace et rapide."
+
+#~ msgid "PTR_0850"
+#~ msgstr "Envoyer"
+
+#~ msgid "PTR_0860"
+#~ msgstr "KrisPC est situé à"
+
+#~ msgid "PTR_0870"
+#~ msgstr "Visualiser sur la carte"
+
+#~ msgid "PTR_0880"
+#~ msgstr ""
+#~ "Les interventions techniques de réparation, dépannage ou formation "
+#~ "sʼéffectuent dans les communes suivantes&nbsp;:"
+
+#~ msgid "PTR_0890"
+#~ msgstr "Notre numéro de téléphone&nbsp;06 19 67 03 56"
+
+#~ msgid "PTR_0900"
+#~ msgstr ""
+#~ "Toutes les mesures dʼhygiène et moyens de prévention contre le "
+#~ "coronavirus sont toujours respectées et mises en œuvre afin de garantir "
+#~ "la sécurité sanitaire pendant toute la durée de chaque intervention : "
+#~ "port de masque visière, gants et surchaussures, gel hydroalcoolique ainsi "
+#~ "que lʼutilisation de produits de désinfection appropriés pour les "
+#~ "appareils et dispositifs nécessaires aux interventions."
+
+#~ msgid "PTR_0910"
+#~ msgstr "Détail des cookies"
+
+#~ msgid "PTR_0920"
+#~ msgstr "Autoriser"
+
+#~ msgid "PTR_0930"
+#~ msgstr "Autoriser tous les cookies"
+
+#~ msgid "PTR_0940"
+#~ msgstr "Interdire"
+
+#~ msgid "PTR_0950"
+#~ msgstr "En savoir plus&hellip;"
+
+#~ msgid "PTR_1960"
+#~ msgstr "https://www.culture-informatique.net/cest-quoi-les-cookies/"
+
+#~ msgid "PTR_2010"
+#~ msgstr ""
+#~ "Réparations matériel et logiciels | Élimination des logiciels espions et "
+#~ "les virus | Installation des pièces de rechange | Réalisation des mises à "
+#~ "niveau du matériel"
+
+#~ msgid "PTR_2030"
+#~ msgstr ""
+#~ "Nous utilisons les cookies pour vous fournir le meilleur service sur "
+#~ "notre site Web."
+
+#~ msgid "PTR_4010"
+#~ msgstr ""
+#~ "Mon objectif&nbsp;: résoudre tous les problèmes liés au matériel et aux "
+#~ "logiciels, trouver et éliminer les logiciels espions et les virus, "
+#~ "installer des pièces de rechange ou dʼeffectuer des mises à niveau du "
+#~ "matériel"
+
+#~ msgid "accept_pol_conf"
+#~ msgstr "https://www.onevision.com/fr/contact"
+
+#~ msgid "PTR_5000"
+#~ msgstr ""
+#~ "Vous acceptez notre politique de confidentialité et le traitement de vos "
+#~ "informations pour nous permettre de vous contacter.*"
+
+#~ msgid "PTR_5010"
+#~ msgstr "Nʼhésitez pas à nous contacter si vous avez des questions"
+
+#~ msgid "PTR_5020"
+#~ msgstr ""
+#~ "Veuillez écrire ci-dessous votre prénom, votre adresse e-mail et un "
+#~ "message. Lʼun de nous se fera un plaisir de revenir vers vous et de "
+#~ "répondre à vos questions dans les plus brefs délais."
+
+#~ msgid "jq_lnk"
+#~ msgstr "https://fr.wikipedia.org/wiki/JQuery/"
+
+#~ msgid "vs_lnk"
+#~ msgstr "https://fr.wikipedia.org/wiki/Visual_Studio_Code/"
+
+#~ msgid "PTR_5050"
+#~ msgstr "Please click to display this site in English language"
+
+#~ msgid "PTR_6000"
+#~ msgstr "Devis pour un projet de dépannage. KrisPC Services Informatiques"
+
+#~ msgid "Location"
+#~ msgstr "Adresse&nbsp;:"
+
+#~ msgid "Email"
+#~ msgstr "Email&nbsp;:"
