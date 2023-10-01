@@ -348,8 +348,7 @@
     /**
      * Initiate Pure Counter
      */
-    new PureCounter();
-
+    // new PureCounter();
 
     const orderthisbtns = document.querySelectorAll(".cmd_btn");
 
