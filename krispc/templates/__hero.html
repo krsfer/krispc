@@ -1,0 +1,33 @@
+{% load i18n %}
+<section id="hero" class="d-flex align-items-center justify-content-left" style="height: 150%">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
+            <div class="col-xl-6 col-lg-8">
+                <h1>{% trans 'PTR_0120' %}<span>.</span></h1>
+                <h6 class="nota">{% trans 'French English' %}</h6>
+                <h2>{% trans 'PTR_0040' %}</h2>
+                <h4>{% trans 'PTR_0220' %}</h4>
+            </div>
+            <div class="col-12" data-aos="fade-up" data-aos-delay="4000">
+                <h6 class="nota">{% trans 'PTR_2055' %}</h6>
+                <h6 class="nota">{% trans 'PTR_2057' %}</h6>
+            </div>
+        </div>
+
+
+        <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
+            {% for prod in prods %}
+                <div class="col-xl-2 col-md-4">
+                    <div class="icon-box">
+                        <i class="{{ prod.Prd_Icon }}"></i>
+                        <h3>
+                            <a href="#prod_{{ forloop.counter0 }}">{{ prod.Prd_Name|safe }}</a>
+                        </h3>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>

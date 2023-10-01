@@ -1,0 +1,89 @@
+{% load static %}
+{% load i18n %}
+<footer id="footer">
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6" id="place">
+                    <div class="footer-info">
+                        <br>
+
+                        <hr style="background-color: #eeb442; height: 3px; border: 0;">
+
+                        <h3>KrisPC<span>.</span></h3>
+                        <p>
+                            <a class="" target="_blank"
+                               href="https://www.google.com/maps/dir//KrisPC+Informatique/data=!4m8!4m7!1m0!1m5!1m1!1s0x12cc2b830288222b:0xf25428ee82c98a0f!2m2!1d7.010611!2d43.641493499999996"
+                               rel="noopener noreferrer">17 Faubourg St. Esprit<br>
+                                06560 Valbonne</a>
+                            <br>
+                            <br>
+                            <strong>{% trans "PTR_5040" %}:</strong> {% trans "PTR_5030" %}<br> {# Phone and rum #}
+                            <strong>Email:</strong> hello@krispc.fr
+
+                        <hr style="background-color: #eeb442; height: 3px; border: 0;">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 footer-links">
+                <h4>{% trans 'PTR_0170' %}</h4>
+                <ul>
+                    {% for prod in prods %}
+                        <li><i class="bx bx-chevron-right"></i>
+                            <a href="#prod_{{ forloop.counter0 }}">{{ prod.Prd_Name|safe }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% include "logos.html" %}
+
+    <div class="colophon">
+        <div class="d-flex flex-wrap justify-content-center justify-content-between">
+            {% for cph in colophon %}
+                <a href="{{ cph.Colophon_Link }}" title='{{ cph.Colophon_Title }}' target='_blank'>
+                    <img class="colophon_logo m-2"
+                         src="
+                            {% with 'images/logos/'|add:cph.Colophon_Icon as image_static %}
+                                {% static image_static %}
+                            {% endwith %}"
+                         alt="image for {{ cph.Colophon_Title }}">
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 copyright fst-italic" style="padding:0; margin: 0; height: 20px">
+            Version {{ VER }} &copy; Copyright
+            <div class="d-inline-block" id="date-container"></div>
+            <script>
+                // Create a new element to display the year
+                let yearElement = document.createElement('p');
+
+                // Set the text of the element to the current year
+                yearElement.textContent = String(new Date().getFullYear());
+
+                // Get a reference to the parent element where you want to add the new element
+                let parentElement = document.getElementById('date-container');
+
+                // Add the new element to the page
+                parentElement.appendChild(yearElement);
+            </script>
+            {% trans 'PTR_2050' %} </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 copyright fst-italic" style="padding:0; margin: 0; height: 20px">
+            {% trans 'PTR_2052' %}
+
+            <i class='bx bxs-heart' style="color:#ff0000"></i>
+
+            {% trans 'PTR_2060' %}
+            <a style="text-decoration:underline; cursor:pointer" onclick="genEmailMe();">
+                Christopher Archer.
+            </a>
+        </div>
+    </div>
+</footer>

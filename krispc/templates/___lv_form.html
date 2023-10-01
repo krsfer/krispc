@@ -1,0 +1,28 @@
+{% load static %}
+{% comment %}
+<div class="row gutters-0 border-0 m-0">
+
+    <div class="col-3 border border-2 border-warning  m-0 m-auto" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="hello" style="width: auto; margin: 0 auto;">
+        <button onclick="location.href='/fr'" class='btn btn-primary-outline btn-sm bg-transparent border-0 m-0'>
+            <img src="{% static 'krispc/images/fr.png' %}" class='img_lv' alt="french flag"></button>
+    </div>
+
+
+    <div class="col-3 border-0 m-0">
+        <button onclick="location.href='/en'" class='btn btn-primary-outline btn-sm bg-transparent link_lv'>
+            <img src="{% static 'krispc/images/en.png' %}" class='img_lv' alt="uk flag"></button>
+    </div>
+
+</div>
+{% endcomment %}
+
+
+<p>
+        <button onclick="location.href='/'" class='btn btn-primary-outline bg-transparent pt-3 ps-0 pe-0'>
+        <img src="{% static 'images/lv_fr.png' %}"></button>
+</p>
+
+<p>
+    <button onclick="location.href='/'" class='btn btn-primary-outline bg-transparent pt-3 ps-1 pe-0'>
+        <img src="{% static 'images/lv_en.png' %}"></button>
+</p>

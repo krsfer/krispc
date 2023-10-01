@@ -1,0 +1,91 @@
+{% load i18n %}
+
+<section id="services" class="services">
+    <div id="the-preamble" style="display:none">{% trans "PTR_6010" %}</div>
+
+    <div class="container" data-aos="fade-up">
+
+        <div class="section-title">{% comment %}Nos services{% endcomment %}
+            <h2>{% trans 'PTR_0170' %}</h2>
+        </div>
+
+        <div class="accordion" id="prods_accordion">
+            <div class="row">
+                {% for prod in prods %}
+                    <div id="prod_{{ forloop.counter0 }}"
+                         class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4"
+                         data-aos="zoom-in" data-aos-delay="100">
+                        <div class="icon-box border border-1 border-primary">
+
+                            <div class="icon mb-0 pb-0">
+                                <i class="{{ prod.Prd_Icon }}"></i>
+                            </div>
+
+                            {% comment %} Start Commander order this {% endcomment %}
+                            <div class="btn mt-1 mb-0 pb-0 pt-0 cmd_btn">
+                                <a data-toggle=" modal" data-bs-toggle="collapse"
+                                   data-bs-target="#order-collapse_{{ forloop.counter0 }}" aria-expanded="false"
+                                   aria-controls="collapseExample">
+                                    {% trans "PTR_0050" %} {% comment %}"Commander" button{% endcomment %}
+                                </a>
+                            </div>
+                            <div class="collapse" id="order-collapse_{{ forloop.counter0 }}">
+                                <div class="mt-0 mb-2 container row col-xs-12 btn-group btn-md">
+                                    <a
+                                            class='btn com-btn'
+                                            onclick="
+                                                    scrolllTo('contact-form-id',
+                                                    '{{ locale }}',
+                                                    '{{ prod.Prd_Name|safe }}')"
+                                    >
+                                        &nbsp;<span class="cls-message">Message</span>&nbsp;
+                                    </a>
+                                    <a
+                                            class='btn com-btn'
+                                            onclick="sendSMS('{{ prod.Prd_Name|safe }}')"
+                                    >
+                                        &nbsp;<span class="cls-sms">SMS</span>&nbsp;
+                                    </a>
+                                    <a
+                                            class='btn com-btn'
+                                            href="tel:+33-6-19-67-03-56">
+                                        &nbsp;<span class="cls-call">{% trans "Call" %}</span>&nbsp;
+                                    </a>
+                                </div>
+                            </div>
+                            {% comment %} End Commander{% endcomment %}
+
+                            <div class="pt-2">
+                                <h4><a href="">{{ prod.Prd_Name|safe }}</a></h4>
+                            </div>
+
+                            <div class="prod-desc text-start">
+                                <p>{{ prod.Prd_Desc|safe }}</p>
+                            </div>
+
+                            <div>
+                                <h2 class="accordion-header" id="heading_{{ forloop.counter0 }}">
+                                    <button class="readmore collapsed" type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse_{{ forloop.counter0 }}"
+                                            aria-expanded="false"
+                                            aria-controls="collapse_{{ forloop.counter0 }}">
+                                        {% trans 'PTR_0150' %}
+                                    </button>
+                                </h2>
+                                <div id="collapse_{{ forloop.counter0 }}" class="collapse"
+                                     aria-labelledby="heading_{{ forloop.counter0 }}"
+                                     data-bs-parent="#prods_accordion">
+                                    <div class="prod-more accordion-body text-start">
+                                        <p>{{ prod.Prd_More|safe }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>

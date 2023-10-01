@@ -1,0 +1,29 @@
+{% load i18n %}
+{% load static %}
+
+<section id="about" class="about">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row">
+            <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left" data-aos-delay="100">
+                <img src="{% static 'images/glint_hero_1.png' %}" class="img-fluid" alt="">
+            </div>
+            <div class="col pt-4 pt-lg-0 order-2 order-lg-1 content" data-aos="fade-right"
+                 data-aos-delay="100">
+                <div class="col ml-auto apropos_section">
+                    <div class="apropos_section-title">
+                        <h2>{% trans 'PTR_0180' %}</h2> {% comment %}FAIRE CONNAISSANCE{% endcomment %}
+                    </div>
+                    <div class="apropos_sub-section"><h2>{% trans 'PTR_0190' %}</h2>
+                    </div>
+                    <div class="apropos_section_content">
+                        <p>{% trans 'PTR_1990' %}</p>
+                        <p>{% trans 'PTR_1995' %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- End About Section -->

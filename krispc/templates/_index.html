@@ -1,0 +1,21 @@
+{% extends "the_base.html" %}
+
+{% block main %}
+
+    {% include "__header.html" %}
+    {% include "__hero.html" %}
+
+    <main id="main">
+        {% include "__about.html" %}
+        {% include "__services.html" %}
+        {% include "__cta.html" %}
+        {% include "__team.html" %}
+
+        {% include "__contact.html" %}
+    </main>
+
+    {% include "__footer.html" %}
+
+
+
+{% endblock %}
