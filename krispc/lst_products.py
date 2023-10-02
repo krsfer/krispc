@@ -5,6 +5,25 @@ from django.utils.translation import gettext as _
 from krispc.lst_prod_prices import crypto_price, price_converted
 
 
+def getPaypal():
+    strstart = "</p>"
+
+    div = "<div>"
+
+    anchorstart = ("<a href='https://paypal.me/krispc06' style='color:gray !important;font-weight: bold; font-size: "
+                   "15px'>")
+    anchorcontent = "https://paypal.me/krispc06"
+    anchorend = "</a>"
+
+    enddiv = "</div>"
+
+    strend = "<p>"
+
+    res = div + anchorstart + anchorcontent + anchorend + enddiv
+
+    return res
+
+
 def data():
     """."""
 
@@ -61,7 +80,9 @@ def data():
             "Prd_Icon": "ri-headphone-line",
             "Prd_Name": _("PTR_0670"),
             "Prd_Desc": _("PTR_0680"),
-            "Prd_More": crypto_price(price_converted("PTR_0690", _("PTR_0690"))),
+            "Prd_More": crypto_price(price_converted("PTR_0690", _("PTR_0690"))) +
+                        _("PTR_0692") + getPaypal() +
+                        _("PTR_0694")
         },
     ]
 
