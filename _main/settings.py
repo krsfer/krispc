@@ -208,6 +208,11 @@ STATIC_URL = "static/"
 #
 # ]
 
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, "krispc/locale"),
+]
+
+
 LANGUAGES = [
     ("fr", _("French")),
     ("en", _("English")),
