@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function displayNumbers() {
         const numbers = generateRandomNumbers();
+        numbers.sort((a, b) => a - b);
+        console.log("numbers", numbers);
         question.innerHTML = numbers.join(" ");
     }
 
