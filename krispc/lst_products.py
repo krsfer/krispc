@@ -8,18 +8,23 @@ from krispc.lst_prod_prices import crypto_price, price_converted
 def getPaypal():
     strstart = "</p>"
 
-    div = "<div>"
+    imgdiv = "<div>"
+    imgstart = "<img src='https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/C2/logos-buttons/optimize/26_Yellow_PayPal_Pill_Button.png' alt='PayPal Logo'>"
+    imgend = "</img>"
+    imgdivend = "</div>"
+    img = imgstart + imgend
 
-    anchorstart = ("<a href='https://paypal.me/krispc06' style='color:gray !important;font-weight: bold; font-size: "
-                   "15px'>")
-    anchorcontent = "https://paypal.me/krispc06"
+    div = "<p style='text-align:center;'>"
+
+    anchorstart = "<a href='https://paypal.me/krispc06' style='color:gray !important;font-weight: normal; font-size: 15px; text-decoration: underline; text-decoration-color: cadetblue;'>"
+    anchorcontent = img + "</br> https://paypal.me/krispc06"
     anchorend = "</a>"
 
-    enddiv = "</div>"
+    enddiv = "</p>"
 
     strend = "<p>"
 
-    res = div + anchorstart + anchorcontent + anchorend + enddiv
+    res = strstart + div + anchorstart + anchorcontent + anchorend + enddiv + strend
 
     return res
 
