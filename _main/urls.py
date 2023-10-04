@@ -20,7 +20,8 @@ from django.urls import include, path
 
 import addthem.views
 import hello.views
-from krispc import views
+import wat.views
+import krispc.views
 
 urlpatterns = i18n_patterns(
     path("", include("krispc.urls")),
@@ -29,8 +30,9 @@ urlpatterns = i18n_patterns(
     path("db/", hello.views.db, name="db"),
     path("addthem/", addthem.views.index, name="addthem"),
     path('chat/', include('chat.urls')),
+    path("wat/", wat.views.index, name="wat"),
     #
-    path("favicon.ico", views.favicon),
+    path("favicon.ico", krispc.views.favicon),
     #
     path("i18n/", include("django.conf.urls.i18n")),
     #

@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     "chat",
     "addthem",
     "krispc",
+    "wat"
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'

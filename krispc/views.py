@@ -8,12 +8,12 @@ from krispc import colophon, forms, lst_products, lst_villes, marques
 
 
 # Create your views here.
-class IndexKPageView(TemplateView):
+class IndexPageView(TemplateView):
     template_name = "_index.html"
 
     def render_to_response(self, context, **response_kwargs):
         # request.META.get('HTTP_REFERER')
-        response = super(IndexKPageView, self).render_to_response(
+        response = super(IndexPageView, self).render_to_response(
             {
                 "redirect_to": "",
                 "locale":      get_language(),
