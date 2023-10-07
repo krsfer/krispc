@@ -1,5 +1,3 @@
-{% load static %}
-
 <html class="h-100">
 <head>
     <meta charset="utf-8">
@@ -7,55 +5,93 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-    <script src="{% static 'js/code.js' %}"></script>
+    <script src="/static/js/code.js"></script>
 
 </head>
 <body class="d-flex flex-column h-100">
-<div class="container my-auto">
-    <div class="table-responsive">
-        <table class="table" id="logTable">
-            <thead>
-            <tr>
-                <th>Question</th>
-                <th>Numbers</th>
-                <th>Guess</th>
-                <th>Elapsed Time(s)</th>
-                <th>Date</th>
-            </tr>
-            </thead>
-        </table>
-    </div>
+
+<div class="row">
+    <div class="col">#</div>
+    <div class="col">Question</div>
+    <div class="col">Resp</div>
+    <div class="col">Tick</div>
+    <div class="col">Time</div>
+    <div class="col">Sum</div>
 </div>
+<span id="data"></span>
+{#<hr />#}
+{#<div class="container">#}
+{#    <div class="row">#}
+{#        <div class="col">1</div>#}
+{#        <div class="col">4,6,7,7,9,9</div>#}
+{#        <div class="col">1</div>#}
+{#        <div class="col">false</div>#}
+{#        <div class="col">3.301</div>#}
+{#        <div class="col">2023-10-06T20:58:19.957Z</div>#}
+{#        <div class="col">42</div>#}
+{#    </div>#}
+{#    <div class="row">#}
+{#        <div class="col">1</div>#}
+{#        <div class="col">1,2,3,4,5,6</div>#}
+{#        <div class="col">1</div>#}
+{#        <div class="col">false</div>#}
+{#        <div class="col">4.278</div>#}
+{#        <div class="col">2023-10-06T21:01:43.427Z</div>#}
+{#        <div class="col">21</div>#}
+{#    </div>#}
+{#    <div class="row">#}
+{#        <div class="col">2</div>#}
+{#        <div class="col">3,3,5</div>#}
+{#        <div class="col">2</div>#}
+{#        <div class="col">false</div>#}
+{#        <div class="col">13.158</div>#}
+{#        <div class="col">2023-10-06T21:01:56.587Z</div>#}
+{#        <div class="col">11</div>#}
+{#    </div>#}
+{#</div>#}
+{#<hr />#}
+{##}
+{##}
+{#<div class="container">#}
+{#    <div class="row col5">#}
+{#        <div class="col">a</div>#}
+{#        <div class="col">b</div>#}
+{#        <div class="col">c</div>#}
+{#        <div class="col">d</div>#}
+{#        <div class="col">e</div>#}
+{#    </div>#}
+{#    <div class="row col5">#}
+{#        <div class="col">a</div>#}
+{#        <div class="col">b</div>#}
+{#        <div class="col">c</div>#}
+{#        <div class="col">d</div>#}
+{#        <div class="col">e</div>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{#<hr />#}
+{##}
+{#<div class="container my-auto">#}
+{#    <div class="table-responsive">#}
+{#        <table class="table" id="logTable"><tbody><tr><th>Question</th><th>Numbers</th><th>Guess</th><th>Elapsed Time(s)</th><th><span class="hidden">Date</span></th></tr><tr><td bgcolor="#F9E0DA">1</td><td>1 6 6 7</td><td>1</td><td>25949.89</td><td><span class="hidden">{date}</span></td></tr><tr><td bgcolor="#F9E0DA">2</td><td>2 3 5 7</td><td>2</td><td>2.20</td><td><span class="hidden">{date}</span></td></tr><tr><td bgcolor="#F9E0DA">3</td><td>2 2 2 3 8 9</td><td>5</td><td>15.42</td><td><span class="hidden">{date}</span></td></tr><tr><td bgcolor="#F9E0DA">4</td><td>1 3 4 6 8</td><td>6</td><td>2.01</td><td><span class="hidden">{date}</span></td></tr></tbody></table>#}
+{#    </div>#}
+{#</div>#}
 
 <footer class="footer mt-auto py-3">
-    {#<div class="container">#}
-    {#    <div class="row mt-3 text-black-50 bg-light">#}
-    {#        <span id="question"></span>#}
-    {#        <input type="text" class="form-control" id="userInput" placeholder="Enter your guess">#}
-    {#        <span id="incorrect"></span>#}
-    {#    </div>#}
-    {##}
-    {#    <br class="d-flex justify-content-center mt-3 fixed-bottom" id="buttons">#}
-    {#    <button class="btn btn-primary me-2" onclick="submitGuess()">Submit</button>#}
-    {#    <button class="btn btn-secondary me-2" onclick="clearLog()">Clear Log</button>#}
-    {#    <button class="btn btn-success" onclick="newSession()">New Session</button>#}
-    {#</div>#}
-
-
     <div class="container">
         <div class="row">
             <div class="col">
-                <span id="question" class="text-light">This is the first line.</span>
+                <span id="question" class="text-black">1 5 7 8</span>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <input type="text"  id="userInput" class="form-control" placeholder="This is the second line.">
+                <input type="text" id="userInput" class="form-control" placeholder="_">
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <span id="incorrect" class="text-light">This is the third line.</span>
+                <span id="incorrect" class="text-light">22</span>
             </div>
         </div>
         <div class="row">
@@ -70,56 +106,3 @@
 </footer>
 </body>
 </html>
-
-
-{#<!DOCTYPE html>#}
-{#<html>#}
-{#<head>#}
-{#    <meta charset="utf-8">#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">#}
-{#    <meta name="description" content="">#}
-{#    <meta name="author" content="">#}
-{##}
-{#    <title>Add Them</title>#}
-{##}
-{#    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>#}
-{##}
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">#}
-{##}
-{#    <script src="{% static 'js/code.js' %}"></script>#}
-{##}
-{#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>#}
-{#    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>#}
-{##}
-{#</head>#}
-{#<body>#}
-{##}
-{#<div class="container mt-5">#}
-{#    <table class="table" id="logTable">#}
-{#        <thead>#}
-{#        <tr>#}
-{#            <th>Question</th>#}
-{#            <th>Numbers</th>#}
-{#            <th>Guess</th>#}
-{#            <th>Elapsed Time(s)</th>#}
-{#            <th>Date</th>#}
-{#        </tr>#}
-{#        </thead>#}
-{#    </table>#}
-{##}
-{#    <div class="mt-3">#}
-{#        <span id="question"></span>#}
-{#        <input type="text" class="form-control" id="userInput" placeholder="Enter your guess">#}
-{#        <span id="incorrect"></span>#}
-{#    </div>#}
-{##}
-{#    <div class="d-flex justify-content-center mt-3 fixed-bottom" id="buttons">#}
-{#        <button class="btn btn-primary me-2" onclick="submitGuess()">Submit</button>#}
-{#        <button class="btn btn-secondary me-2" onclick="clearLog()">Clear Log</button>#}
-{#        <button class="btn btn-success" onclick="newSession()">New Session</button>#}
-{#    </div>#}
-{##}
-{#</div>#}
-{##}
-{#</body>#}
-{#</html>#}
