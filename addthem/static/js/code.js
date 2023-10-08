@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const logTable = document.getElementById("logTable");
     // const userInput = document.getElementById("userInput");
     const question = document.getElementById("question");
-    const incorrect = document.getElementById("incorrect");
+    // const incorrect = document.getElementById("incorrect");
 
 
     const buttons = document.querySelectorAll('.keypad button');
@@ -59,11 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("does not exist");
     }
 
-    userInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            submitGuess();
-        }
-    });
+    // userInput.addEventListener("keydown", (e) => {
+    //     if (e.key === "Enter") {
+    //         submitGuess();
+    //     }
+    // });
 
 
     displayNumbers();
@@ -79,11 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let is_correct = int_guess === sum;
 
-            if (is_correct) {
-                incorrect.innerHTML = "";
-            } else {
-                incorrect.innerHTML = sum.toString();
-            }
+            // if (is_correct) {
+            //     incorrect.innerHTML = "";
+            // } else {
+            //     incorrect.innerHTML = sum.toString();
+            // }
 
             addLog(count + 1, numbers, int_guess, is_correct, elapsedTime, new Date().toISOString(), sum);
 
@@ -157,12 +157,13 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Invalid input. Enter only characters 0-9, a-z, or space.");
         }
         displayNumbers();
-        userInput.value = "";
+        // userInput.value = "";
         startTime = Date.now();
     };
 
     window.clearLog = () => {
-        localStorage.clear();
+        console.log("Clearing log");
+        localStorage.removeItem('larve');
         data.innerHTML = "";
     };
 
@@ -199,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (key === 'date')
                     continue
                 if (key === 'numbers') {
-                    let num_str = larve_str[i][key].join(" ");
+                    let num_str = larve_str[i][key].join("");
                     content += `<div class="col px-0">${num_str}</div>`;
                 } else {
                     content += `<div class="col px-0">${larve_str[i][key]}</div>`
@@ -261,11 +262,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // newRow.innerHTML = `<td bgcolor=${couleur}>${nth}</td><td>${numbers.join(" ")}</td><td>${guess}</td><td>${elapsedTime.toFixed(2)}</td><td><span class="hidden">{date}</span></td>`;
         // localStorage.setItem('log', logTable.innerHTML);
 
-        if (parseInt(guess) === sum) {
-            console.log("Correct");
-        } else {
-            console.log("Incorrect");
-        }
+        // if (parseInt(guess) === sum) {
+        //     console.log("Correct");
+        // } else {
+        //     console.log("Incorrect");
+        // }
     }
 
     // aaa
@@ -276,6 +277,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 input.value = '';
             } else if (button.textContent === 'Backspace') {
                 input.value = input.value.slice(0, -1);
+            } else if (button.textContent === 'Clear Log') {
+                window.clearLog();
+            } else if (button.textContent === 'New Session') {
+                window.newSession();
             } else if (button.textContent === 'Submit') {
                 submitGuess();
                 input.value = '';
