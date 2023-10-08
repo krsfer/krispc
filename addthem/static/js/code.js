@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let savedLarve = localStorage.getItem('larve');
 
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     if (savedLarve) {
         try {
             let str = JSON.parse(savedLarve);
@@ -52,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.log("does not exist");
     }
-    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
     userInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
@@ -183,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(key === 'date')
                     continue
                 if(key === 'numbers') {
-                    console.log(key);
                     let num_str = larve_str[i][key].join(" ");
                     content += `<div class="col px-0">${num_str}</div>`;
                 }
