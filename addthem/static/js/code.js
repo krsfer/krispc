@@ -170,6 +170,17 @@ document.addEventListener("DOMContentLoaded", () => {
         return Array.from({length}, () => Math.floor(Math.random() * 9) + 1);
     }
 
+    function replaceLast(string, search, replace) {
+
+        const index = string.lastIndexOf(search);
+
+        if (index === -1) {
+            return string;
+        }
+
+        return string.substring(0, index) + replace + string.substring(index + search.length);
+    }
+
     function makeBS5str(larve_str) {
         let start_str = "<div class=\"container border\">";
 
@@ -177,15 +188,26 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let i = 0; i < larve_str.length; i++) {
             content += "<div class=\"row\">";
 
-            for(let key in larve_str[i]) {
-                if(key === 'date')
+            for (let key in larve_str[i]) {
+                if (key === 'date')
                     continue
-                if(key === 'numbers') {
+                if (key === 'numbers') {
                     let num_str = larve_str[i][key].join(" ");
                     content += `<div class="col px-0">${num_str}</div>`;
-                }
-                else
+                } else {
                     content += `<div class="col px-0">${larve_str[i][key]}</div>`
+                }
+
+                if (key === 'is_correct') {
+                    let bgcol;
+                    if (!larve_str[i][key]) {
+                        bgcol = "#F8D7DA";
+                    } else {
+                        bgcol = "#DAF9EA";
+                    }
+                    content = replaceLast(content, "col px-0\"", `col " style="background-color: ${bgcol};"`);
+                }
+
             }
             content += "</div>";
         }
@@ -195,6 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let res;
         res = start_str + content + end_str;
 
+
         return res;
     }
 
@@ -203,15 +226,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let json;
         json = {
-                nth: nth,
-                numbers: numbers,
-                guess: guess,
-                is_correct: is_correct,
-                elapsedTime: elapsedTime,
-                date: date,
-                sum: sum
+            nth: nth,
+            numbers: numbers,
+            guess: guess,
+            is_correct: is_correct,
+            elapsedTime: elapsedTime,
+            date: date,
+            sum: sum
         }
-        console.log(typeof larve);
         larve.push(json);
 
         localStorage.removeItem('larve');
@@ -220,7 +242,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         data.innerHTML = makeBS5str(larve);
-
 
 
         // console.log("is_correct", is_correct);
@@ -236,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (parseInt(guess) === sum) {
             console.log("Correct");
         } else {
-            console.log(`Incorrect : The sum is ${sum}`);
+            console.log("Incorrect");
         }
     }
 
