@@ -9,9 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let larve = [];
 
     const logTable = document.getElementById("logTable");
-    const userInput = document.getElementById("userInput");
+    // const userInput = document.getElementById("userInput");
     const question = document.getElementById("question");
     const incorrect = document.getElementById("incorrect");
+
+
+    const buttons = document.querySelectorAll('.keypad button');
+    const input = document.getElementById('textInput');
+
+
+
 
     const data = document.getElementById("data");
 
@@ -62,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     displayNumbers();
 
     window.submitGuess = () => {
-        const guess = userInput.value.trim();
+        const guess = input.value.trim();
 
 
         function processGuess(numbers, elapsedTime) {
@@ -260,5 +267,22 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Incorrect");
         }
     }
+
+    // aaa
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (button.textContent === 'Delete') {
+                input.value = '';
+            } else if (button.textContent === 'Backspace') {
+                input.value = input.value.slice(0, -1);
+            } else if (button.textContent === 'Submit') {
+                submitGuess();
+                input.value = '';
+            } else {
+                input.value += button.textContent;
+            }
+        });
+    });
 
 });
