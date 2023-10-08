@@ -28,7 +28,7 @@ urlpatterns = i18n_patterns(
     #
     path("start/", hello.views.index, name="index"),
     path("db/", hello.views.db, name="db"),
-    path("addthem/", addthem.views.index, name="addthem"),
+    path("addthem/", include('addthem.urls')),
     path('chat/', include('chat.urls')),
     path("wat/", wat.views.index, name="wat"),
     #
