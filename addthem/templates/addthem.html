@@ -22,65 +22,36 @@
     <div class="col">Sum</div>
 </div>
 <span id="data"></span>
-{#<hr />#}
-{#<div class="container">#}
-{#    <div class="row">#}
-{#        <div class="col">1</div>#}
-{#        <div class="col">4,6,7,7,9,9</div>#}
-{#        <div class="col">1</div>#}
-{#        <div class="col">false</div>#}
-{#        <div class="col">3.301</div>#}
-{#        <div class="col">2023-10-06T20:58:19.957Z</div>#}
-{#        <div class="col">42</div>#}
-{#    </div>#}
-{#    <div class="row">#}
-{#        <div class="col">1</div>#}
-{#        <div class="col">1,2,3,4,5,6</div>#}
-{#        <div class="col">1</div>#}
-{#        <div class="col">false</div>#}
-{#        <div class="col">4.278</div>#}
-{#        <div class="col">2023-10-06T21:01:43.427Z</div>#}
-{#        <div class="col">21</div>#}
-{#    </div>#}
-{#    <div class="row">#}
-{#        <div class="col">2</div>#}
-{#        <div class="col">3,3,5</div>#}
-{#        <div class="col">2</div>#}
-{#        <div class="col">false</div>#}
-{#        <div class="col">13.158</div>#}
-{#        <div class="col">2023-10-06T21:01:56.587Z</div>#}
-{#        <div class="col">11</div>#}
-{#    </div>#}
-{#</div>#}
-{#<hr />#}
-{##}
-{##}
-{#<div class="container">#}
-{#    <div class="row col5">#}
-{#        <div class="col">a</div>#}
-{#        <div class="col">b</div>#}
-{#        <div class="col">c</div>#}
-{#        <div class="col">d</div>#}
-{#        <div class="col">e</div>#}
-{#    </div>#}
-{#    <div class="row col5">#}
-{#        <div class="col">a</div>#}
-{#        <div class="col">b</div>#}
-{#        <div class="col">c</div>#}
-{#        <div class="col">d</div>#}
-{#        <div class="col">e</div>#}
-{#    </div>#}
-{#</div>#}
-{##}
-{#<hr />#}
-{##}
-{#<div class="container my-auto">#}
-{#    <div class="table-responsive">#}
-{#        <table class="table" id="logTable"><tbody><tr><th>Question</th><th>Numbers</th><th>Guess</th><th>Elapsed Time(s)</th><th><span class="hidden">Date</span></th></tr><tr><td bgcolor="#F9E0DA">1</td><td>1 6 6 7</td><td>1</td><td>25949.89</td><td><span class="hidden">{date}</span></td></tr><tr><td bgcolor="#F9E0DA">2</td><td>2 3 5 7</td><td>2</td><td>2.20</td><td><span class="hidden">{date}</span></td></tr><tr><td bgcolor="#F9E0DA">3</td><td>2 2 2 3 8 9</td><td>5</td><td>15.42</td><td><span class="hidden">{date}</span></td></tr><tr><td bgcolor="#F9E0DA">4</td><td>1 3 4 6 8</td><td>6</td><td>2.01</td><td><span class="hidden">{date}</span></td></tr></tbody></table>#}
-{#    </div>#}
-{#</div>#}
 
 <footer class="footer mt-auto py-3">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <input type="text" id="textInput" class="form-control">
+            </div>
+            <div class="col-12">
+                <div class="keypad">
+                    <button class="btn btn-secondary">0</button>
+                    <button class="btn btn-secondary">1</button>
+                    <button class="btn btn-secondary">2</button>
+                    <button class="btn btn-secondary">3</button>
+                    <button class="btn btn-secondary">4</button>
+                    <button class="btn btn-secondary">5</button>
+                    <button class="btn btn-secondary">6</button>
+                    <button class="btn btn-secondary">7</button>
+                    <button class="btn btn-secondary">8</button>
+                    <button class="btn btn-secondary">9</button>
+                    <button class="btn btn-danger">Delete</button>
+                    <button class="btn btn-warning">Backspace</button>
+                    <button class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#uu#}
+
     <div class="container">
         <div class="row">
             <div class="col">
@@ -89,7 +60,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <input type="text" id="userInput" class="form-control" placeholder="_">
+                <input type="text" id="userInput" class="form-control" placeholder="…">
             </div>
         </div>
         <div class="row">
