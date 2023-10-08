@@ -44,6 +44,8 @@
                     <button class="btn btn-secondary">9</button>
                     <button class="btn btn-danger">Delete</button>
                     <button class="btn btn-warning">Backspace</button>
+                    <button class="btn btn-warning">Clear Log</button>
+                    <button class="btn btn-warning">New Session</button>
                     <button class="btn btn-success">Submit</button>
                 </div>
             </div>
@@ -58,16 +60,16 @@
                 <span id="question" class="text-black">1 5 7 8</span>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <input type="text" id="userInput" class="form-control" placeholder="…">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <span id="incorrect" class="text-light">22</span>
-            </div>
-        </div>
+        {#<div class="row">#}
+        {#    <div class="col">#}
+        {#        <input type="text" id="userInput" class="form-control" placeholder="…">#}
+        {#    </div>#}
+        {#</div>#}
+        {#<div class="row">#}
+        {#    <div class="col">#}
+        {#        <span id="incorrect" class="text-black">22</span>#}
+        {#    </div>#}
+        {#</div>#}
         <div class="row">
             <div class="col">
                 <button type="button" class="btn btn-light" onclick="submitGuess()">Submit</button>
