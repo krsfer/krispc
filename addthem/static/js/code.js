@@ -44,12 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (savedLarve) {
         try {
-            let str = JSON.parse(savedLarve);
-            if (str !== null) {
-
-                data.innerHTML = makeBS5str(str);
-
-                larve = str;
+            larve = JSON.parse(savedLarve);
+            if (larve !== null) {
+                data.innerHTML = makeBS5str(larve);
             }
         } catch {
             console.log("failed to parse");
@@ -65,8 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
     //     }
     // });
 
-
-    displayNumbers();
 
     window.submitGuess = () => {
         const guess = input.value.trim();
