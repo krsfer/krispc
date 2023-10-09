@@ -1,18 +1,4 @@
-body {
+
+.container {
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: larger;
-
-}
-
-#logTable {
-    margin: 0 auto;
-    width: 80vh;
-}
-
-div.question {
-    margin: 0 auto;
-    width: 500px;
 }
