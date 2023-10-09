@@ -56,11 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("does not exist");
     }
 
-    // userInput.addEventListener("keydown", (e) => {
-    //     if (e.key === "Enter") {
-    //         submitGuess();
-    //     }
-    // });
+    //
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            submitGuess();
+        }
+    });
 
 
     window.submitGuess = () => {
