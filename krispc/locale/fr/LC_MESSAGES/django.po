@@ -78,7 +78,7 @@ msgstr ""
 #: krispc/lst_products.py:15
 msgid "PTR_0380"
 msgstr ""
-"J'ai les compétences et les outils pour réparer l'écran cassé ou la batterie faible de votre téléphone. Je peux aussi vous aider à installer des applis et à régler votre téléphone, que vous soyez sur Android, iOS ou même Blackberry."
+"J'ai les compétences et les outils pour réparer l'écran cassé ou la batterie faible de votre téléphone. Je peux aussi vous aider à installer des applis et à le régler, que vous soyez sur Android, iOS ou même Blackberry."
 
 #: krispc/lst_products.py:16
 msgid "PTR_3330"
