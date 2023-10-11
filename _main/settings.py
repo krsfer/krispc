@@ -257,7 +257,7 @@ CACHES = {
     }
 }
 
-VER = semver.VersionInfo.parse("2.2.0")
+VER = semver.VersionInfo.parse("2.2.1")
 
 
 # Default primary key field type
