@@ -14,14 +14,10 @@ msgstr ""
 "X-Translated-Using: django-rosetta 0.9.8\n"
 
 #: _main/settings.py:217
-#, fuzzy
-#| msgid "French English"
 msgid "French"
 msgstr "English &middot; French"
 
 #: _main/settings.py:218
-#, fuzzy
-#| msgid "French English"
 msgid "English"
 msgstr "English &middot; French"
 
@@ -242,15 +238,11 @@ msgstr ""
 "software and drivers. {0} per hour. Any hour begun is du in full."
 
 #: krispc/lst_products.py:64
-#, fuzzy
-#| msgid "PTR_0690"
 msgid "PTR_0692"
 msgstr ""
 "aaaaa"
 
 #: krispc/lst_products.py:65
-#, fuzzy
-#| msgid "PTR_0690"
 msgid "PTR_0694"
 msgstr ""
 "bbbb"
