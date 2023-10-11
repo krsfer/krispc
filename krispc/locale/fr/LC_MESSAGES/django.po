@@ -294,9 +294,9 @@ msgstr "À Domicile &middot; Aux Particuliers"
 #: krispc/templates/__hero.html:10
 msgid "PTR_0220"
 msgstr ""
-"&nbsp;Linux&middot; Windows&nbsp;&middot; macOS&nbsp;&middot; Dépannage&nbsp;"
+"Linux&nbsp;&middot; Windows&nbsp;&middot; macOS&nbsp;&middot; Dépannage&nbsp;"
 "&middot; Montage&nbsp;&middot; Équipement&nbsp;&middot; Logiciel&nbsp;&middot; "
-"Formation&nbsp;&middot; Conseil&nbsp;"
+"Formation&nbsp;&middot; Conseil"
 
 #: krispc/templates/__hero.html:13
 msgid "PTR_2055"
