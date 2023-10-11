@@ -106,8 +106,7 @@ msgstr "Réparations portables et entretien informatique"
 #: krispc/lst_products.py:27
 msgid "PTR_0320"
 msgstr ""
-"Votre ordinateur portable est-il devenu extrêmement lent ? Et si vous le "
-"Votre potable est lent ? Au lieu d'en acheter un nouveau, pourquoi ne pas le mettre à jour ? Plusieurs options possibles : nouvelle batterie, plus de mémoire, disque dur plus rapide, etc."
+"Votre ordinateur portable est-il devenu extrêmement lent ? Au lieu d'en acheter un nouveau, pourquoi ne pas le mettre à jour ? Plusieurs options possibles : nouvelle batterie, plus de mémoire, disque dur plus rapide, etc."
 
 #: krispc/lst_products.py:28
 msgid "PTR_0200"
