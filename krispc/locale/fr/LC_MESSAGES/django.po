@@ -198,7 +198,7 @@ msgstr ""
 
 #: krispc/lst_products.py:64
 msgid "PTR_0692"
-msgstr " Paiements sur Paypal.me sont acceptés"
+msgstr " Paiements sur &quot;Paypal.me&quot; sont acceptés"
 
 #: krispc/lst_products.py:65
 msgid "PTR_0694"
