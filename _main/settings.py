@@ -121,7 +121,7 @@ ROOT_URLCONF = "_main.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "addthem/templates", "chat/templates")],
+        "DIRS": [os.path.join(BASE_DIR, "addthem/templates", "chat/templates", "_krispc/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -133,8 +133,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = "_main.wsgi.application"
 
 
 # Database

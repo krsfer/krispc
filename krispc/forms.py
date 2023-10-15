@@ -170,7 +170,7 @@ class ContactForm(forms.ModelForm):
         message = MIMEMultipart("alternative")
         message["Subject"] = suj
         message["From"] = sender_email
-        message["To"] = "hello@krispc.fr"
+        message["To"] = "hello.krispc@gmail.com"
 
         part1 = MIMEText(text, 'plain')
         part2 = MIMEText(html, "html")
@@ -195,7 +195,7 @@ class ContactForm(forms.ModelForm):
             response = sg.send(message_1)
 
         except Exception as e:
-            print(e)
+            LG.error(e)
 
         if DEBUG:
             LG.debug("End send_email")
