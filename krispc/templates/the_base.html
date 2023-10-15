@@ -2,8 +2,6 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_filters %}
-{% load django_htmx %}
-
 
 
 <!DOCTYPE html>
@@ -65,8 +63,7 @@
 <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
 <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
 
-<script src="{% static 'js/htmx.min.js' %}" defer></script>
-{% django_htmx_script %}
+{#<script src="https://unpkg.com/htmx.org@1.8.4"></script>#}
 
 <!-- Template Main JS File -->
 <script src="{% static 'js/main.js' %}"></script>

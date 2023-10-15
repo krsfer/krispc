@@ -338,9 +338,9 @@ msgstr "Conveniently &middot; At your home"
 #: krispc/templates/__hero.html:10
 msgid "PTR_0220"
 msgstr ""
-"Linux&nbsp;&middot;&nbsp;Windows&nbsp;&middot;&nbsp;macOS&middot;&nbsp;"
-"Troubleshoot&nbsp;&middot;&nbsp;Building&middot;&nbsp;Hardware&nbsp;&middot;"
-"&nbspSoftware&middot;&nbsp;Training&nbsp;&middot;&nbsp;Advice"
+"Linux&nbsp;&middot;&nbsp;Windows&nbsp;&middot;&nbsp;macOS | "
+"Troubleshoot&nbsp;&middot;&nbsp;Building | Hardware&nbsp;&middot;"
+"&nbspSoftware | Training&nbsp;&middot;&nbsp;Advice"
 
 #: krispc/templates/__hero.html:13
 msgid "PTR_2055"

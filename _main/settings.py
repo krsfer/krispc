@@ -73,10 +73,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "django_user_agents",
-    "django_htmx",
     "crispy_forms",
-    "crispy_bootstrap5",
     "channels",
     "hello",
     "chat",
@@ -112,8 +109,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_htmx.middleware.HtmxMiddleware",
-    # "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
 ROOT_URLCONF = "_main.urls"
@@ -121,7 +116,7 @@ ROOT_URLCONF = "_main.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "addthem/templates", "chat/templates", "_krispc/templates")],
+        "DIRS": [os.path.join(BASE_DIR, "addthem/templates", "chat/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -134,12 +129,8 @@ TEMPLATES = [
     },
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.gmx.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'archer.chris@gmx.com' # hello.krispc@gmail.com
-EMAIL_HOST_PASSWORD = 'kgamlx.238' # 'Cm3bAffpXAGabWu6PyJv'
+WSGI_APPLICATION = "_main.wsgi.application"
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -267,7 +258,7 @@ CACHES = {
     }
 }
 
-VER = semver.VersionInfo.parse("2.2.1")
+VER = semver.VersionInfo.parse("2.2.0")
 
 
 # Default primary key field type
