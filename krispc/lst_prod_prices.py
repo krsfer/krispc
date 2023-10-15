@@ -1,10 +1,5 @@
 # https://pythex.org # a quick way to test your Python regular expressions
 
-"""
-for i in $( grep Prd_Name /Users/chris/dev/src/py/docker_example_app/djangodocker-master/krispc/lst_products.py | sed -E 's/.*(PTR_[0-9]{4}).*/\1/' ); do echo -n $i; grep $i /Users/chris/dev/src/py/docker_example_app/djangodocker-master/locale/fr/LC_MESSAGES/django.po -A1 | grep msgstr | sed 's/.*"\(.*\).*"/\t\1/' ; done
-
-base=/Users/chris/dev/src/py/docker_example_app/djangodocker-master; for i in $( grep Prd_Name $base/krispc/lst_products.py | sed -E 's/.*(PTR_[0-9]{4}).*/\1/' ); do echo -n $i; grep $i $base/locale/fr/LC_MESSAGES/django.po -A1 | grep msgstr | sed 's/.*"\(.*\).*"/\t\1/'; done
-"""
 import re
 
 data = {
