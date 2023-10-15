@@ -49,9 +49,6 @@ custom_errors = {
     'required': 'Ce champ est obligatoire'
 }
 
-url = os.environ['TRUSTIFI_URL'] + '/api/i/v1/email'
-
-
 # @override_settings(EMAIL_BACKEND='mailer.backend.DbBackend')
 def test_email():
     subject = 'welcome to GFG world'
