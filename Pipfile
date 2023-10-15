@@ -4,10 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = ">=4.2,<5.0"
-gunicorn = ">=21.2,<22.0"
-dj-database-url = ">=2.0,<3.0"
-whitenoise = {version = ">=6.0,<7.0", extras = ["brotli"]}
+django = "*"
+gunicorn = "*"
+dj-database-url = "*"
+whitenoise = "*"
 psycopg = "*"
 requests = "*"
 psycopg2 = "*"
@@ -23,6 +23,8 @@ coloredlogs = "*"
 django-crispy-forms = "*"
 semver = "*"
 crispy-bootstrap5 = "*"
+django-htmx = "*"
+sendgrid = "*"
 
 [dev-packages]
 

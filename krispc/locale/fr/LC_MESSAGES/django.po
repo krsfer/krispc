@@ -198,11 +198,11 @@ msgstr ""
 
 #: krispc/lst_products.py:64
 msgid "PTR_0692"
-msgstr " Paiements sur Paypal.me sont acceptés"
+msgstr " Paiements sur &quot;Paypal.me&quot; sont acceptés"
 
 #: krispc/lst_products.py:65
 msgid "PTR_0694"
-msgstr "Toute heure commencée est due"
+msgstr "Toute heure commencée est due."
 
 #: krispc/templates/____contact_form_checker.html:16
 msgid "PTR_0010"
@@ -294,9 +294,9 @@ msgstr "À Domicile &middot; Aux Particuliers"
 #: krispc/templates/__hero.html:10
 msgid "PTR_0220"
 msgstr ""
-"Linux&nbsp;&middot;&nbsp;Windows&nbsp;&middot;&nbsp;macOS | Dépannage&nbsp;"
-"&middot;&nbsp;Montage | Matériel&nbsp;&middot;&nbsp;Logiciel | "
-"Formation&nbsp;&middot;&nbsp;Conseil"
+"Linux&nbsp;&middot; Windows&nbsp;&middot; macOS&nbsp;&middot; Dépannage&nbsp;"
+"&middot; Montage&nbsp;&middot; Équipement&nbsp;&middot; Logiciel&nbsp;&middot; "
+"Formation&nbsp;&middot; Conseil"
 
 #: krispc/templates/__hero.html:13
 msgid "PTR_2055"

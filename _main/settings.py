@@ -73,7 +73,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # "django_user_agents",
+    "django_htmx",
     "crispy_forms",
+    "crispy_bootstrap5",
     "channels",
     "hello",
     "chat",
@@ -109,6 +112,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
+    # "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
 ROOT_URLCONF = "_main.urls"
@@ -258,7 +263,7 @@ CACHES = {
     }
 }
 
-VER = semver.VersionInfo.parse("2.2.0")
+VER = semver.VersionInfo.parse("2.3.0")
 
 
 # Default primary key field type

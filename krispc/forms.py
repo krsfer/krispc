@@ -1,16 +1,19 @@
 # signup form
 import logging
-import smtplib
+import os
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from zoneinfo import ZoneInfo
 
 import coloredlogs
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
+from sendgrid import Mail, SendGridAPIClient
 
 from _main import settings
 from _main.settings import DEBUG
@@ -114,40 +117,32 @@ class ContactForm(forms.ModelForm):
         self.helper.form_id = 'contact-form-id'
         self.helper.form_tag = True
         self.helper.attrs = {
-            'hx-post' : "create/",
-            'hx-headers': '{"X-CSRFToken": "{{ csrf_token }}"}',
-            'hx-target': "#merci",
-            'class': 'contact_form'}
+            'hx-post':           "create/",
+            'hx-headers':        '{"X-CSRFToken": "{{ csrf_token }}"}',
+            'hx-target':         "#merci",
+            'class':             'contact_form'}
         self.helper.form_error_title = "errors"
         self.helper.form_show_errors = True
 
         self.helper.add_input(Submit("submit", _("Submit"), css_class="btn-success"))
 
     def send_email(self):
-        # send email using the self.cleaned_data dictionary
 
-        if DEBUG:
-            LG.debug("Start send_email")
+        sender_email = 'archer.chris@gmx.com'  # self.cleaned_data["from_email"]
 
-        SMTP_SERVER = "mail.gandi.net"
-        SMTP_PORT = 587
-        SMTP_USERNAME = "admin@krispc.fr"
-        SMTP_PASSWORD = "krispc.238"
-        SMTP_TO_ADDRESS = "admin@krispc.fr"
+        now = datetime.now(tz=ZoneInfo("Europe/Paris"))
+        dt_string = now.strftime("%A %d/%m/%Y %H:%M:%S")
 
-        sender_email = self.cleaned_data["from_email"]
-
-        now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
         suj = f"Demande de devis. {self.cleaned_data['firstname']}. {dt_string}"
 
         firstname = self.cleaned_data['firstname']
         surname = self.cleaned_data['surname']
-        msg = self.cleaned_data["message"]
+        msg = self.cleaned_data['message']
+        client_email = self.cleaned_data["from_email"]
 
         str_ua = "some user agent info"
 
-        text = f'Prénom {firstname} Nom :{surname} Message : {msg}'
+        text = f'Prénom {firstname} Nom :{surname} Message : {msg}, Email : {client_email}'
         html = html = f"""\
 <html>
     <body>
@@ -160,6 +155,10 @@ class ContactForm(forms.ModelForm):
             <td>Nom:</td>
             <td>{surname}</td>
         </tr>
+        <tr>
+            <td>Email:</td>
+            <td>{client_email}</td>
+        </tr>
     </table>
     <p>Message:</p>{msg}
     <hr />
@@ -171,7 +170,7 @@ class ContactForm(forms.ModelForm):
         message = MIMEMultipart("alternative")
         message["Subject"] = suj
         message["From"] = sender_email
-        message["To"] = SMTP_TO_ADDRESS
+        message["To"] = "hello@krispc.fr"
 
         part1 = MIMEText(text, 'plain')
         part2 = MIMEText(html, "html")
@@ -181,30 +180,22 @@ class ContactForm(forms.ModelForm):
 
         status = "ok"
 
-        if DEBUG:
-            send_mail(
-                'Subject here',
-                text,
-                'from@example.com',
-                ['to@example.com'],
-                False,
-                html_message=html
-            )
-            return status
+        message_1 = Mail(
+            from_email=sender_email,
+            to_emails='hello.krispc@gmail.com',
+            subject=suj,
+            plain_text_content=text,
+            html_content=html)
 
-        else:
 
-            try:
-                server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-                server.login(SMTP_USERNAME, SMTP_PASSWORD)
-                server.sendmail(sender_email, SMTP_TO_ADDRESS, message.as_string())
-                server.quit()
-            except smtplib.SMTPServerDisconnected:
-                print('Failed to connect to the server. Wrong user/password?')
-                status = "SMTPServerDisconnected"
-            except smtplib.SMTPException as e:
-                print('SMTP error occurred: ' + str(e))
-                status = "SMTPException"
+        sg_api_key = os.environ.get('SENDGRID_API_KEY')
+
+        try:
+            sg = SendGridAPIClient(sg_api_key)
+            response = sg.send(message_1)
+
+        except Exception as e:
+            print(e)
 
         if DEBUG:
             LG.debug("End send_email")
@@ -214,27 +205,3 @@ class ContactForm(forms.ModelForm):
 
 class LanguageForm(forms.Form):
     language = forms.ChoiceField(choices=settings.LANGUAGES)
-
-# class LVForm(forms.Form):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         super(LVForm, self).__init__(*args, **kwargs)
-#
-#         self.helper = FormHelper()
-#         self.helper.form_id = 'lv-form'
-#
-#         self.helper.form_method = 'post'
-#         self.helper.form_action = '.'
-#
-#         self.helper.add_input(Submit("submit1", "Submit1"))
-#         self.helper.add_input(Submit("submit2", "Submit2"))
-
-
-# class Form1(forms.Form):
-#     name = forms.CharField(max_length=100)
-#     email = forms.EmailField()
-#     message = forms.CharField(widget=forms.Textarea)
-#
-# class Form2(forms.Form):
-#     subject = forms.CharField(max_length=100)
-#     message = forms.CharField(widget=forms.Textarea)

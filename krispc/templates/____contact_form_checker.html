@@ -1,9 +1,11 @@
 {% load i18n %}
 
 {% if not form.is_valid %}
+
     {% if form.errors.from_email %}
         <div class="text-danger">{{ form.errors.from_email }}</div>
     {% endif %}
+
 {% else %}
 
     {% if status %}
