@@ -25,6 +25,7 @@ semver = "*"
 crispy-bootstrap5 = "*"
 django-htmx = "*"
 sendgrid = "*"
+django-environ = "*"
 
 [dev-packages]
 
