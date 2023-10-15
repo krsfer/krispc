@@ -1,8 +1,12 @@
 # Python files
 __pycache__/
+.*
+!/.gitignore
+
 .venv/
 venv/
 .idea/
+.env
 
 # Django files
 staticfiles/
