@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from zoneinfo import ZoneInfo
 
 import coloredlogs
 from crispy_forms.helper import FormHelper
@@ -141,8 +142,9 @@ class ContactForm(forms.ModelForm):
 
         sender_email = 'archer.chris@gmx.com'  # self.cleaned_data["from_email"]
 
-        now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        now = datetime.now(tz=ZoneInfo("Europe/Paris"))
+        dt_string = now.strftime("%A %d/%m/%Y %H:%M:%S")
+
         suj = f"Demande de devis. {self.cleaned_data['firstname']}. {dt_string}"
 
         firstname = self.cleaned_data['firstname']
