@@ -18,6 +18,7 @@ import dj_database_url
 import semver
 
 from django.utils.translation import gettext_lazy as _
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,6 +90,12 @@ ASGI_APPLICATION = '_main.asgi.application'
 WSGI_APPLICATION = '_main.wsgi.application'
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+env = environ.Env()
+
+SENDGRID_API_KEY = env('SENDGRID_API_KEY')
 
 CHANNEL_LAYERS = {
     'default': {

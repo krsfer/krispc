@@ -16,7 +16,7 @@ from django.utils.translation import gettext_lazy as _
 from sendgrid import Mail, SendGridAPIClient
 
 from _main import settings
-from _main.settings import DEBUG
+from _main.settings import DEBUG, SENDGRID_API_KEY
 from krispc.models import Contact
 
 LG = logging.getLogger(__name__)
@@ -137,7 +137,7 @@ class ContactForm(forms.ModelForm):
 
     def send_email(self):
 
-        sender_email = 'archer.chris@gmx.com'  # self.cleaned_data["from_email"]
+        sender_email = 'hello.krispc@gmail.com'  # self.cleaned_data["from_email"]
 
         now = datetime.now(tz=ZoneInfo("Europe/Paris"))
         dt_string = now.strftime("%A %d/%m/%Y %H:%M:%S")
@@ -190,21 +190,24 @@ class ContactForm(forms.ModelForm):
         status = "ok"
 
         message_1 = Mail(
-            from_email=sender_email,
+            from_email="archer.chris@gmx.com",
             to_emails='hello.krispc@gmail.com',
             subject=suj,
             plain_text_content=text,
             html_content=html)
 
 
-        sg_api_key = os.environ.get('SENDGRID_API_KEY')
+        sg_api_key = SENDGRID_API_KEY
+        LG.warning(sg_api_key)
+        LG.warning(f"from:{message_1.from_email.email}")
 
         try:
             sg = SendGridAPIClient(sg_api_key)
             response = sg.send(message_1)
 
         except Exception as e:
-            print(e)
+            LG.error(e)
+            LG.error(message_1.from_email.email)
 
         if DEBUG:
             LG.debug("End send_email")
