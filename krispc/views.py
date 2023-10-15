@@ -131,17 +131,14 @@ def _is_valid_ip(visitor_ip_address):
 def create_contact(request: HtmxHttpRequest) -> HttpResponse:
     LG.debug("#### create contact ####")
     form = ContactForm(request.POST or None)
-    print("#$#$#", request.POST)
 
     status = "ok"
     if form.is_valid():
-        LG.debug("## form is valid")
         form.instance.author = request.user
         firstname = form.cleaned_data['firstname']
         surname = form.cleaned_data['surname']
         from_email = form.cleaned_data['from_email']
         message = form.cleaned_data['message']
-        LG.debug(f'firstname={firstname} surname={surname}, from_email={from_email}, message={message}')
 
         # user_agent = get_user_agent(request)
         accepts = request.headers['ACCEPT']
@@ -171,8 +168,8 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
         # form.save()
 
         # print("########### sending email ###########")
-        # status = form.send_email()
-        # print("status: ", status)
+        status = form.send_email()
+        print("status: ", status)
         # print("########### email sent ###########")
 
     else:
