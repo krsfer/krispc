@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from pprint import pprint
 from zoneinfo import ZoneInfo
 
 import coloredlogs
@@ -128,7 +129,7 @@ class ContactForm(forms.ModelForm):
 
     def send_email(self):
 
-        sender_email = 'archer.chris@gmx.com'  # self.cleaned_data["from_email"]
+        sender_email = 'hello.krispc@gmail.com'  # self.cleaned_data["from_email"]
 
         now = datetime.now(tz=ZoneInfo("Europe/Paris"))
         dt_string = now.strftime("%A %d/%m/%Y %H:%M:%S")
@@ -182,17 +183,23 @@ class ContactForm(forms.ModelForm):
 
         message_1 = Mail(
             from_email=sender_email,
-            to_emails='hello.krispc@gmail.com',
+            to_emails='archer.chris@gmil.com',
             subject=suj,
             plain_text_content=text,
             html_content=html)
 
 
         sg_api_key = os.environ.get('SENDGRID_API_KEY')
+        LG.debug(sg_api_key)
 
         try:
+            LG.debug("create sg")
             sg = SendGridAPIClient(sg_api_key)
+            LG.debug("created sg")
+            LG.debug("sending message")
+            pprint(message_1.__str__())
             response = sg.send(message_1)
+            LG.debug("message sent")
 
         except Exception as e:
             LG.error(e)

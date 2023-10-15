@@ -143,17 +143,17 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
         # user_agent = get_user_agent(request)
         accepts = request.headers['ACCEPT']
         now = datetime.now()
-        dt_string = now.strftime("%A %d/%m/%Y %H:%M:%S %z")
-
-        visitor_ip_address = get_visitor_ip_address(request)
-
-        bool__is_valid_ip = _is_valid_ip(visitor_ip_address)
-
-        str__is_valid_ip = str(bool__is_valid_ip)
+        # dt_string = now.strftime("%A %d/%m/%Y %H:%M:%S %z")
+        #
+        # visitor_ip_address = get_visitor_ip_address(request)
+        #
+        # bool__is_valid_ip = _is_valid_ip(visitor_ip_address)
+        #
+        # str__is_valid_ip = str(bool__is_valid_ip)
 
         # create_description(accepts, dt_string, str__is_valid_ip, user_agent, visitor_ip_address)
 
-        if DEBUG:
+        # if DEBUG:
             # LG.warning(user_agent.browser)
             # LG.error(type(user_agent))
 
@@ -163,13 +163,13 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
             # language Python
             #    print(key, value)
 
-            LG.warning(accepts)
+            # LG.warning(accepts)
 
         # form.save()
 
-        # print("########### sending email ###########")
+        LG.info("########### sending email ###########")
         status = form.send_email()
-        print("status: ", status)
+        LG.info(f"status: {status}")
         # print("########### email sent ###########")
 
     else:
