@@ -119,7 +119,6 @@ class ContactForm(forms.ModelForm):
         self.helper.form_id = 'contact-form-id'
         self.helper.form_tag = True
         self.helper.attrs = {
-            'X-CSRFToken':  '{"X-CSRFToken": "{{ csrf_token }}"}',
             'hx-post':      "create/",
             'hx-headers':   '{"X-CSRFToken": "{{ csrf_token }}"}',
             'hx-target':    "#merci",

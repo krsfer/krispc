@@ -8,6 +8,7 @@ from datetime import datetime
 from pprint import pprint
 
 import coloredlogs
+from crispy_forms.utils import render_crispy_form
 from django.contrib.gis import geoip2
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -140,7 +141,6 @@ def _is_valid_ip(visitor_ip_address):
 #
 #     return token
 
-@csrf_protect
 @require_POST
 def create_contact(request: HtmxHttpRequest) -> HttpResponse:
     LG.debug("#### create contact ####")
@@ -205,6 +205,8 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
 
     # ctx = {}
     # ctx.update(csrf(request))
+
+    res = render_crispy_form(form, request)
 
     return render(
         request,

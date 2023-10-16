@@ -2,45 +2,8 @@
     <div class="container" data-aos="fade-up">
 
         <div class="row mt-5">
-
-            {% comment %}<div class="col-lg-4">
-                <div class="info">
-                    <div class="address">
-                        <i class="bi bi-geo-alt"></i>
-                        <h4>{% trans "Location" %}</h4>
-                        <p>17 Faubourg Saint-Esprit, 06560 Valbonne Sophia Antipolis</p>
-                    </div>
-
-                    <div class="email">
-                        <i class="bi bi-envelope"></i>
-                        <h4>{% trans "Email" %}</h4>
-                        <p>hello@krispc.fr</p>
-                    </div>
-
-                    <div class="phone">
-                        <i class="bi bi-phone"></i>
-                        <h4>{% trans "Call" %}</h4>
-                        <p>{% trans "PTR_5030" %}</p>
-
-                    </div>
-                </div>
-            </div>{% endcomment %}
-
-            {% comment %}Begin. Service range{% endcomment %}
-            {% comment %}<div class="mt-3 col-lg-4">
-                {% trans "PTR_0880" %}<br/>
-
-                <span class="align-text-bottom"><i class='range-stars bx bxs-star'></i></span>
-                {% for ville in villes %}{{ ville|safe|striptags }}
-                    <span class="align-text-bottom"><i class='range-stars bx bxs-star'></i></span>
-                {% endfor %}
-
-            </div>{% endcomment %}
-
             {% include "___contact_form.html" %}
-
         </div>
 
     </div>
-
 </section>
