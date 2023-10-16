@@ -128,27 +128,27 @@ def _is_valid_ip(visitor_ip_address):
 
     return ip_valid
 
-def get_or_create_csrf_token(request):
-    token = request.META.get('CSRF_COOKIE', None)
-
-    if token is None:
-        LG.warning("Getting new token")
-        token = csrf._get_new_csrf_string()
-        request.META['CSRF_COOKIE'] = token
-
-    request.META['CSRF_COOKIE_USED'] = True
-
-    return token
+# def get_or_create_csrf_token(request):
+#     token = request.META.get('CSRF_COOKIE', None)
+#
+#     if token is None:
+#         LG.warning("Getting new token")
+#         token = csrf._get_new_csrf_string()
+#         request.META['CSRF_COOKIE'] = token
+#
+#     request.META['CSRF_COOKIE_USED'] = True
+#
+#     return token
 
 @csrf_protect
 @require_POST
 def create_contact(request: HtmxHttpRequest) -> HttpResponse:
     LG.debug("#### create contact ####")
 
-    token = get_or_create_csrf_token(request)
+    # token = get_or_create_csrf_token(request)
 
-    LG.info(token)
-    LG.debug("done")
+    # LG.info(token)
+    # LG.debug("done")
 
     form = ContactForm(request.POST or None)
 

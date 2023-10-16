@@ -1,5 +1,7 @@
 {% load i18n %}
 
+{% csrf_token %}
+
 {% if not form.is_valid %}
 
     {% if form.errors.from_email %}
