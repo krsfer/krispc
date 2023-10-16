@@ -17,7 +17,7 @@ from django.utils.translation import gettext_lazy as _
 from sendgrid import Mail, SendGridAPIClient
 
 from _main import settings
-from _main.settings import DEBUG, SENDGRID_API_KEY
+from _main.settings import DEBUG
 from krispc.models import Contact
 
 LG = logging.getLogger(__name__)
@@ -193,16 +193,47 @@ class ContactForm(forms.ModelForm):
 
 
 
-        sg_api_key = SENDGRID_API_KEY
-        LG.warning(sg_api_key)
         LG.warning(f"from:{message_1.from_email.email}")
 
+        """
+        def send_mail(subject: Any,
+            message: Any,
+            from_email: Any,
+            recipient_list: Any,
+            fail_silently: bool = False,
+            auth_user: Any = None,
+            auth_password: Any = None,
+            connection: Any = None,
+            html_message: Any = None) -> int
+            
+        from django.core.mail import send_mail
+        send_mail(
+            'Subject here',
+            'Here is the message.',
+            'from@example.com',
+            ['to@example.com'],
+            fail_silently=False
+        )
+
+        """
+
         try:
-            LG.debug("create sg")
-            sg = SendGridAPIClient(sg_api_key)
-            LG.debug("created sg")
             LG.debug("sending message")
-            response = sg.send(message_1)
+
+            response = send_mail(
+                subject=suj,
+                message=text,
+                from_email='archer.chris@gmx.com',
+                recipient_list=["hello.krispc@gmail.com"],
+                fail_silently=False,
+                # auth_user=sender_email,
+                # auth_password=os.environ.get('GMAIL_PASS'),
+                # connection=None,
+                html_message=html
+            )
+
+            LG.warning(f'response:{response}')
+
             LG.debug("message sent")
 
         except Exception as e:
