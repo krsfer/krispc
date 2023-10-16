@@ -110,6 +110,7 @@ class ContactForm(forms.ModelForm):
             ),
         }
 
+
     def exec_helpers(self):
         self.helper = FormHelper()
 
@@ -118,10 +119,11 @@ class ContactForm(forms.ModelForm):
         self.helper.form_id = 'contact-form-id'
         self.helper.form_tag = True
         self.helper.attrs = {
-            'hx-post':           "create/",
-            'hx-headers':        '{"X-CSRFToken": "{{ csrf_token }}"}',
-            'hx-target':         "#merci",
-            'class':             'contact_form'}
+            'X-CSRFToken':  '{"X-CSRFToken": "{{ csrf_token }}"}',
+            'hx-post':      "create/",
+            'hx-headers':   '{"X-CSRFToken": "{{ csrf_token }}"}',
+            'hx-target':    "#merci",
+            'class':        'contact_form'}
         self.helper.form_error_title = "errors"
         self.helper.form_show_errors = True
 

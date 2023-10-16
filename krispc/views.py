@@ -11,7 +11,7 @@ import coloredlogs
 from django.contrib.gis import geoip2
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.template.context_processors import csrf
+from django.middleware import csrf
 from django.utils.translation import get_language
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
@@ -128,16 +128,34 @@ def _is_valid_ip(visitor_ip_address):
 
     return ip_valid
 
+def get_or_create_csrf_token(request):
+    token = request.META.get('CSRF_COOKIE', None)
+
+    if token is None:
+        LG.warning("Getting new token")
+        token = csrf._get_new_csrf_string()
+        request.META['CSRF_COOKIE'] = token
+
+    request.META['CSRF_COOKIE_USED'] = True
+
+    return token
 
 @csrf_protect
 @require_POST
 def create_contact(request: HtmxHttpRequest) -> HttpResponse:
     LG.debug("#### create contact ####")
+
+    token = get_or_create_csrf_token(request)
+
+    LG.info(token)
+    LG.debug("done")
+
     form = ContactForm(request.POST or None)
 
     status = "ok"
     if form.is_valid():
         form.instance.author = request.user
+
         firstname = form.cleaned_data['firstname']
         surname = form.cleaned_data['surname']
         from_email = form.cleaned_data['from_email']
@@ -185,8 +203,8 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
     ow_secs = int(time.time())
     timestamp = time.strftime('%d %b %Hh%Mm%Ss', time.localtime(ow_secs))
 
-    ctx = {}
-    ctx.update(csrf(request))
+    # ctx = {}
+    # ctx.update(csrf(request))
 
     return render(
         request,
