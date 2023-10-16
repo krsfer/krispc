@@ -13,6 +13,8 @@
 (() => {
     "use strict";
 
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))

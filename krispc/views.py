@@ -11,7 +11,9 @@ import coloredlogs
 from django.contrib.gis import geoip2
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.template.context_processors import csrf
 from django.utils.translation import get_language
+from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
@@ -127,6 +129,7 @@ def _is_valid_ip(visitor_ip_address):
     return ip_valid
 
 
+@csrf_protect
 @require_POST
 def create_contact(request: HtmxHttpRequest) -> HttpResponse:
     LG.debug("#### create contact ####")
@@ -181,6 +184,9 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
 
     ow_secs = int(time.time())
     timestamp = time.strftime('%d %b %Hh%Mm%Ss', time.localtime(ow_secs))
+
+    ctx = {}
+    ctx.update(csrf(request))
 
     return render(
         request,
