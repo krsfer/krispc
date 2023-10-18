@@ -191,9 +191,8 @@ class ContactForm(forms.ModelForm):
             plain_text_content=text,
             html_content=html)
 
-
-
-        LG.warning(f"from:{message_1.from_email.email}")
+        if DEBUG:
+            LG.warning(f"from:{message_1.from_email.email}")
 
         """
         def send_mail(subject: Any,
@@ -218,7 +217,8 @@ class ContactForm(forms.ModelForm):
         """
 
         try:
-            LG.debug("sending message")
+            if DEBUG:
+                LG.debug("sending message")
 
             response = send_mail(
                 subject=suj,
@@ -232,9 +232,9 @@ class ContactForm(forms.ModelForm):
                 html_message=html
             )
 
-            LG.warning(f'response:{response}')
-
-            LG.debug("message sent")
+            if DEBUG:
+                LG.warning(f'response:{response}')
+                LG.debug("message sent")
 
         except Exception as e:
             LG.error(e)

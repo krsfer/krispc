@@ -120,6 +120,8 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
     # ctx = {}
     # ctx.update(csrf(request))
 
+    # res = render_crispy_form(form, request)
+
     return render(
         request,
         "____contact_form_checker.html", {
