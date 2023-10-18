@@ -14,7 +14,7 @@ from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
-from sendgrid import Mail, SendGridAPIClient
+from sendgrid import Mail
 
 from _main import settings
 from _main.settings import DEBUG
@@ -122,7 +122,8 @@ class ContactForm(forms.ModelForm):
             'hx-post':      "create/",
             'hx-headers':   '{"X-CSRFToken": "{{ csrf_token }}"}',
             'hx-target':    "#merci",
-            'class':        'contact_form'}
+            'class':        'contact_form'
+        }
         self.helper.form_error_title = "errors"
         self.helper.form_show_errors = True
 

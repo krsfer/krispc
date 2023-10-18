@@ -1,39 +1,22 @@
-import os
-
-import ipaddress
 import logging
-import os
 import time
-from datetime import datetime
 from pprint import pprint
 
 import coloredlogs
 from crispy_forms.utils import render_crispy_form
-from django.contrib.gis import geoip2
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.middleware import csrf
 from django.utils.translation import get_language
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import TemplateView
-
-# from django_user_agents.utils import get_user_agent
+from django_htmx.middleware import HtmxDetails
 
 from _main import settings
 from _main.settings import DEBUG
 from krispc import colophon, forms, lst_products, lst_villes, marques
 from krispc.forms import ContactForm
 
-from django.contrib.gis import geoip2
-from django.http import HttpResponse
-from django.utils.translation import get_language
-from django.views.decorators.http import require_GET
-from django.views.generic import TemplateView
-from django_htmx.middleware import HtmxDetails
-
-from _main import settings
-from krispc import colophon, forms, lst_products, lst_villes, marques
+# from django_user_agents.utils import get_user_agent
 
 LG = logging.getLogger(__name__)
 
@@ -111,87 +94,18 @@ def favicon(request) -> HttpResponse:
     )
 
 
-def get_visitor_ip_address(request) -> str:
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
-
-
-def _is_valid_ip(visitor_ip_address):
-    try:
-        ip = ipaddress.ip_address(visitor_ip_address)
-        ip_valid = True
-    except ValueError:
-        ip_valid = False
-
-    return ip_valid
-
-# def get_or_create_csrf_token(request):
-#     token = request.META.get('CSRF_COOKIE', None)
-#
-#     if token is None:
-#         LG.warning("Getting new token")
-#         token = csrf._get_new_csrf_string()
-#         request.META['CSRF_COOKIE'] = token
-#
-#     request.META['CSRF_COOKIE_USED'] = True
-#
-#     return token
-
 @require_POST
 def create_contact(request: HtmxHttpRequest) -> HttpResponse:
-    LG.debug("#### create contact ####")
+    form = ContactForm(request.POST)
 
-    # token = get_or_create_csrf_token(request)
-
-    # LG.info(token)
-    # LG.debug("done")
-
-    form = ContactForm(request.POST or None)
-
-    status = "ok"
+    status = 0
     if form.is_valid():
         form.instance.author = request.user
 
-        firstname = form.cleaned_data['firstname']
-        surname = form.cleaned_data['surname']
-        from_email = form.cleaned_data['from_email']
-        message = form.cleaned_data['message']
-
-        # user_agent = get_user_agent(request)
-        accepts = request.headers['ACCEPT']
-        now = datetime.now()
-        # dt_string = now.strftime("%A %d/%m/%Y %H:%M:%S %z")
-        #
-        # visitor_ip_address = get_visitor_ip_address(request)
-        #
-        # bool__is_valid_ip = _is_valid_ip(visitor_ip_address)
-        #
-        # str__is_valid_ip = str(bool__is_valid_ip)
-
-        # create_description(accepts, dt_string, str__is_valid_ip, user_agent, visitor_ip_address)
-
-        # if DEBUG:
-            # LG.warning(user_agent.browser)
-            # LG.error(type(user_agent))
-
-            # for key, value in user_agent.items():
-            # name bobbyhadz
-            # age 30
-            # language Python
-            #    print(key, value)
-
-            # LG.warning(accepts)
-
-        # form.save()
-
-        LG.info("########### sending email ###########")
-        status = form.send_email()
-        LG.info(f"status: {status}")
-        # print("########### email sent ###########")
+        if DEBUG:
+            status = "some status"
+        else:
+            status = form.send_email()
 
     else:
         LG.warning("## form is not valid")
@@ -205,8 +119,6 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
 
     # ctx = {}
     # ctx.update(csrf(request))
-
-    res = render_crispy_form(form, request)
 
     return render(
         request,
