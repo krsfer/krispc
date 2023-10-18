@@ -14,10 +14,12 @@ from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
+
+from sendgrid import SendGridAPIClient
 from sendgrid import Mail
 
 from _main import settings
-from _main.settings import DEBUG
+from _main.settings import DEBUG, SENDGRID_API_KEY
 from krispc.models import Contact
 
 LG = logging.getLogger(__name__)
@@ -170,29 +172,17 @@ class ContactForm(forms.ModelForm):
 </html>
 """
 
-        message = MIMEMultipart("alternative")
-        message["Subject"] = suj
-        message["From"] = sender_email
-        message["To"] = "hello.krispc@gmail.com"
+        # message = MIMEMultipart("alternative")
+        # message["Subject"] = suj
+        # message["From"] = sender_email
+        # message["To"] = "hello.krispc@gmail.com"
+        #
+        # part1 = MIMEText(text, 'plain')
+        # part2 = MIMEText(html, "html")
+        #
+        # message.attach(part1)
+        # message.attach(part2)
 
-        part1 = MIMEText(text, 'plain')
-        part2 = MIMEText(html, "html")
-
-        message.attach(part1)
-        message.attach(part2)
-
-        status = "ok"
-
-        message_1 = Mail(
-
-            from_email="archer.chris@gmx.com",
-            to_emails='hello.krispc@gmail.com',
-            subject=suj,
-            plain_text_content=text,
-            html_content=html)
-
-        if DEBUG:
-            LG.warning(f"from:{message_1.from_email.email}")
 
         """
         def send_mail(subject: Any,
@@ -213,24 +203,56 @@ class ContactForm(forms.ModelForm):
             ['to@example.com'],
             fail_silently=False
         )
+        
+        
+        
+        from sendgrid import SendGridAPIClient
+        from sendgrid.helpers.mail import Mail
+        
+        message = Mail(
+            from_email='from_email@example.com',
+            to_emails='to@example.com',
+            subject='Sending with Twilio SendGrid is Fun',
+            html_content='<strong>and easy to do anywhere, even with Python</strong>')
+        
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(response.status_code, response.body, response.headers)
 
         """
+
+        message_1 = Mail(
+
+            from_email="archer.chris@gmx.com",
+            to_emails='hello.krispc@gmail.com',
+            subject=suj,
+            plain_text_content=text,
+            html_content=html)
+
+
+        if DEBUG:
+            LG.warning(f"from:{message_1.from_email.email}")
+
+        status = "ok"
 
         try:
             if DEBUG:
                 LG.debug("sending message")
 
-            response = send_mail(
-                subject=suj,
-                message=text,
-                from_email='archer.chris@gmx.com',
-                recipient_list=["hello.krispc@gmail.com"],
-                fail_silently=False,
-                # auth_user=sender_email,
-                # auth_password=os.environ.get('GMAIL_PASS'),
-                # connection=None,
-                html_message=html
-            )
+            # response = send_mail(
+            #     subject=suj,
+            #     message=text,
+            #     from_email='archer.chris@gmx.com',
+            #     recipient_list=["hello.krispc@gmail.com"],
+            #     fail_silently=False,
+            #     # auth_user=sender_email,
+            #     # auth_password=os.environ.get('GMAIL_PASS'),
+            #     # connection=None,
+            #     html_message=html
+            # )
+
+            sg = SendGridAPIClient(SENDGRID_API_KEY)
+            response = sg.send(message_1)
 
             if DEBUG:
                 LG.warning(f'response:{response}')
