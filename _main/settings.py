@@ -46,7 +46,7 @@ SECRET_KEY = os.environ.get(
 # https://devcenter.heroku.com/articles/heroku-ci#immutable-environment-variables
 IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
 
-CSRF_TRUSTED_ORIGINS = ['https://krispc-c2edb2fe441a.herokuapp.com', 'https://krispc.fr']
+CSRF_TRUSTED_ORIGINS = ['https://krispc-c2edb2fe441a.herokuapp.com', 'https://krispc.fr', 'https://wwww.krispc.fr']
 
 
 DEBUG = False
