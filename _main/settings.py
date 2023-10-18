@@ -54,6 +54,15 @@ DEBUG = False
 if not IS_HEROKU_APP:
     DEBUG = True
 
+if not IS_HEROKU_APP:
+    # Take environment variables from .env file
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+    env = environ.Env()
+
+    SENDGRID_API_KEY = env('SENDGRID_API_KEY')
+else:
+    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
+
 # On Heroku, it's safe to use a wildcard for `ALLOWED_HOSTS``, since the Heroku router performs
 # validation of the Host header in the incoming HTTP request. On other platforms you may need
 # to list the expected hostnames explicitly to prevent HTTP Host header attacks. See:
@@ -93,13 +102,6 @@ ASGI_APPLICATION = '_main.asgi.application'
 WSGI_APPLICATION = '_main.wsgi.application'
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
-
-# Take environment variables from .env file
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-env = environ.Env()
-
-
-SENDGRID_API_KEY = env('SENDGRID_API_KEY')
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'  # this is exactly the value 'apikey'
