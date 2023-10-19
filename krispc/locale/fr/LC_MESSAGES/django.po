@@ -72,8 +72,7 @@ msgstr "Envoyer"
 #: krispc/lst_products.py:14
 msgid "PTR_0370"
 msgstr ""
-"Smartphones&hellip; Remplacement écran ou batterie. Réglage. Configuration. "
-"Dépannage"
+"Réparation smartphones et tablettes"
 
 #: krispc/lst_products.py:15
 msgid "PTR_0380"
@@ -87,7 +86,7 @@ msgstr ""
 
 #: krispc/lst_products.py:20
 msgid "PTR_0230"
-msgstr "Réparation PC de bureau et mise à jour de matériel"
+msgstr "Maintenance PC fixes"
 
 #: krispc/lst_products.py:21
 msgid "PTR_0240"
@@ -101,7 +100,7 @@ msgstr ""
 
 #: krispc/lst_products.py:26
 msgid "PTR_0310"
-msgstr "Réparations portables et entretien informatique"
+msgstr "Entretien ordinateurs portables"
 
 #: krispc/lst_products.py:27
 msgid "PTR_0320"
@@ -114,7 +113,7 @@ msgstr "Par heure : {0}. Toute heure commencée est due."
 
 #: krispc/lst_products.py:32
 msgid "PTR_0400"
-msgstr "Configuration et dépannage dʼimprimante"
+msgstr "Support imprimantes"
 
 #: krispc/lst_products.py:33
 msgid "PTR_0410"
@@ -128,7 +127,7 @@ msgstr ""
 
 #: krispc/lst_products.py:38
 msgid "PTR_0480"
-msgstr "Conseil, formation personnalisé"
+msgstr "Formation informatique"
 
 #: krispc/lst_products.py:39
 msgid "PTR_0490"
@@ -142,7 +141,7 @@ msgstr ""
 
 #: krispc/lst_products.py:44
 msgid "PTR_0510"
-msgstr "Identification et suppression des logiciels malveillants"
+msgstr "Sécurité et nettoyage logiciels malveillants"
 
 #: krispc/lst_products.py:45
 msgid "PTR_0520"
@@ -156,7 +155,7 @@ msgstr ""
 
 #: krispc/lst_products.py:50
 msgid "PTR_0560"
-msgstr "Connexions et Sécurité Internet"
+msgstr "Conseil connexions internet"
 
 #: krispc/lst_products.py:51
 msgid "PTR_0570"
@@ -170,7 +169,7 @@ msgstr ""
 
 #: krispc/lst_products.py:56
 msgid "PTR_0600"
-msgstr "Configuration de box internet"
+msgstr "Configuration box et réseau"
 
 #: krispc/lst_products.py:57
 msgid "PTR_0610"
@@ -184,7 +183,7 @@ msgstr ""
 
 #: krispc/lst_products.py:62
 msgid "PTR_0670"
-msgstr "Prise en main à distance de vos appareils"
+msgstr "Assistance à distance"
 
 #: krispc/lst_products.py:63
 msgid "PTR_0680"
