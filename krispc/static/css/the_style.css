@@ -575,8 +575,20 @@ section {
     font-size: 1rem;
 }
 
-.apropos_section_content {
-    font-size: 1rem;
+.apropos_section_content > p::first-letter {
+    -webkit-initial-letter: 1;
+    initial-letter: 1;
+
+    line-height: 1.25em;
+
+    margin-top: 0.25em;
+    padding: 0;
+
+    font-family: lobster, serif;
+    font-size: 1.25em;
+    padding-right: 0.1em;
+    float: left;
+    color: #737373;
 }
 
 .prod-desc > p::first-letter {
@@ -1981,14 +1993,6 @@ section {
 
 .btn-emailme {
     background-color: #ffc451;
-}
-
-.apropos_section_content > p::first-letter {
-    font-family: lobster, serif;
-    font-size: 1.25em;
-    padding-right: 0.1em;
-    float: left;
-    color: #737373;
 }
 
 /* ************************************************************ */
