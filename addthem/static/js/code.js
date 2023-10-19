@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.submitGuess = () => {
         const guess = input.value.trim();
+        input.value = '';
 
 
         function processGuess(numbers, elapsedTime) {
