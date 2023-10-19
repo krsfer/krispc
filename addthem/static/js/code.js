@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const buttons = document.querySelectorAll('.keypad button');
     const input = document.getElementById('textInput');
 
+    displayNumbers();
+
 
 
 
@@ -31,14 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // console.log("numbers", numbers);
         question.innerHTML = numbers.join(" ");
     }
-
-    // Load from local storage if available
-    // const savedLog = localStorage.getItem('log');
-    // if (savedLog) {
-    //     logTable.innerHTML = savedLog;
-    //     // console.log("Loaded from local storage");
-    //     // console.log(savedLog);
-    // }
 
     let savedLarve = localStorage.getItem('larve');
 
@@ -75,12 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
             let int_guess = parseInt(guess);
 
             let is_correct = int_guess === sum;
-
-            // if (is_correct) {
-            //     incorrect.innerHTML = "";
-            // } else {
-            //     incorrect.innerHTML = sum.toString();
-            // }
 
             addLog(count + 1, numbers, int_guess, is_correct, elapsedTime, new Date().toISOString(), sum);
 
@@ -248,25 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         data.innerHTML = makeBS5str(larve);
 
-
-        // console.log("is_correct", is_correct);
-
-        couleur = is_correct ? "#DAF9EA" : "#F9E0DA";
-
-        // console.log("couleur", couleur);
-
-        // const newRow = logTable.insertRow(-1);
-        // newRow.innerHTML = `<td bgcolor=${couleur}>${nth}</td><td>${numbers.join(" ")}</td><td>${guess}</td><td>${elapsedTime.toFixed(2)}</td><td><span class="hidden">{date}</span></td>`;
-        // localStorage.setItem('log', logTable.innerHTML);
-
-        // if (parseInt(guess) === sum) {
-        //     console.log("Correct");
-        // } else {
-        //     console.log("Incorrect");
-        // }
     }
-
-    // aaa
 
     buttons.forEach(button => {
         button.addEventListener('click', () => {
