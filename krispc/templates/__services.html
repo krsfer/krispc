@@ -59,7 +59,7 @@
                                 <h4><a href="">{{ prod.Prd_Name|safe }}</a></h4>
                             </div>
 
-                            <div class="prod-desc text-start">
+                            <div class="prod-desc text-start lettrine">
                                 <p>{{ prod.Prd_Desc|safe }}</p>
                             </div>
 
@@ -76,7 +76,7 @@
                                 <div id="collapse_{{ forloop.counter0 }}" class="collapse"
                                      aria-labelledby="heading_{{ forloop.counter0 }}"
                                      data-bs-parent="#prods_accordion">
-                                    <div class="prod-more accordion-body text-start">
+                                    <div class="prod-more accordion-body text-start lettrine">
                                         <p>{{ prod.Prd_More|safe }}</p>
                                     </div>
                                 </div>

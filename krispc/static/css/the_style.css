@@ -575,37 +575,53 @@ section {
     font-size: 1rem;
 }
 
-.apropos_section_content > p::first-letter {
-    -webkit-initial-letter: 1;
-    initial-letter: 1;
-
-    /*line-height: 1.25em;*/
-
-    margin-top: 0.25em;
-    padding: 0;
-
-    font-family: lobster, serif;
-    font-size: 1.1em;
-    padding-right: 0.05em;
-    float: left;
-    color: #737373;
+.tiny {
+    font-size: xx-small;
 }
 
-.prod-desc > p::first-letter {
-    font-family: lobster, serif;
+/* start. Lettrines.***********************************/
+
+.lettrine::first-letter {
+    /*font-family: lobster, serif;*/
     font-size: 1.25em;
-    padding-right: 0.1em;
-    float: left;
-    color: #737373;
+    color: #c58400;
 }
+.lettrine-s::first-letter {
+    /*font-family: serif;*/
+    font-size: 1.2em;
+    color: #c58400;
+}
+/*.apropos_section_content > p::first-letter {*/
+/*    -webkit-initial-letter: 1;*/
+/*    initial-letter: 1;*/
 
-.prod-more > p::first-letter {
-    font-family: lobster, serif;
-    font-size: 1.25em;
-    padding-right: 0.1em;
-    float: left;
-    color: #737373;
-}
+/*    margin-top: 0.25em;*/
+/*    padding: 0;*/
+
+/*    font-family: lobster, serif;*/
+/*    font-size: 1.1em;*/
+/*    padding-right: 0.05em;*/
+/*    float: left;*/
+/*    color: #737373;*/
+/*}*/
+
+/*.prod-desc > p::first-letter {*/
+/*    font-family: lobster, serif;*/
+/*    font-size: 1.25em;*/
+/*    padding-right: 0.1em;*/
+/*    float: left;*/
+/*    color: #737373;*/
+/*}*/
+
+/*.prod-more > p::first-letter {*/
+/*    font-family: lobster, serif;*/
+/*    font-size: 1.25em;*/
+/*    padding-right: 0.1em;*/
+/*    float: left;*/
+/*    color: #737373;*/
+/*}*/
+
+/* end.   Lettrines.***********************************/
 
 .section-title h2::after {
     content: "";
@@ -2050,14 +2066,8 @@ section {
 .cmd_btn {
     background-color: #ffc451;
     border: none;
-    font-size: 1.5rem;
-    font-family: 'Lobster', cursive;
-
-    /*animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
-    animation-iteration-count: 5;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    perspective: 1000px;*/
+    font-size: 1.2rem;
+    font-family: Lobster, serif;
 }
 
 .cmd_btn:hover {
