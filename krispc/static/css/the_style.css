@@ -1679,7 +1679,8 @@ section {
 }
 
 .prod_padding {
-    padding-right: calc(var(--bs-gutter-x) * .3);
+    padding-left: calc(var(--bs-gutter-x) * .5);
+    padding-right: calc(var(--bs-gutter-x) * .5);
 }
 .prods {
     border-style: solid !important;
