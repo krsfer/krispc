@@ -1678,6 +1678,15 @@ section {
     font-size: 1rem;
 }
 
+.prod_padding {
+    padding-right: calc(var(--bs-gutter-x) * .2);
+}
+.prods {
+    border-style: solid !important;
+    border-width: 1px !important;
+    border-color: #f8d185 !important;
+}
+
 [id^='prod_'] {
     scroll-margin-top: 2rem;
 }
