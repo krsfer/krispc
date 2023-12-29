@@ -23,6 +23,8 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 
 # Before using your Heroku app in production, make sure to review Django's deployment checklist:
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -36,15 +38,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECRET_KEY
 # https://devcenter.heroku.com/articles/config-vars
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    default=secrets.token_urlsafe(nbytes=64),
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
 )
+
+SECRET_KEY = env('SECRET_KEY')
 
 # The `DYNO` env var is set on Heroku CI, but it's not a real Heroku app, so we have to
 # also explicitly exclude CI:
 # https://devcenter.heroku.com/articles/heroku-ci#immutable-environment-variables
-IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
+# IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
+
+IS_HEROKU_APP = env.str("DYNO", default="") and not env.str("CI", default="")
 
 CSRF_TRUSTED_ORIGINS = ['https://krispc-c2edb2fe441a.herokuapp.com', 'https://krispc.fr', 'https://www.krispc.fr']
 
@@ -54,11 +61,7 @@ DEBUG = False
 if not IS_HEROKU_APP:
     DEBUG = True
 
-if not IS_HEROKU_APP:
-    # Take environment variables from .env file
-    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-    env = environ.Env()
-
+if not IS_HEROKU_APP:    
     SENDGRID_API_KEY = env('SENDGRID_API_KEY')
 else:
     SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
@@ -289,8 +292,9 @@ VER = semver.VersionInfo.parse("2.3.0")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 if __name__ == "__main__":
-    print(f"IS_HEROKU_APP: {IS_HEROKU_APP}")
     print(f"DEBUG: {DEBUG}")
     print(f"BASE_DIR: {BASE_DIR}")
-    print(f"STATIC_ROOT: {STATIC_ROOT}")
     print(f"STATIC_URL: {STATIC_URL}")
+    print(f"STATIC_ROOT: {STATIC_ROOT}")
+    print(f"IS_HEROKU_APP: {IS_HEROKU_APP}")
+    print(f"SENDGRID_API_KEY: {SENDGRID_API_KEY}")
