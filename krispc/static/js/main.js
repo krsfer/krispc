@@ -8,8 +8,6 @@
  * https://www.geeksforgeeks.org/javascript-anonymous-functions/
  */
 
-// import {PureCounter} from "../vendor/purecounter/purecounter_vanilla";
-
 (() => {
     "use strict";
 
@@ -345,12 +343,6 @@
         let scrollPos = document.body.scrollTop || document.documentElement.scrollTop;
         localStorage.setItem('scrollPos', scrollPos.toString());
     });
-
-
-    /**
-     * Initiate Pure Counter
-     */
-    // new PureCounter();
 
     const orderthisbtns = document.querySelectorAll(".cmd_btn");
 

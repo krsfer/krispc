@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-29 21:41+0000\n"
+"POT-Creation-Date: 2023-12-29 22:25+0000\n"
 "PO-Revision-Date: 2022-11-06 22:12+0000\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Translated-Using: django-rosetta 0.9.8\n"
 
-#: _main/settings.py:245
+#: _main/settings.py:246
 msgid "French"
 msgstr "English &middot; French"
 
-#: _main/settings.py:246
+#: _main/settings.py:247
 msgid "English"
 msgstr "English &middot; French"
 
