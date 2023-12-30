@@ -17,16 +17,41 @@
         </div>
 
 
+
         <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
-            {% for prod in prods %}
-                <div class="col-6">
-                    <div class="icon-box">
+            {% with prod=prods.0 %}
+                <div class="col-12">
+                    <div class="icon-box" style="background-color:rgb(92, 92, 92)">
                         <i class="{{ prod.Prd_Icon }}"></i>
                         <h3>
-                            <a href="#prod_{{ forloop.counter0 }}">{{ prod.Prd_Name|safe }}</a>
+                            <a href="#prod_0">{{ prod.Prd_Name|safe }}</a>
                         </h3>
+                        <br>
+                        <span style="color:white">
+                            Quel que soit le problème de votre téléphone, écran cassé ou batterie défectueuse,
+                            je dispose des compétences et des outils nécessaires pour le réparer.
+                            iPhone, Samsung, Huawei…
+                        </span>
+                        <hr>
+                        <span style="color:white">
+                            Réparer un vieux smartphone coûte souvent moins cher que les nouveaux modèles.
+                            Le tarif de la réparation est de 50 € par heure, avec un minimum d’une heure facturée.
+                        </span>
                     </div>
                 </div>
+            {% endwith %}
+
+            {% for prod in prods %}
+                {% if forloop.counter > 1 %}
+                    <div class="col-6">
+                        <div class="icon-box">
+                            <i class="{{ prod.Prd_Icon }}"></i>
+                            <h3>
+                                <a href="#prod_{{ forloop.counter0 }}">{{ prod.Prd_Name|safe }}</a>
+                            </h3>
+                        </div>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
 
