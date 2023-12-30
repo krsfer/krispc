@@ -447,6 +447,7 @@ h6 {
     background: url("../images/glint_hero_3.png") top center;
     background-size: cover;
     position: relative;
+    top: -1px !important;
 }
 
 #hero:before {
@@ -2268,4 +2269,34 @@ textarea.form-control {
 .nota {
     color: #ffc451;
     font-family: 'Lobster', cursive;
+}
+
+.neon-text {
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: -webkit-gradient(linear,left top,right top,from(#00C5FF),to(#FC0)) !important;
+    background-image: -webkit-linear-gradient(left,#5EFF00,#FF0008,#2400FE,#0F7,#FFA400) !important;
+}
+
+.neon-text1 {
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-image: -webkit-gradient(linear,left top,right top,from(#00C5FF),to(#FC0)) !important;
+    background-image: -webkit-linear-gradient(left,#5EFF00,#FF0008,#2400FE,#0F7,#FFA400) !important;
+
+    text-shadow:
+        /* 0 0 7px #fff,
+        0 0 10px #fff,
+        0 0 21px #fff,
+        0 0 42px #0fa, 
+        0 0 82px #0fa, 
+        0 0 92px #0fa, */
+        0 0 102px #0fa,
+        0 0 151px #0fa;
+}
+
+.glow {
+    -webkit-box-shadow:0px 0px 105px 45px rgba(45,255,196,0.9);
+    -moz-box-shadow: 0px 0px 105px 45px rgba(45,255,196,0.9);
+    box-shadow: 0px 0px 105px 45px rgba(45,255,196,0.9);
 }
