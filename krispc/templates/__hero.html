@@ -3,7 +3,7 @@
 <section id="hero" class="d-flex align-items-center justify-content-left" style="height: 150%">
     <div class="container" data-aos="fade-up">
 
-        <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
+        <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150" style="margin-bottom: 0 !important;">
             <div class="col-xl-6 col-lg-8">
                 <h1>{% trans 'PTR_0120' %}<span>.</span></h1>
                 <h6 class="nota">{% trans 'French English' %}</h6>
@@ -16,11 +16,9 @@
             </div>
         </div>
 
-
-
-        <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
+        <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250" style="margin-top: 0px !important;">
             {% with prod=prods.0 %}
-                <div class="col-12">
+                <div class="col-12" style="margin-top:0">
                     <div class="icon-box" style="background-color:rgb(92, 92, 92)">
                         <i class="{{ prod.Prd_Icon }}"></i>
                         <h3>
