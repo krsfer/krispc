@@ -84,7 +84,7 @@ msgstr ""
 #: krispc/lst_products.py:40
 msgid "PTR_3330"
 msgstr ""
-"Reparer un vieux smartphone coûte souvent moins cher que les nouveaux "
+"Réparer un vieux smartphone coûte souvent moins cher que les nouveaux "
 "modèles. Si votre téléphone a pris l&rsquo;eau, je fais un diagnostic avant "
 "de vous donner un prix. {0} par heure et toute heure commencée est due."
 
