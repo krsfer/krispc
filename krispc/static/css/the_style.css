@@ -445,7 +445,6 @@ h6 {
     height: 100vh;
     /*background: url("../img/hero-bg.jpg") top center;*/
      background: url("../images/glint_hero_2.png") top center;
-    /*background: url("{% static 'images_person_1.png'  %}") top center;*/
      /*<img src="{% static 'images/person_1.png' %}" class="glow img-fluid rounded-4" alt="Photo of*/
     background-size: cover;
     position: relative;
