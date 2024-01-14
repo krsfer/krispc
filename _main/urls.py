@@ -18,19 +18,19 @@ from django.conf.urls.i18n import i18n_patterns
 # from django.contrib import admin
 from django.urls import include, path
 
-import addthem.views
 import hello.views
-import wat.views
 import krispc.views
+import wat.views
 
 urlpatterns = i18n_patterns(
     path("", include("krispc.urls")),
+    path("wat/", include("wat.urls")),
     #
     path("start/", hello.views.index, name="index"),
     path("db/", hello.views.db, name="db"),
     path("addthem/", include('addthem.urls')),
     path('chat/', include('chat.urls')),
-    path("wat/", wat.views.index, name="wat"),
+    # path("wat/", wat.views.index, name="wat"),
     #
     path("favicon.ico", krispc.views.favicon),
     #
@@ -38,7 +38,6 @@ urlpatterns = i18n_patterns(
     #
     prefix_default_language=False,
 )
-
 
 # Uncomment this and the entry in `INSTALLED_APPS` if you wish to use the Django admin feature:
 # https://docs.djangoproject.com/en/4.2/ref/contrib/admin/

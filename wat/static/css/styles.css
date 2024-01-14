@@ -1,0 +1,18 @@
+.fade-out {
+    transition: opacity 5s linear;
+    opacity: 0 !important;
+}
+
+.mapboxgl-ctrl-top-left .control-1 {
+    margin-bottom: 30px;
+}
+
+.mapboxgl-ctrl-top-left .control-2 {
+    margin-bottom: 60px;
+}
+
+.mapboxgl-popup-content {
+    border-radius: 10px;
+    border: 1px solid rgb(189, 189, 189);
+    background-color: rgb(227 227 227);
+}

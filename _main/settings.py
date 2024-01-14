@@ -55,13 +55,15 @@ IS_HEROKU_APP = env.str("DYNO", default="") and not env.str("CI", default="")
 
 CSRF_TRUSTED_ORIGINS = ['https://krispc-c2edb2fe441a.herokuapp.com', 'https://krispc.fr', 'https://www.krispc.fr']
 
+MAPBOX_TOKEN = env('MAPBOX_TOKEN')
+
 
 DEBUG = False
 # SECURITY WARNING: don't run with debug turned on in production!
 if not IS_HEROKU_APP:
     DEBUG = True
 
-if not IS_HEROKU_APP:    
+if not IS_HEROKU_APP:
     SENDGRID_API_KEY = env('SENDGRID_API_KEY')
 else:
     SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
@@ -230,12 +232,6 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-#     "addthem/static",
-#     "krispc/static",
-#
-# ]
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, "krispc/locale"),
