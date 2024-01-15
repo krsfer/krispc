@@ -59,9 +59,6 @@
         zoom: 7
     });
 
-    const contactssrc = "{% static '/data/contacts.json' %}";
-    console.log(contactssrc);
-
     map.on('load', async function () {
         fetch("contacts_json")
             .then((response) => response.json())
@@ -90,6 +87,8 @@
 
         // Add zoom and rotation controls to the map.
         map.addControl(new mapboxgl.NavigationControl());
+
+        addMapStyleSelector(map);
 
         // Add geolocation control to the map
         const geolocate = new mapboxgl.GeolocateControl({
@@ -230,6 +229,59 @@
         console.log("Map clicked at:", coordsTxt);
     });
 
+    map.on('styledata', function () {
+        // Check if the route layer exists
+        /*if (!map.getLayer('route')) {
+            // If the route layer does not exist, add it
+            map.addLayer({
+                id: 'route',
+                type: 'line',
+                source: {
+                    type: 'geojson',
+                    data: route.route.geometry,
+                },
+                paint: {
+                    'line-color': 'rgba(183, 0, 0, 1)',
+                    'line-width': 2,
+                },
+            });
+        }*/
+
+        /*// Check if the georoute layer exists
+        if (!map.getLayer('georoute')) {
+            // If the georoute layer does not exist, add it
+            map.addLayer({
+                id: 'georoute',
+                type: 'line',
+                source: {
+                    type: 'geojson',
+                    data: georoute.geometry,
+                },
+                paint: {
+                    'line-color': 'rgba(255, 0, 255, 1)',
+                    'line-width': 2,
+                },
+            });
+        }
+
+        // Check if the fixedRoute layer exists
+        if (!map.getLayer('fixedRoute')) {
+            // If the fixedRoute layer does not exist, add it
+            map.addLayer({
+                id: 'fixedRoute',
+                type: 'line',
+                source: {
+                    type: 'geojson',
+                    data: fixedRoute.geometry,
+                },
+                paint: {
+                    'line-color': 'blue',
+                    'line-width': 2,
+                },
+            });
+        }*/
+    });
+
     function addMarkerToMap(map, lngLat, name, address) {
         // Create a new marker and add it to the map
         const marker = new mapboxgl.Marker()
@@ -272,7 +324,7 @@
             }
             // Start the fade-out  (apply css) effect after n milliseconds
             setTimeout(() => {
-                    marker.getPopup().getElement().classList.add("fade-out");
+                marker.getPopup().getElement().classList.add("fade-out");
             }, 100);
         });
         return marker;
@@ -320,6 +372,41 @@
             points.push([x, y]);
         }
         return points;
+    }
+
+    function addMapStyleSelector(map) {
+        // Create the select element
+        const select = document.createElement('select');
+        select.style.position = 'absolute';
+        select.style.top = '10px';
+        select.style.left = '50%';
+        select.style.transform = 'translateX(-50%)';
+        select.style.zIndex = '1';
+
+        // Define the map styles
+        const mapStyles = [
+            {name: 'Dark', style: 'mapbox://styles/mapbox/dark-v9'},
+            {name: 'Light', style: 'mapbox://styles/mapbox/light-v9'},
+            {name: 'Streets', style: 'mapbox://styles/mapbox/streets-v11'},
+            {name: 'Outdoors', style: 'mapbox://styles/mapbox/outdoors-v11'},
+            {name: 'Satellite', style: 'mapbox://styles/mapbox/satellite-v9'}
+        ];
+
+        // Create an option element for each map style
+        for (const mapStyle of mapStyles) {
+            const option = document.createElement('option');
+            option.value = mapStyle.style;
+            option.text = mapStyle.name;
+            select.appendChild(option);
+        }
+
+        // Add an event listener to change the map style when a different option is selected
+        select.addEventListener('change', function () {
+            map.setStyle(this.value);
+        });
+
+        // Append the select element to the map's container
+        map.getContainer().appendChild(select);
     }
 
     class MapSimulation_btn {
