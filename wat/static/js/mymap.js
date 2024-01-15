@@ -47,6 +47,8 @@
 
     let simMar = null; // Define simMar in an outer scope
 
+    let backgroundColor = 'rgba(255, 255, 255, 0.3)';
+
     const getAccessToken = async () => {
         const response = await fetch('mapbox_token');
         const data = await response.json();
@@ -212,10 +214,11 @@
                 data: route.route.geometry,
             },
             paint: {
-                "line-color": "blue",
-                "line-width": 2,
+                "line-color": "rgba(0, 0, 255, 0.50)",
+                "line-width": 6,
             },
         });
+        map.setLayoutProperty('fixedRoute', 'visibility', 'none');
 
         fixedRouteSource = map.getSource('fixedRoute');
         routeSource = map.getSource('route');
@@ -361,7 +364,7 @@
                         data: fixedRouteSource._data,
                     },
                     paint: {
-                        'line-color': 'rgba(0, 0, 255, 1)',
+                        'line-color': 'RGB(0, 0, 255, 1)',
                         'line-width': 2,
                     },
                 });
@@ -470,6 +473,10 @@
         select.style.top = '10px';
         select.style.left = '50%';
         select.style.transform = 'translateX(-50%)';
+        select.style.backgroundColor = backgroundColor; // 60% transparent background
+        select.style.textAlign = 'center';
+        select.style.borderRadius = '10px';
+        select.style.border = '1px solid lightgrey';
         select.style.zIndex = '1';
 
         // Define the map styles
@@ -565,7 +572,7 @@
             this.simButton.style.left = "10px";
             this.simButton.style.borderRadius = "10px";
             this.simButton.style.border = "1px solid grey";
-            this.simButton.style.backgroundColor = "lightgrey"; // Set initial button color
+            this.simButton.style.backgroundColor = backgroundColor; // Set initial button color
             this.simButton.addEventListener("click", () => this.toggleSimulation());
 
             // Create the monitorTextbox
@@ -575,7 +582,7 @@
             monitorTextbox.style.bottom = "0px";
             monitorTextbox.style.left = "50%";
             monitorTextbox.style.transform = "translateX(-50%)";
-            monitorTextbox.style.backgroundColor = "rgba(255, 255, 255, 0.4)"; // 60% transparent background
+            monitorTextbox.style.backgroundColor = backgroundColor; // 60% transparent background
             monitorTextbox.style.color = "rgba(66, 3, 3, 1)";
             // monitorTextbox.style.fontSize = '16px';
             // monitorTextbox.style.fontWeight = 'bold';
@@ -600,12 +607,22 @@
 
         toggleSimulation() {
             if (simulationActive) {
-                this.simButton.style.backgroundColor = "lightgrey"; // Change button color to lightgrey
+                this.simButton.style.backgroundColor = backgroundColor
                 clearInterval(this.simulationInterval); // Stop the animation
                 simulationActive = false; // Toggle simulation state
+
+                // Hide the fixedRoute layer when the simulation is not active
+                // if (map.getLayer('fixedRoute')) {
+                //     map.setLayoutProperty('fixedRoute', 'visibility', 'none');
+                // }
             } else {
                 this.simButton.style.backgroundColor = "grey"; // Change button color to grey
                 simulationActive = true; // Toggle simulation state
+
+                // Show the fixedRoute layer when the simulation is active
+                if (map.getLayer('fixedRoute')) {
+                    map.setLayoutProperty('fixedRoute', 'visibility', 'visible');
+                }
 
                 // Calculate the total distance of the route in kilometers
                 let totalDistance = 0;
@@ -637,6 +654,7 @@
 
                     // Move the marker to this point
                     simMar.setLngLat(point);
+                    simPoint = point; // Update simPoint
 
                     // If the marker has reached the end of the line, stop the animation
                     if (elapsedTime >= totalTime) {
@@ -681,7 +699,7 @@
             this.controlButton.style.left = "10px";
             this.controlButton.style.borderRadius = "10px";
             this.controlButton.style.border = "1px solid grey";
-            this.controlButton.style.backgroundColor = "lightgrey";
+            this.controlButton.style.backgroundColor = backgroundColor;
             this.controlButton.style.visibility = "visible";
 
             this.controlButton.addEventListener("click", () => {
@@ -706,7 +724,7 @@
                     anyVisible = marker._element.hidden;
                 });
 
-                this.controlButton.style.backgroundColor = anyVisible ? 'grey' : 'lightgrey';
+                this.controlButton.style.backgroundColor = anyVisible ? 'grey' : backgroundColor;
             }
         }
     }
@@ -726,7 +744,7 @@
             this._btn.style.left = "10px";
             this._btn.style.borderRadius = "10px";
             this._btn.style.border = "1px solid grey";
-            this._btn.style.backgroundColor = "lightgrey";
+            this._btn.style.backgroundColor = backgroundColor;
             this._btn.style.visibility = "visible";
 
 
@@ -748,7 +766,7 @@
 
         async _showAddress() {
             if (simPoint) { // Check if simPoint is not null
-                const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${simPoint[0]},${simPoint[1]}.json?access_token=${mapboxgl.accessToken}`);
+                const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${simPoint[0]},${simPoint[1]}.json?access_token=${window.mapbox_token}`);
                 const data = await response.json();
                 const address = data.features[0].place_name;
 
