@@ -159,8 +159,8 @@
                                 data: route.route.geometry,
                             },
                             paint: {
-                                "line-color": "rgba(255, 0, 255, 1)",
-                                "line-width": 2,
+                                "line-color": "rgba(255, 0, 255, 0.50)",
+                                "line-width": 6,
                             },
                         });
                     }
@@ -396,8 +396,8 @@
                             data: route.route.geometry,
                         },
                         paint: {
-                            "line-color": "rgba(255, 0, 255, 1)",
-                            "line-width": 2,
+                            "line-color": "rgba(255, 0, 255)",
+                            "line-width": 6,
                         },
                     });
                 });
