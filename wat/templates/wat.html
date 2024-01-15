@@ -12,7 +12,6 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 
 
-
     <title>Title</title>
 
     <style>
@@ -29,7 +28,7 @@
         }
     </style>
 </head>
-<body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 {% csrf_token %}
 
 <div id="map"></div>

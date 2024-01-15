@@ -74,21 +74,34 @@
 
                 // data is an array of objects with "name" and "address" properties
                 contacts.forEach((contact) => {
-                    getLngLatFromAddress(contact.address)
-                        .then((lngLat) => {
-                            const marker = addMarkerToMap(map, lngLat, contact.name, contact.address);
-                            contacts_markers.push(marker);
-                        }).catch((error) => {
-                        console.warn('!!An error occurred using nominatim: >' + error.message + '<', contact);
-                        // try getting lngLat using getLngLatFromAddress_mapbox(contact.address)
-                        getLngLatFromAddress_mapbox(contact.address)
+                    // console.log("contact", contact);
+                    // console.log("contact.name", contact.name);
+                    // console.log('contact.address', contact.address);
+                    // console.log('contact.coords', contact.coords);
+                    // console.log('contact.coords.length', contact.coords.length);
+                    let lngLat;
+                    if (contact.coords.length !== 0) {
+                        lngLat = contact.coords;
+                        const marker = addMarkerToMap(map, lngLat, contact.name, contact.address);
+                        contacts_markers.push(marker);
+                    } else {
+                        getLngLatFromAddress(contact.address)
                             .then((lngLat) => {
                                 const marker = addMarkerToMap(map, lngLat, contact.name, contact.address);
                                 contacts_markers.push(marker);
+                                updateContactsJson(contact.name, lngLat);
                             }).catch((error) => {
-                            console.warn('!!An error occurred using mapbox: >' + error.message + '<', contact);
-                        });
-                    })
+                            console.warn('!!An error occurred using nominatim: >' + error.message + '<', contact);
+                            getLngLatFromAddress_mapbox(contact.address)
+                                .then((lngLat) => {
+                                    const marker = addMarkerToMap(map, lngLat, contact.name, contact.address);
+                                    contacts_markers.push(marker);
+                                    updateContactsJson(contact.name, lngLat);
+                                }).catch((error) => {
+                                console.warn('!!An error occurred using mapbox: >' + error.message + '<', contact);
+                            });
+                        })
+                    }
                 });
             });
 
@@ -241,9 +254,6 @@
     });
 
     map.on('styledata', function () {
-        console.log('in styledata');
-        console.log("yy#### fixedRouteSource", fixedRouteSource);
-
         // console.log("map.getStyle().layers", map.getStyle().layers);
         // console.log("map.getStyle().sources", map.getStyle().sources);
         // console.log("map.getStyle().metadata", map.getStyle().metadata);
@@ -341,7 +351,6 @@
         } else {
             // if fixedRoute layer exists, replace its source, otherwise add it
             if (map.getLayer('fixedRoute')) {
-                console.log("xx#### fixedRouteSource", fixedRouteSource);
                 map.getSource('fixedRoute').setData(fixedRouteSource._data);
             } else {
                 map.addLayer({
@@ -480,6 +489,9 @@
             select.appendChild(option);
         }
 
+        // Set the selected option to the one that matches the selectedStyle
+        select.value = selectedStyle;
+
         // Add an event listener to change the map style when a different option is selected
         select.addEventListener('change', function () {
             map.setStyle(this.value);
@@ -489,6 +501,47 @@
 
         // Append the select element to the map's container
         map.getContainer().appendChild(select);
+    }
+
+    function updateContactsJson(name, lngLat) {
+        // console.log("updateContactsJson");
+        // console.log("name", name);
+        // console.log("lngLat", lngLat);
+        fetch('update_contacts_json', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({
+                name: name,
+                coords: lngLat,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    let csrftoken = getCookie('csrftoken');
+    console.log("csrftoken", csrftoken);
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
     class MapSimulation_btn {
