@@ -2214,7 +2214,7 @@ textarea.form-control {
 }
 
 /* Start. waiting-on-form spinner ------------------------- */
-/* http://www.menucool.com/9499/CSS-loading-spinner-with-a-semi-transparent-background */
+/* https://www.menucool.com/9499/CSS-loading-spinner-with-a-semi-transparent-background */
 #cover-spin {
     position: fixed;
     width: 100%;

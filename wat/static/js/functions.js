@@ -45,7 +45,7 @@ async function getDirections(startPoint, endPoint) {
     const endLat = endPoint[1];
 
 // Use OSRM routing API
-    const url = `http://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
+    const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
 
     try {
         const response = await fetch(url);

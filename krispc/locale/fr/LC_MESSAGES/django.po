@@ -43,7 +43,7 @@ msgstr "https://www.postgresql.fr/"
 
 #: krispc/colophon.py:14
 msgid "gm_lnk"
-msgstr "http://www.gimpfr.org/"
+msgstr "https://www.gimpfr.org/"
 
 #: krispc/colophon.py:16
 msgid "pc_lnk"
