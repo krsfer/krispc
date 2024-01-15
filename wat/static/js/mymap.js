@@ -65,7 +65,7 @@
         container: 'map',
         style: selectedStyle,
         center: [6.9237, 43.6634], // Grasse 43.6634° N, 6.9237
-        zoom: 7
+        zoom: 7,
     });
 
     map.on('load', async function () {
@@ -76,11 +76,6 @@
 
                 // data is an array of objects with "name" and "address" properties
                 contacts.forEach((contact) => {
-                    // console.log("contact", contact);
-                    // console.log("contact.name", contact.name);
-                    // console.log('contact.address', contact.address);
-                    // console.log('contact.coords', contact.coords);
-                    // console.log('contact.coords.length', contact.coords.length);
                     let lngLat;
                     if (contact.coords.length !== 0) {
                         lngLat = contact.coords;
@@ -122,12 +117,10 @@
         map.addControl(geolocate, 'top-right');
 
         geolocate.on('trackuserlocationend', function () {
-            console.log('geolocate end');
-            // After adding the control, you can access the button element
+            // After adding the control, access the button element
             const geolocateButton = document.getElementsByClassName('mapboxgl-ctrl-geolocate')[0];
-            console.log("geolocateButton", geolocateButton);
 
-            // Now you can get the class list of the button
+            // Get the class list of the button
             const classList = geolocateButton.classList;
 
             // If the class list contains neither 'mapboxgl-ctrl-geolocate-active'
@@ -139,39 +132,34 @@
         });
 
         geolocate.on('geolocate', function (e) {
-            console.log('success. found you!');
-            console.log('Coordinates: ', e.coords.longitude, e.coords.latitude);
-            console.log("marPoint", marPoint);
-            console.log("is sim active", simulationActive);
-
             isGeolocating = true;
-            console.log("isGeolocating set to true", isGeolocating);
 
             // If simulationActive is true, stop the simulation
             if (simulationActive) {
                 mapSimulation.toggleSimulation();
             }
-            // Remove the simulation route
-            // if (map.getLayer("fixedRoute")) {
-            //     map.removeLayer("fixedRoute");
-            //     map.removeSource("fixedRoute"); // Also remove the source associated with the layer
-            // }
 
             geo = [e.coords.longitude, e.coords.latitude]; // Update geo
 
             if (marPoint) {
                 // Fetch the fastest  route from geolocated position to marPoint in pink with a width of 2px, or
                 // updat the route if it already exists on the map
-                getDirections(geo, marPoint).then((route) => {
+                 getDirections(geo, marPoint).then(({route, distance, eta}) => {
+
+                    // Update the monitorTextbox
+                    mapSimulation.updateMonitorTextbox(
+                        `Distance: ${distance} km\nETA: ${eta}`
+                    );
+
                     if (map.getLayer("georoute")) {
-                        map.getSource("georoute").setData(route.route.geometry);
+                        map.getSource("georoute").setData(route.geometry);
                     } else {
                         map.addLayer({
                             id: "georoute",
                             type: "line",
                             source: {
                                 type: "geojson",
-                                data: route.route.geometry,
+                                data: route.geometry,
                             },
                             paint: {
                                 "line-color": "rgba(255, 0, 255, 0.50)",
@@ -249,129 +237,33 @@
         );
     });
 
+    let attributionControl = null;
+
+    for (const control of map._controls) {
+        if (control instanceof mapboxgl.AttributionControl) {
+            attributionControl = control;
+            break;
+        }
+    }
+    if (attributionControl) {
+        map.removeControl(attributionControl);
+    } else {
+        console.log("Attribution control not found.");
+    }
+
+    // Show attribution control values in console log
+    map.attrControl = new mapboxgl.AttributionControl({
+        compact: true,
+        customAttribution: "Made with ❤ by <a href='mailto://archer.chris@gmail.com'>Chris Archer</a>",
+    });
+    map.addControl(map.attrControl, "bottom-right");
+
+
     map.on('click', (e) => {
         const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
         const coordsTxt = JSON.stringify(END);
         navigator.clipboard.writeText(coordsTxt).then(r => console.log());
         console.log("Map clicked at:", coordsTxt);
-    });
-
-    map.on('styledata', function () {
-        // console.log("map.getStyle().layers", map.getStyle().layers);
-        // console.log("map.getStyle().sources", map.getStyle().sources);
-        // console.log("map.getStyle().metadata", map.getStyle().metadata);
-        // console.log("map.getStyle().glyphs", map.getStyle().glyphs);
-        // console.log("map.getStyle().transition", map.getStyle().transition);
-        // console.log("map.getStyle().light", map.getStyle().light);
-        // console.log("map.getStyle().sprite", map.getStyle().sprite);
-        // console.log("map.getStyle().version", map.getStyle().version);
-        // console.log("map.getStyle().name", map.getStyle().name);
-        // show map.getLayer('route')
-        // console.log("map.getLayer('route')", map.getLayer('route'));
-        // console.log("map.getLayer('georoute')", map.getLayer('georoute'));
-        // console.log("map.getLayer('fixedRoute')", map.getLayer('fixedRoute'));
-
-
-        // Check if the route layer exists
-        /*if (!map.getLayer('route')) {
-            // If the route layer does not exist, add it
-            map.addLayer({
-                id: 'route',
-                type: 'line',
-                source: {
-                    type: 'geojson',
-                    data: route.route.geometry,
-                },
-                paint: {
-                    'line-color': 'rgba(183, 0, 0, 1)',
-                    'line-width': 2,
-                },
-            });
-        }*/
-
-        /*// Check if the georoute layer exists
-        if (!map.getLayer('georoute')) {
-            // If the georoute layer does not exist, add it
-            map.addLayer({
-                id: 'georoute',
-                type: 'line',
-                source: {
-                    type: 'geojson',
-                    data: georoute.geometry,
-                },
-                paint: {
-                    'line-color': 'rgba(255, 0, 255, 1)',
-                    'line-width': 2,
-                },
-            });
-        }*/
-
-        // Test if routeSource is null
-        // if (routeSource !== null) {
-        //     // if route layer exists, replace its source, otherwise add it
-        //     if (map.getLayer('route')) {
-        //         map.getSource('route').setData(routeSource._data);
-        //     } else {
-        //         map.addLayer({
-        //             id: 'route',
-        //             type: 'line',
-        //             source: {
-        //                 type: 'geojson',
-        //                 data: routeSource._data,
-        //             },
-        //             paint: {
-        //                 'line-color': 'rgba(183, 0, 0, 1)',
-        //                 'line-width': 2,
-        //             },
-        //         });
-        //     }
-        // }
-
-        // Test if georouteSource is null
-        // if (georouteSource !== null) {
-        //     // if georoute layer exists, replace its source, otherwise add it
-        //     if (map.getLayer('georoute')) {
-        //         map.getSource('georoute').setData(georouteSource._data);
-        //     } else {
-        //         map.addLayer({
-        //             id: 'georoute',
-        //             type: 'line',
-        //             source: {
-        //                 type: 'geojson',
-        //                 data: georouteSource._data,
-        //             },
-        //             paint: {
-        //                 'line-color': 'rgba(255, 0, 255, 1)',
-        //                 'line-width': 2,
-        //             },
-        //         });
-        //     }
-        // }
-
-        // Test if fixedRouteSource is null
-        if (fixedRouteSource === null) {
-            console.log("fixedRouteSource is null");
-        } else {
-            // if fixedRoute layer exists, replace its source, otherwise add it
-            if (map.getLayer('fixedRoute')) {
-                map.getSource('fixedRoute').setData(fixedRouteSource._data);
-            } else {
-                map.addLayer({
-                    id: 'fixedRoute',
-                    type: 'line',
-                    source: {
-                        type: 'geojson',
-                        data: fixedRouteSource._data,
-                    },
-                    paint: {
-                        'line-color': 'RGB(0, 0, 255, 1)',
-                        'line-width': 2,
-                    },
-                });
-            }
-        }
-
-
     });
 
     function addMarkerToMap(map, lngLat, name, address) {
@@ -390,10 +282,12 @@
             // If geolocation is active, get directions from current location to marker
             if (isGeolocating) {
                 getDirections(geo, marPoint).then(({route, distance, eta}) => {
-                    // Now you can use route, distance, and eta
-                    console.log("route", route);
-                    console.log("distance", distance);
-                    console.log("eta", eta);
+
+                    // Update the monitorTextbox
+                    mapSimulation.updateMonitorTextbox(
+                        `Distance: ${distance.toFixed(2)} km<br>ETA: ${eta.toFixed(2)} hours`
+                    );
+
                     if (map.getLayer("georoute")) {
                         // Remove the georoute layer
                         map.removeLayer("georoute");
@@ -408,7 +302,7 @@
                             data: route.route.geometry,
                         },
                         paint: {
-                            "line-color": "rgba(255, 0, 255)",
+                            "line-color": "rgba(0, 255, 0, 0.50)",
                             "line-width": 6,
                         },
                     });
@@ -533,8 +427,6 @@
     }
 
     let csrftoken = getCookie('csrftoken');
-    console.log("csrftoken", csrftoken);
-
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -560,6 +452,7 @@
             monitorTextbox = null;
             this.simulationInterval = null;
             this.simMar = new mapboxgl.Marker({color: "#FF8C00"});
+            this.savedPoint = null; // Declare savedPoint as a global variable
         }
 
         addControls(map) {
@@ -608,16 +501,21 @@
         toggleSimulation() {
             if (simulationActive) {
                 this.simButton.style.backgroundColor = backgroundColor
+                // Save the current position
+                this.savedPoint = simPoint;
+
                 clearInterval(this.simulationInterval); // Stop the animation
                 simulationActive = false; // Toggle simulation state
 
-                // Hide the fixedRoute layer when the simulation is not active
-                // if (map.getLayer('fixedRoute')) {
-                //     map.setLayoutProperty('fixedRoute', 'visibility', 'none');
-                // }
+
             } else {
                 this.simButton.style.backgroundColor = "grey"; // Change button color to grey
                 simulationActive = true; // Toggle simulation state
+
+                // Restore the saved position
+                if (this.savedPoint) {
+                    simMar.setLngLat(this.savedPoint);
+                }
 
                 // Show the fixedRoute layer when the simulation is active
                 if (map.getLayer('fixedRoute')) {
