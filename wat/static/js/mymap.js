@@ -26,6 +26,10 @@
     let i = 0; // Define i in an outer scope
     let t = 0; // Define t in an outer scope
 
+    let fixedRouteSource = null;
+    let routeSource = null;
+    let georouteSource = null;
+
     /*
         The smaller the following speed value, the slower the simulation will be, because it takes more iteration
          to move from the start point to the end point. Conversely, the larger the speed value, the faster the
@@ -51,10 +55,13 @@
 
     window.mapbox_token = await getAccessToken();
 
+    // Get the selected style from local storage, or use a default style if no style is saved
+    const selectedStyle = localStorage.getItem('selectedMapStyle') || 'mapbox://styles/mapbox/dark-v9';
+
     map = new mapboxgl.Map({
         accessToken: window.mapbox_token,
         container: 'map',
-        style: 'mapbox://styles/mapbox/dark-v9',
+        style: selectedStyle,
         center: [6.9237, 43.6634], // Grasse 43.6634° N, 6.9237
         zoom: 7
     });
@@ -130,10 +137,10 @@
                 mapSimulation.toggleSimulation();
             }
             // Remove the simulation route
-            if (map.getLayer("fixedRoute")) {
-                map.removeLayer("fixedRoute");
-                map.removeSource("fixedRoute"); // Also remove the source associated with the layer
-            }
+            // if (map.getLayer("fixedRoute")) {
+            //     map.removeLayer("fixedRoute");
+            //     map.removeSource("fixedRoute"); // Also remove the source associated with the layer
+            // }
 
             geo = [e.coords.longitude, e.coords.latitude]; // Update geo
 
@@ -197,6 +204,10 @@
             },
         });
 
+        fixedRouteSource = map.getSource('fixedRoute');
+        routeSource = map.getSource('route');
+        georouteSource = map.getSource('georoute');
+
         // Calculate and set the bounding box of the route
         coordinates = route.route.geometry.coordinates;
 
@@ -230,6 +241,24 @@
     });
 
     map.on('styledata', function () {
+        console.log('in styledata');
+        console.log("yy#### fixedRouteSource", fixedRouteSource);
+
+        // console.log("map.getStyle().layers", map.getStyle().layers);
+        // console.log("map.getStyle().sources", map.getStyle().sources);
+        // console.log("map.getStyle().metadata", map.getStyle().metadata);
+        // console.log("map.getStyle().glyphs", map.getStyle().glyphs);
+        // console.log("map.getStyle().transition", map.getStyle().transition);
+        // console.log("map.getStyle().light", map.getStyle().light);
+        // console.log("map.getStyle().sprite", map.getStyle().sprite);
+        // console.log("map.getStyle().version", map.getStyle().version);
+        // console.log("map.getStyle().name", map.getStyle().name);
+        // show map.getLayer('route')
+        // console.log("map.getLayer('route')", map.getLayer('route'));
+        // console.log("map.getLayer('georoute')", map.getLayer('georoute'));
+        // console.log("map.getLayer('fixedRoute')", map.getLayer('fixedRoute'));
+
+
         // Check if the route layer exists
         /*if (!map.getLayer('route')) {
             // If the route layer does not exist, add it
@@ -262,24 +291,75 @@
                     'line-width': 2,
                 },
             });
+        }*/
+
+        // Test if routeSource is null
+        // if (routeSource !== null) {
+        //     // if route layer exists, replace its source, otherwise add it
+        //     if (map.getLayer('route')) {
+        //         map.getSource('route').setData(routeSource._data);
+        //     } else {
+        //         map.addLayer({
+        //             id: 'route',
+        //             type: 'line',
+        //             source: {
+        //                 type: 'geojson',
+        //                 data: routeSource._data,
+        //             },
+        //             paint: {
+        //                 'line-color': 'rgba(183, 0, 0, 1)',
+        //                 'line-width': 2,
+        //             },
+        //         });
+        //     }
+        // }
+
+        // Test if georouteSource is null
+        // if (georouteSource !== null) {
+        //     // if georoute layer exists, replace its source, otherwise add it
+        //     if (map.getLayer('georoute')) {
+        //         map.getSource('georoute').setData(georouteSource._data);
+        //     } else {
+        //         map.addLayer({
+        //             id: 'georoute',
+        //             type: 'line',
+        //             source: {
+        //                 type: 'geojson',
+        //                 data: georouteSource._data,
+        //             },
+        //             paint: {
+        //                 'line-color': 'rgba(255, 0, 255, 1)',
+        //                 'line-width': 2,
+        //             },
+        //         });
+        //     }
+        // }
+
+        // Test if fixedRouteSource is null
+        if (fixedRouteSource === null) {
+            console.log("fixedRouteSource is null");
+        } else {
+            // if fixedRoute layer exists, replace its source, otherwise add it
+            if (map.getLayer('fixedRoute')) {
+                console.log("xx#### fixedRouteSource", fixedRouteSource);
+                map.getSource('fixedRoute').setData(fixedRouteSource._data);
+            } else {
+                map.addLayer({
+                    id: 'fixedRoute',
+                    type: 'line',
+                    source: {
+                        type: 'geojson',
+                        data: fixedRouteSource._data,
+                    },
+                    paint: {
+                        'line-color': 'rgba(0, 0, 255, 1)',
+                        'line-width': 2,
+                    },
+                });
+            }
         }
 
-        // Check if the fixedRoute layer exists
-        if (!map.getLayer('fixedRoute')) {
-            // If the fixedRoute layer does not exist, add it
-            map.addLayer({
-                id: 'fixedRoute',
-                type: 'line',
-                source: {
-                    type: 'geojson',
-                    data: fixedRoute.geometry,
-                },
-                paint: {
-                    'line-color': 'blue',
-                    'line-width': 2,
-                },
-            });
-        }*/
+
     });
 
     function addMarkerToMap(map, lngLat, name, address) {
@@ -403,6 +483,8 @@
         // Add an event listener to change the map style when a different option is selected
         select.addEventListener('change', function () {
             map.setStyle(this.value);
+            // Save the selected style in local storage
+            localStorage.setItem('selectedMapStyle', this.value);
         });
 
         // Append the select element to the map's container
