@@ -174,8 +174,8 @@
             isGeolocating = true;
 
             // Remove default geolocation marker
-            const geolocateMarker = document.getElementsByClassName('mapboxgl-user-location-dot')[0];
-            geolocateMarker.parentNode.removeChild(geolocateMarker);
+            // const geolocateMarker = document.getElementsByClassName('mapboxgl-user-location-dot')[0];
+            // geolocateMarker.parentNode.removeChild(geolocateMarker);
 
 
             const bearing = e.coords.heading; // Get the heading from geolocation
@@ -355,7 +355,7 @@
 
                     // If the fixedRoute layer exists, update the source data
                     if (map.getLayer("georoute")) {
-                        map.getSource("georoute").setData(route.route.geometry);
+                        map.getSource("georoute").setData(route.geometry);
                     } else {
                         // Otherwise, add a new georoute layer
                         map.addLayer({
