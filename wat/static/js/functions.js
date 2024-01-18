@@ -37,12 +37,17 @@ async function getAddressFromLngLat_gouv(startLat, startLng) {
     // Use the Gouv API to get the longitude and latitude from the address.
     // For example https://api-adresse.data.gouv.fr/reverse/?lon=6.98799&lat=43.66121&type=street&limit=1
     const url = `https://api-adresse.data.gouv.fr/reverse/?lon=${startLng}&lat=${startLat}&type=street&limit=1`;
+
     try {
         const response = await fetch(url);
         const data = await response.json();
         if (data.features.length === 0) {
             throw new Error('No matches found for this address:');
         }
+
+
+        console.log('data', data);
+
         // Get housenumber if it exists
         let housenumber = ''
         if (data.features[0].properties.housenumber) {
@@ -251,10 +256,8 @@ function displayUpdates(mapSimulation, distance, durée, eta, address) {
 
     // Remove numéro de département from address if address is not null it contains the numéro
     if (address) {
-        console.log('a address', address);
         const regex = / \b\d{5}\b /g;
         address = address.replace(regex, ',');
-        console.log('b address', address);
     } else {
         address = 'nono';
     }

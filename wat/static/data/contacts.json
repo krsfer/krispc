@@ -8,35 +8,11 @@
     ]
   },
   {
-    "name": "Centre Auto Valbonne",
-    "address": "1600 Rte de Cannes, Valbonne 06560, France",
-    "coords": [
-      7.0049427,
-      43.6389816
-    ]
-  },
-  {
-    "name": "Nathalie Poirier",
-    "address": "35 rue des Abondances, Boulogne-Billancourt 92100, France",
-    "coords": [
-      2.230201,
-      48.846513
-    ]
-  },
-  {
     "name": "Pat Brewster",
     "address": "27 Court Way, London, England NW9 6JG",
     "coords": [
       -0.2503028,
       51.5901585
-    ]
-  },
-  {
-    "name": "l\u2019Auberge de la Source",
-    "address": "3935 Route du Parc, Valbonne 06560, France",
-    "coords": [
-      7.0522412,
-      43.6094857
     ]
   },
   {
@@ -53,6 +29,62 @@
     "coords": [
       7.0102149,
       43.642199
+    ]
+  },
+  {
+    "name": "Banasser, Khaled",
+    "address": "2 Chemin des Comtesses, 06130 Grasse",
+    "coords": [
+      6.9324005,
+      43.6473613
+    ]
+  },
+  {
+    "name": "Baszczowski, St\u00e9phanie",
+    "address": "14 chemin du Porrichon, 06110 Le Cannet",
+    "coords": [
+      7.0017972,
+      43.5705294
+    ]
+  },
+  {
+    "name": "Fontaine, Simon",
+    "address": "21 Avenue Chiris, 06130 Grasse",
+    "coords": [
+      6.9288689481173975,
+      43.657844
+    ]
+  },
+  {
+    "name": "Saez-Pavigna, Paulette",
+    "address": "31 Chemin de la Chapelle Saint-Antoine, 06130 Grasse",
+    "coords": [
+      6.9328861,
+      43.6465955
+    ]
+  },
+  {
+    "name": "Porcu, Jean Pierre",
+    "address": "195 Rue des Roses, 06550 La Roquette-sur-Siagne",
+    "coords": [
+      6.9491889,
+      43.582299
+    ]
+  },
+  {
+    "name": "Mariani, Sam",
+    "address": "36 Chem. de Blancard, 06130 Grasse, France",
+    "coords": [
+      6.949348,
+      43.673764
+    ]
+  },
+  {
+    "name": "Formation En Agence",
+    "address": "500 All. des Terriers, 06600 Antibes, France",
+    "coords": [
+      7.082361233992904,
+      43.601723449999994
     ]
   }
 ]

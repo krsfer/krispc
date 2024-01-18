@@ -258,7 +258,7 @@
         const haversineDis = haversineDistance(startPoint, endPoint);
 
         // Update the monitorTextbox
-        displayUpdates(mapSimulation, distance, durée, eta, address);
+        // displayUpdates(mapSimulation, distance, durée, eta, address);
 
         map.addLayer({
             id: "fixedRoute",
@@ -540,26 +540,26 @@
 
             // Create the monitorTextbox
             monitorTextbox = document.createElement("div");
+            // monitorTextbox.style.fontWeight = 'bold';
+            // monitorTextbox.style.height = '100px';
+            // monitorTextbox.style.width = '200px';
+            monitorTextbox.innerText = "";
+            monitorTextbox.style.backgroundColor = backgroundColor;
+            monitorTextbox.style.border = "1px solid";
+            monitorTextbox.style.borderColor = "rgba(194, 181, 181)";
+            monitorTextbox.style.borderRadius = "10px";
+            monitorTextbox.style.bottom = "5px";
+            monitorTextbox.style.color = "rgba(8, 4, 244)";
+            // monitorTextbox.style.fontFamily = "monospace";
+            monitorTextbox.style.fontSize = '18px';
+            monitorTextbox.style.lineHeight = "0.9";
+            monitorTextbox.style.overflow = "auto";
+            monitorTextbox.style.padding = "0px";
             monitorTextbox.style.position = "absolute";
-            monitorTextbox.style.zIndex = "1";
-            monitorTextbox.style.bottom = "0px";
+            monitorTextbox.style.textAlign = "center";
             monitorTextbox.style.left = "50%";
             monitorTextbox.style.transform = "translateX(-50%)";
-            monitorTextbox.style.backgroundColor = backgroundColor;
-            monitorTextbox.style.color = "rgba(66, 3, 3, 1)";
-            monitorTextbox.style.fontSize = '16px';
-            // monitorTextbox.style.fontWeight = 'bold';
-            monitorTextbox.style.fontFamily = "monospace";
-            monitorTextbox.style.textAlign = "center";
-            monitorTextbox.style.borderRadius = "10px";
-            monitorTextbox.style.border = "1px solid lightgrey";
-            // monitorTextbox.style.width = '200px';
-            // monitorTextbox.style.height = '100px';
-            monitorTextbox.style.lineHeight = "1.5";
-            monitorTextbox.style.overflow = "auto";
-            monitorTextbox.style.padding = "10px";
-            monitorTextbox.innerText = "";
-            monitorTextbox.style.padding = "10px";
+            monitorTextbox.style.zIndex = "1";
 
             // Append the button to the map's container
             map.getContainer().appendChild(this.simButton);
@@ -569,6 +569,8 @@
         }
 
         toggleSimulation() {
+
+
             if (simulationActive) {
                 this.simButton.style.backgroundColor = backgroundColor
                 // Save the current position
