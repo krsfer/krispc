@@ -30,6 +30,8 @@
     let routeSource = null;
     let georouteSource = null;
 
+    let endPoint = null;
+
     /*
         The smaller the following speed value, the slower the simulation will be, because it takes more iteration
          to move from the start point to the end point. Conversely, the larger the speed value, the faster the
@@ -47,7 +49,11 @@
 
     let simMar = null; // Define simMar in an outer scope
 
-    let backgroundColor = 'rgba(255, 255, 255, 0.3)';
+    let backgroundColor = 'rgba(255, 255, 255, 0.7)';
+
+
+    const bb = document.getElementById('blue_ball').value; // eg. /static/watapp/img/blue_ball.png
+    const gb = document.getElementById('green_ball').value;
 
     const getAccessToken = async () => {
         const response = await fetch('mapbox_token');
@@ -69,6 +75,39 @@
     });
 
     map.on('load', async function () {
+
+        console.log("map.on('load')");
+        // Add an image to use as a custom marker
+        map.loadImage(bb, function (error, image) {
+
+            if (error) throw error;
+            map.addImage('custom-marker', image);
+
+            // Add a layer to use the image to represent the data
+            map.addLayer({
+                'id': 'custom_marker_layer',
+                'type': 'symbol',
+                'source': {
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'FeatureCollection',
+                        'features': [{
+                            'type': 'Feature',
+                            'properties': {},
+                            'geometry': {
+                                'type': 'Point',
+                                'coordinates': [7.008, 43.64163999646119] // Valbonne 7.008715192368488, 43.64163999646119
+                            }
+                        }]
+                    }
+                },
+                'layout': {
+                    'icon-image': 'custom-marker',
+                    'icon-size': 1
+                }
+            });
+        });
+
         fetch("contacts_json")
             .then((response) => response.json())
             .then((data) => {
@@ -134,6 +173,29 @@
         geolocate.on('geolocate', function (e) {
             isGeolocating = true;
 
+            // Remove default geolocation marker
+            const geolocateMarker = document.getElementsByClassName('mapboxgl-user-location-dot')[0];
+            geolocateMarker.parentNode.removeChild(geolocateMarker);
+
+
+            const bearing = e.coords.heading; // Get the heading from geolocation
+
+            // Update the marker's rotation
+            map.setLayoutProperty('custom_marker_layer', 'icon-rotate', bearing);
+
+            // Update the marker's position
+            map.getSource('custom_marker_layer').setData({
+                'type': 'FeatureCollection',
+                'features': [{
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [e.coords.longitude, e.coords.latitude]
+                    }
+                }]
+            });
+
+
             // If simulationActive is true, stop the simulation
             if (simulationActive) {
                 mapSimulation.toggleSimulation();
@@ -144,15 +206,13 @@
             if (marPoint) {
                 // Fetch the fastest  route from geolocated position to marPoint in pink with a width of 2px, or
                 // updat the route if it already exists on the map
-                 getDirections(geo, marPoint).then(({route, distance, eta}) => {
+                getDirections(geo, marPoint).then(({route, distance, durée, eta, address}) => {
 
                     // Update the monitorTextbox
-                    mapSimulation.updateMonitorTextbox(
-                        `Distance: ${distance} km\nETA: ${eta}`
-                    );
+                    displayUpdates(mapSimulation, distance, durée, eta, address);
 
                     if (map.getLayer("georoute")) {
-                        map.getSource("georoute").setData(route.geometry);
+                        map.getSource("georoute").setData(route.route.geometry);
                     } else {
                         map.addLayer({
                             id: "georoute",
@@ -184,7 +244,7 @@
 
         // Initialize markers
         const startPoint = [6.98799, 43.66121]; // Opio Rond point Coulouche 43.661221, 6.987799
-        const endPoint = [7.0821, 43.6686]; // La Colle-sur-Loup
+        endPoint = [7.0821, 43.6686]; // La Colle-sur-Loup
 
         new mapboxgl.Marker({color: "green"}).setLngLat(startPoint).addTo(map);
         new mapboxgl.Marker({color: "red"}).setLngLat(endPoint).addTo(map);
@@ -192,14 +252,20 @@
         simMar = new mapboxgl.Marker({color: "blue"}).setLngLat(startPoint).addTo(map);
 
         // Fetch and display the fastest route between startPoint and endPoint
-        const route = await getDirections(startPoint, endPoint);
+        const {route, distance, durée, eta, address} = await getDirections(startPoint, endPoint);
+
+        // get haversine distance between startPoint and endPoint
+        const haversineDis = haversineDistance(startPoint, endPoint);
+
+        // Update the monitorTextbox
+        displayUpdates(mapSimulation, distance, durée, eta, address);
 
         map.addLayer({
             id: "fixedRoute",
             type: "line",
             source: {
                 type: "geojson",
-                data: route.route.geometry,
+                data: route.geometry,
             },
             paint: {
                 "line-color": "rgba(0, 0, 255, 0.50)",
@@ -213,7 +279,7 @@
         georouteSource = map.getSource('georoute');
 
         // Calculate and set the bounding box of the route
-        coordinates = route.route.geometry.coordinates;
+        coordinates = route.geometry.coordinates;
 
         const bbox = coordinates.reduce(
             (bounds, coord) => {
@@ -281,33 +347,33 @@
 
             // If geolocation is active, get directions from current location to marker
             if (isGeolocating) {
-                getDirections(geo, marPoint).then(({route, distance, eta}) => {
+                console.log("geolocation is active, get directions from current location to marker");
+                getDirections(geo, marPoint).then(({route, distance, durée, eta, address}) => {
 
                     // Update the monitorTextbox
-                    mapSimulation.updateMonitorTextbox(
-                        `Distance: ${distance.toFixed(2)} km<br>ETA: ${eta.toFixed(2)} hours`
-                    );
+                    displayUpdates(mapSimulation, distance, durée, eta, address);
 
+                    // If the fixedRoute layer exists, update the source data
                     if (map.getLayer("georoute")) {
-                        // Remove the georoute layer
-                        map.removeLayer("georoute");
-                        map.removeSource("georoute"); // Also remove the source associated with the layer
+                        map.getSource("georoute").setData(route.route.geometry);
+                    } else {
+                        // Otherwise, add a new georoute layer
+                        map.addLayer({
+                            id: "georoute",
+                            type: "line",
+                            source: {
+                                type: "geojson",
+                                data: route.geometry,
+                            },
+                            paint: {
+                                "line-color": "rgba(0, 0, 255, 0.50)",
+                                "line-width": 6,
+                            },
+                        });
                     }
-                    // Add new route layer
-                    map.addLayer({
-                        id: "georoute",
-                        type: "line",
-                        source: {
-                            type: "geojson",
-                            data: route.route.geometry,
-                        },
-                        paint: {
-                            "line-color": "rgba(0, 255, 0, 0.50)",
-                            "line-width": 6,
-                        },
-                    });
                 });
             }
+
             // Start the fade-out  (apply css) effect after n milliseconds
             setTimeout(() => {
                 marker.getPopup().getElement().classList.add("fade-out");
@@ -427,6 +493,7 @@
     }
 
     let csrftoken = getCookie('csrftoken');
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -449,8 +516,10 @@
             this.simButton = null;
             this.coordinates = null;
             this.startTime = null;
+            this.elapsedTime = null;
             monitorTextbox = null;
             this.simulationInterval = null;
+            this.addr_interval = null;
             this.simMar = new mapboxgl.Marker({color: "#FF8C00"});
             this.savedPoint = null; // Declare savedPoint as a global variable
         }
@@ -467,6 +536,7 @@
             this.simButton.style.border = "1px solid grey";
             this.simButton.style.backgroundColor = backgroundColor; // Set initial button color
             this.simButton.addEventListener("click", () => this.toggleSimulation());
+            this.point = null;
 
             // Create the monitorTextbox
             monitorTextbox = document.createElement("div");
@@ -475,9 +545,9 @@
             monitorTextbox.style.bottom = "0px";
             monitorTextbox.style.left = "50%";
             monitorTextbox.style.transform = "translateX(-50%)";
-            monitorTextbox.style.backgroundColor = backgroundColor; // 60% transparent background
+            monitorTextbox.style.backgroundColor = backgroundColor;
             monitorTextbox.style.color = "rgba(66, 3, 3, 1)";
-            // monitorTextbox.style.fontSize = '16px';
+            monitorTextbox.style.fontSize = '16px';
             // monitorTextbox.style.fontWeight = 'bold';
             monitorTextbox.style.fontFamily = "monospace";
             monitorTextbox.style.textAlign = "center";
@@ -504,10 +574,10 @@
                 // Save the current position
                 this.savedPoint = simPoint;
 
+                clearInterval(this.addr_interval); // Stop updating the monitorTextbox
                 clearInterval(this.simulationInterval); // Stop the animation
+
                 simulationActive = false; // Toggle simulation state
-
-
             } else {
                 this.simButton.style.backgroundColor = "grey"; // Change button color to grey
                 simulationActive = true; // Toggle simulation state
@@ -542,40 +612,45 @@
                 this.simulationInterval = setInterval(() => {
                     // Calculate the elapsed time since the start of the animation in hours
                     if (!this.startTime) this.startTime = Date.now();
-                    const elapsedTime = (Date.now() - this.startTime) / 3600000;
+                    this.elapsedTime = (Date.now() - this.startTime) / 3600000;
 
                     // Calculate the distance the marker should have moved by this time
-                    const distance = 60 * elapsedTime;
+                    const distance = 60 * this.elapsedTime;
 
                     // Get the point at this distance along the interpolated line
-                    const point = getPointAtDistance(interpolatedCoordinates, distance);
+                    this.point = getPointAtDistance(interpolatedCoordinates, distance);
 
                     // Move the marker to this point
-                    simMar.setLngLat(point);
-                    simPoint = point; // Update simPoint
+                    simMar.setLngLat(this.point);
+                    // console.log("simMar", simMar.getLngLat());
+                    simPoint = this.point; // Update simPoint
 
                     // If the marker has reached the end of the line, stop the animation
-                    if (elapsedTime >= totalTime) {
+                    if (this.elapsedTime >= totalTime) {
+                        clearInterval(this.addr_interval);
                         clearInterval(this.simulationInterval);
                     }
                 }, 100);
+
+
+                // Update the monitorTextbox every 3 seconds
+                this.addr_interval = setInterval(async () => {
+                    // Get lnglat[] from simMar
+                    const lnglat = simMar.getLngLat();
+                    const strt = lnglat.toArray();
+
+                    getDirections(strt, endPoint)
+                        .then(({route, distance, durée, eta, address}) => {
+                            displayUpdates(mapSimulation, distance, durée, eta, address);
+                        })
+                        .catch(error => {
+                            console.error("Error getting directions:", error);
+                        });
+
+
+                }, 5000);
+
             }
-        }
-
-        getDistance(pointA, pointB) {
-            const R = 6371; // Radius of the earth in km
-            const dLat = this.deg2rad(pointB[1] - pointA[1]);
-            const dLng = this.deg2rad(pointB[0] - pointA[0]);
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(this.deg2rad(pointA[1])) * Math.cos(this.deg2rad(pointB[1])) *
-                Math.sin(dLng / 2) * Math.sin(dLng / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const distance = R * c; // Distance in km
-            return distance;
-        }
-
-        deg2rad(deg) {
-            return deg * (Math.PI / 180);
         }
 
         updateMonitorTextbox(text) {

@@ -31,6 +31,10 @@
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 {% csrf_token %}
 
+<input type="hidden" id="blue_ball" value="{% static 'img/blue_ball.png' %}">
+<input type="hidden" id="green_ball" value="{% static 'img/green_ball.png' %}">
+
+
 <div id="map"></div>
 
 <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
