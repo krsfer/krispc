@@ -331,7 +331,8 @@
     // Show attribution control values in console log
     map.attrControl = new mapboxgl.AttributionControl({
         compact: true,
-        customAttribution: "Made with ❤ by <a href='mailto://archer.chris@gmail.com'>Chris Archer</a>",
+        customAttribution: "Made with ❤ by <a href='mailto://archer.chris@gmail.com'>C. Archer</a> D’après une idée" +
+            " de P. Ricaud",
     });
     map.addControl(map.attrControl, "bottom-right");
 
