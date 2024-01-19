@@ -113,30 +113,41 @@
             .then((data) => {
                 const contacts = data.contacts;
 
+                function createMarkerAndPush(map, lngLat, name, address, el) {
+                    const marker = addMarkerToMap(map, lngLat, name, address, el);
+                    contacts_markers.push(marker);
+                    return marker;
+                }
+
+                function updateContactsAndWarnOnError(name, lngLat, errorMessage, contact) {
+                    updateContactsJson(name, lngLat).catch((error) => {
+                        console.warn(`${errorMessage} > ${error.message} <`, contact);
+                    });
+                }
+
                 // data is an array of objects with "name" and "address" properties
                 contacts.forEach((contact) => {
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+
                     let lngLat;
                     if (contact.coords.length !== 0) {
                         lngLat = contact.coords;
-                        const marker = addMarkerToMap(map, lngLat, contact.name, contact.address);
-                        contacts_markers.push(marker);
+                        createMarkerAndPush(map, lngLat, contact.name, contact.address, el);
                     } else {
                         getLngLatFromAddress(contact.address)
                             .then((lngLat) => {
-                                const marker = addMarkerToMap(map, lngLat, contact.name, contact.address);
-                                contacts_markers.push(marker);
-                                updateContactsJson(contact.name, lngLat);
-                            }).catch((error) => {
-                            console.warn('!!An error occurred using nominatim: >' + error.message + '<', contact);
-                            getLngLatFromAddress_mapbox(contact.address)
-                                .then((lngLat) => {
-                                    const marker = addMarkerToMap(map, lngLat, contact.name, contact.address);
-                                    contacts_markers.push(marker);
-                                    updateContactsJson(contact.name, lngLat);
-                                }).catch((error) => {
-                                console.warn('!!An error occurred using mapbox: >' + error.message + '<', contact);
+                                createMarkerAndPush(map, lngLat, contact.name, contact.address, el);
+                                updateContactsAndWarnOnError(contact.name, lngLat, '!!An error occurred using nominatim:', contact);
+                            })
+                            .catch((error) => {
+                                console.warn('!!An error occurred using nominatim: >' + error.message + '<', contact);
+                                getLngLatFromAddress_mapbox(contact.address)
+                                    .then((lngLat) => {
+                                        createMarkerAndPush(map, lngLat, contact.name, contact.address, el);
+                                        updateContactsAndWarnOnError(contact.name, lngLat, '!!An error occurred using mapbox:', contact);
+                                    });
                             });
-                        })
                     }
                 });
             });
@@ -332,9 +343,9 @@
         console.log("Map clicked at:", coordsTxt);
     });
 
-    function addMarkerToMap(map, lngLat, name, address) {
+    function addMarkerToMap(map, lngLat, name, address, el) {
         // Create a new marker and add it to the map
-        const marker = new mapboxgl.Marker()
+        const marker = new mapboxgl.Marker(el)
             .setLngLat(lngLat)
             .setPopup(
                 new mapboxgl.Popup().setHTML(`<h3>${name}</h3><p>${address}</p>`)

@@ -32,3 +32,27 @@ body {
 .mapboxgl-ctrl-logo {
     display: none !important;
 }
+
+.marker-pro {
+    background-image: url('../img/red_ball.png');
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding:  0;
+    opacity: 70%;
+}
+
+.marker {
+    background-image: url('../img/green_ball.png');
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding:  0;
+    opacity: 70%;
+}

@@ -52,15 +52,13 @@ def contacts_json(request):
 
 
 def update_contacts_json(request):
-    print('.')
-    print("in update_contacts_json")
-    print("request: ", request)
-    print("request.body: ", request.body)
-    print("request.POST: ", request.POST)
-    print("request.GET: ", request.GET)
-    print("request.GET.get('coords', None): ", request.GET.get('coords', None))
-    print("request.GET.get('name', None): ", request.GET.get('name', None))
-
+    """
+    Update contacts.json
+    :param request:
+    :type request:
+    :return:
+    :rtype:
+    """
     # Decode the byte string to a string
     body_unicode = request.body.decode('utf-8')
 

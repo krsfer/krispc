@@ -5,7 +5,8 @@
     "coords": [
       3.6874615,
       43.4113696
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Pat Brewster",
@@ -13,7 +14,8 @@
     "coords": [
       -0.2503028,
       51.5901585
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Philippe Lantin",
@@ -21,7 +23,8 @@
     "coords": [
       2.3712742,
       48.8806473
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Home",
@@ -29,7 +32,8 @@
     "coords": [
       7.0102149,
       43.642199
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Banasser, Khaled",
@@ -37,7 +41,8 @@
     "coords": [
       6.9324005,
       43.6473613
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Baszczowski, St\u00e9phanie",
@@ -45,7 +50,8 @@
     "coords": [
       7.0017972,
       43.5705294
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Fontaine, Simon",
@@ -53,7 +59,8 @@
     "coords": [
       6.9288689481173975,
       43.657844
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Saez-Pavigna, Paulette",
@@ -61,7 +68,8 @@
     "coords": [
       6.9328861,
       43.6465955
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Porcu, Jean Pierre",
@@ -69,7 +77,8 @@
     "coords": [
       6.9491889,
       43.582299
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Mariani, Sam",
@@ -77,7 +86,8 @@
     "coords": [
       6.949348,
       43.673764
-    ]
+    ],
+    "tags": []
   },
   {
     "name": "Formation En Agence",
@@ -85,6 +95,7 @@
     "coords": [
       7.082361233992904,
       43.601723449999994
-    ]
+    ],
+    "tags": []
   }
 ]
