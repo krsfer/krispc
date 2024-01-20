@@ -28,6 +28,8 @@ class DisplayList_btn {
 
         document.body.appendChild(this._list);
 
+        this._list.style.visibility = 'visible';
+
         await new Promise(resolve => {
             let opacity = 0;
             const interval = setInterval(() => {
@@ -122,6 +124,7 @@ class DisplayList_btn {
                         opacity -= 0.2;
                         this._list.style.opacity = opacity;
                         if (opacity <= 0) {
+                            this._list.style.visibility = 'hidden';
                             clearInterval(interval);
                             resolve();
                         }
