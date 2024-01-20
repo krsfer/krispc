@@ -15,6 +15,11 @@ body {
     opacity: 0 !important;
 }
 
+.fade-in {
+    transition: opacity 5s linear;
+    opacity: 1 !important;
+}
+
 .mapboxgl-ctrl-top-left .control-1 {
     margin-bottom: 30px;
 }

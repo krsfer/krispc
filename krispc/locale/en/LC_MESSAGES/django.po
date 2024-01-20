@@ -155,7 +155,7 @@ msgid "PTR_0490"
 msgstr ""
 "Modern life can be a challenge for adults who may not be completely computer "
 "literate. Technology is involved in almost every aspect of our lives: we "
-"need it for work, school, social and family contacts, day-to-day management, "
+"need it for work, school, social and family contacts_list, day-to-day management, "
 "online learning and even shopping."
 
 #: krispc/lst_products.py:64

@@ -32,6 +32,8 @@
 
     let endPoint = null;
 
+    let contacts_list = null;
+
     /*
         The smaller the following speed value, the slower the simulation will be, because it takes more iteration
          to move from the start point to the end point. Conversely, the larger the speed value, the faster the
@@ -111,7 +113,12 @@
         fetch("contacts_json")
             .then((response) => response.json())
             .then((data) => {
-                const contacts = data.contacts;
+                contacts_list = data.contacts;
+
+                // Add the control to the map
+                // const displayListControl = new DisplayList_btn(contacts_list);
+                // map.addControl(displayListControl, 'bottom-left');
+
 
                 function createMarkerAndPush(map, lngLat, name, address, el) {
                     const marker = addMarkerToMap(map, lngLat, name, address, el);
@@ -126,7 +133,7 @@
                 }
 
                 // data is an array of objects with "name" and "address" properties
-                contacts.forEach((contact) => {
+                contacts_list.forEach((contact) => {
                     const el = document.createElement('div');
                     el.className = 'marker';
 
@@ -223,7 +230,13 @@
                     displayUpdates(mapSimulation, distance, durée, eta, address);
 
                     if (map.getLayer("georoute")) {
-                        map.getSource("georoute").setData(route.route.geometry);
+                        if (route.route.geometry) {
+                            console.log("route.route.geometry", route.route.geometry);
+                            map.getSource("georoute").setData(route.route.geometry);
+                        } else {
+                            console.log("route.geometry", route.geometry);
+                            map.getSource("georoute").setData(route.geometry);
+                        }
                     } else {
                         map.addLayer({
                             id: "georoute",
@@ -252,6 +265,9 @@
         let displayAddressBtn = new DisplayAddress_btn();
         displayAddressBtn.addControls(map);
 
+        let displayListBtn = new DisplayList_btn();
+        displayListBtn.addControls(map);
+        console.log("contacts_list", contacts_list);
 
         // Initialize markers
         const startPoint = [6.98799, 43.66121]; // Opio Rond point Coulouche 43.661221, 6.987799
@@ -774,6 +790,231 @@
         }
     }
 
-})
-();
-//
+    class DisplayList_btn {
+        constructor() {
+            this._container = document.createElement('div');
+            this._btn = null;
+        }
+
+        addControls(map) {
+            this._btn = document.createElement('button');
+            this._btn.innerText = 'xxAddress';
+            this._btn.classList.add = 'address-button';
+            this._btn.style.position = "absolute";
+            this._btn.style.top = "200px";
+            this._btn.style.left = "10px";
+            this._btn.style.borderRadius = "10px";
+            this._btn.style.border = "1px solid grey";
+            this._btn.style.backgroundColor = backgroundColor;
+            this._btn.style.visibility = "visible";
+
+
+            this._container.appendChild(this._btn);
+            this.popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false
+            });
+
+            this._btn.onclick = this._showList.bind(this);
+
+            map.getContainer().appendChild(this._btn);
+        }
+
+        onAdd() {
+            this._container = document.createElement('div');
+            this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+            this._container.style.position = 'absolute';
+            this._container.style.top = '200px';
+            this._container.style.left = '50%';
+            this._container.style.transform = 'translateX(-50%)';
+            this._container.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+            this._container.style.border = 'none';
+            this._container.style.borderRadius = '10px';
+            this._container.style.overflow = 'auto';
+            this._container.style.display = 'none';
+            this._container.style.transition = 'bottom 3s';
+
+            // Create the button
+            this._btn = document.createElement('button');
+            this._btn.className = 'display-list-button';
+            this._btn.style.width = '40vw';
+            this._btn.style.height = '5vh';
+            this._btn.style.position = 'absolute';
+            this._btn.style.bottom = '0';
+            // this._btn.style.left = '50%';
+            // this._btn.style.transform = 'translateX(-50%)';
+            this._btn.style.backgroundColor = 'rgba(187,90,90,0.6)';
+            this._btn.style.border = 'none';
+            this._btn.style.borderRadius = '10px';
+            this._btn.innerText = 'Display List';
+            this._btn.style.cursor = 'pointer';
+
+            // Create the list container
+            this._list = document.createElement('div');
+            this._list.className = 'name-list';
+            // this._list.style.width = '50vw';
+            this._list.style.position = 'absolute';
+            this._list.style.bottom = '5vh';
+            this._list.style.left = '50%';
+            this._list.style.transform = 'translateX(-50%)';
+            this._list.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+            // this._list.style.border = '50px';
+            // this._list.style.borderColor = 'rgba(194, 181, 181)';
+            // this._list.style.borderColor = 'rgba(194, 0, 0)';
+            this._list.style.borderRadius = '10px';
+            // this._list.style.overflow = 'auto';
+            this._list.style.transition = 'bottom 3s';
+        }
+
+        onRemove() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+
+        async _showList() {
+            console.log("DisplayList_btn _showList");
+            console.log("contacts_list", contacts_list);
+            console.log("length of contacts_list", contacts_list.length);
+
+            if (!this._list) {
+                this.onAdd(this._map);
+            }
+
+            // Test to only add the list items if they haven't been added yet
+            if (this._list.childElementCount === 0) {
+                contacts_list.forEach((contact, index) => {
+                    const name = contact.name;
+                    const address = contact.address;
+                    const coords = contact.coords;
+                    console.log("name", name);
+
+                    const el = document.createElement('div');
+
+                    el.style.backgroundColor = backgroundColor;
+                    // Make a bottom border for all but the last list item
+                    if (index < contacts_list.length - 1) {
+                        el.style.borderBottom = '1px solid';
+                        el.style.borderBottomColor = 'rgb(240,240,240)';
+                    }
+                    // el.style.border = 'none';
+                    // el.style.borderRadius = '10px';
+                    el.style.overflow = 'auto';
+                    el.style.display = 'none';
+                    el.style.transition = 'bottom 3s';
+                    el.style.display = 'block';
+                    el.style.cursor = 'pointer';
+                    el.style.padding = '1px';
+                    el.style.margin = '5px';
+                    el.style.fontSize = '18px';
+                    el.style.fontFamily = 'monospace';
+                    el.style.color = 'rgba(8, 4, 244)';
+                    el.style.lineHeight = '1.0';
+
+                    el.innerText = name;
+
+                    // Add click event listener to each name. When clicked, the map will fly to the corresponding coordinates
+                    el.addEventListener('click', () => {
+                        map.flyTo({
+                            center: coords,
+                            zoom: 15,
+                            essential: true // this animation is considered essential with respect to prefers-reduced-motion
+                        });
+                        // Fade out the list over 3 seconds  instead of closing it when a name is clicked
+                        setTimeout(() => {
+                            this._list.style.display = 'none';
+                        }, 100);
+
+                    });
+
+
+                    // Add the el to the list container
+                    this._list.appendChild(el);
+                });
+            }
+
+
+            // Show the list container
+            this._list.style.display = 'block';
+
+            // Append the list to the body of the document
+            document.body.appendChild(this._list);
+        }
+    }
+
+
+    class DisplayxxList_btn {
+        constructor(DisplayList_btn) {
+            this._container = null;
+            this._btn = null;
+            this._list = null;
+        }
+
+        onAdd(map) {
+            this._map = map;
+
+            console.log("DisplayList_btn onAdd");
+
+            // Create the button
+            this._btn = document.createElement('button');
+            this._btn.className = 'display-list-button';
+            this._btn.style.width = '40vw';
+            this._btn.style.height = '5vh';
+            this._btn.style.position = 'absolute';
+            this._btn.style.bottom = '0';
+            // this._btn.style.left = '50%';
+            // this._btn.style.transform = 'translateX(-50%)';
+            this._btn.style.backgroundColor = 'rgba(187,90,90,0.6)';
+            this._btn.style.border = 'none';
+            this._btn.style.borderRadius = '10px';
+            this._btn.innerText = 'Display List';
+            this._btn.style.cursor = 'pointer';
+
+            // Create the list container
+            this._list = document.createElement('div');
+            this._list.className = 'name-list';
+            this._list.style.width = '40vw';
+            this._list.style.position = 'absolute';
+            this._list.style.bottom = '5vh';
+            this._list.style.left = '50%';
+            this._list.style.transform = 'translateX(-50%)';
+            this._list.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+            this._list.style.border = 'none';
+            this._list.style.borderRadius = '10px';
+            this._list.style.overflow = 'auto';
+            this._list.style.display = 'none';
+            this._list.style.transition = 'bottom 3s';
+
+            this._list.style.display = 'block';
+
+
+            // Add event listener to the button
+            this._btn.addEventListener('click', () => {
+                console.log("button clicked");
+
+                // Toggle the list's visibility
+                if (this._list.style.display === 'none') {
+                    this._list.style.display = 'block';
+                } else {
+                    this._list.style.display = 'none';
+                }
+            });
+
+            // Create the container and append the button and list to it
+            this._container = document.createElement('div');
+            this._container.style.position = 'relative';
+            this._container.appendChild(this._btn);
+            this._container.appendChild(this._list);
+
+            return this._container;
+        }
+
+        onRemove() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+
+        getDefaultPosition() {
+            return 'bottom-left';
+        }
+    }
+})();
