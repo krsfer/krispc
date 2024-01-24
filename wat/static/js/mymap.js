@@ -7,11 +7,11 @@
     // Define marPoint as a global variable
     let marPoint = null;
 
-    window.map = null; // ??
-
     let map = null; // Define map as a global variable
 
     let simPoint = null; // Declare simPoint as a global variable
+
+    window.simPoint = null;
 
     let simulationActive = false; // Declare simulationActive as a global variable
 
@@ -54,17 +54,19 @@
     let simMar = null; // Define simMar in an outer scope
 
     window.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+    const line_width = 12;
 
     const bb = document.getElementById('blue_ball').value; // eg. /static/watapp/img/blue_ball.png
     const gb = document.getElementById('green_ball').value;
 
-    const getAccessToken = async () => {
-        const response = await fetch('mapbox_token');
+    const getAccessToken = async (token_id) => {
+        const response = await fetch(token_id);
         const data = await response.json();
         return data.token;
     };
 
-    window.mapbox_token = await getAccessToken();
+    window.mapbox_token = await getAccessToken('mapbox_token');
+    window.googlemaps_token = await getAccessToken('googlemaps_token');
 
     // Get the selected style from local storage, or use a default style if no style is saved
     const selectedStyle = localStorage.getItem('selectedMapStyle') || 'mapbox://styles/mapbox/dark-v9';
@@ -76,7 +78,6 @@
         center: [6.9237, 43.6634], // Grasse 43.6634° N, 6.9237
         zoom: 7,
     });
-    window.map = map;
 
     map.on('load', async function () {
 
@@ -193,11 +194,6 @@
         geolocate.on('geolocate', function (e) {
             isGeolocating = true;
 
-            // Remove default geolocation marker
-            // const geolocateMarker = document.getElementsByClassName('mapboxgl-user-location-dot')[0];
-            // geolocateMarker.parentNode.removeChild(geolocateMarker);
-
-
             const bearing = e.coords.heading; // Get the heading from geolocation
 
             // Update the marker's rotation
@@ -249,7 +245,7 @@
                             },
                             paint: {
                                 "line-color": "rgba(255, 0, 255, 0.50)",
-                                "line-width": 6,
+                                "line-width": line_width,
                             },
                         });
                     }
@@ -264,7 +260,7 @@
         let contactsControl = new ContactsControl();
         contactsControl.addControls(map);
 
-        let displayAddressBtn = new DisplayAddress_btn();
+        let displayAddressBtn = new newDisplayAddress_btn();
         displayAddressBtn.addControls(map);
 
         let displayListBtn = new DisplayList_btn();
@@ -298,7 +294,7 @@
             },
             paint: {
                 "line-color": "rgba(0, 0, 255, 0.50)",
-                "line-width": 6,
+                "line-width": line_width,
             },
         });
         map.setLayoutProperty('fixedRoute', 'visibility', 'none');
@@ -397,7 +393,7 @@
                             },
                             paint: {
                                 "line-color": "rgba(0, 0, 255, 0.50)",
-                                "line-width": 6,
+                                "line-width": ine_width,
                             },
                         });
                     }
@@ -573,6 +569,7 @@
             // monitorTextbox.style.fontWeight = 'bold';
             // monitorTextbox.style.height = '100px';
             // monitorTextbox.style.width = '200px';
+            monitorTextbox.classList.add("monitor-textbox");
             monitorTextbox.innerText = "";
             monitorTextbox.style.backgroundColor = backgroundColor;
             monitorTextbox.style.border = "1px solid";
@@ -584,7 +581,7 @@
             monitorTextbox.style.fontSize = '18px';
             monitorTextbox.style.lineHeight = "0.9";
             monitorTextbox.style.overflow = "auto";
-            monitorTextbox.style.padding = "0px";
+            monitorTextbox.style.padding = "10px";
             monitorTextbox.style.position = "absolute";
             monitorTextbox.style.textAlign = "center";
             monitorTextbox.style.left = "50%";
@@ -656,6 +653,7 @@
                     simMar.setLngLat(this.point);
                     // console.log("simMar", simMar.getLngLat());
                     simPoint = this.point; // Update simPoint
+                    window.simPoint = simPoint; // Update window.simPoint
 
                     // If the marker has reached the end of the line, stop the animation
                     if (this.elapsedTime >= totalTime) {

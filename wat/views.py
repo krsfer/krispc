@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from _main.settings import MAPBOX_TOKEN
+from _main.settings import GOOGLE_MAPS_API_KEY, MAPBOX_TOKEN
 
 
 def index(request):
@@ -28,6 +28,18 @@ def mapbox_token(request):
     :rtype:
     """
     token = MAPBOX_TOKEN
+    return JsonResponse({'token': token})
+
+
+def googlemaps_token(request):
+    """
+    Get googlemaps  token from .env
+    :param request:
+    :type request:
+    :return:
+    :rtype:
+    """
+    token = GOOGLE_MAPS_API_KEY
     return JsonResponse({'token': token})
 
 

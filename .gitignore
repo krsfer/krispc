@@ -8,6 +8,8 @@ venv/
 .idea/
 .env
 
+example.json
+
 # Django files
 staticfiles/
 db.sqlite3

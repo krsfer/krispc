@@ -37,17 +37,12 @@ async function getAddressFromLngLat_gouv(startLat, startLng) {
     // Use the Gouv API to get the longitude and latitude from the address.
     // For example https://api-adresse.data.gouv.fr/reverse/?lon=6.98799&lat=43.66121&type=street&limit=1
     const url = `https://api-adresse.data.gouv.fr/reverse/?lon=${startLng}&lat=${startLat}&type=street&limit=1`;
-
     try {
         const response = await fetch(url);
         const data = await response.json();
         if (data.features.length === 0) {
             throw new Error('No matches found for this address:');
         }
-
-
-        console.log('data', data);
-
         // Get housenumber if it exists
         let housenumber = ''
         if (data.features[0].properties.housenumber) {
@@ -169,7 +164,10 @@ async function getDirections(startPoint, endPoint) {
         if (!data.routes || data.routes.length === 0) {
             throw new Error("No routes found");
         }
-        let address = await getAddressFromLngLat_gouv(startLat, startLng);
+        // let address = await getAddressFromLngLat_gouv(startLat, startLng);
+
+        const address = await window.useGooglemaps(startLat, startLng);
+        console.log('address', address);
 
         // Get the first route from the array of routes
         const route = data.routes[0];

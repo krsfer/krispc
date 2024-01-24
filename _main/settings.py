@@ -56,6 +56,8 @@ IS_HEROKU_APP = env.str("DYNO", default="") and not env.str("CI", default="")
 CSRF_TRUSTED_ORIGINS = ['https://krispc-c2edb2fe441a.herokuapp.com', 'https://krispc.fr', 'https://www.krispc.fr']
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
+GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
+
 
 
 DEBUG = False
