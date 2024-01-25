@@ -93,10 +93,10 @@ async function getAddressFromLngLat(startLat, startLng) {
     // Use Nominatim to get the address of the starting point. If successful, set the `address` variable to the address
     try {
         const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${startLat}&lon=${startLng}`;
-        console.log('url', url);
+        // console.log('url', url);
         const response = await fetch(url);
         const data = await response.json();
-        console.log('data', data);
+        // console.log('data', data);
 
         let name = ''
         // If keys name and road exist in data, then if values of name and route are equal, set local name variable
@@ -128,11 +128,11 @@ async function getAddressFromLngLat(startLat, startLng) {
             village += ", " + data.address.municipality;
         }
 
-        console.log('village', village);
+        // console.log('village', village);
         // Set local address variable to name and village
         address = name + village;
 
-        console.log('xx', address);
+        // console.log('xx', address);
 
     } catch (error) {
         console.error("Error getting address:", error);
@@ -167,7 +167,7 @@ async function getDirections(startPoint, endPoint) {
         // let address = await getAddressFromLngLat_gouv(startLat, startLng);
 
         const address = await window.useGooglemaps(startLat, startLng);
-        console.log('address', address);
+        // console.log('address', address);
 
         // Get the first route from the array of routes
         const route = data.routes[0];

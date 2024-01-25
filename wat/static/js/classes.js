@@ -142,7 +142,7 @@ class DisplayList_btn {
     }
 
     async _toggleList() {
-        console.log('toggle list visible?', this._listVisible);
+        // console.log('toggle list visible?', this._listVisible);
 
         if (!this._list) {
             this.onAdd(this._map);
@@ -170,7 +170,7 @@ window.useGooglemaps = async function (lat, lng) {
 
     let address = 'No address found';
 
-    console.log('g_url', url);
+    // console.log('g_url', url);
 
     // const response = await fetch(url);
     // const data = await response.json();
@@ -178,13 +178,13 @@ window.useGooglemaps = async function (lat, lng) {
     const data = await fetch(url)
         .then(response => response.json());
 
-    console.log('g_data', data);
+    // console.log('g_data', data);
 
     if (data.status === 'OK') {
-        console.log('g_data.results[0].address_components', data.results[0].address_components);
-        console.log('g_data.results[0].address_components[0].long_name', data.results[0].address_components[0].long_name);
-        console.log('g_data.results[0].address_components[1].short_name', data.results[0].address_components[1].short_name);
-        console.log('g_data.results[0].address_components[2].long_name', data.results[0].address_components[2].long_name);
+        // console.log('g_data.results[0].address_components', data.results[0].address_components);
+        // console.log('g_data.results[0].address_components[0].long_name', data.results[0].address_components[0].long_name);
+        // console.log('g_data.results[0].address_components[1].short_name', data.results[0].address_components[1].short_name);
+        // console.log('g_data.results[0].address_components[2].long_name', data.results[0].address_components[2].long_name);
 
         address = data.results[0].address_components[0].long_name + ' '
             + data.results[0].address_components[1].short_name + ', '
@@ -237,7 +237,7 @@ class newDisplayAddress_btn {
         async function useMapbox(lng, lat) {
             const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${window.mapbox_token}`;
 
-            console.log('url', url);
+            // console.log('url', url);
 
             const response = await fetch(url);
             const data = await response.json();
@@ -262,7 +262,7 @@ class newDisplayAddress_btn {
                 }
             }, 100);
         } else {
-            console.log('window.simPoint is null');
+            // console.log('window.simPoint is null');
         }
     }
 }

@@ -1,3 +1,23 @@
+function createOrUpdateLineLayer(map, route, line_width, line_color) {
+    if (map.getLayer("georoute")) {
+        map.getSource("georoute").setData(route.geometry);
+    } else {
+        // Otherwise, add a new georoute layer
+        map.addLayer({
+            id: "georoute",
+            type: "line",
+            source: {
+                type: "geojson",
+                data: route.geometry,
+            },
+            paint: {
+                "line-color": line_color,
+                "line-width": line_width,
+            },
+        });
+    }
+}
+
 (async function () {
     'use strict';
 
@@ -32,6 +52,7 @@
     let routeSource = null;
     let georouteSource = null;
 
+    let startPoint = null;
     let endPoint = null;
 
     window.contacts_list = null;
@@ -81,7 +102,8 @@
 
     map.on('load', async function () {
 
-        console.log("map.on('load')");
+        let travelled = []; // Declare travelled as a global variable
+
         // Add an image to use as a custom marker
         map.loadImage(bb, function (error, image) {
 
@@ -176,6 +198,9 @@
         });
         map.addControl(geolocate, 'top-right');
 
+        geolocate.on('trackuserlocationstart', function () {
+        });
+
         geolocate.on('trackuserlocationend', function () {
             // After adding the control, access the button element
             const geolocateButton = document.getElementsByClassName('mapboxgl-ctrl-geolocate')[0];
@@ -195,6 +220,65 @@
             isGeolocating = true;
 
             const bearing = e.coords.heading; // Get the heading from geolocation
+
+            let currentBearing = "no bearing"; // Set currentBearing to bearing
+            // test if bearing is null
+            if (!bearing === null) {
+                currentBearing = bearing;
+            }
+            console.log("bearing", bearing);
+            // Popup at the marker to show bearing
+            const popup = new mapboxgl.Popup({closeOnClick: false})
+                .setLngLat([e.coords.longitude, e.coords.latitude])
+                .setHTML(`<h3>${currentBearing}</h3>`)
+                .addTo(map);
+
+
+            // Set the current position into the travelled array if its length is 0 else purh it
+            if (travelled.length === 0) {
+                travelled = [e.coords.longitude, e.coords.latitude];
+            } else {
+                travelled.push([e.coords.longitude, e.coords.latitude]);
+            }
+
+            // Zoom to the geolocated position
+            map.flyTo({
+                center: [e.coords.longitude, e.coords.latitude],
+                zoom: 15,
+                essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+            });
+
+            // Update the line with id `travelled` described by this._currentPoint array, if the line exists, else
+            // create it
+            if (map.getLayer("travelled")) {
+                map.getSource("travelled").setData({
+                    type: "Feature",
+                    geometry: {
+                        type: "LineString",
+                        coordinates: travelled,
+                    },
+                });
+            } else {
+                map.addLayer({
+                    id: "travelled",
+                    type: "line",
+                    source: {
+                        type: "geojson",
+                        data: {
+                            type: "Feature",
+                            geometry: {
+                                type: "LineString",
+                                coordinates: travelled,
+                            },
+                        },
+                    },
+                    paint: {
+                        "line-color": "rgba(15,17,217,0.5)",
+                        "line-width": line_width,
+                    },
+                });
+            }
+
 
             // Update the marker's rotation
             map.setLayoutProperty('custom_marker_layer', 'icon-rotate', bearing);
@@ -220,35 +304,37 @@
             geo = [e.coords.longitude, e.coords.latitude]; // Update geo
 
             if (marPoint) {
+
+                // Close the selected marker’s popup
+                contacts_markers.forEach((marker) => {
+                    if (marker.getPopup().isOpen()) {
+                        marker.togglePopup();
+                    }
+                });
+
                 // Fetch the fastest  route from geolocated position to marPoint in pink with a width of 2px, or
                 // updat the route if it already exists on the map
                 getDirections(geo, marPoint).then(({route, distance, durée, eta, address}) => {
 
+                    // let currentBearing = "no bearing"; // Set currentBearing to bearing
+                    // // test if bearing is null
+                    // if (!bearing === null) {
+                    //     currentBearing = bearing;
+                    // }
+                    // console.log("bearing", bearing);
+                    // // Popup at the marker to show bearing
+                    // const popup = new mapboxgl.Popup({closeOnClick: false})
+                    //     .setLngLat(marPoint)
+                    //     .setHTML(`<h3>${currentBearing}</h3>`)
+                    //     .addTo(map);
+
                     // Update the monitorTextbox
                     displayUpdates(mapSimulation, distance, durée, eta, address);
 
-                    if (map.getLayer("georoute")) {
-                        if (route.route.geometry) {
-                            console.log("route.route.geometry", route.route.geometry);
-                            map.getSource("georoute").setData(route.route.geometry);
-                        } else {
-                            console.log("route.geometry", route.geometry);
-                            map.getSource("georoute").setData(route.geometry);
-                        }
-                    } else {
-                        map.addLayer({
-                            id: "georoute",
-                            type: "line",
-                            source: {
-                                type: "geojson",
-                                data: route.geometry,
-                            },
-                            paint: {
-                                "line-color": "rgba(255, 0, 255, 0.50)",
-                                "line-width": line_width,
-                            },
-                        });
-                    }
+                    let routeGeometrySource = route.route ? route.route : route;
+
+                    createOrUpdateLineLayer(map, routeGeometrySource, line_width, "rgb(120,0,121)");
+
                 });
             }
         });
@@ -268,7 +354,7 @@
         console.log("contacts_list", contacts_list);
 
         // Initialize markers
-        const startPoint = [6.98799, 43.66121]; // Opio Rond point Coulouche 43.661221, 6.987799
+        startPoint = [6.98799, 43.66121]; // Opio Rond point Coulouche 43.661221, 6.987799
         endPoint = [7.0821, 43.6686]; // La Colle-sur-Loup
 
         new mapboxgl.Marker({color: "green"}).setLngLat(startPoint).addTo(map);
@@ -293,7 +379,8 @@
                 data: route.geometry,
             },
             paint: {
-                "line-color": "rgba(0, 0, 255, 0.50)",
+                // "line-color": "rgba(0, 0, 255, 0.50)",
+                "line-color": "rgb(255,0,0)",
                 "line-width": line_width,
             },
         });
@@ -373,30 +460,37 @@
 
             // If geolocation is active, get directions from current location to marker
             if (isGeolocating) {
-                console.log("geolocation is active, get directions from current location to marker");
                 getDirections(geo, marPoint).then(({route, distance, durée, eta, address}) => {
 
                     // Update the monitorTextbox
                     displayUpdates(mapSimulation, distance, durée, eta, address);
 
                     // If the fixedRoute layer exists, update the source data
-                    if (map.getLayer("georoute")) {
-                        map.getSource("georoute").setData(route.geometry);
-                    } else {
-                        // Otherwise, add a new georoute layer
-                        map.addLayer({
-                            id: "georoute",
-                            type: "line",
-                            source: {
-                                type: "geojson",
-                                data: route.geometry,
-                            },
-                            paint: {
-                                "line-color": "rgba(0, 0, 255, 0.50)",
-                                "line-width": ine_width,
-                            },
+                    createOrUpdateLineLayer(map, route, line_width, "rgb(120,0,121)");
+
+                    // get directions from current location to START marker
+                    getDirections(geo, startPoint).then(({route, distance, durée, eta, address}) => {
+                        // Update the monitorTextbox
+                        displayUpdates(mapSimulation, distance, durée, eta, address);
+
+                        // Zoom to the start point
+                        map.flyTo({
+                            center: startPoint,
+                            zoom: 15,
+                            essential: true,
                         });
-                    }
+
+                        // If the fixedRoute layer exists, update the source data
+                        // createOrUpdateLineLayer(map, route, line_width, "rgba(50,50,93,0.5)");
+
+                    });
+                    // get directions from current location to END marker
+                    // getDirections(geo, marPoint).then(({route, distance, durée, eta, address}) => {
+                    //     // Update the monitorTextbox
+                    //     displayUpdates(mapSimulation, distance, durée, eta, address);
+                    //     // If the fixedRoute layer exists, update the source data
+                    //     // createOrUpdateLineLayer(map, route, line_width, "rgba(50,50,93,0.5)");
+                    // });
                 });
             }
 
@@ -595,6 +689,8 @@
             map.getContainer().appendChild(monitorTextbox);
         }
 
+        _currentPoint = [];
+
         toggleSimulation() {
 
 
@@ -655,6 +751,10 @@
                     simPoint = this.point; // Update simPoint
                     window.simPoint = simPoint; // Update window.simPoint
 
+                    // Pan to the marker's location
+                    if (!isGeolocating)
+                        map.panTo(this.point);
+
                     // If the marker has reached the end of the line, stop the animation
                     if (this.elapsedTime >= totalTime) {
                         clearInterval(this.addr_interval);
@@ -669,6 +769,42 @@
                     const lnglat = simMar.getLngLat();
                     const strt = lnglat.toArray();
 
+                    // Save the current position by pushing it to this._currentPoint array
+                    this._currentPoint.push(strt)
+
+                    // Update the line with id `traversed` described by this._currentPoint array, if the line
+                    // exists, else create it
+
+                    if (map.getLayer("traversed")) {
+                        map.getSource("traversed").setData({
+                            type: "Feature",
+                            geometry: {
+                                type: "LineString",
+                                coordinates: this._currentPoint,
+                            },
+                        });
+                    } else {
+                        map.addLayer({
+                            id: "traversed",
+                            type: "line",
+                            source: {
+                                type: "geojson",
+                                data: {
+                                    type: "Feature",
+                                    geometry: {
+                                        type: "LineString",
+                                        coordinates: this._currentPoint,
+                                    },
+                                },
+                            },
+                            paint: {
+                                "line-color": "rgba(255,59,59,0.5)",
+                                "line-width": line_width,
+                            },
+                        });
+                    }
+
+
                     getDirections(strt, endPoint)
                         .then(({route, distance, durée, eta, address}) => {
                             displayUpdates(mapSimulation, distance, durée, eta, address);
@@ -676,8 +812,6 @@
                         .catch(error => {
                             console.error("Error getting directions:", error);
                         });
-
-
                 }, 5000);
 
             }
