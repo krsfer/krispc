@@ -219,18 +219,25 @@ function createOrUpdateLineLayer(map, route, line_width, line_color) {
         geolocate.on('geolocate', function (e) {
             isGeolocating = true;
 
+            console.log("e", e);
             const bearing = e.coords.heading; // Get the heading from geolocation
 
+            // Show accuracy
+            const accuracy = e.coords.accuracy;
+            console.log("accuracy", accuracy);
+
             let currentBearing = "no bearing"; // Set currentBearing to bearing
+
             // test if bearing is null
             if (!bearing === null) {
                 currentBearing = bearing;
             }
             console.log("bearing", bearing);
+
             // Popup at the marker to show bearing
             const popup = new mapboxgl.Popup({closeOnClick: false})
                 .setLngLat([e.coords.longitude, e.coords.latitude])
-                .setHTML(`<h3>${currentBearing}</h3>`)
+                .setHTML(`<h3>speed: ${e.coords.speed}mps heading: ${currentBearing}° accuracy: ${e.coords.accuracy}m</h3>`)
                 .addTo(map);
 
 
