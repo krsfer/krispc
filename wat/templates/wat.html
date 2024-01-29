@@ -38,6 +38,8 @@
 
 <div id="map"></div>
 
+
+{% comment %}
 <script>
     (g => {
         var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__",
@@ -63,7 +65,7 @@
         // Add other bootstrap parameters as needed, using camel case.
     });
 </script>
-
+{% endcomment %}
 
 <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
 <script src="{% static 'js/classes.js' %}"></script>

@@ -260,8 +260,21 @@ function displayUpdates(mapSimulation, distance, durée, eta, address) {
         address = 'nono';
     }
 
-
     mapSimulation.updateMonitorTextbox(
         `${distance}\nDuration ${durée}\neta ${eta}\n${address}`
     );
 }
+
+window.convertMetersPerSecondToKilometersPerHour = function (metersPerSecond) {
+    return (metersPerSecond * 3.6).toFixed(0);
+}
+
+// window.createOrUpdateLineLayer = function (map, routeName, route, line_width, line_color) {
+//     console.log('createOrUpdateLineLayer', routeName, route, line_width, line_color);
+//     if (map.getLayer(routeName)) {
+//         map.getSource(routeName).setData(route.geometry);
+//     } else {
+//         // Otherwise, add a new georoute layer
+//         console.error('DoNothing???');
+//     }
+// }
