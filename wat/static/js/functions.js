@@ -249,7 +249,7 @@ function lerp(start, end, t) {
     return start * (1 - t) + end * t;
 }
 
-function displayUpdates(mapSimulation, distance, durée, eta, address) {
+function xdisplayUpdates(mapSimulation, distance, durée, eta, address) {
     // Update the monitorTextbox with the distance, duration, and address
 
     // Remove numéro de département from address if address is not null it contains the numéro
@@ -264,6 +264,21 @@ function displayUpdates(mapSimulation, distance, durée, eta, address) {
         `${distance}\nDuration ${durée}\neta ${eta}\n${address}`
     );
 }
+
+function displayUpdates(monitor_textbox, distance, durée, eta, address) {
+    // Update the monitorTextbox with the distance, duration, and address
+
+    // Remove numéro de département from address if address is not null it contains the numéro
+    if (address) {
+        const regex = / \b\d{5}\b /g;
+        address = address.replace(regex, ',');
+    } else {
+        address = 'nono';
+    }
+
+    monitor_textbox.monitorTextbox.innerText = `${distance}\nDuration ${durée}\neta ${eta}\n${address}`;
+}
+
 
 window.convertMetersPerSecondToKilometersPerHour = function (metersPerSecond) {
     return (metersPerSecond * 3.6).toFixed(0);

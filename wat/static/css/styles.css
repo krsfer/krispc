@@ -10,6 +10,11 @@ body {
     width: 100%;
 }
 
+.xmapboxgl-popup-content.fade-out {
+    transition: opacity 1s ease-out;
+    opacity: 0;
+}
+
 .fade-out {
     opacity: 0;
     transition: opacity 5s ease-out;
@@ -60,4 +65,8 @@ body {
     cursor: pointer;
     padding:  0;
     opacity: 70%;
+}
+
+select option {
+  font-size: 2vw;
 }

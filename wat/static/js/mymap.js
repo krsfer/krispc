@@ -54,7 +54,7 @@
 
     let simMar = null; // Define simMar in an outer scope
 
-    window.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+    window.backgroundColor = 'rgba(255, 255, 255, 0.3)';
     const line_width = 12;
 
     const bb = document.getElementById('blue_ball').value; // eg. /static/watapp/img/blue_ball.png
@@ -93,19 +93,29 @@
 
     // Function to add a contact marker to the map
     function addMarker(map, lngLat, name, address, el) {
-        // If the marker already exists, return it, else create it
+        // If the marker already exists, return it, else create it and add it to contacts_markers
         const marker = contacts_markers.find((marker) => {
             return marker.getLngLat().lng === lngLat[0] && marker.getLngLat().lat === lngLat[1];
         }) || new mapboxgl.Marker(el)
             .setLngLat(lngLat)
-            // .setPopup(
-            //     new mapboxgl.Popup()
-            //         .setHTML(`<h3>${name}</h3><p>${address}</p>`)
-            // )
+            .setPopup(
+                new mapboxgl.Popup()
+                    .setHTML(`<h3>${name}</h3><p>${address}</p>`)
+            )
             .addTo(map);
+        // Add the marker to the contacts_markers array
+        contacts_markers.push(marker);
 
         // Add click event listener to the marker
         marker.getElement().addEventListener('click', function () {
+
+            // On click, apply the fade-out class the marker's popup
+            setTimeout(() => {
+                marker.getPopup().getElement().classList.add("fade-out");
+            }, 500);
+            marker.togglePopup();
+
+
             console.log(`Marker at ${lngLat} was clicked.`);
 
             console.log("lngLat", lngLat);
@@ -114,8 +124,6 @@
             const key = `${lngLat[0].toFixed(2)}_${lngLat[1].toFixed(2)}`;
             console.log("contacts_markers_dict[lngLat]", contacts_markers_dict[key]);
 
-
-            //  _content.id
 
             // show the marker id
             console.log("marker.getElement().id", marker.getElement().id);
@@ -221,12 +229,6 @@
             // Remove spaces from the contact name and concatenate it with the word "_route"
             const routeName = createRouteName(contact.name);
 
-
-            // if (isGeolocating) {
-            //     console.log("contact name", contact.name);
-            // }
-
-
             const startPoint = contact.coords;
             const endPoint = [startPoint[0], startPoint[1] + 0.045045045]; // 5 km to the north
             const numSegments = 50;
@@ -320,6 +322,7 @@
         map.on('load', function () {
             addContactMarkers(map); // Add the contact markers when the map initially loads
             addRouteLayers(map); // Add the route layer when the map initially loads
+
         });
 
         map.on('style.load', function () {
@@ -356,7 +359,7 @@
         map.on('click', (e) => {
             const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
             const coordsTxt = JSON.stringify(END);
-            navigator.clipboard.writeText(coordsTxt).then(r => console.log());
+            // navigator.clipboard.writeText(coordsTxt).then(r => console.log());
             console.log("Map clicked at:", coordsTxt);
         });
 
@@ -378,6 +381,15 @@
             map.on('mouseup', () => {
                 clearInterval(timer);
             });
+
+            map.on('move', function () {
+                // Remove all popups when the map is moved
+                contacts_markers.forEach((marker) => {
+                    if (marker.getPopup().isOpen()) {
+                        marker.togglePopup();
+                    }
+                });
+            });
         });
 
         // Add style selector control to the map
@@ -391,10 +403,10 @@
             positionOptions: {
                 enableHighAccuracy: true
             },
-            fitBoundsOptions: {
-                zoom: 11,
-                maxZoom: 11
-            },
+            // fitBoundsOptions: {
+            //     zoom: 11,
+            //     maxZoom: 11
+            // },
             trackUserLocation: true,
             showAccuracyCircle: true,
             showUserLocation: true,
@@ -418,7 +430,7 @@
         });
 
         let geo_travelled = []; // Declare geo_travelled as a global variable
-        // let geo_popup = null; // Declare geo_popup as a global variable
+        let geo_popup = null; // Declare geo_popup as a global variable
         let geo_times = 0; // Declare geo_times as a global variable
 
         geolocate.on('geolocate', function (e) {
@@ -439,20 +451,25 @@
                 accuracy = e.coords.accuracy + ' m'
 
 
-            // if (geo_popup) {
-            //     setTimeout(() => {
-            //         if (isGeolocating) {
-            //             geo_popup.getElement().classList.add("fade-out");
-            //         }
-            //     }, 500)
-            //     geo_popup.remove();
-            // }
+            if (geo_popup) {
+                setTimeout(() => {
+                    geo_popup.getElement().classList.add("fade-out");
+                }, 500)
+                geo_popup.remove();
+            } else {
+                console.log("geo_popup does not exist");
+            }
 
             // Popup at the marker to show speed, heading and accuracy
-            // geo_popup = new mapboxgl.Popup({closeOnClick: true})
-            //     .setLngLat([e.coords.longitude, e.coords.latitude])
-            //     .setHTML(`<h4>geo_times: ${geo_times} speed: ${speed} heading: ${heading} accuracy: ${accuracy}</h4>`)
-            //     .addTo(map);
+            geo_popup = new mapboxgl.Popup({closeOnClick: true})
+                .setLngLat([e.coords.longitude, e.coords.latitude])
+                .setHTML(`<h4>geo_times: ${geo_times} speed: ${speed} heading: ${heading} accuracy: ${accuracy}</h4>`)
+                .addTo(map);
+
+            // Fade out the popup after 5 seconds
+            setTimeout(() => {
+                geo_popup.getElement().classList.add("fade-out");
+            }, 1000);
 
 
             // Set the current position into the geo_travelled array if its length is 0 else purh it
@@ -480,13 +497,13 @@
                 getDirections([e.coords.longitude, e.coords.latitude], contact_position)
                     .then(({route, distance, durée, eta, address}) => {
 
-                        // Update the monitorTextbox
-                        // displayUpdates(mapSimulation, distance, durée, eta, address);
+                        // Create an instance of Monitor_textbox if it does not exist
+                        if (!monitorTextbox)
+                            monitorTextbox = new Monitor_textbox(map, window.backgroundColor);
 
-                        // console log selected contact’s name
-                        console.log("################### contact_name", contact_name);
-                        console.warn("routeName", contact_name);
-                        // resetRoutesExceptSelected(map, contact_name);
+                        // Update the monitorTextbox with the instance of Monitor_textbox, the distance, durée, eta and
+                        // address
+                        displayUpdates(monitorTextbox, distance, durée, eta, address);
 
 
                         // Use contact_position as key to get the routeName from contacts_markers_dict
@@ -500,6 +517,34 @@
 
 
     initializeMap(); // Call the function to initialize the map
+
+    class Monitor_textbox {
+        constructor(map, backgroundColor) {
+            this.monitorTextbox = document.createElement("div");
+            this.monitorTextbox.classList.add("monitor-textbox");
+            this.monitorTextbox.innerText = "";
+            this.monitorTextbox.style.backgroundColor = backgroundColor;
+            this.monitorTextbox.style.border = "1px solid";
+            this.monitorTextbox.style.borderColor = "rgba(194, 181, 181)";
+            this.monitorTextbox.style.borderRadius = "10px";
+            this.monitorTextbox.style.bottom = "5px";
+            // add shadow to the text
+            this.monitorTextbox.style.textShadow = "1px 1px 1px #fff";
+            this.monitorTextbox.style.color = "rgb(0,0,0)";
+            this.monitorTextbox.style.fontSize = '25px';
+            this.monitorTextbox.style.lineHeight = "0.9";
+            this.monitorTextbox.style.overflow = "auto";
+            this.monitorTextbox.style.padding = "10px";
+            this.monitorTextbox.style.position = "absolute";
+            this.monitorTextbox.style.textAlign = "center";
+            this.monitorTextbox.style.left = "50%";
+            this.monitorTextbox.style.transform = "translateX(-50%)";
+            this.monitorTextbox.style.zIndex = "1";
+
+            // Append the monitorTextbox to the map's container
+            map.getContainer().appendChild(this.monitorTextbox);
+        }
+    }
 
 
     /*map = new mapboxgl.Map({
@@ -1291,106 +1336,106 @@
         }
     */
 
-    class ContactsControl {
-        constructor() {
-            this.contact_list_toggle_btn = null;
-        }
-
-        addControls(map) {
-            this.contact_list_toggle_btn = document.createElement("button");
-            this.contact_list_toggle_btn.innerText = "Contacts";
-            this.contact_list_toggle_btn.classList.add("contacts-button");
-            this.contact_list_toggle_btn.style.position = "absolute";
-            this.contact_list_toggle_btn.style.top = "40px";
-            this.contact_list_toggle_btn.style.left = "10px";
-            this.contact_list_toggle_btn.style.borderRadius = "10px";
-            this.contact_list_toggle_btn.style.border = "1px solid grey";
-            this.contact_list_toggle_btn.style.backgroundColor = backgroundColor;
-            this.contact_list_toggle_btn.style.visibility = "visible";
-
-            this.contact_list_toggle_btn.addEventListener("click", () => {
-                this.toggleVisibility();
-            });
-
-            // Append the button to the map's container
-            map.getContainer().appendChild(this.contact_list_toggle_btn);
-        }
-
-        toggleVisibility() {
-            console.log("toggleVisibility");
-            // Toggle visibility of contact markers
-
-            // Test if markers array is empty
-            if (contacts_markers.length === 0) {
-                console.error("markers array is empty");
-            } else {
-                let anyVisible = true;
-                contacts_markers.forEach((marker) => {
-                    marker._element.hidden = !marker._element.hidden;
-                    anyVisible = marker._element.hidden;
-                });
-
-                this.contact_list_toggle_btn.style.backgroundColor = anyVisible ? 'grey' : backgroundColor;
-            }
-        }
-    }
-
-    class DisplayAddress_btn {
-        constructor() {
-            this._container = document.createElement('div');
-            this.sim_address_btn = null;
-        }
-
-        addControls(map) {
-            this.sim_address_btn = document.createElement('button');
-            this.sim_address_btn.innerText = 'Address';
-            this.sim_address_btn.classList.add = 'address-button';
-            this.sim_address_btn.style.position = "absolute";
-            this.sim_address_btn.style.top = "70px";
-            this.sim_address_btn.style.left = "10px";
-            this.sim_address_btn.style.borderRadius = "10px";
-            this.sim_address_btn.style.border = "1px solid grey";
-            this.sim_address_btn.style.backgroundColor = backgroundColor;
-            this.sim_address_btn.style.visibility = "visible";
-
-
-            this._container.appendChild(this.sim_address_btn);
-            // this.popup = new mapboxgl.Popup({
-            //     closeButton: false,
-            //     closeOnClick: true
-            // });
-
-            this.sim_address_btn.onclick = this._showAddress.bind(this);
-
-            map.getContainer().appendChild(this.sim_address_btn);
-        }
-
-        onRemove() {
-            this._container.parentNode.removeChild(this._container);
-            this._map = undefined;
-        }
-
-        async _showAddress() {
-            if (simPoint) { // Check if simPoint is not null
-                const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${simPoint[0]},${simPoint[1]}.json?access_token=${window.mapbox_token}`);
-                const data = await response.json();
-                const address = data.features[0].place_name;
-
-                // Set the popup coordinates to the simPoint coordinates
-                // this.popup.setLngLat([simPoint[0], simPoint[1]])
-                //     .setHTML(address)
-                //     .addTo(map);
-
-                // Fade out the popup instead of closing it
-                // setTimeout(() => {
-                //     if (simulationActive) {
-                //         this.popup.getElement().classList.add("fade-out");
-                //     }
-                // }, 500);
-            } else {
-                console.log('simPoint is null');
-            }
-        }
-    }
+    // class ContactsControl {
+    //     constructor() {
+    //         this.contact_list_toggle_btn = null;
+    //     }
+    //
+    //     addControls(map) {
+    //         this.contact_list_toggle_btn = document.createElement("button");
+    //         this.contact_list_toggle_btn.innerText = "Contacts";
+    //         this.contact_list_toggle_btn.classList.add("contacts-button");
+    //         this.contact_list_toggle_btn.style.position = "absolute";
+    //         this.contact_list_toggle_btn.style.top = "40px";
+    //         this.contact_list_toggle_btn.style.left = "10px";
+    //         this.contact_list_toggle_btn.style.borderRadius = "10px";
+    //         this.contact_list_toggle_btn.style.border = "1px solid grey";
+    //         this.contact_list_toggle_btn.style.backgroundColor = backgroundColor;
+    //         this.contact_list_toggle_btn.style.visibility = "visible";
+    //
+    //         this.contact_list_toggle_btn.addEventListener("click", () => {
+    //             this.toggleVisibility();
+    //         });
+    //
+    //         // Append the button to the map's container
+    //         map.getContainer().appendChild(this.contact_list_toggle_btn);
+    //     }
+    //
+    //     toggleVisibility() {
+    //         console.log("toggleVisibility");
+    //         // Toggle visibility of contact markers
+    //
+    //         // Test if markers array is empty
+    //         if (contacts_markers.length === 0) {
+    //             console.error("markers array is empty");
+    //         } else {
+    //             let anyVisible = true;
+    //             contacts_markers.forEach((marker) => {
+    //                 marker._element.hidden = !marker._element.hidden;
+    //                 anyVisible = marker._element.hidden;
+    //             });
+    //
+    //             this.contact_list_toggle_btn.style.backgroundColor = anyVisible ? 'grey' : backgroundColor;
+    //         }
+    //     }
+    // }
+    //
+    // class DisplayAddress_btn {
+    //     constructor() {
+    //         this._container = document.createElement('div');
+    //         this.sim_address_btn = null;
+    //     }
+    //
+    //     addControls(map) {
+    //         this.sim_address_btn = document.createElement('button');
+    //         this.sim_address_btn.innerText = 'Address';
+    //         this.sim_address_btn.classList.add = 'address-button';
+    //         this.sim_address_btn.style.position = "absolute";
+    //         this.sim_address_btn.style.top = "70px";
+    //         this.sim_address_btn.style.left = "10px";
+    //         this.sim_address_btn.style.borderRadius = "10px";
+    //         this.sim_address_btn.style.border = "1px solid grey";
+    //         this.sim_address_btn.style.backgroundColor = backgroundColor;
+    //         this.sim_address_btn.style.visibility = "visible";
+    //
+    //
+    //         this._container.appendChild(this.sim_address_btn);
+    //         // this.popup = new mapboxgl.Popup({
+    //         //     closeButton: false,
+    //         //     closeOnClick: true
+    //         // });
+    //
+    //         this.sim_address_btn.onclick = this._showAddress.bind(this);
+    //
+    //         map.getContainer().appendChild(this.sim_address_btn);
+    //     }
+    //
+    //     onRemove() {
+    //         this._container.parentNode.removeChild(this._container);
+    //         this._map = undefined;
+    //     }
+    //
+    //     async _showAddress() {
+    //         if (simPoint) { // Check if simPoint is not null
+    //             const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${simPoint[0]},${simPoint[1]}.json?access_token=${window.mapbox_token}`);
+    //             const data = await response.json();
+    //             const address = data.features[0].place_name;
+    //
+    //             // Set the popup coordinates to the simPoint coordinates
+    //             // this.popup.setLngLat([simPoint[0], simPoint[1]])
+    //             //     .setHTML(address)
+    //             //     .addTo(map);
+    //
+    //             // Fade out the popup instead of closing it
+    //             // setTimeout(() => {
+    //             //     if (simulationActive) {
+    //             //         this.popup.getElement().classList.add("fade-out");
+    //             //     }
+    //             // }, 500);
+    //         } else {
+    //             console.log('simPoint is null');
+    //         }
+    //     }
+    // }
 })
 ();
