@@ -159,7 +159,7 @@
                 'source': routeId,
                 'layout': {},
                 'paint': {
-                    'line-color': 'rgba(114,30,30,0.75)',
+                    'line-color': 'rgba(114,30,107,0.65)',
                     'line-width': 8
                 }
             });
@@ -231,7 +231,8 @@
             const endPoint = [startPoint[0], startPoint[1] + 0.045045045]; // 5 km to the north
             const numSegments = 50;
 
-            const points = interpolate(startPoint, endPoint, numSegments);
+            // const points = interpolate(startPoint, endPoint, numSegments);
+            const points = [];
 
             if (isGeolocating) {
                 addRouteLayer(map, routeName, contact_route)
