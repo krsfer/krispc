@@ -24,6 +24,8 @@
 
     let monitorTextbox = null;
 
+    let geoTextbox = null;
+
     let mapSimulation = null;
 
     let isGeolocating = false;
@@ -115,18 +117,8 @@
             }, 500);
             marker.togglePopup();
 
-
-            console.log(`Marker at ${lngLat} was clicked.`);
-
-            console.log("lngLat", lngLat);
-            console.log('contacts_markers_dict', contacts_markers_dict);
             // create key from lngLat rounded to 2 decimals
             const key = `${lngLat[0].toFixed(2)}_${lngLat[1].toFixed(2)}`;
-            console.log("contacts_markers_dict[lngLat]", contacts_markers_dict[key]);
-
-
-            // show the marker id
-            console.log("marker.getElement().id", marker.getElement().id);
 
             // get value using key
             const value = contacts_markers_dict[key];
@@ -224,7 +216,6 @@
 
     function addRouteLayers(map) {
         // Iterate through the contacts_lst array. For each contact, use addRouteLayer to add a route layer to the map
-        console.log("contact name", contact_name);
         contacts_lst.contacts.forEach((contact) => {
             // Remove spaces from the contact name and concatenate it with the word "_route"
             const routeName = createRouteName(contact.name);
@@ -267,13 +258,17 @@
         const select = document.createElement('select');
         select.style.position = 'absolute';
         select.style.top = '10px';
-        select.style.left = '50%';
-        select.style.transform = 'translateX(-50%)';
+
+        // Position the select element to the right of the map's container
+        select.style.right = '50px';
+        // select.style.left = '50%';
+        // select.style.transform = 'translateX(-90%)';
+
         select.style.backgroundColor = backgroundColor; // 60% transparent background
         select.style.textAlign = 'center';
         select.style.borderRadius = '10px';
         select.style.border = '1px solid lightgrey';
-        select.style.zIndex = '1';
+        select.style.zIndex = '10';
 
         // Define the map styles
         const mapStyles = [
@@ -359,8 +354,6 @@
         map.on('click', (e) => {
             const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
             const coordsTxt = JSON.stringify(END);
-            // navigator.clipboard.writeText(coordsTxt).then(r => console.log());
-            console.log("Map clicked at:", coordsTxt);
         });
 
         // Detect long press on map
@@ -430,7 +423,8 @@
         });
 
         let geo_travelled = []; // Declare geo_travelled as a global variable
-        let geo_popup = null; // Declare geo_popup as a global variable
+        // let geo_popup = null; // Declare geo_popup as a global variable
+        let geo_textbox = null;
         let geo_times = 0; // Declare geo_times as a global variable
 
         geolocate.on('geolocate', function (e) {
@@ -442,7 +436,7 @@
             if (e.coords.speed)
                 speed = toString(convertMetersPerSecondToKilometersPerHour(e.coords.speed)) + ' km/h'
 
-            let heading = 0;
+            let heading = "no heading";
             if (e.coords.heading)
                 heading = toString(e.coords.heading) + '°'
 
@@ -450,26 +444,51 @@
             if (e.coords.accuracy)
                 accuracy = e.coords.accuracy + ' m'
 
+            if (!geo_textbox)
+                geo_textbox = new Geo_textbox(map, window.backgroundColor);
 
-            if (geo_popup) {
+
+            // if (geo_popup) {
+            //     setTimeout(() => {
+            //         geo_popup.getElement().classList.add("fade-out");
+            //     }, 500)
+            //     geo_popup.remove();
+            // } else {
+            //     console.log("geo_popup does not exist");
+            // }
+
+            if (geo_textbox && speed > 0) {
                 setTimeout(() => {
-                    geo_popup.getElement().classList.add("fade-out");
+                   // add fade-out class to the geo_textbox
+                    geo_textbox.geoTextbox.classList.add("fade-out");
                 }, 500)
-                geo_popup.remove();
+                // geo_textbox.remove();
             } else {
-                console.log("geo_popup does not exist");
+                console.log("geo_textbox does not exist");
             }
 
             // Popup at the marker to show speed, heading and accuracy
-            geo_popup = new mapboxgl.Popup({closeOnClick: true})
-                .setLngLat([e.coords.longitude, e.coords.latitude])
-                .setHTML(`<h4>geo_times: ${geo_times} speed: ${speed} heading: ${heading} accuracy: ${accuracy}</h4>`)
-                .addTo(map);
+
+            // geo_popup = new mapboxgl.Popup({closeOnClick: true})
+            //     .setLngLat([e.coords.longitude, e.coords.latitude])
+            //     .setHTML(`<h4>geo_times: ${geo_times} speed: ${speed} heading: ${heading} accuracy: ${accuracy}</h4>`)
+            //     .addTo(map);
+
+            // Show geo_times, speed, heading and accuracy in the geo_textbox
+            geo_textbox.geoTextbox.innerText = `geo_times: ${geo_times}
+                speed: ${speed}
+                heading: ${heading}
+                accuracy: ${accuracy}`;
+
 
             // Fade out the popup after 5 seconds
-            setTimeout(() => {
-                geo_popup.getElement().classList.add("fade-out");
-            }, 1000);
+            // setTimeout(() => {
+            //     geo_popup.getElement().classList.add("fade-out");
+            // }, 1000);
+
+            // setTimeout(() => {
+            //     geo_textbox.geoTextbox.classList.add("fade-out");
+            // }, 1000);
 
 
             // Set the current position into the geo_travelled array if its length is 0 else purh it
@@ -486,9 +505,6 @@
             //     zoom: 15,
             //     essential: true, // this animation is considered essential with respect to prefers-reduced-motion
             // });
-
-            // Get the route from the geolocated position to the selected contact_position
-            console.log("contact_position", contact_position);
 
             if (contact_position) {
                 // Hide all contact route layers
@@ -518,34 +534,60 @@
 
     initializeMap(); // Call the function to initialize the map
 
-    class Monitor_textbox {
-        constructor(map, backgroundColor) {
-            this.monitorTextbox = document.createElement("div");
-            this.monitorTextbox.classList.add("monitor-textbox");
-            this.monitorTextbox.innerText = "";
-            this.monitorTextbox.style.backgroundColor = backgroundColor;
-            this.monitorTextbox.style.border = "1px solid";
-            this.monitorTextbox.style.borderColor = "rgba(194, 181, 181)";
-            this.monitorTextbox.style.borderRadius = "10px";
-            this.monitorTextbox.style.bottom = "5px";
-            // add shadow to the text
-            this.monitorTextbox.style.textShadow = "1px 1px 1px #fff";
-            this.monitorTextbox.style.color = "rgb(0,0,0)";
-            this.monitorTextbox.style.fontSize = '25px';
-            this.monitorTextbox.style.lineHeight = "0.9";
-            this.monitorTextbox.style.overflow = "auto";
-            this.monitorTextbox.style.padding = "10px";
-            this.monitorTextbox.style.position = "absolute";
-            this.monitorTextbox.style.textAlign = "center";
-            this.monitorTextbox.style.left = "50%";
-            this.monitorTextbox.style.transform = "translateX(-50%)";
-            this.monitorTextbox.style.zIndex = "1";
+   class Monitor_textbox {
+    constructor(map, backgroundColor) {
+        this.monitorTextbox = document.createElement("div");
+        this.monitorTextbox.classList.add("monitor-textbox");
+        this.monitorTextbox.innerText = "";
+        this.monitorTextbox.style.backgroundColor = backgroundColor;
+        this.monitorTextbox.style.border = "1px solid";
+        this.monitorTextbox.style.borderColor = "rgba(194, 181, 181)";
+        this.monitorTextbox.style.borderRadius = "10px";
+        this.monitorTextbox.style.bottom = "5px";
+        this.monitorTextbox.style.textShadow = "1px 1px 1px #ccc";
+        this.monitorTextbox.style.color = "rgb(0,0,0)";
+        this.monitorTextbox.style.fontSize = '20px';
+        this.monitorTextbox.style.lineHeight = "0.9";
+        this.monitorTextbox.style.overflow = "auto";
+        this.monitorTextbox.style.padding = "10px";
+        this.monitorTextbox.style.position = "absolute";
+        this.monitorTextbox.style.textAlign = "center";
+        this.monitorTextbox.style.right = "5px";
+        // this.monitorTextbox.style.width = "40%";
+        this.monitorTextbox.style.zIndex = "1";
 
-            // Append the monitorTextbox to the map's container
-            map.getContainer().appendChild(this.monitorTextbox);
-        }
+        // Append the monitorTextbox to the map's container
+        map.getContainer().appendChild(this.monitorTextbox);
     }
+}
 
+class Geo_textbox {
+    constructor(map, backgroundColor) {
+        this.geoTextbox = document.createElement("div");
+        this.geoTextbox.classList.add("geo-textbox");
+        this.geoTextbox.innerText = "";
+        this.geoTextbox.style.backgroundColor = backgroundColor;
+        this.geoTextbox.style.border = "1px solid";
+        this.geoTextbox.style.borderColor = "rgba(194, 181, 181)";
+        this.geoTextbox.style.borderRadius = "10px";
+        this.geoTextbox.style.top = "5px"; // Changed from "bottom: 5px"
+        // this.geoTextbox.style.bottom = "5px"; // Removed this line
+        this.geoTextbox.style.textShadow = "1px 1px 1px #ccc";
+        this.geoTextbox.style.color = "rgb(0,0,0)";
+        this.geoTextbox.style.fontSize = '20px';
+        this.geoTextbox.style.lineHeight = "0.9";
+        this.geoTextbox.style.overflow = "auto";
+        this.geoTextbox.style.padding = "10px";
+        this.geoTextbox.style.position = "absolute";
+        this.geoTextbox.style.textAlign = "center";
+        this.geoTextbox.style.left = "5px";
+        // this.geoTextbox.style.width = "40%"; // Added this line
+        this.geoTextbox.style.zIndex = "1";
+
+        // Append the geoTextbox to the map's container
+        map.getContainer().appendChild(this.geoTextbox);
+    }
+}
 
     /*map = new mapboxgl.Map({
         accessToken: window.mapbox_token,
