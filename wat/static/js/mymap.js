@@ -1,40 +1,16 @@
 (async function () {
     'use strict';
-    let pointA = null;
     let contact_position = null;
     let contact_name = null;
     let contact_route = null;
-    let map = null; // Define map as a global variable
-    let simPoint = null; // Declare simPoint as a global variable
-    window.simPoint = null;
-    let simulationActive = false; // Declare simulationActive as a global variable
     let contacts_markers = [];
     let contacts_markers_dict = {};
     let monitorTextbox = null;
-    let geoTextbox = null;
-    let mapSimulation = null;
     let isGeolocating = false;
     let geo = [];
-    let i = 0; // Define i in an outer scope
-    let t = 0; // Define t in an outer scope
-    let startPoint = null;
-    let endPoint = null;
-    /*
-        The smaller the following speed value, the slower the simulation will be, because it takes more iteration
-        to move from the start point to the end point. Conversely, the larger the speed value, the faster the
-        simulation will be.
-        The speed value is the amount of distance the marker moves between each iteration. For example, if the speed
-        value is 0.01, then the marker moves 1% of the distance between the start point and the end point between each
-        iteration. If the speed value is 0.1, then the marker moves 10% of the distance between the start point and the
-        end point between each iteration.
-        A speed of 0 would mean the marker doesn't move at all.
-        A speed of 1 would mean the marker immediately jumps to the next point in the coordinates array in each iteration.
-     */
-    const speed = 0.05; // Define speed in an outer scope (adjust this value to change the speed of the animation)
-    let coordinates = null; // Define coordinates in an outer scope
-    let simMar = null; // Define simMar in an outer scope
+
     window.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-    const line_width = 12;
+
     const bb = document.getElementById('blue_ball').value; // eg. /static/watapp/img/blue_ball.png
     const gb = document.getElementById('green_ball').value;
     const response = await fetch('contacts_json');
@@ -48,6 +24,9 @@
     window.googlemaps_token = await getAccessToken('googlemaps_token');
     const selectedStyle = localStorage.getItem('selectedMapStyle') || 'mapbox://styles/mapbox/dark-v9';
 
+    
+    /* This function takes in three parameters: "pointA", "pointB", and "numSegments". It is used to interpolate between two points,
+    "pointA" and "pointB", by dividing the distance between them into a specified number of segments. */
     function interpolate(pointA, pointB, numSegments) {
         const dx = (pointB[0] - pointA[0]) / numSegments;
         const dy = (pointB[1] - pointA[1]) / numSegments;
@@ -59,7 +38,7 @@
         }
         return points;
     }
-
+    
     function addMarker(map, lngLat, name, address, el) {
         const marker = contacts_markers.find((marker) => {
             return marker.getLngLat().lng === lngLat[0] && marker.getLngLat().lat === lngLat[1];
@@ -74,7 +53,9 @@
         marker.getPopup().options.closeButton = false;
         marker.getElement().style.zIndex = 1;
         marker.getElement().style.cursor = 'pointer';
+
         contacts_markers.push(marker);
+        
         marker.getElement().addEventListener('click', function () {
             const key = `${lngLat[0].toFixed(2)}_${lngLat[1].toFixed(2)}`;
             const value = contacts_markers_dict[key];
@@ -124,7 +105,10 @@
                 'id': routeId,
                 'type': 'line',
                 'source': routeId,
-                'layout': {},
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
                 'paint': {
                     "line-color": "rgb(255,0,0)",
                     "line-width": 8,
@@ -245,6 +229,11 @@
             }
         });
     }
+
+    const state = {
+        map: null
+    };
+    
 
     function initializeMap() {
         mapboxgl.accessToken = window.mapbox_token;
