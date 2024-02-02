@@ -13,7 +13,7 @@
             console.log('WakeLock state:', wakelock.released ? 'released' : 'active');
 
             wakelock.addEventListener('release', () => {
-                 console.log('WakeLock state: released');
+                console.log('WakeLock state: released');
             });
         } catch (e) {
             console.error('Failed to lock wake state with reason:', e.message);
@@ -46,6 +46,8 @@
     let monitorTextbox = null;
     let isGeolocating = false;
     let geo = [];
+    let i = 0;
+    let t = 0;
 
     window.backgroundColor = 'rgba(255, 255, 255, 0.3)';
 
@@ -400,14 +402,20 @@
             geo = [e.coords.longitude, e.coords.latitude];
             geo_times = geo_times + 1;
             let speed = 'no speed';
+
+             console.log("e.coords.speed", e.coords.speed);
+
             if (e.coords.speed)
                 speed = toString(convertMetersPerSecondToKilometersPerHour(e.coords.speed)) + ' km/h'
+
             let heading = "no heading";
             if (e.coords.heading)
                 heading = toString(e.coords.heading) + '°'
+
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
                 accuracy = e.coords.accuracy + ' m'
+
             if (!geo_textbox)
                 geo_textbox = new Geo_textbox(map, window.backgroundColor);
             if (geo_textbox && speed > 0) {
