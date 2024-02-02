@@ -401,12 +401,16 @@
             isGeolocating = true;
             geo = [e.coords.longitude, e.coords.latitude];
             geo_times = geo_times + 1;
+
             let speed = 'no speed';
 
              console.log("e.coords.speed", e.coords.speed);
+             // Test if e.coords.speed is not null
+
 
             if (e.coords.speed)
-                speed = toString(convertMetersPerSecondToKilometersPerHour(e.coords.speed)) + ' km/h'
+                // ensure e.coords.speed is numeric
+                speed = toString(convertMetersPerSecondToKilometersPerHour(parseFloat(e.coords.speed))) + ' km/h'
 
             let heading = "no heading";
             if (e.coords.heading)
@@ -414,7 +418,7 @@
 
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
-                accuracy = e.coords.accuracy + ' m'
+                accuracy = (e.coords.accuracy.toFixed(1)) + ' m'
 
             if (!geo_textbox)
                 geo_textbox = new Geo_textbox(map, window.backgroundColor);
@@ -425,7 +429,7 @@
             } else {
                 console.log("geo_textbox does not exist");
             }
-            geo_textbox.geoTextbox.innerText = `geo_times: ${geo_times}
+            geo_textbox.geoTextbox.innerText = `n: ${geo_times}
                 speed: ${speed}
                 heading: ${heading}
                 accuracy: ${accuracy}`;
