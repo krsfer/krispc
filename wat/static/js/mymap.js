@@ -1,5 +1,43 @@
 (async function () {
     'use strict';
+
+    // Start. wakelock ///////////////////////////
+    const canWakeLock = () => 'wakeLock' in navigator;
+
+    let wakelock;
+
+    async function lockWakeState() {
+        if (!canWakeLock()) return;
+        try {
+            wakelock = await navigator.wakeLock.request();
+            console.log('WakeLock state:', wakelock.released ? 'released' : 'active');
+
+            wakelock.addEventListener('release', () => {
+                 console.log('WakeLock state: released');
+            });
+        } catch (e) {
+            console.error('Failed to lock wake state with reason:', e.message);
+        }
+    }
+
+    function releaseWakeState() {
+        if (wakelock) wakelock.release();
+        wakelock = null;
+    }
+
+    await lockWakeState();
+    const duration = 1000 * 60 * 30; // 30 minutes
+    setTimeout(releaseWakeState, duration);
+
+
+    // End. wakelock ///////////////////////////
+
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        releaseWakeState();
+        e.returnValue = '';
+    });
+
     let contact_position = null;
     let contact_name = null;
     let contact_route = null;
@@ -24,7 +62,7 @@
     window.googlemaps_token = await getAccessToken('googlemaps_token');
     const selectedStyle = localStorage.getItem('selectedMapStyle') || 'mapbox://styles/mapbox/dark-v9';
 
-    
+
     /* This function takes in three parameters: "pointA", "pointB", and "numSegments". It is used to interpolate between two points,
     "pointA" and "pointB", by dividing the distance between them into a specified number of segments. */
     function interpolate(pointA, pointB, numSegments) {
@@ -38,7 +76,7 @@
         }
         return points;
     }
-    
+
     function addMarker(map, lngLat, name, address, el) {
         const marker = contacts_markers.find((marker) => {
             return marker.getLngLat().lng === lngLat[0] && marker.getLngLat().lat === lngLat[1];
@@ -55,7 +93,7 @@
         marker.getElement().style.cursor = 'pointer';
 
         contacts_markers.push(marker);
-        
+
         marker.getElement().addEventListener('click', function () {
             const key = `${lngLat[0].toFixed(2)}_${lngLat[1].toFixed(2)}`;
             const value = contacts_markers_dict[key];
@@ -233,7 +271,7 @@
     const state = {
         map: null
     };
-    
+
 
     function initializeMap() {
         mapboxgl.accessToken = window.mapbox_token;
