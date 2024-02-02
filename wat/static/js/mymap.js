@@ -276,6 +276,13 @@
 
 
     function initializeMap() {
+        console.log("initializeMap");
+
+        const a = 0;
+        const b = convertMetersPerSecondToKilometersPerHour(parseFloat(a))
+
+        console.log("b", b);
+
         mapboxgl.accessToken = window.mapbox_token;
         const map = new mapboxgl.Map({
             container: 'map', // Specify the container ID
@@ -410,7 +417,7 @@
 
             if (e.coords.speed)
                 // ensure e.coords.speed is numeric
-                speed = toString(convertMetersPerSecondToKilometersPerHour(parseFloat(e.coords.speed))) + ' km/h'
+                speed = convertMetersPerSecondToKilometersPerHour(parseFloat(e.coords.speed))
 
             let heading = "no heading";
             if (e.coords.heading)
