@@ -87,59 +87,6 @@ function formatDuration(hours, minutes, seconds) {
     return durée;
 }
 
-/*
-async function getAddressFromLngLat(startLat, startLng) {
-    let address = `!`;
-    // Use Nominatim to get the address of the starting point. If successful, set the `address` variable to the address
-    try {
-        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${startLat}&lon=${startLng}`;
-        // console.log('url', url);
-        const response = await fetch(url);
-        const data = await response.json();
-        // console.log('data', data);
-
-        let name = ''
-        // If keys name and road exist in data, then if values of name and route are equal, set local name variable
-        // to road, otherwise set local name variable to name and road
-        if (data.name && data.address.road) {
-            if (data.name === data.address.road) {
-                name = data.address.road;
-            } else {
-                name = data.name + ", " + data.address.road;
-            }
-        } else if (data.name) {
-            name = data.name;
-        } else if (data.address.road) {
-            name = data.address.road;
-        }
-
-        let village = ''
-        // If keys city and town exist in data, then if values of village and municipality are equal, set local city
-        // variable to village, otherwise set local city variable to city and town
-        if (data.address.village && data.address.municipality) {
-            if (data.address.village === data.address.municipality) {
-                village += ", " + data.address.municipality;
-            } else {
-                village += ", " + data.address.village + ", " + data.address.municipality;
-            }
-        } else if (data.address.village) {
-            village += ", " + data.address.village;
-        } else if (data.address.municipality) {
-            village += ", " + data.address.municipality;
-        }
-
-        // console.log('village', village);
-        // Set local address variable to name and village
-        address = name + village;
-
-        // console.log('xx', address);
-
-    } catch (error) {
-        console.error("Error getting address:", error);
-    }
-    return address;
-}
-*/
 
 /**
  * @param {Array<number>} startPoint - The starting point of the route. It's an array where the first element is the longitude and the second element is the latitude.
@@ -281,11 +228,7 @@ function displayUpdates(monitor_textbox, distance, durée, eta, address) {
 
 
 window.convertMetersPerSecondToKilometersPerHour = function (metersPerSecond) {
-    // console.log('convertMetersPerSecondToKilometersPerHour', metersPerSecond);
-    // console.log('metersPerSecond * 3.6', metersPerSecond * 3.6);
-    // console.log('(metersPerSecond * 3.6).toFixed(0)', (metersPerSecond * 3.6).toFixed(0));
-    const ret = (metersPerSecond * 3.6).toFixed(0) + " km/h"
-    console.log('ret', ret);
+    const ret = (parseFloat(metersPerSecond) * 3.6).toFixed(0) + " km/h"
     return ret;
 }
 

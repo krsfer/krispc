@@ -285,7 +285,7 @@
         const a = 0;
         const b = convertMetersPerSecondToKilometersPerHour(parseFloat(a))
 
-        console.log("b", b);
+        // console.log("b", b);
 
         mapboxgl.accessToken = window.mapbox_token;
         const map = new mapboxgl.Map({
@@ -358,45 +358,164 @@
         });
         map.addControl(geolocate, 'top-right');
 
-        class ContactsControl {
+        class Display_contacts_markers_btn {
             constructor(map, backgroundColor) {
-                this.contact_list_toggle_btn = document.createElement("button");
-                this.contact_list_toggle_btn.innerText = "Contacts";
-                this.contact_list_toggle_btn.classList.add("contacts-button");
-                this.contact_list_toggle_btn.style.position = "absolute";
-                this.contact_list_toggle_btn.style.top = "10px";
-                this.contact_list_toggle_btn.style.left = "10px";
-                this.contact_list_toggle_btn.style.borderRadius = "10px";
-                this.contact_list_toggle_btn.style.border = "1px solid grey";
-                this.contact_list_toggle_btn.style.backgroundColor = backgroundColor;
-                this.contact_list_toggle_btn.style.visibility = "visible";
-                this.contact_list_toggle_btn.addEventListener("click", () => {
-                    this.toggleVisibility()
-                });
-                map.getContainer().appendChild(this.contact_list_toggle_btn);
+                this.map = map;
+                this.button = document.createElement('button');
+                this.button.innerText = 'Display Contacts';
+                this.button.style.backgroundColor = backgroundColor;
+                this.button.style.position = 'absolute';
+                this.button.style.top = '10px';
+                this.button.style.left = '10px';
+                this.button.style.borderRadius = '10px';
+                this.button.style.border = '1px solid';
+                this.button.style.borderColor = 'rgba(194, 181, 181)';
+
+                this.button.addEventListener('click', this.toggle_contacts_markers_visibility.bind(this));
+                map.getContainer().appendChild(this.button);
             }
 
-            toggleVisibility() {
-                console.log("toggleVisibility");
-                if (contacts_markers.length === 0) {
-                    console.error("markers array is empty");
-                } else {
-                    contacts_markers.forEach((marker) => {
-                        console.log("marker.getElement().id", marker.getElement().id);
-                        const visibility = marker.getElement().style.visibility;
-                        console.log("visibility before", marker.getElement().style.visibility)
-                        if (visibility === "visible") {
-                            marker.getElement().style.visibility = "hidden";
-                        } else {
-                            marker.getElement().style.visibility = "visible";
-                        }
-                        console.log("visibility after", marker.getElement().style.visibility)
+            toggle_contacts_markers_visibility() {
+                contacts_lst.contacts.forEach((contact) => {
+                    const marker = contacts_markers.find((marker) => {
+                        return marker.getLngLat().lng === contact.coords[0] && marker.getLngLat().lat === contact.coords[1];
                     });
-                }
+                    if (marker) {
+                        const visibility = marker.getElement().style.visibility;
+                        marker.getElement().style.visibility = visibility === 'visible' ? 'hidden' : 'visible';
+                    }
+                });
             }
         }
 
-        let contactsControl = new ContactsControl(map, window.backgroundColor);
+        let displaylistbtn = new Display_contacts_markers_btn(map, window.backgroundColor);
+
+        class ContactsTextbox {
+            constructor(map, backgroundColor) {
+                this.map = map;
+                this.textbox = document.createElement('div');
+                this.textbox.style.backgroundColor = backgroundColor;
+                this.textbox.style.position = 'absolute';
+                this.textbox.style.bottom = '10px';
+                this.textbox.style.left = '50%';
+                this.textbox.style.transform = 'translateX(-50%)';
+                this.textbox.style.padding = '10px';
+                this.textbox.style.borderRadius = '10px';
+                this.textbox.style.border = '1px solid lightgrey';
+                this.textbox.style.textAlign = 'center';
+                this.textbox.style.whiteSpace = 'normal';
+                this.textbox.style.maxWidth = '100%';
+                this.textbox.style.width = 'auto';
+                this.textbox.style.overflow = 'auto'; // Add a scrollbar when the content overflows
+                this.textbox.style.maxHeight = '200px'; // Limit th
+
+                map.getContainer().appendChild(this.textbox);
+            }
+
+            updateContacts(contacts) {
+                this.textbox.innerHTML = ''; // Clear the textbox
+                contacts.forEach((contact, index) => {
+
+                    // replace spaces in contact.name with nbsp
+                    // contact.name = contact.name.replace(/\s/g, '\u00A0');
+                    contact.name = contact.name.replace(/\s/g, '_');
+
+                    const contactElement = document.createElement('span');
+                    contactElement.innerText = contact.name;
+                    contactElement.style.cursor = 'pointer';
+                    contactElement.style.marginRight = '0px';
+
+                    // if (index > 0 and index < contacts.length - 1) append `|` to the contactElement
+                    if (index > 0 && index < contacts.length - 1) {
+                        const separator = document.createElement('span');
+                        separator.innerText = '|';
+                        separator.style.marginRight = '10px';
+                        separator.style.marginLeft = '10px';
+                        this.textbox.appendChild(separator);
+                    }
+
+
+                    contactElement.addEventListener('click', () => {
+                        this.map.flyTo({
+                            center: contact.coords,
+                            essential: true
+                        });
+
+                        if (isGeolocating) {
+                            resetRoutesExceptSelected(map, contact_name);
+                            getDirections([geo[0], geo[1]], contact.coords)
+                                .then(({route, distance, durée, eta, address}) => {
+                                    if (!monitorTextbox)
+                                        monitorTextbox = new Monitor_textbox(map, window.backgroundColor);
+                                    displayUpdates(monitorTextbox, distance, durée, eta, address);
+                                    setTimeout(() => {
+                                        marker.getPopup().getElement().classList.add("fade-out");
+                                    }, 500);
+                                    marker.getPopup().getElement().style.zIndex = 0;
+                                    const routeName = contacts_markers_dict[`${contact_position[0].toFixed(2)}_${contact_position[1].toFixed(2)}`];
+                                    map.getSource(routeName).setData(route.geometry);
+                                    contact_route = route.geometry.coordinates;
+                                });
+                        } else {
+                            setTimeout(() => {
+                                marker.getPopup().getElement().classList.add("fade-out");
+                            }, 500);
+                        }
+
+                        contact_position = contact.coords;
+
+                        const marker = contacts_markers.find((marker) => {
+                            return marker.getLngLat().lng === contact.coords[0] && marker.getLngLat().lat === contact.coords[1];
+                        });
+                        if (marker) {
+                            // check if the popup is open
+                            if (marker.getPopup().isOpen()) {
+                                marker.togglePopup(); // Close the popup
+                            } else {
+                                // Open the popup
+                                marker.togglePopup();
+                                if (marker.getPopup().getElement.classList) {
+                                    setTimeout(() => {
+                                        marker.getPopup().getElement().classList.add("fade-out"); // Fade out the popup after 500ms
+                                    }, 500);
+                                }
+                            }
+                        }
+                    });
+                    this.textbox.appendChild(contactElement);
+                });
+            }
+        }
+
+        let contactsTextbox = new ContactsTextbox(map, window.backgroundColor);
+        contactsTextbox.updateContacts(contacts_lst.contacts);
+
+        class ToggleListButton {
+            constructor(map, backgroundColor, contactsTextbox) {
+                this.map = map;
+                this.contactsTextbox = contactsTextbox;
+                this.button = document.createElement('button');
+                this.button.innerText = 'Toggle List';
+                this.button.style.backgroundColor = backgroundColor;
+                this.button.style.position = 'absolute';
+                this.button.style.top = '50px';
+                this.button.style.left = '10px';
+                this.button.style.borderRadius = '10px';
+                this.button.style.border = '1px solid';
+                this.button.style.borderColor = 'rgba(194, 181, 181)';
+                this.button.addEventListener('click', this.toggleContactsTextboxVisibility.bind(this));
+                map.getContainer().appendChild(this.button);
+            }
+
+            toggleContactsTextboxVisibility() {
+                const visibility = this.contactsTextbox.textbox.style.visibility;
+                this.contactsTextbox.textbox.style.visibility = visibility === 'visible' ? 'hidden' : 'visible';
+            }
+        }
+
+        let toggleListButton = new ToggleListButton(map, window.backgroundColor, contactsTextbox);
+
+
         geolocate.on('trackuserlocationend', function () {
             const geolocateButton = document.getElementsByClassName('mapboxgl-ctrl-geolocate')[0];
             const classList = geolocateButton.classList;
@@ -415,17 +534,14 @@
 
             let speed = 'no speed';
 
-             console.log("e.coords.speed", e.coords.speed);
-             // Test if e.coords.speed is not null
-
 
             if (e.coords.speed)
                 // ensure e.coords.speed is numeric
-                speed = convertMetersPerSecondToKilometersPerHour(parseFloat(e.coords.speed))
+                speed = convertMetersPerSecondToKilometersPerHour(e.coords.speed)
 
             let heading = "no heading";
             if (e.coords.heading)
-                heading = toString(e.coords.heading) + '°'
+                heading = toString(parseFloat(e.coords.heading)) + '°'
 
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
@@ -444,6 +560,7 @@
                 speed: ${speed}
                 heading: ${heading}
                 accuracy: ${accuracy}`;
+
             if (contact_position) {
                 resetRoutesExceptSelected(map, contact_name);
                 getDirections([e.coords.longitude, e.coords.latitude], contact_position)
@@ -493,7 +610,7 @@
             this.geoTextbox.style.border = "1px solid";
             this.geoTextbox.style.borderColor = "rgba(194, 181, 181)";
             this.geoTextbox.style.borderRadius = "10px";
-            this.geoTextbox.style.top = "5px"; // Changed from "bottom: 5px"
+            this.geoTextbox.style.top = "65px"; // Changed from "bottom: 5px"
             this.geoTextbox.style.textShadow = "1px 1px 1px #ccc";
             this.geoTextbox.style.color = "rgb(0,0,0)";
             this.geoTextbox.style.fontSize = '20px';
@@ -507,39 +624,4 @@
             map.getContainer().appendChild(this.geoTextbox);
         }
     }
-
-
-    class ContactsControl {
-        constructor(map, backgroundColor) {
-            this.contact_list_toggle_btn = document.createElement("button");
-            this.contact_list_toggle_btn.innerText = "Contacts";
-            this.contact_list_toggle_btn.classList.add("contacts-button");
-            this.contact_list_toggle_btn.style.position = "absolute";
-            this.contact_list_toggle_btn.style.top = "10px";
-            this.contact_list_toggle_btn.style.left = "10px";
-            this.contact_list_toggle_btn.style.borderRadius = "10px";
-            this.contact_list_toggle_btn.style.border = "1px solid grey";
-            this.contact_list_toggle_btn.style.backgroundColor = backgroundColor;
-            this.contact_list_toggle_btn.style.visibility = "visible";
-            this.contact_list_toggle_btn.addEventListener("click", () => {
-                this.toggleVisibility()
-            });
-            map.getContainer().appendChild(this.contact_list_toggle_btn);
-        }
-
-        toggleVisibility() {
-            console.log("toggleVisibility");
-            if (contacts_markers.length === 0) {
-                console.error("markers array is empty");
-            } else {
-                let anyVisible = true;
-                contacts_markers.forEach((marker) => {
-                    marker._element.hidden = !marker._element.hidden;
-                    anyVisible = marker._element.hidden;
-                });
-                this.contact_list_toggle_btn.style.backgroundColor = anyVisible ? 'grey' : backgroundColor;
-            }
-        }
-    }
-})
-();
+})();
