@@ -281,7 +281,12 @@ function displayUpdates(monitor_textbox, distance, durée, eta, address) {
 
 
 window.convertMetersPerSecondToKilometersPerHour = function (metersPerSecond) {
-    return (metersPerSecond * 3.6).toFixed(0);
+    // console.log('convertMetersPerSecondToKilometersPerHour', metersPerSecond);
+    // console.log('metersPerSecond * 3.6', metersPerSecond * 3.6);
+    // console.log('(metersPerSecond * 3.6).toFixed(0)', (metersPerSecond * 3.6).toFixed(0));
+    const ret = (metersPerSecond * 3.6).toFixed(0) + " km/h"
+    console.log('ret', ret);
+    return ret;
 }
 
 // window.createOrUpdateLineLayer = function (map, routeName, route, line_width, line_color) {
