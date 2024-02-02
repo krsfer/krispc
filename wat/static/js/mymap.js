@@ -150,7 +150,7 @@
                     'line-cap': 'round'
                 },
                 'paint': {
-                    "line-color": "rgb(255,0,0)",
+                    "line-color": "rgba(255,0,0,0.52)",
                     "line-width": 8,
                 },
             });
@@ -162,7 +162,11 @@
             });
             map.on('click', routeId, function (e) {
                 console.log('Route line clicked:', e);
-                map.panTo(destination);
+                // zoom to instead of pante
+                map.flyTo({
+                    center: destination,
+                    essential: true
+                });
             });
         }
     }
