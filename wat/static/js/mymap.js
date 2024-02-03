@@ -29,7 +29,6 @@
     const duration = 1000 * 60 * 30; // 30 minutes
     setTimeout(releaseWakeState, duration);
 
-
     // End. wakelock ///////////////////////////
 
     window.addEventListener('beforeunload', function (e) {
@@ -82,13 +81,28 @@
     function addMarker(map, lngLat, name, address, el) {
         const marker = contacts_markers.find((marker) => {
             return marker.getLngLat().lng === lngLat[0] && marker.getLngLat().lat === lngLat[1];
-        }) || new mapboxgl.Marker(el)
+        }) || new mapboxgl.Marker({
+            element: el,
+            draggable: true  // Make the marker draggable
+        })
             .setLngLat(lngLat)
             .setPopup(
                 new mapboxgl.Popup()
                     .setHTML(`<h3>${name}</h3><p>${address}</p>`),
             )
             .addTo(map);
+
+        // Add event listeners for the dragstart and dragend events
+        marker.on('dragstart', function () {
+            console.log('Marker drag start');
+        });
+
+        marker.on('dragend', function () {
+            console.log('Marker drag end');
+            lngLat = marker.getLngLat();
+            console.log('New marker position:', lngLat);
+        });
+
         marker.getElement().style.visibility = "visible";
         marker.getPopup().options.closeButton = false;
         marker.getElement().style.zIndex = 1;
@@ -150,7 +164,7 @@
                     'line-cap': 'round'
                 },
                 'paint': {
-                    "line-color": "rgba(255,0,0,0.52)",
+                    "line-color": "rgba(0, 255 , 0, 0.52)",
                     "line-width": 8,
                 },
             });
@@ -411,6 +425,10 @@
                 this.textbox.style.maxHeight = '200px'; // Limit the max height of the textbox
                 this.textbox.style.overflowY = 'scroll'; // Add a scrollbar when the content overflows
                 this.textbox.className = 'ContactsTextbox';
+                this.textbox.style.visibility = 'visible';
+                this.textbox.style.transition = 'transform 0.3s ease-out';
+                // add translateX(-100%) to hide the textbox
+                this.textbox.style.transform = 'translateX(-100%)';
 
                 map.getContainer().appendChild(this.textbox);
             }
@@ -534,8 +552,14 @@
             }
 
             toggleContactsTextboxVisibility() {
-                const visibility = this.contactsTextbox.textbox.style.visibility;
-                this.contactsTextbox.textbox.style.visibility = visibility === 'visible' ? 'hidden' : 'visible';
+                // Check if the textbox is visible
+                if (this.contactsTextbox.textbox.style.transform === 'translateX(0%)') {
+                    // If it is visible, translate it to the left out of the viewport
+                    this.contactsTextbox.textbox.style.transform = 'translateX(-100%)';
+                } else {
+                    // If it is not visible, translate it to the right until it is visible
+                    this.contactsTextbox.textbox.style.transform = 'translateX(0%)';
+                }
             }
         }
 
