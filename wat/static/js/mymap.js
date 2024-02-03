@@ -409,6 +409,8 @@
                 this.textbox.style.width = 'auto';
                 this.textbox.style.overflow = 'auto'; // Add a scrollbar when the content overflows
                 this.textbox.style.maxHeight = '200px'; // Limit the max height of the textbox
+                this.textbox.style.overflowY = 'scroll'; // Add a scrollbar when the content overflows
+                this.textbox.className = 'ContactsTextbox';
 
                 map.getContainer().appendChild(this.textbox);
             }
@@ -421,19 +423,16 @@
                     contact.name = contact.name.replace(/\s/g, '\u00A0');
                     // contact.name = contact.name.replace(/\s/g, '_');
 
+                    // Highlight the selected contact and reset the others
+                    if (contact.name === contact_name) {
+                        contactElement.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                    }
+
                     const contactElement = document.createElement('span');
                     contactElement.innerText = contact.name;
                     contactElement.style.cursor = 'pointer';
                     contactElement.style.marginRight = '0px';
 
-                    // if (index > 0 and index < contacts.length - 1) append `|` to the contactElement
-                    // if (index > 0 && index < contacts.length - 1) {
-                    //     const separator = document.createElement('span');
-                    //     separator.innerText = '|';
-                    //     separator.style.marginRight = '10px';
-                    //     separator.style.marginLeft = '10px';
-                    //     this.textbox.appendChild(separator);
-                    // }
 
                     // Display contacts list vertically
                     contactElement.style.display = 'block';
@@ -441,30 +440,52 @@
 
 
                     contactElement.addEventListener('click', () => {
+                        contact_position = contact.coords;
+
                         this.map.flyTo({
-                            center: contact.coords,
+                            center: contact_position,
                             essential: true
                         });
 
+                        // Highlight the selected contact and reset the others if any is highlighted
+                        if (contactElement.style.backgroundColor === 'rgba(255, 255, 255, 0.3)') {
+                            contactElement.style.backgroundColor = 'rgba(255, 255, 255, 0)';
+                        } else {
+                            this.textbox.childNodes.forEach((element) => {
+                                element.style.backgroundColor = 'rgba(255, 255, 255, 0)';
+                            });
+                            contactElement.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                        }
+
                         if (isGeolocating) {
-                            resetRoutesExceptSelected(map, contact_name);
+                            resetRoutesExceptSelected(map, contact.name);
                             getDirections([geo[0], geo[1]], contact.coords)
                                 .then(({route, distance, durée, eta, address}) => {
                                     if (!monitorTextbox)
                                         monitorTextbox = new Monitor_textbox(map, window.backgroundColor);
                                     displayUpdates(monitorTextbox, distance, durée, eta, address);
-                                    setTimeout(() => {
-                                        marker.getPopup().getElement().classList.add("fade-out");
-                                    }, 500);
-                                    marker.getPopup().getElement().style.zIndex = 0;
+
                                     const routeName = contacts_markers_dict[`${contact_position[0].toFixed(2)}_${contact_position[1].toFixed(2)}`];
                                     map.getSource(routeName).setData(route.geometry);
                                     contact_route = route.geometry.coordinates;
                                 });
                         } else {
-                            setTimeout(() => {
-                                marker.getPopup().getElement().classList.add("fade-out");
-                            }, 500);
+                            const marker = contacts_markers.find((marker) => {
+                                if (marker.getLngLat().lng === contact.coords[0] && marker.getLngLat().lat === contact.coords[1]) {
+                                    setTimeout(() => {
+                                        marker.getPopup().getElement().classList.add("fade-out");
+                                    }, 500);
+                                    return marker.getLngLat().lng === contact.coords[0] && marker.getLngLat().lat === contact.coords[1];
+                                } else {
+                                    removeAllPopups();
+                                }
+                            });
+
+                            // if (marker.getPopup().getElement().classList) {
+                            //     setTimeout(() => {
+                            //         marker.getPopup().getElement().classList.add("fade-out");
+                            //     }, 500);
+                            // }
                         }
 
                         contact_position = contact.coords;
