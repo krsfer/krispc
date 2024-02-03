@@ -302,28 +302,10 @@
             addContactMarkers(map); // Add the contact markers when the map initially loads
             addRouteLayers(map); // Re-add the route layer every time the map style changes and is fully loaded
         });
-        map.addControl(new mapboxgl.NavigationControl());
-        let attributionControl = null;
-        for (const control of map._controls) {
-            if (control instanceof mapboxgl.AttributionControl) {
-                attributionControl = control;
-                break;
-            }
-        }
-        if (attributionControl) {
-            map.removeControl(attributionControl);
-        } else {
-            console.log("Attribution control not found.");
-        }
-        map.attrControl = new mapboxgl.AttributionControl({
-            compact: true,
-            customAttribution: "Made with ❤ by <a href='mailto://archer.chris@gmail.com'>C. Archer.</a> D’après une idée" +
-                " de P. Ricaud",
-        });
-        map.addControl(map.attrControl, "bottom-right");
         map.on('click', (e) => {
             const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
             const coordsTxt = JSON.stringify(END);
+            console.log("Map clicked at:", coordsTxt);
         });
         map.on('mousedown', (e) => {
             i = 0;
@@ -346,6 +328,25 @@
                 removeAllPopups();
             });
         });
+        map.addControl(new mapboxgl.NavigationControl());
+        let attributionControl = null;
+        for (const control of map._controls) {
+            if (control instanceof mapboxgl.AttributionControl) {
+                attributionControl = control;
+                break;
+            }
+        }
+        if (attributionControl) {
+            map.removeControl(attributionControl);
+        } else {
+            console.log("Attribution control not found.");
+        }
+        map.attrControl = new mapboxgl.AttributionControl({
+            compact: true,
+            customAttribution: "Made with ❤ by <a href='mailto://archer.chris@gmail.com'>C. Archer.</a> D’après une idée" +
+                " de P. Ricaud",
+        });
+        map.addControl(map.attrControl, "bottom-right");
         addMapStyleSelector(map);
         const currentZoom = map.getZoom();
         const geolocate = new mapboxgl.GeolocateControl({
@@ -397,8 +398,8 @@
                 this.textbox.style.backgroundColor = backgroundColor;
                 this.textbox.style.position = 'absolute';
                 this.textbox.style.bottom = '10px';
-                this.textbox.style.left = '50%';
-                this.textbox.style.transform = 'translateX(-50%)';
+                this.textbox.style.left = '10px';
+                // this.textbox.style.transform = 'translateX(-50%)';
                 this.textbox.style.padding = '10px';
                 this.textbox.style.borderRadius = '10px';
                 this.textbox.style.border = '1px solid lightgrey';
@@ -407,7 +408,7 @@
                 this.textbox.style.maxWidth = '100%';
                 this.textbox.style.width = 'auto';
                 this.textbox.style.overflow = 'auto'; // Add a scrollbar when the content overflows
-                this.textbox.style.maxHeight = '200px'; // Limit th
+                this.textbox.style.maxHeight = '200px'; // Limit the max height of the textbox
 
                 map.getContainer().appendChild(this.textbox);
             }
@@ -417,8 +418,8 @@
                 contacts.forEach((contact, index) => {
 
                     // replace spaces in contact.name with nbsp
-                    // contact.name = contact.name.replace(/\s/g, '\u00A0');
-                    contact.name = contact.name.replace(/\s/g, '_');
+                    contact.name = contact.name.replace(/\s/g, '\u00A0');
+                    // contact.name = contact.name.replace(/\s/g, '_');
 
                     const contactElement = document.createElement('span');
                     contactElement.innerText = contact.name;
@@ -426,13 +427,17 @@
                     contactElement.style.marginRight = '0px';
 
                     // if (index > 0 and index < contacts.length - 1) append `|` to the contactElement
-                    if (index > 0 && index < contacts.length - 1) {
-                        const separator = document.createElement('span');
-                        separator.innerText = '|';
-                        separator.style.marginRight = '10px';
-                        separator.style.marginLeft = '10px';
-                        this.textbox.appendChild(separator);
-                    }
+                    // if (index > 0 && index < contacts.length - 1) {
+                    //     const separator = document.createElement('span');
+                    //     separator.innerText = '|';
+                    //     separator.style.marginRight = '10px';
+                    //     separator.style.marginLeft = '10px';
+                    //     this.textbox.appendChild(separator);
+                    // }
+
+                    // Display contacts list vertically
+                    contactElement.style.display = 'block';
+                    contactElement.style.marginBottom = '10px';
 
 
                     contactElement.addEventListener('click', () => {
