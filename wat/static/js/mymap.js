@@ -628,6 +628,42 @@
 
             if (contact_position) {
                 resetRoutesExceptSelected(map, contact_name);
+                // append the current position to the geo_travelled array
+                geo_travelled.push([e.coords.longitude, e.coords.latitude]);
+                // if the length of the geo_travelled array is greater than 1, draw the geo_travelled  route
+                if (geo_travelled.length > 1) {
+                    const geo_travelled_route = {
+                        'type': 'Feature',
+                        'properties': {},
+                        'geometry': {
+                            'type': 'LineString',
+                            'coordinates': geo_travelled
+                        }
+                    };
+                    if (!map.getSource('geo_travelled_route')) {
+                        map.addSource('geo_travelled_route', {
+                            'type': 'geojson',
+                            'data': geo_travelled_route
+                        });
+                    }
+                    if (!map.getLayer('geo_travelled_route')) {
+                        map.addLayer({
+                            'id': 'geo_travelled_route',
+                            'type': 'line',
+                            'source': 'geo_travelled_route',
+                            'layout': {
+                                'line-join': 'round',
+                                'line-cap': 'round'
+                            },
+                            'paint': {
+                                "line-color": "rgba(255,0,0,0.25)",
+                                "line-width": 8,
+                            },
+                        });
+                    }
+                }
+
+
                 getDirections([e.coords.longitude, e.coords.latitude], contact_position)
                     .then(({route, distance, durée, eta, address}) => {
                         if (!monitorTextbox)
