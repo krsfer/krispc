@@ -36,8 +36,8 @@
 
     /*
         The smaller the following speed value, the slower the simulation will be, because it takes more iteration
-         to move from the start point to the end point. Conversely, the larger the speed value, the faster the
-          simulation will be.
+        to move from the start point to the end point. Conversely, the larger the speed value, the faster the
+        simulation will be.
         The speed value is the amount of distance the marker moves between each iteration. For example, if the speed
         value is 0.01, then the marker moves 1% of the distance between the start point and the end point between each
         iteration. If the speed value is 0.1, then the marker moves 10% of the distance between the start point and the

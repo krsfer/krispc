@@ -164,7 +164,7 @@
                     'line-cap': 'round'
                 },
                 'paint': {
-                    "line-color": "rgba(0, 255 , 0, 0.52)",
+                    "line-color": "rgba(0,255,0,0.4)",
                     "line-width": 8,
                 },
             });
@@ -230,6 +230,21 @@
             const endPoint = [startPoint[0], startPoint[1] + 0.045045045]; // 5 km to the north
             const numSegments = 50;
             const points = [];
+
+            // resetRoutesExceptSelected(map, routeName);
+            // Remove all route layers
+
+            const layers = map.getStyle().layers;
+            layers.forEach((layer) => {
+                if (layer.id.endsWith('_route')) {
+                    map.getSource(layer.id).setData({
+                        'type': 'FeatureCollection',
+                        'features': []
+                    });
+                }
+            });
+
+
             if (isGeolocating) {
                 addRouteLayer(map, routeName, contact_route, startPoint)
             } else
