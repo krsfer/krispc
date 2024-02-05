@@ -557,7 +557,7 @@
                 this.button.innerText = 'Toggle List';
                 this.button.style.backgroundColor = backgroundColor;
                 this.button.style.position = 'absolute';
-                this.button.style.top = '50px';
+                this.button.style.top = '40px';
                 this.button.style.left = '10px';
                 this.button.style.borderRadius = '10px';
                 this.button.style.border = '1px solid';
@@ -593,6 +593,7 @@
         let geo_textbox = null;
         let geo_times = 0; // Declare geo_times as a global variable
         geolocate.on('geolocate', function (e) {
+            console.log("geolocate event", e);
             isGeolocating = true;
             geo = [e.coords.longitude, e.coords.latitude];
             geo_times = geo_times + 1;
@@ -605,8 +606,14 @@
                 speed = convertMetersPerSecondToKilometersPerHour(e.coords.speed)
 
             let heading = "no heading";
-            if (e.coords.heading)
-                heading = toString(parseFloat(e.coords.heading)) + '°'
+            console.log("e.coords.heading", e.coords.heading);
+            if (e.coords.heading) {
+                // ensure e.coords.heading is numeric
+                const headingnum = parseFloat(e.coords.heading);
+                console.log("headingnum", headingnum);
+
+                heading = toString(headingnum) + '°'
+            }
 
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
