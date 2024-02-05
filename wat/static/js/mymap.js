@@ -43,6 +43,7 @@
     let contacts_markers = [];
     let contacts_markers_dict = {};
     let monitorTextbox = null;
+    let debug_textbox = null;
     let isGeolocating = false;
     let geo = [];
     let i = 0;
@@ -615,6 +616,11 @@
                 heading = toString(headingnum) + '°'
             }
 
+            if (!debug_textbox)
+                debug_textbox = new Debug_textbox(map, window.backgroundColor);
+            debug_textbox.debugTextbox.innerText = `e: ${e.coords.heading}
+            n: ${heading} `;
+
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
                 accuracy = (e.coords.accuracy.toFixed(1)) + ' m'
@@ -628,15 +634,18 @@
             } else {
                 console.log("geo_textbox does not exist");
             }
-            geo_textbox.geoTextbox.innerText = `n: ${geo_times}
+            geo_textbox.geoTextbox.innerText = `
+            n: ${geo_times}
                 speed: ${speed}
-                heading: ${heading}
-                accuracy: ${accuracy}`;
+                    heading: ${heading}
+                        accuracy: ${accuracy}`;
 
             if (contact_position) {
                 resetRoutesExceptSelected(map, contact_name);
                 // append the current position to the geo_travelled array
                 geo_travelled.push([e.coords.longitude, e.coords.latitude]);
+
+
                 // if the length of the geo_travelled array is greater than 1, draw the geo_travelled  route
                 if (geo_travelled.length > 1) {
                     const geo_travelled_route = {
@@ -676,7 +685,12 @@
                         if (!monitorTextbox)
                             monitorTextbox = new Monitor_textbox(map, window.backgroundColor);
                         displayUpdates(monitorTextbox, distance, durée, eta, address);
-                        const routeName = contacts_markers_dict[`${contact_position[0].toFixed(2)}_${contact_position[1].toFixed(2)}`];
+                        const routeName = contacts_markers_dict[`${contact_position[0].toFixed(2)}
+            _$
+            {
+                contact_position[1].toFixed(2)
+            }
+            `];
                         map.getSource(routeName).setData(route.geometry);
                         contact_route = route.geometry.coordinates;
                     });
@@ -706,6 +720,42 @@
             this.monitorTextbox.style.right = "5px";
             this.monitorTextbox.style.zIndex = "1";
             map.getContainer().appendChild(this.monitorTextbox);
+        }
+    }
+
+    class Debug_textbox {
+        constructor(map, backgroundColor) {
+            this.debugTextbox = document.createElement("div");
+            this.debugTextbox.classList.add("debux-textbox");
+            this.debugTextbox.innerText = "xxxxxx";
+            this.debugTextbox.style.backgroundColor = backgroundColor;
+            this.debugTextbox.style.border = "1px solid";
+            this.debugTextbox.style.borderColor = "rgba(194, 181, 181)";
+            this.debugTextbox.style.borderRadius = "10px";
+            this.debugTextbox.style.bottom = "5px";
+            this.debugTextbox.style.textShadow = "1px 1px 1px #ccc";
+            this.debugTextbox.style.color = "rgb(0,0,0)";
+            this.debugTextbox.style.fontSize = '20px';
+            this.debugTextbox.style.lineHeight = "0.9";
+            this.debugTextbox.style.overflow = "auto";
+            this.debugTextbox.style.padding = "10px";
+            this.debugTextbox.style.position = "absolute";
+            this.debugTextbox.style.textAlign = "center";
+            this.debugTextbox.style.left = "50%";
+            this.debugTextbox.style.transform = "translateX(-50%)";
+            this.debugTextbox.style.zIndex = "1";
+            this.debugTextbox.style.transition = "bottom 0.3s ease-out";
+            map.getContainer().appendChild(this.debugTextbox);
+
+            this.debugTextbox.addEventListener('click', (event) => {
+                if (event.clientY <= 5) {
+                    if (this.debugTextbox.style.bottom === "5px") {
+                        this.debugTextbox.style.bottom = "-100%";
+                    } else {
+                        this.debugTextbox.style.bottom = "5px";
+                    }
+                }
+            });
         }
     }
 
