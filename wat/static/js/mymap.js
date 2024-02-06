@@ -623,7 +623,7 @@
 
             if (!debug_textbox)
                 debug_textbox = new Debug_textbox(map, window.backgroundColor);
-            debug_textbox.addText(debugDBmgr(`e_heading: ${e.coords.heading}, heading: ${heading}`));
+            debug_textbox.addText(debugDBmgr(`progress:, e_heading: ${e.coords.heading}, heading: ${heading}`));
 
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
