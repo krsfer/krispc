@@ -327,10 +327,15 @@
         map.on('load', function () {
             addContactMarkers(map); // Add the contact markers when the map initially loads
             addRouteLayers(map); // Add the route layer when the map initially loads
+            if (!debug_textbox)
+                debug_textbox = new Debug_textbox(map, window.backgroundColor);
+            debug_textbox.addText(debugDBmgr("progress: Map loaded"));
         });
         map.on('style.load', function () {
             addContactMarkers(map); // Add the contact markers when the map initially loads
             addRouteLayers(map); // Re-add the route layer every time the map style changes and is fully loaded
+            if (!debug_textbox)
+                debug_textbox = new Debug_textbox(map, window.backgroundColor);
         });
         map.on('click', (e) => {
             const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
@@ -618,8 +623,7 @@
 
             if (!debug_textbox)
                 debug_textbox = new Debug_textbox(map, window.backgroundColor);
-            debug_textbox.debugTextbox.innerText = `e: ${e.coords.heading}
-            n: ${heading} `;
+            debug_textbox.addText(debugDBmgr(`e_heading: ${e.coords.heading}, heading: ${heading}`));
 
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
@@ -634,8 +638,7 @@
             } else {
                 console.log("geo_textbox does not exist");
             }
-            geo_textbox.geoTextbox.innerText = `
-            n: ${geo_times}
+            geo_textbox.geoTextbox.innerText = `n: ${geo_times}
             speed: ${speed}
             heading: ${heading}
             accuracy: ${accuracy}`;
@@ -670,7 +673,8 @@
             this.monitorTextbox.style.border = "1px solid";
             this.monitorTextbox.style.borderColor = "rgba(194, 181, 181)";
             this.monitorTextbox.style.borderRadius = "10px";
-            this.monitorTextbox.style.bottom = "5px";
+            this.monitorTextbox.style.top= "50vh";
+            this.monitorTextbox.style.transform = "translateY(-50%)"; // Move the textbox up by half of its height
             this.monitorTextbox.style.textShadow = "1px 1px 1px #ccc";
             this.monitorTextbox.style.color = "rgb(0,0,0)";
             this.monitorTextbox.style.fontSize = '20px';
@@ -681,6 +685,8 @@
             this.monitorTextbox.style.textAlign = "center";
             this.monitorTextbox.style.right = "5px";
             this.monitorTextbox.style.zIndex = "1";
+            // set width to 30% of the viewport width
+            this.monitorTextbox.style.width = "30%";
             map.getContainer().appendChild(this.monitorTextbox);
         }
     }
@@ -736,13 +742,18 @@
 
             });
 
-
             this.debugTextbox.addEventListener('mouseover', () => {
                 this.debugTextbox.style.cursor = 'pointer';
             });
             this.debugTextbox.addEventListener('mouseout', () => {
                 this.debugTextbox.style.cursor = 'default';
             });
+
+            // Create a funcsion to handle adding text to the debug textbox
+            this.addText = function (text) {
+                console.log("text", text);
+                this.debugTextbox.innerText = text;
+            }
         }
     }
 
@@ -755,7 +766,7 @@
             this.geoTextbox.style.border = "1px solid";
             this.geoTextbox.style.borderColor = "rgba(194, 181, 181)";
             this.geoTextbox.style.borderRadius = "10px";
-            this.geoTextbox.style.top = "65px"; // Changed from "bottom: 5px"
+            this.geoTextbox.style.top = "70px"; // Changed from "bottom: 5px"
             this.geoTextbox.style.textShadow = "1px 1px 1px #ccc";
             this.geoTextbox.style.color = "rgb(0,0,0)";
             this.geoTextbox.style.fontSize = '20px';
@@ -769,4 +780,44 @@
             map.getContainer().appendChild(this.geoTextbox);
         }
     }
+
+    // Assuming debugDB is a global dictionary
+    let debugDB = {};
+
+    function debugDBmgr(fields) {
+        if (fields === '') {
+            debugDB = {};
+        } else {
+            const fieldArray = fields.split(/,|\r?\n/);
+
+            fieldArray.forEach(field => {
+                const indexOfColon = field.indexOf(':');
+                const k = indexOfColon !== -1 ? field.substring(0, indexOfColon) : field;
+                const v = indexOfColon !== -1 ? field.substring(indexOfColon + 1) : undefined;
+
+                if (v === '' || v === undefined) {
+                    // If v is empty or undefined, delete the key k from debugDB
+                    delete debugDB[k];
+                } else {
+                    // Otherwise, add or update k with v in debugDB
+                    debugDB[k] = v;
+                }
+            });
+        }
+
+        // Directly convert debugDB to string format, as keys with empty or undefined values have been filtered already
+        return Object.entries(debugDB)
+            .map(([key, value]) => `${key}:${value}`)
+            .join('\r\n');
+    }
+
+    // Subsequent calls to debugDBmgr can be made with different parameters to modify debugDB
+    // Example usage
+    // console.log(debugDBmgr('username:admin,password:1234'));
+
+    // console.log(debugDBmgr("key1:value1, key2: value2"));
+    // console.log(debugDBmgr("key3:value3\nkey4:value4"));
+    console.log(debugDBmgr("key3:value999\nkey4:"));
+    console.log(debugDBmgr(""));
+
 })();
