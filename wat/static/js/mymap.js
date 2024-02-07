@@ -329,7 +329,12 @@
             addRouteLayers(map); // Add the route layer when the map initially loads
             if (!debug_textbox)
                 debug_textbox = new Debug_textbox(map, window.backgroundColor);
-            debug_textbox.addText(debugDBmgr("progress: Map loaded"));
+            debugDBmgr_0("");
+            const res = debugDBmgr_0("progress#Maploaded#red");
+            const res_c = applyColorToText(res);
+            // console.log("res", res);
+            // console.log("res_c", res_c);
+            debug_textbox.addText(res_c);
         });
         map.on('style.load', function () {
             addContactMarkers(map); // Add the contact markers when the map initially loads
@@ -440,22 +445,36 @@
                 this.textbox.style.border = '1px solid lightgrey';
                 this.textbox.style.textAlign = 'center';
                 this.textbox.style.whiteSpace = 'normal';
-                this.textbox.style.maxWidth = '100%';
+                this.textbox.style.maxWidth = '80%';
                 this.textbox.style.width = 'auto';
                 this.textbox.style.overflow = 'auto'; // Add a scrollbar when the content overflows
                 this.textbox.style.maxHeight = '200px'; // Limit the max height of the textbox
                 this.textbox.style.overflowY = 'scroll'; // Add a scrollbar when the content overflows
                 this.textbox.className = 'ContactsTextbox';
                 this.textbox.style.visibility = 'visible';
-                this.textbox.style.transition = 'transform 0.3s ease-out';
+                this.textbox.style.transition = 'transform 0.5s ease-out';
                 // add translateX(-100%) to hide the textbox
-                this.textbox.style.transform = 'translateX(-100%)';
+                // this.textbox.style.transform = 'translateX(-97%)';
+
+                // Manage click events on the textbox
+                this.textbox.addEventListener('click', (e) => {
+                    console.log("textbox clicked");
+                    // e.stopPropagation();
+                    // Hide the textbox if it is visible
+                    if (this.textbox.style.transform === 'translateX(0%)') {
+                        this.textbox.style.transform = 'translateX(-97%)';
+                    } else {
+                        // If it is not visible, translate it to the right until it is visible
+                        this.textbox.style.transform = 'translateX(0%)';
+                    }
+                });
 
                 map.getContainer().appendChild(this.textbox);
             }
 
             updateContacts(contacts) {
                 this.textbox.innerHTML = ''; // Clear the textbox
+
                 contacts.forEach((contact, index) => {
 
                     // replace spaces in contact.name with nbsp
@@ -493,8 +512,11 @@
                             this.textbox.childNodes.forEach((element) => {
                                 element.style.backgroundColor = 'rgba(255, 255, 255, 0)';
                             });
-                            contactElement.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                            contactElement.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
                         }
+
+                        // Hide the textbox
+                        // this.textbox.style.transform = 'translateX(-100%)';
 
                         if (isGeolocating) {
                             resetRoutesExceptSelected(map, contact.name);
@@ -555,6 +577,7 @@
         let contactsTextbox = new ContactsTextbox(map, window.backgroundColor);
         contactsTextbox.updateContacts(contacts_lst.contacts);
 
+        /*
         class ToggleListButton {
             constructor(map, backgroundColor, contactsTextbox) {
                 this.map = map;
@@ -576,7 +599,7 @@
                 // Check if the textbox is visible
                 if (this.contactsTextbox.textbox.style.transform === 'translateX(0%)') {
                     // If it is visible, translate it to the left out of the viewport
-                    this.contactsTextbox.textbox.style.transform = 'translateX(-100%)';
+                    this.contactsTextbox.textbox.style.transform = 'translateX(-97%)';
                 } else {
                     // If it is not visible, translate it to the right until it is visible
                     this.contactsTextbox.textbox.style.transform = 'translateX(0%)';
@@ -585,6 +608,7 @@
         }
 
         let toggleListButton = new ToggleListButton(map, window.backgroundColor, contactsTextbox);
+*/
 
 
         geolocate.on('trackuserlocationend', function () {
@@ -623,7 +647,8 @@
 
             if (!debug_textbox)
                 debug_textbox = new Debug_textbox(map, window.backgroundColor);
-            debug_textbox.addText(debugDBmgr(`progress:, e_heading: ${e.coords.heading}, heading: ${heading}`));
+            debugDBmgr_0("");
+            debug_textbox.addText(applyColorToText(debugDBmgr_0(`e_heading#${e.coords.heading}#red;heading#${heading}#blue`)));
 
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
@@ -673,7 +698,7 @@
             this.monitorTextbox.style.border = "1px solid";
             this.monitorTextbox.style.borderColor = "rgba(194, 181, 181)";
             this.monitorTextbox.style.borderRadius = "10px";
-            this.monitorTextbox.style.top= "50vh";
+            this.monitorTextbox.style.top = "50vh";
             this.monitorTextbox.style.transform = "translateY(-50%)"; // Move the textbox up by half of its height
             this.monitorTextbox.style.textShadow = "1px 1px 1px #ccc";
             this.monitorTextbox.style.color = "rgb(0,0,0)";
@@ -695,7 +720,7 @@
         constructor(map, backgroundColor) {
             this.debugTextbox = document.createElement("div");
             this.debugTextbox.classList.add("debux-textbox");
-            this.debugTextbox.innerText = "xxxxxx";
+            this.debugTextbox.innerText = "";
             this.debugTextbox.style.backgroundColor = backgroundColor;
             this.debugTextbox.style.border = "1px solid";
             this.debugTextbox.style.borderColor = "rgba(194, 181, 181)";
@@ -751,8 +776,12 @@
 
             // Create a funcsion to handle adding text to the debug textbox
             this.addText = function (text) {
-                console.log("text", text);
-                this.debugTextbox.innerText = text;
+                // this.debugTextbox.innerText = text;
+                // this.debugTextbox.innerHTML = "<span style='color: red;'>This is a line in red.</span><br><span" +
+                //     " style='color:" +
+                //     " blue;'>This is a line in blue.</span>";
+                // console.log("text", text);
+                this.debugTextbox.innerHTML = text;
             }
         }
     }
@@ -782,42 +811,199 @@
     }
 
     // Assuming debugDB is a global dictionary
-    let debugDB = {};
 
-    function debugDBmgr(fields) {
-        if (fields === '') {
-            debugDB = {};
-        } else {
+    /**
+     * Parse debug DB field data and return formatted string
+     * @param {string} fields - Debug DB field data
+     * @returns {string} Fields formatted as key:value pairs
+     */
+
+    function debugDBmgr_1(fields = '') {
+        let debugDB = {};
+        const defaultColor = 'green';
+
+        if (!fields) return Object.entries(debugDB)
+            .map(formatEntry)
+            .join('\n');
+
+        const fieldArray = fields.split(/,|\\r?\\n/);
+
+        fieldArray
+            .map(parseField)
+            .forEach(field => {
+                if (!field.key) delete debugDB[field.key];
+                else debugDB[field.key] = field.value;
+            });
+
+        return Object.entries(debugDB)
+            .map(formatEntry)
+            .join('\n');
+
+        function parseField(fieldStr) {
+            const [key, value, color] = fieldStr.split(':');
+            return {key, value, color};
+        }
+
+        function formatEntry([key, value]) {
+            console.log('key', key);
+            const [val, color] = value.split(':');
+            console.log('val', val);
+            console.log('color', color);
+            return `${key}:${val}:${color || defaultColor}`;
+        }
+    }
+
+    function debugDBmgr_2(fields) {
+        // let debugDB = {}; // Ensure debugDB is defined in the function scope
+
+        if (fields !== '') {
             const fieldArray = fields.split(/,|\r?\n/);
 
             fieldArray.forEach(field => {
-                const indexOfColon = field.indexOf(':');
-                const k = indexOfColon !== -1 ? field.substring(0, indexOfColon) : field;
-                const v = indexOfColon !== -1 ? field.substring(indexOfColon + 1) : undefined;
+                const [k, v, c] = field.split(':'); // Destructure the parts for clarity
 
-                if (v === '' || v === undefined) {
-                    // If v is empty or undefined, delete the key k from debugDB
-                    delete debugDB[k];
+                if (!k) { // Check for falsy values (empty string, null, undefined)
+                    // Potentially log an error or handle the case of an empty key
                 } else {
-                    // Otherwise, add or update k with v in debugDB
-                    debugDB[k] = v;
+                    debugDB[k] = c ? `${v}:${c}` : v; // Use template literals for string construction
                 }
             });
         }
 
-        // Directly convert debugDB to string format, as keys with empty or undefined values have been filtered already
+        const default_color = 'green';
         return Object.entries(debugDB)
-            .map(([key, value]) => `${key}:${value}`)
-            .join('\r\n');
+            .map(([key, value]) => {
+                const [val, color = default_color] = value.split(':'); // Default color if not provided
+                return `${key}:${val}:${color}`; // Simplified return statement
+            })
+            .join('\n');
+    }
+
+    function debugDBmgr_0(fields) {
+        // console.log('fields', fields);
+        // console.log('is fields empty', fields === '');
+
+         let debugDB = {}; // Ensure debugDB is defined in the function scope
+
+        const fieldArray = fields.split(/;|\r?\n/);
+        // console.log('fieldArray', fieldArray);
+
+        fieldArray.forEach(field => {
+            let parts = field.split("#");
+
+            let k = parts[0];
+            let v = parts[1];
+            let c = parts[2];
+
+            // console.log('k', k);
+            // console.log('v', v);
+            // console.log('c', c);
+
+            if (k === '' || k === undefined) {
+                delete debugDB[k]; // If v is empty or undefined, delete the key k from debugDB
+            } else {
+                if (c) {
+                    // console.log('c is defined');
+                    debugDB[`${k}`] = v + '#' + c;
+                    // console.log('debugDB', debugDB);
+                    // console.log('debugDB[k]', debugDB[k]);
+                } else {
+                    debugDB[k] = v; // No color definition, so add or update k with v in debugDB as before
+                }
+            }
+        });
+
+
+        const default_color = 'green';
+
+        return Object.entries(debugDB)
+            .map(([key, value]) => {
+                const val = value.split("#");
+                if (val) {
+                    const color = val[1];
+                    if (color) {
+                        return `${key}#${val[0]}#${color}`;
+                    } else {
+                        return `${key}#${val[0]}#${default_color}`;
+                    }
+                    return `${key}#${val[0]}${color}`; // Add color to the key#val[0 pair
+                } else {
+                    return `${key}#${val[0]}#${default_color}`; // No $color in key, so return as before
+                }
+            })
+            .join('\n');
+    }
+
+    function applyColorToText(txt) {
+        const lines = txt.split('\n');
+        let result = '';
+        for (let line of lines) {
+            const parts = line.split('#');
+            if (parts.length === 2) {
+                const [key, value] = parts;
+                result += `<span>${value}</span><br>`;
+            } else if (parts.length === 3) {
+                const [key, value, color] = parts;
+                result += `<span style="color:${color};">${value}</span><br>`;
+            }
+        }
+        return result;
+    }
+
+    function displayUpdates(monitor_textbox, distance, durée, eta, address) {
+        // Update the monitorTextbox with the distance, duration, and address
+
+        // Remove numéro de département from address if address is not null it contains the numéro
+        if (address) {
+            const regex = / \b\d{5}\b /g;
+            address = address.replace(regex, ',');
+        } else {
+            address = 'nono';
+        }
+
+        const txt = `dist ${distance}\nDuration ${durée}\neta ${eta}\n${address}`;
+        console.log('displayUpdates txt', txt);
+
+        const txt2 = `Dist#${distance}#;Dur#${durée}#;eta#${eta}#red;address#${address}#`;
+        console.log('displayUpdates txt2', txt2);
+
+        debugDBmgr_0("");
+        console.warn('debugDBmgr_0 txt2:', debugDBmgr_0(txt2));
+        const htm = applyColorToText(debugDBmgr_0(txt2));
+        console.warn('debugDBmgr_0 htm:', htm);
+
+        // <span style="color: red;"> null</span><br>
+        // <span style="color: blue;"> no heading</span><br>
+        // <span style="color: blue;">87 m</span><br>
+        // <span style="color: red;">19</span><br>
+        // <span style="color: 36;">13</span><br>
+        // <span style="color: green;">17 Rue du Faubourg Saint-Esprit</span><br>
+        // <span style="color: green;">black</span><br>
+
+
+        // monitor_textbox.monitorTextbox.innerText = txt;
+        monitor_textbox.monitorTextbox.innerHTML = htm;
     }
 
     // Subsequent calls to debugDBmgr can be made with different parameters to modify debugDB
     // Example usage
     // console.log(debugDBmgr('username:admin,password:1234'));
 
+    // console.log(debugDBmgr("key0:value0:col0"));
     // console.log(debugDBmgr("key1:value1, key2: value2"));
-    // console.log(debugDBmgr("key3:value3\nkey4:value4"));
-    console.log(debugDBmgr("key3:value999\nkey4:"));
-    console.log(debugDBmgr(""));
+    // const txt = "Dist#87 m#;Dur#19#;eta#17:48#red;address#17 Rue du Faubourg Saint-Esprit, Valbonne#";
+    // console.log(txt);
+    //
+    // debugDBmgr_0("");
+    // const res = debugDBmgr_0(txt);
+    // console.log(res);
+    //
+    // const htm = applyColorToText(res);
+    // console.log(htm);
+
+    // console.log(debugDBmgr("key3:value3:green,key4:value4:"));
+    // console.log(debugDBmgr("key5::\nkey6:value6:yellow"))
+    // console.log(debugDBmgr("key2"));
+    // console.log(debugDBmgr(""));
 
 })();

@@ -212,21 +212,6 @@ function xdisplayUpdates(mapSimulation, distance, durée, eta, address) {
     );
 }
 
-function displayUpdates(monitor_textbox, distance, durée, eta, address) {
-    // Update the monitorTextbox with the distance, duration, and address
-
-    // Remove numéro de département from address if address is not null it contains the numéro
-    if (address) {
-        const regex = / \b\d{5}\b /g;
-        address = address.replace(regex, ',');
-    } else {
-        address = 'nono';
-    }
-
-    monitor_textbox.monitorTextbox.innerText = `${distance}\nDuration ${durée}\neta ${eta}\n${address}`;
-}
-
-
 window.convertMetersPerSecondToKilometersPerHour = function (metersPerSecond) {
     const ret = (parseFloat(metersPerSecond) * 3.6).toFixed(0) + " km/h"
     return ret;
