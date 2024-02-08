@@ -6,7 +6,7 @@
       3.6874615,
       43.4113696
     ],
-    "tags": []
+    "tags": ["private"]
   },
   {
     "name": "Pat Brewster",
@@ -15,7 +15,7 @@
       -0.2503028,
       51.5901585
     ],
-    "tags": []
+    "tags": ["private"]
   },
   {
     "name": "Philippe Lantin",
@@ -24,7 +24,7 @@
       2.3712742,
       48.8806473
     ],
-    "tags": []
+    "tags": ["private"]
   },
   {
     "name": "Home",
@@ -33,7 +33,7 @@
       7.0102149,
       43.642199
     ],
-    "tags": []
+    "tags": ["home"]
   },
   {
     "name": "Banasser, Khaled",
@@ -42,7 +42,7 @@
       6.9324005,
       43.6473613
     ],
-    "tags": []
+    "tags": ["pro", "work"]
   },
   {
     "name": "Baszczowski, St\u00e9phanie",
@@ -51,7 +51,7 @@
       7.0017972,
       43.5705294
     ],
-    "tags": []
+    "tags": ["pro", "work"]
   },
   {
     "name": "Fontaine, Simon",
@@ -60,7 +60,7 @@
       6.9288689481173975,
       43.657844
     ],
-    "tags": []
+    "tags": ["pro", "work"]
   },
   {
     "name": "Saez-Pavigna, Paulette",
@@ -69,7 +69,7 @@
       6.9328861,
       43.6465955
     ],
-    "tags": []
+    "tags": ["pro", "work"]
   },
   {
     "name": "Porcu, Jean Pierre",
@@ -78,7 +78,7 @@
       6.949094992598361,
       43.58275802821768
     ],
-    "tags": []
+    "tags": ["pro", "work"]
   },
   {
     "name": "Mariani, Sam",
@@ -87,7 +87,7 @@
       6.949348,
       43.673764
     ],
-    "tags": []
+    "tags": ["pro", "work"]
   },
   {
     "name": "Formation En Agence",
@@ -96,6 +96,6 @@
       7.082361233992904,
       43.601723449999994
     ],
-    "tags": []
+    "tags": ["pro", "work"]
   }
 ]

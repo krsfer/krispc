@@ -43,7 +43,19 @@ body {
     display: none !important;
 }
 
-.marker-pro {
+.home-marker {
+    background-image: url('../img/blue_ball.png');
+    background-size: cover;
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding:  0;
+    opacity: 70%;
+}
+
+.private-marker {
     background-image: url('../img/blue_ball.png');
     background-size: cover;
     width: 30px;
@@ -55,7 +67,7 @@ body {
     opacity: 70%;
 }
 
-.marker {
+.work-marker {
     background-image: url('../img/green_ball.png');
     background-size: cover;
     width: 30px;

@@ -49,10 +49,12 @@
     let i = 0;
     let t = 0;
 
-    window.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+    let contacts_lst_translate = '-97%';
 
-    const bb = document.getElementById('blue_ball').value; // eg. /static/watapp/img/blue_ball.png
-    const gb = document.getElementById('green_ball').value;
+    window.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+
+    // const bb = document.getElementById('blue_ball').value; // eg. /static/watapp/img/blue_ball.png
+    // const gb = document.getElementById('green_ball').value;
     const response = await fetch('contacts_json');
     const contacts_lst = await response.json();
     const getAccessToken = async (token_id) => {
@@ -198,10 +200,23 @@
 
     function addContactMarkers(map) {
         contacts_lst.contacts.forEach((contact) => {
+
             const routeName = createRouteName(contact.name);
+
             const el = document.createElement('div');
-            el.className = 'marker';
+
             let lngLat;
+
+            if (contact.tags.includes("home")) {
+                el.className = 'home-marker';
+            } else if (contact.tags.includes("private")) {
+                el.className = 'private-marker';
+            } else if (contact.tags.includes("work")) {
+                el.className = 'work-marker';
+            } else {
+                el.className = 'contact-marker';
+            }
+
             if (contact.coords.length !== 0) {
                 lngLat = contact.coords;
                 addMarker(map, lngLat, contact.name, contact.address, el);
@@ -458,13 +473,15 @@
 
                 // Manage click events on the textbox
                 this.textbox.addEventListener('click', (e) => {
-                    console.log("textbox clicked");
-                    // e.stopPropagation();
                     // Hide the textbox if it is visible
                     if (this.textbox.style.transform === 'translateX(0%)') {
-                        this.textbox.style.transform = 'translateX(-97%)';
+                        this.textbox.style.transform = `translateX(${contacts_lst_translate})`;
+                        // Remove the scrollbar
+                        this.textbox.style.overflowY = 'hidden';
                     } else {
                         // If it is not visible, translate it to the right until it is visible
+                        // Show the scrollbar
+                        this.textbox.style.overflowY = 'scroll';
                         this.textbox.style.transform = 'translateX(0%)';
                     }
                 });
@@ -506,7 +523,7 @@
                         });
 
                         // Highlight the selected contact and reset the others if any is highlighted
-                        if (contactElement.style.backgroundColor === 'rgba(255, 255, 255, 0.3)') {
+                        if (contactElement.style.backgroundColor === window.backgroundColor) {
                             contactElement.style.backgroundColor = 'rgba(255, 255, 255, 0)';
                         } else {
                             this.textbox.childNodes.forEach((element) => {
@@ -623,7 +640,6 @@
         let geo_textbox = null;
         let geo_times = 0; // Declare geo_times as a global variable
         geolocate.on('geolocate', function (e) {
-            console.log("geolocate event", e);
             isGeolocating = true;
             geo = [e.coords.longitude, e.coords.latitude];
             geo_times = geo_times + 1;
@@ -647,6 +663,7 @@
 
             if (!debug_textbox)
                 debug_textbox = new Debug_textbox(map, window.backgroundColor);
+
             debugDBmgr_0("");
             debug_textbox.addText(applyColorToText(debugDBmgr_0(`e_heading#${e.coords.heading}#red;heading#${heading}#blue`)));
 
@@ -660,13 +677,12 @@
                 setTimeout(() => {
                     geo_textbox.geoTextbox.classList.add("fade-out");
                 }, 500)
-            } else {
-                console.log("geo_textbox does not exist");
             }
-            geo_textbox.geoTextbox.innerText = `n: ${geo_times}
-            speed: ${speed}
-            heading: ${heading}
-            accuracy: ${accuracy}`;
+
+            geo_textbox.geoTextbox.innerHTML = applyColorToText(debugDBmgr_0(`n#${geo_times}#black;
+            speed#${speed}#red;
+            heading#${heading}#black;
+            accuracy#${accuracy}#black;`));
 
             if (contact_position) {
                 resetRoutesExceptSelected(map, contact_name);
@@ -883,7 +899,7 @@
         // console.log('fields', fields);
         // console.log('is fields empty', fields === '');
 
-         let debugDB = {}; // Ensure debugDB is defined in the function scope
+        let debugDB = {}; // Ensure debugDB is defined in the function scope
 
         const fieldArray = fields.split(/;|\r?\n/);
         // console.log('fieldArray', fieldArray);
@@ -961,45 +977,13 @@
             address = 'nono';
         }
 
-        const txt = `dist ${distance}\nDuration ${durée}\neta ${eta}\n${address}`;
-        console.log('displayUpdates txt', txt);
-
         const txt2 = `Dist#${distance}#;Dur#${durée}#;eta#${eta}#red;address#${address}#`;
-        console.log('displayUpdates txt2', txt2);
 
         debugDBmgr_0("");
-        console.warn('debugDBmgr_0 txt2:', debugDBmgr_0(txt2));
         const htm = applyColorToText(debugDBmgr_0(txt2));
-        console.warn('debugDBmgr_0 htm:', htm);
 
-        // <span style="color: red;"> null</span><br>
-        // <span style="color: blue;"> no heading</span><br>
-        // <span style="color: blue;">87 m</span><br>
-        // <span style="color: red;">19</span><br>
-        // <span style="color: 36;">13</span><br>
-        // <span style="color: green;">17 Rue du Faubourg Saint-Esprit</span><br>
-        // <span style="color: green;">black</span><br>
-
-
-        // monitor_textbox.monitorTextbox.innerText = txt;
         monitor_textbox.monitorTextbox.innerHTML = htm;
     }
-
-    // Subsequent calls to debugDBmgr can be made with different parameters to modify debugDB
-    // Example usage
-    // console.log(debugDBmgr('username:admin,password:1234'));
-
-    // console.log(debugDBmgr("key0:value0:col0"));
-    // console.log(debugDBmgr("key1:value1, key2: value2"));
-    // const txt = "Dist#87 m#;Dur#19#;eta#17:48#red;address#17 Rue du Faubourg Saint-Esprit, Valbonne#";
-    // console.log(txt);
-    //
-    // debugDBmgr_0("");
-    // const res = debugDBmgr_0(txt);
-    // console.log(res);
-    //
-    // const htm = applyColorToText(res);
-    // console.log(htm);
 
     // console.log(debugDBmgr("key3:value3:green,key4:value4:"));
     // console.log(debugDBmgr("key5::\nkey6:value6:yellow"))
