@@ -3,10 +3,12 @@
     "name": "Denis Cinus",
     "address": "7 rue du Jardin des Fleurs, S\u00e8te 34200, France",
     "coords": [
-      3.6874615,
-      43.4113696
+      3.688181051980081,
+      43.41096978025445
     ],
-    "tags": ["private"]
+    "tags": [
+      "private"
+    ]
   },
   {
     "name": "Pat Brewster",
@@ -15,43 +17,55 @@
       -0.2503028,
       51.5901585
     ],
-    "tags": ["private"]
+    "tags": [
+      "private"
+    ]
   },
   {
     "name": "Philippe Lantin",
     "address": "16 rue de Chaumont\n75019 Paris\nFR",
     "coords": [
-      2.3712742,
-      48.8806473
+      2.3713206207414714,
+      48.880659595861346
     ],
-    "tags": ["private"]
+    "tags": [
+      "private"
+    ]
   },
   {
     "name": "Home",
     "address": "17, rue du Faubourg Saint-Esprit, Valbonne 06560, France",
     "coords": [
-      7.0102149,
-      43.642199
+      7.010860989124836,
+      43.64139476392839
     ],
-    "tags": ["home"]
+    "tags": [
+      "home"
+    ]
   },
   {
     "name": "Banasser, Khaled",
     "address": "2 Chemin des Comtesses, 06130 Grasse",
     "coords": [
-      6.9324005,
-      43.6473613
+      6.9317772875055255,
+      43.648882479312334
     ],
-    "tags": ["pro", "work"]
+    "tags": [
+      "pro",
+      "work"
+    ]
   },
   {
     "name": "Baszczowski, St\u00e9phanie",
     "address": "14 chemin du Porrichon, 06110 Le Cannet",
     "coords": [
-      7.0017972,
-      43.5705294
+      6.999417993650127,
+      43.567788345389516
     ],
-    "tags": ["pro", "work"]
+    "tags": [
+      "pro",
+      "work"
+    ]
   },
   {
     "name": "Fontaine, Simon",
@@ -60,16 +74,22 @@
       6.9288689481173975,
       43.657844
     ],
-    "tags": ["pro", "work"]
+    "tags": [
+      "pro",
+      "work"
+    ]
   },
   {
     "name": "Saez-Pavigna, Paulette",
     "address": "31 Chemin de la Chapelle Saint-Antoine, 06130 Grasse",
     "coords": [
-      6.9328861,
-      43.6465955
+      6.933440842597577,
+      43.64734093705377
     ],
-    "tags": ["pro", "work"]
+    "tags": [
+      "pro",
+      "work"
+    ]
   },
   {
     "name": "Porcu, Jean Pierre",
@@ -78,7 +98,10 @@
       6.949094992598361,
       43.58275802821768
     ],
-    "tags": ["pro", "work"]
+    "tags": [
+      "pro",
+      "work"
+    ]
   },
   {
     "name": "Mariani, Sam",
@@ -87,15 +110,32 @@
       6.949348,
       43.673764
     ],
-    "tags": ["pro", "work"]
+    "tags": [
+      "pro",
+      "work"
+    ]
   },
   {
     "name": "Formation En Agence",
     "address": "500 All. des Terriers, 06600 Antibes, France",
     "coords": [
-      7.082361233992904,
-      43.601723449999994
+      7.082205665870134,
+      43.60167586302774
     ],
-    "tags": ["pro", "work"]
+    "tags": [
+      "pro",
+      "work"
+    ]
+  },
+  {
+    "name": "Mom",
+    "address": "717 Broadview Ave #307",
+    "coords": [
+      -79.35735249846795,
+      43.67511946057537
+    ],
+    "tags": [
+      "private"
+    ]
   }
 ]

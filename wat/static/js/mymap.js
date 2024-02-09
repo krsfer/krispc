@@ -37,6 +37,8 @@
         e.returnValue = '';
     });
 
+    let csrftoken = getCookie('csrftoken');
+
     let contact_position = null;
     let contact_name = null;
     let contact_route = null;
@@ -50,6 +52,8 @@
     let t = 0;
 
     let contacts_lst_translate = '-97%';
+
+    let compass = null;
 
     window.backgroundColor = 'rgba(255, 255, 255, 0.6)';
 
@@ -95,6 +99,11 @@
             )
             .addTo(map);
 
+        // Replace nbsp with space in name
+        name = name.replace(/\u00A0/g, ' ');
+        marker.contact_name = name; // Add the custom field to the marker
+        marker.contact_position = lngLat; // Add the custom field to the marker
+
         // Add event listeners for the dragstart and dragend events
         marker.on('dragstart', function () {
             console.log('Marker drag start');
@@ -103,7 +112,12 @@
         marker.on('dragend', function () {
             console.log('Marker drag end');
             lngLat = marker.getLngLat();
+            console.log("marker", marker);
+            const some_name = marker.contact_name;
+            console.log('contact name:', some_name);
+            console.log("Old marker position:", marker.contact_position);
             console.log('New marker position:', lngLat);
+            updateContactsJson(some_name, lngLat);
         });
 
         marker.getElement().style.visibility = "visible";
@@ -196,6 +210,25 @@
         updateContactsJson(name, lngLat).catch((error) => {
             console.warn(`${errorMessage} > ${error.message} <`, contact);
         });
+    }
+
+    function updateContactsJson(name, lngLat) {
+        fetch('update_contacts_json', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({
+                name: name,
+                coords: lngLat,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     function addContactMarkers(map) {
@@ -617,6 +650,8 @@
 
                 this._setPosition();
 
+                this.setRotation(10);
+
                 this._container.appendChild(this._compass);
 
                 map.getContainer().appendChild(this._container);
@@ -637,42 +672,7 @@
 
         //End. Compass ///////////////////////////////////////////////////////////////
 
-        const compass = new CompassControl(map);
-
-
-        /*
-        class ToggleListButton {
-            constructor(map, backgroundColor, contactsTextbox) {
-                this.map = map;
-                this.contactsTextbox = contactsTextbox;
-                this.button = document.createElement('button');
-                this.button.innerText = 'Toggle List';
-                this.button.style.backgroundColor = backgroundColor;
-                this.button.style.position = 'absolute';
-                this.button.style.top = '40px';
-                this.button.style.left = '10px';
-                this.button.style.borderRadius = '10px';
-                this.button.style.border = '1px solid';
-                this.button.style.borderColor = 'rgba(194, 181, 181)';
-                this.button.addEventListener('click', this.toggleContactsTextboxVisibility.bind(this));
-                map.getContainer().appendChild(this.button);
-            }
-
-            toggleContactsTextboxVisibility() {
-                // Check if the textbox is visible
-                if (this.contactsTextbox.textbox.style.transform === 'translateX(0%)') {
-                    // If it is visible, translate it to the left out of the viewport
-                    this.contactsTextbox.textbox.style.transform = 'translateX(-97%)';
-                } else {
-                    // If it is not visible, translate it to the right until it is visible
-                    this.contactsTextbox.textbox.style.transform = 'translateX(0%)';
-                }
-            }
-        }
-
-        let toggleListButton = new ToggleListButton(map, window.backgroundColor, contactsTextbox);
-*/
-
+        compass = new CompassControl(map);
 
         geolocate.on('trackuserlocationend', function () {
             const geolocateButton = document.getElementsByClassName('mapboxgl-ctrl-geolocate')[0];
@@ -694,30 +694,25 @@
 
             let speed = 'no speed';
 
+            // Set the rotation of the compass to the current heading of the device if e.coords.heading is defined
+            console.log("test e.coords.heading", e.coords.heading);
+            if (e.coords.heading) {
+                console.log("e.coords.heading", e.coords.heading);
+                compass.setRotation(e.coords.heading);
+            }
 
             if (e.coords.speed)
                 // ensure e.coords.speed is numeric
                 speed = convertMetersPerSecondToKilometersPerHour(e.coords.speed)
 
-            let heading = "no heading";
-            console.log("e.coords.heading", e.coords.heading);
-            if (e.coords.heading) {
-                // ensure e.coords.heading is numeric
-
-                compass.setRotation(e.coords.heading);
-
-                const headingnum = parseFloat(e.coords.heading);
-                console.log("headingnum", headingnum);
-
-
-                heading = toString(headingnum) + '°'
-            }
+            let heading = e.coords.heading ? e.coords.heading.toString() : 'no heading';
+            console.log("heading", heading);
 
             if (!debug_textbox)
                 debug_textbox = new Debug_textbox(map, window.backgroundColor);
 
             debugDBmgr_0("");
-            debug_textbox.addText(applyColorToText(debugDBmgr_0(`e_heading#${e.coords.heading}#red;heading#${heading}#blue`)));
+            debug_textbox.addText(applyColorToText(debugDBmgr_0(`e_heading#${e.coords.heading}#red;heading#${heading}°#blue`)));
 
             let accuracy = 'no accuracy';
             if (e.coords.accuracy)
@@ -739,10 +734,10 @@
 
             if (contact_position) {
                 resetRoutesExceptSelected(map, contact_name);
+
                 // append the current position to the geo_travelled array
                 geo_travelled.push([e.coords.longitude, e.coords.latitude]);
                 // if the length of the geo_travelled array is greater than 1, draw the geo_travelled  route
-
 
                 getDirections([e.coords.longitude, e.coords.latitude], contact_position)
                     .then(({route, distance, durée, eta, address}) => {
@@ -1036,6 +1031,21 @@
         const htm = applyColorToText(debugDBmgr_0(txt2));
 
         monitor_textbox.monitorTextbox.innerHTML = htm;
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
     // console.log(debugDBmgr("key3:value3:green,key4:value4:"));

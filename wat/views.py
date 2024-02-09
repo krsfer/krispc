@@ -95,14 +95,20 @@ def update_contacts_json(request):
 
     # Find the contact with the given name and update its coordinates
     for contact in contacts:
+        print(f'same?{contact['name'] == name}  cname: >{contact['name']}< name: >{name}<')
+        # Test if the value of contact['name'] is the same as that of name
+
         if contact['name'] == name:
-            contact['coords'] = coords
+            # set new coordinates to a list of [lng, lat]
+            contact['coords'] = [
+                coords['lng'], coords['lat']
+            ]
             break
     else:
         return JsonResponse({'error': 'Contact not found'})
 
     # Write the updated contacts back to the contacts.json file
     with open(file_path, 'w') as f:
-        json.dump(contacts, f)
+        json.dump(contacts, f, indent=4)
 
     return JsonResponse({'success': 'Contact updated'})

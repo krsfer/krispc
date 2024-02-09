@@ -54,7 +54,7 @@ body {
 .compass-image {
   width: 50px; /* Set the width of the compass */
   height: 50px; /* Set the height of the compass */
-  background-image: url('../img/Simple_compass_rose.svg'); /* Path to your compass image */
+  background-image: url('../img/north-arrow-2235-green.svg'); /* Path to your compass image */
   background-size: cover; /* Cover the div area with the image */
   background-position: center; /* Center the background image */
 }
