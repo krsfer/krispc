@@ -602,39 +602,43 @@
         // The image of the compass will be rotated to match the current heading of the device.
 
         class CompassControl {
-            constructor() {
-                this._container = document.createElement('div');
-                this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group compass-control';
-                this._compass = document.createElement('div');
-                this._compass.className = 'compass-image'; // Use this class to set the background image in CSS
-                this._container.appendChild(this._compass);
-            }
 
-            onAdd(map) {
+            constructor(map) {
                 this._map = map;
-                this._setPosition('center-left'); // Custom method to set position
-                return this._container;
+
+                this._container = document.createElement('div');
+                this._container.className = 'compass-control';
+
+                this._compass = document.createElement('div');
+                this._compass.className = 'compass-image';
+
+                this._compass.style.width = '100px';
+                this._compass.style.height = '100px';
+
+                this._setPosition();
+
+                this._container.appendChild(this._compass);
+
+                map.getContainer().appendChild(this._container);
             }
 
-            onRemove() {
-                this._container.parentNode.removeChild(this._container);
-                this._map = undefined;
+            _setPosition() {
+                this._container.style.position = 'absolute';
+                this._container.style.left = '5px';
+                this._container.style.top = '50%';
+                this._container.style.transform = 'translateY(-50%)';
             }
 
-            _setPosition(position) {
-                // Positioning code remains the same
-            }
-
-            // Method to rotate the compass background
             setRotation(heading) {
                 this._compass.style.transform = `rotate(${heading}deg)`;
             }
+
         }
 
-
         //End. Compass ///////////////////////////////////////////////////////////////
-        let compass = new CompassControl();
-        map.addControl(compass);
+
+        const compass = new CompassControl(map);
+
 
         /*
         class ToggleListButton {
@@ -700,7 +704,7 @@
             if (e.coords.heading) {
                 // ensure e.coords.heading is numeric
 
-                compass.setRotation(heading);
+                compass.setRotation(e.coords.heading);
 
                 const headingnum = parseFloat(e.coords.heading);
                 console.log("headingnum", headingnum);
