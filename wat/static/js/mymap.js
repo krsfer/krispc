@@ -594,6 +594,48 @@
         let contactsTextbox = new ContactsTextbox(map, window.backgroundColor);
         contactsTextbox.updateContacts(contacts_lst.contacts);
 
+        // Begin. Compass ////////////////////////////////////////////////////////////
+
+        // Create a class to display a rotating compass. The compass will be displayed in the center left  of the map.
+        // The compass will be displayed as a div with a background color and a border. The compass will be displayed
+        // The image comes from compass1.jpg
+        // The image of the compass will be rotated to match the current heading of the device.
+
+        class CompassControl {
+            constructor() {
+                this._container = document.createElement('div');
+                this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group compass-control';
+                this._compass = document.createElement('div');
+                this._compass.className = 'compass-image'; // Use this class to set the background image in CSS
+                this._container.appendChild(this._compass);
+            }
+
+            onAdd(map) {
+                this._map = map;
+                this._setPosition('center-left'); // Custom method to set position
+                return this._container;
+            }
+
+            onRemove() {
+                this._container.parentNode.removeChild(this._container);
+                this._map = undefined;
+            }
+
+            _setPosition(position) {
+                // Positioning code remains the same
+            }
+
+            // Method to rotate the compass background
+            setRotation(heading) {
+                this._compass.style.transform = `rotate(${heading}deg)`;
+            }
+        }
+
+
+        //End. Compass ///////////////////////////////////////////////////////////////
+        let compass = new CompassControl();
+        map.addControl(compass);
+
         /*
         class ToggleListButton {
             constructor(map, backgroundColor, contactsTextbox) {
@@ -636,9 +678,11 @@
                 console.log("isGeolocating set to false", isGeolocating);
             }
         });
+
         let geo_travelled = []; // Declare geo_travelled as a global variable
         let geo_textbox = null;
         let geo_times = 0; // Declare geo_times as a global variable
+
         geolocate.on('geolocate', function (e) {
             isGeolocating = true;
             geo = [e.coords.longitude, e.coords.latitude];
@@ -657,6 +701,7 @@
                 // ensure e.coords.heading is numeric
                 const headingnum = parseFloat(e.coords.heading);
                 console.log("headingnum", headingnum);
+
 
                 heading = toString(headingnum) + '°'
             }
@@ -678,6 +723,7 @@
                     geo_textbox.geoTextbox.classList.add("fade-out");
                 }, 500)
             }
+
 
             geo_textbox.geoTextbox.innerHTML = applyColorToText(debugDBmgr_0(`n#${geo_times}#black;
             speed#${speed}#red;
@@ -705,6 +751,7 @@
     }
 
     initializeMap(); // Call the function to initialize the map
+
     class Monitor_textbox {
         constructor(map, backgroundColor) {
             this.monitorTextbox = document.createElement("div");
@@ -826,7 +873,6 @@
         }
     }
 
-    // Assuming debugDB is a global dictionary
 
     /**
      * Parse debug DB field data and return formatted string
