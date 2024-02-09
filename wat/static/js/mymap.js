@@ -699,6 +699,9 @@
             console.log("e.coords.heading", e.coords.heading);
             if (e.coords.heading) {
                 // ensure e.coords.heading is numeric
+
+                compass.setRotation(heading);
+
                 const headingnum = parseFloat(e.coords.heading);
                 console.log("headingnum", headingnum);
 
