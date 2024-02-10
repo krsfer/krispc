@@ -398,6 +398,7 @@
         map.on('mousedown', (e) => {
             i = 0;
             t = 0;
+            let longpress = false;
             const timer = setInterval(() => {
                 i++;
                 if (i === 10) {
@@ -407,15 +408,41 @@
                     const coordsTxt = JSON.stringify(END);
                     navigator.clipboard.writeText(coordsTxt).then(r => console.log());
                     console.log("Map longpressed at:", coordsTxt);
+
+                    longpress = true;
+
+
                 }
             }, 100);
+
             map.on('mouseup', () => {
                 clearInterval(timer);
+
+                if (longpress) {
+                    longpress = false;
+                    console.warn("###e.lnglat", e.lngLat);
+
+                    const el = document.createElement('div');
+                    el.className = 'longpress-marker';
+                    const marker = new mapboxgl.Marker(el)
+                        .setLngLat(e.lngLat)
+                        .addTo(map);
+
+                    // Display the marker for 2 seconds
+                    // setTimeout(() => {
+                    //     marker.remove();
+                    // }, 2000);
+                } else {
+                    console.log("short press");
+                }
             });
-            map.on('move', function () {
-                removeAllPopups();
-            });
+
         });
+
+        map.on('move', function () {
+            removeAllPopups();
+        });
+
         map.addControl(new mapboxgl.NavigationControl());
         let attributionControl = null;
         for (const control of map._controls) {
@@ -670,9 +697,16 @@
 
         }
 
+        compass = new CompassControl(map);
         //End. Compass ///////////////////////////////////////////////////////////////
 
-        compass = new CompassControl(map);
+        // Begin. Search ////////////////////////////////////////////////////////////////
+        // Add a search bar to the map  in the top left of the map
+
+
+
+        // End. Search ///////////////////////////////////////////////////////////////////
+
 
         geolocate.on('trackuserlocationend', function () {
             const geolocateButton = document.getElementsByClassName('mapboxgl-ctrl-geolocate')[0];
