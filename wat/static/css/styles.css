@@ -54,7 +54,7 @@ body {
 .compass-image {
   width: 50px; /* Set the width of the compass */
   height: 50px; /* Set the height of the compass */
-  background-image: url('../img/north-arrow-2235-green.svg'); /* Path to your compass image */
+  background-image: url('../img/north-arrow-2235-black.svg'); /* Path to your compass image */
   background-size: cover; /* Cover the div area with the image */
   background-position: center; /* Center the background image */
 }
@@ -96,7 +96,7 @@ body {
     opacity: 70%;
 }
 
-.longpress-marker {
+.longpress-marker .longtouch-marker {
     background-image: url('../img/blue_ball.png');
     background-size: cover;
     width: 30px;
@@ -137,4 +137,40 @@ select option {
 
 .ContactsTextbox::-webkit-scrollbar-thumb:hover {
     background: #555; /* Color of the scroll thumb on hover */
+}
+
+/* Change the background color of the geocoder */
+.mapboxgl-ctrl-geocoder {
+    background-color: #333;
+    border-radius: 8px;
+    top: 30px;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion {
+    background-color: #333;
+    color: #fff;
+}
+/* Change the background color of the dropdown menu */
+.mapboxgl-ctrl-geocoder .suggestions {
+    background-color: #333;
+}
+
+
+
+/* Change the color of the input text */
+.mapboxgl-ctrl-geocoder input[type='text'] {
+    color: #f00;
+}
+
+
+/* Change the color of the dropdown menu items */
+.mapboxgl-ctrl-geocoder .suggestions > div {
+    background-color: #0f0;
+
+}
+
+/* Change the color of the dropdown menu items when they're active */
+.mapboxgl-ctrl-geocoder .suggestions > div.active {
+    color: #000;
+    background-color: #00ff;
 }

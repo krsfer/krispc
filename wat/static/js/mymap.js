@@ -410,8 +410,6 @@
                     console.log("Map longpressed at:", coordsTxt);
 
                     longpress = true;
-
-
                 }
             }, 100);
 
@@ -437,6 +435,38 @@
                 }
             });
 
+        });
+
+        map.on('touchstart', function (e) {
+           let longtouch = false;
+            const timer = setInterval(() => {
+                if (i === 10) {
+                    console.log("long touch");
+                    clearInterval(timer);
+                    longtouch = true;
+                }
+            }, 100);
+            map.on('touchend', () => {
+                clearInterval(timer);
+                if (longtouch) {
+                    longtouch = false;
+                    console.warn("###e.lnglat", e.lngLat);
+
+                    const el = document.createElement('div');
+                    el.className = 'longtouch-marker';
+                    const marker = new mapboxgl.Marker(el)
+                        .setLngLat(e.lngLat)
+                        .addTo(map);
+
+                    // Display the marker for 2 seconds
+                    // setTimeout(() => {
+                    //     marker.remove();
+                    // }, 2000);
+                } else {
+                    console.log("short touch");
+                }
+            });
+            /*...*/
         });
 
         map.on('move', function () {
@@ -476,15 +506,21 @@
 
 
         // Add the search bar to your map
+        let geocoder = null;
         map.addControl(
-            new MapboxGeocoder({
+            geocoder = new MapboxGeocoder({
                 accessToken: mapboxgl.accessToken,
                 mapboxgl: mapboxgl
             }),
             'top-left'
         );
 
-        
+        // Listen for the 'result' event
+        geocoder.on('result', function (event) {
+            // The event.result object contains the selected suggestion
+            console.log(event.result);
+        });
+
 
         class Display_contacts_markers_btn {
             constructor(map, backgroundColor) {
@@ -710,14 +746,6 @@
         }
 
         compass = new CompassControl(map);
-        //End. Compass ///////////////////////////////////////////////////////////////
-
-        // Begin. Search ////////////////////////////////////////////////////////////////
-        // Add a search bar to the map  in the top left of the map
-
-
-
-        // End. Search ///////////////////////////////////////////////////////////////////
 
 
         geolocate.on('trackuserlocationend', function () {
