@@ -474,6 +474,18 @@
         });
         map.addControl(geolocate, 'top-right');
 
+
+        // Add the search bar to your map
+        map.addControl(
+            new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl
+            }),
+            'top-left'
+        );
+
+        
+
         class Display_contacts_markers_btn {
             constructor(map, backgroundColor) {
                 this.map = map;
