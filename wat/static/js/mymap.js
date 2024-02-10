@@ -403,6 +403,7 @@
                 i++;
                 if (i === 10) {
                     console.log("long press");
+                    debug_textbox.addText("long press");
                     clearInterval(timer);
                     const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
                     const coordsTxt = JSON.stringify(END);
@@ -438,11 +439,14 @@
         });
 
         map.on('touchstart', function (e) {
+            console.log("touchstart");
+            debug_textbox.addText("touchstart");
             let longtouch = false;
             const timer = setInterval(() => {
                 longtouch = true;
             }, 100);
             map.on('touchend', () => {
+                debug_textbox.addText("touchend");
                 clearInterval(timer);
                 longtouch = false;
                 const el = document.createElement('div');

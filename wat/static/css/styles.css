@@ -96,7 +96,7 @@ body {
     opacity: 70%;
 }
 
-.longpress-marker .longtouch-marker {
+.longpress-marker, .longtouch-marker {
     background-image: url('../img/blue_ball.png');
     background-size: cover;
     width: 30px;
