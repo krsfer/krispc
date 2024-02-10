@@ -438,35 +438,19 @@
         });
 
         map.on('touchstart', function (e) {
-           let longtouch = false;
+            let longtouch = false;
             const timer = setInterval(() => {
-                if (i === 10) {
-                    console.log("long touch");
-                    clearInterval(timer);
-                    longtouch = true;
-                }
+                longtouch = true;
             }, 100);
             map.on('touchend', () => {
                 clearInterval(timer);
-                if (longtouch) {
-                    longtouch = false;
-                    console.warn("###e.lnglat", e.lngLat);
-
-                    const el = document.createElement('div');
-                    el.className = 'longtouch-marker';
-                    const marker = new mapboxgl.Marker(el)
-                        .setLngLat(e.lngLat)
-                        .addTo(map);
-
-                    // Display the marker for 2 seconds
-                    // setTimeout(() => {
-                    //     marker.remove();
-                    // }, 2000);
-                } else {
-                    console.log("short touch");
-                }
+                longtouch = false;
+                const el = document.createElement('div');
+                el.className = 'longtouch-marker';
+                const marker = new mapboxgl.Marker(el)
+                    .setLngLat(e.lngLat)
+                    .addTo(map);
             });
-            /*...*/
         });
 
         map.on('move', function () {
