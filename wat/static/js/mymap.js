@@ -51,7 +51,7 @@
     let i = 0;
     let t = 0;
 
-    let contacts_lst_translate = "-97%";
+    let contacts_lst_translate = "-90%";
 
     let compass = null;
 
@@ -670,13 +670,31 @@
                     // Hide the textbox if it is visible
                     if (this.textbox.style.transform === "translateX(0%)") {
                         this.textbox.style.transform = `translateX(${contacts_lst_translate})`;
+
                         // Remove the scrollbar
                         this.textbox.style.overflowY = "hidden";
+
+                        // Hide the textbox contents
+                        this.textbox.childNodes.forEach((element) => {
+                            element.style.visibility = "hidden";
+                        });
+
+                        // Set transparency to 0.1
+                        this.textbox.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+
                     } else {
                         // If it is not visible, translate it to the right until it is visible
                         // Show the scrollbar
                         this.textbox.style.overflowY = "scroll";
                         this.textbox.style.transform = "translateX(0%)";
+
+                        // Show the textbox contents
+                        this.textbox.childNodes.forEach((element) => {
+                            element.style.visibility = "visible";
+                        });
+
+                        // Set transparency to 0.6
+                        this.textbox.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
                     }
                 });
 
