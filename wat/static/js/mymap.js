@@ -408,6 +408,12 @@
             const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
             const coordsTxt = JSON.stringify(END);
             console.log("Map clicked at:", coordsTxt);
+            // If geocoder is visible, hide it using the slide-out-right class
+            let geocoderElement = document.querySelector(".mapboxgl-ctrl-geocoder");
+            if (!geocoderElement.classList.contains("hidden")) {
+                // geocoderElement.classList.add("hidden");
+                geocoderElement.classList.add("slide-out-right");
+            }
         });
         map.on("mousedown", (e) => {
             i = 0;
