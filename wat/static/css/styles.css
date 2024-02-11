@@ -10,11 +10,6 @@ body {
     width: 100%;
 }
 
-.xmapboxgl-popup-content.fade-out {
-    transition: opacity 1s ease-out;
-    opacity: 0;
-}
-
 .fade-out {
     opacity: 0;
     transition: opacity 5s ease-out;
@@ -45,18 +40,18 @@ body {
 
 
 .mapboxgl-ctrl-center-left {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .compass-image {
-  width: 50px; /* Set the width of the compass */
-  height: 50px; /* Set the height of the compass */
-  background-image: url('../img/north-arrow-2235-black.svg'); /* Path to your compass image */
-  background-size: cover; /* Cover the div area with the image */
-  background-position: center; /* Center the background image */
+    width: 50px; /* Set the width of the compass */
+    height: 50px; /* Set the height of the compass */
+    background-image: url('../img/north-arrow-2235-black.svg'); /* Path to your compass image */
+    background-size: cover; /* Cover the div area with the image */
+    background-position: center; /* Center the background image */
 }
 
 
@@ -68,7 +63,7 @@ body {
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    padding:  0;
+    padding: 0;
     opacity: 70%;
 }
 
@@ -80,7 +75,7 @@ body {
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    padding:  0;
+    padding: 0;
     opacity: 70%;
 }
 
@@ -92,7 +87,7 @@ body {
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    padding:  0;
+    padding: 0;
     opacity: 70%;
 }
 
@@ -104,7 +99,7 @@ body {
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    padding:  0;
+    padding: 0;
     opacity: 70%;
 }
 
@@ -120,13 +115,16 @@ select option {
 }
 
 @keyframes wakeup {
-    from {opacity: 0;}
-    to {opacity: 1;}
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
-/* CSS */
+
 /* Always show scrollbar */
 .ContactsTextbox::-webkit-scrollbar {
-    /*display: block;*/
     width: 5px;
 }
 
@@ -139,38 +137,82 @@ select option {
     background: #555; /* Color of the scroll thumb on hover */
 }
 
+/** Geocoder styling **/
 /* Change the background color of the geocoder */
 .mapboxgl-ctrl-geocoder {
-    background-color: #333;
+    background-color: #fff;
+
+    border: 1px solid rgb(194, 181, 181);
     border-radius: 8px;
-    top: 30px;
+
+    position: absolute !important;
+
+    margin: 0 !important;
+    top: 35px;
+    left: 10px;
+    height: 30px;
 }
 
-.mapboxgl-ctrl-geocoder--suggestion {
-    background-color: #333;
-    color: #fff;
-}
 /* Change the background color of the dropdown menu */
 .mapboxgl-ctrl-geocoder .suggestions {
-    background-color: #333;
+    background-color: #fff;
 }
-
-
 
 /* Change the color of the input text */
 .mapboxgl-ctrl-geocoder input[type='text'] {
-    color: #f00;
+    color: #000;
+    height: 30px;
 }
-
 
 /* Change the color of the dropdown menu items */
 .mapboxgl-ctrl-geocoder .suggestions > div {
-    background-color: #0f0;
+    background-color: #fff;
+    color: #000;
+}
 
+.mapboxgl-ctrl-geocoder .suggestions li {
+    margin: 1px 0;
 }
 
 /* Change the color of the dropdown menu items when they're active */
 .mapboxgl-ctrl-geocoder .suggestions > div.active {
-    color: #000;
-    background-color: #00ff;
+    color: #fff;
+    background-color: #000;
+}
+
+@keyframes slideOutRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+.mapboxgl-ctrl-geocoder.slide-out-right {
+    animation: slideOutRight 0.5s forwards;
+}
+
+@keyframes slideInLeft {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s forwards;
+}
+
+
+/* Start. Search button */
+/* End. Search button */
+.hidden {
+    visibility: hidden;
 }

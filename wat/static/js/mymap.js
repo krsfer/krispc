@@ -448,7 +448,6 @@
 
             // Listen for any map movement events during the touch
             map.on('move', () => {
-                console.log("map moved");
                 debug_textbox.addText("map moved");
                 if (touchStartTime !== 0) {  // Ensure this runs only if touchstart has been triggered
                     mapMovedDuringTouch = true;
@@ -556,20 +555,33 @@
             map.addControl(geolocate, 'top-right');
 
 
-            // Add the search bar to your map
+            // Add the search bar to the map
             let geocoder = null;
             map.addControl(
                 geocoder = new MapboxGeocoder({
                     accessToken: mapboxgl.accessToken,
                     mapboxgl: mapboxgl
-                }),
-                'top-left'
+                }), 'top-left'
             );
+
 
             // Listen for the 'result' event
             geocoder.on('result', function (event) {
                 // The event.result object contains the selected suggestion
-                console.log(event.result);
+                console.log(event.result.place_name);
+
+                // Get the element that contains the geocoder control
+                let geocoderElement = document.querySelector('.mapboxgl-ctrl-geocoder');
+
+                // Add the slide-out-right class to the geocoder control
+                geocoderElement.classList.add('slide-out-right');
+
+                // After the animation ends, remove the slide-out-right class, add the hidden class, and reset the geocoder text
+                geocoderElement.addEventListener('animationend', function () {
+                    // geocoderElement.classList.remove('slide-out-right');
+                    geocoderElement.classList.add('hidden');
+                    geocoder.clear();
+                }, {once: true});
             });
 
 
@@ -797,6 +809,60 @@
             }
 
             compass = new CompassControl(map);
+
+
+            class SearchButton {
+                constructor(map, backgroundColor) {
+                    this.map = map;
+                    this.button = document.createElement('button');
+                    this.button.innerText = 'Search';
+                    // this.button.className = 'mapboxgl-ctrl-icon';
+                    this.button.style.backgroundColor = backgroundColor;
+                    this.button.style.position = 'absolute';
+                    this.button.style.top = '35px';
+                    // this.button.style.left = '250px'; // debug textbox styles
+                    this.button.style.left = '10px';
+                    this.button.style.borderRadius = '10px';
+                    this.button.style.border = '1px solid';
+                    this.button.style.borderColor = 'rgba(194, 181, 181)';
+
+                    // Start with the geocoder searchbox hidden
+                    let geocoderElement = document.querySelector('.mapboxgl-ctrl-geocoder');
+                    geocoderElement.classList.remove('slide-in-left');
+                    geocoderElement.classList.add('slide-out-right');
+
+                    this.button.addEventListener('click', this._showGeocoder.bind(this));
+                    map.getContainer().appendChild(this.button);
+
+
+                    // this.button.onclick = this._showGeocoder.bind(this);
+
+                    // Create a container for the button and append it to the map's control container
+                    // this._container = document.createElement('div');
+                    // this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+                    // this._container.appendChild(this._btn);
+
+                    // Get the map's control container and append the button's container to it
+                    // let controlContainer = map.getContainer().querySelector('.mapboxgl-ctrl-top-left');
+                    // controlContainer.appendChild(this._container);
+                }
+
+                _showGeocoder() {
+                    console.log("show geocoder");
+                    let geocoderElement = document.querySelector('.mapboxgl-ctrl-geocoder');
+                    // geocoderElement.classList.add('hidden');
+                    geocoderElement.classList.remove('slide-out-right');
+
+                    geocoderElement.classList.add('slide-in-left');
+
+                    geocoderElement.addEventListener('animationend', function () {
+                        geocoderElement.classList.remove('hidden');
+                        geocoderElement.classList.remove('slide-in-left');
+                    }, {once: false});
+                }
+            }
+
+            let searchButton = new SearchButton(map, window.backgroundColor);
 
 
             geolocate.on('trackuserlocationend', function () {
