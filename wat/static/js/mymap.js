@@ -710,7 +710,17 @@
             updateContacts(contacts) {
                 this.textbox.innerHTML = ""; // Clear the textbox
 
-                contacts.forEach((contact, index) => {
+                // Sort the contacts by geographic distance from contact with tag "home" using the haversine formula
+                let homeContact = contacts_lst.contacts.find(contact => contact.tags.includes("home"));
+                let homeCoords = homeContact.coords;
+                let sorted_contacts = contacts.sort((a, b) => {
+                    let aDistance = haversineDistance(homeCoords, a.coords);
+                    let bDistance = haversineDistance(homeCoords, b.coords);
+                    return aDistance - bDistance;
+                });
+                // Sort the contacts by route length from contact with tag "home" , using getDirections
+
+                sorted_contacts.forEach((contact, index) => {
                     // replace spaces in contact.name with nbsp
                     contact.name = contact.name.replace(/\s/g, "\u00A0");
                     // contact.name = contact.name.replace(/\s/g, '_');
@@ -1315,6 +1325,21 @@
             }
         }
         return cookieValue;
+    }
+
+    function haversineDistance(coords1, coords2) {
+        const R = 6371e3; // Earth's radius in metres
+        const lat1 = coords1[1] * Math.PI / 180;
+        const lat2 = coords2[1] * Math.PI / 180;
+        const deltaLat = (coords2[1] - coords1[1]) * Math.PI / 180;
+        const deltaLng = (coords2[0] - coords1[0]) * Math.PI / 180;
+
+        const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+            Math.cos(lat1) * Math.cos(lat2) *
+            Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
     }
 
     // console.log(debugDBmgr("key3:value3:green,key4:value4:"));
