@@ -812,44 +812,44 @@
         // The image comes from compass1.jpg
         // The image of the compass will be rotated to match the current heading of the device.
 
-        class CompassControl {
-            constructor(map) {
-                this._map = map;
+        // class CompassControl {
+        //     constructor(map) {
+        //         this._map = map;
+        //
+        //         this._container = document.createElement("div");
+        //         this._container.className = "compass-control";
+        //
+        //         this._compass = document.createElement("div");
+        //         this._compass.className = "compass-image";
+        //         this._compass.id = "compass-image-id";
+        //
+        //         this._compass.style.width = "100px";
+        //         this._compass.style.height = "100px";
+        //
+        //         this._compass.style.opacity = "0.3";
+        //
+        //         this._setPosition();
+        //
+        //         this.setRotation(10);
+        //
+        //         this._container.appendChild(this._compass);
+        //
+        //         map.getContainer().appendChild(this._container);
+        //     }
+        //
+        //     _setPosition() {
+        //         this._container.style.position = "absolute";
+        //         this._container.style.left = "5px";
+        //         this._container.style.top = "50%";
+        //         this._container.style.transform = "translateY(-50%)";
+        //     }
+        //
+        //     setRotation(heading) {
+        //         this._compass.style.transform = `rotate(${heading}deg)`;
+        //     }
+        // }
 
-                this._container = document.createElement("div");
-                this._container.className = "compass-control";
-
-                this._compass = document.createElement("div");
-                this._compass.className = "compass-image";
-                this._compass.id = "compass-image-id";
-
-                this._compass.style.width = "100px";
-                this._compass.style.height = "100px";
-
-                this._compass.style.opacity = "0.3";
-
-                this._setPosition();
-
-                this.setRotation(10);
-
-                this._container.appendChild(this._compass);
-
-                map.getContainer().appendChild(this._container);
-            }
-
-            _setPosition() {
-                this._container.style.position = "absolute";
-                this._container.style.left = "5px";
-                this._container.style.top = "50%";
-                this._container.style.transform = "translateY(-50%)";
-            }
-
-            setRotation(heading) {
-                this._compass.style.transform = `rotate(${heading}deg)`;
-            }
-        }
-
-        compass = new CompassControl(map);
+        // compass = new CompassControl(map);
 
         class SearchButton {
             constructor(map, backgroundColor) {
@@ -920,6 +920,12 @@
             let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
             geolocationUserIcon.classList.add('compass-image');
 
+            // Remove mapboxgl-user-location-dot
+            geolocationUserIcon.classList.remove('mapboxgl-user-location-dot');
+
+            // Set the opacity to 0.3
+            geolocationUserIcon.style.opacity = "0.3";
+
             isGeolocating = true;
             geo = [e.coords.longitude, e.coords.latitude];
             geo_times = geo_times + 1;
@@ -928,7 +934,7 @@
 
             // Set the rotation of the compass to the current heading of the device if e.coords.heading is defined
             if (e.coords.heading) {
-                compass.setRotation(e.coords.heading);
+                // compass.setRotation(e.coords.heading);
                 // rotate the geolocationUserIcon to match the heading of the device
                 geolocationUserIcon.style.transform = `rotate(${e.coords.heading}deg)`;
             }
