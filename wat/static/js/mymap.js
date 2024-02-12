@@ -110,20 +110,44 @@
         marker.contact_position = lngLat; // Add the custom field to the marker
 
         // Add event listeners for the dragstart and dragend events
-        marker.on("dragstart", function () {
-            console.log("Marker drag start");
+        marker.on("dragstart", () => {
+            // Test if marker.originalLngLat is not defined
+            if (!marker.originalLngLat) {
+                marker.originalLngLat = marker.getLngLat(); // Save the original marker position
+                console.log("dragstart marker lnglat", marker.originalLngLat);
+            }
         });
 
-        marker.on("dragend", function () {
-            console.log("Marker drag end");
-            lngLat = marker.getLngLat();
-            console.log("marker", marker);
-            const some_name = marker.contact_name;
-            console.log("contact name:", some_name);
-            console.log("Old marker position:", marker.contact_position);
-            console.log("New marker position:", lngLat);
-            updateContactsJson(some_name, lngLat);
+        marker.on("dragend", () => {
+            console.log("dragend marker lnglat", marker.getLngLat());
+            let lngLat = marker.getLngLat();
+            let some_name = marker.contact_name;
+
+            let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+            myModal.show();
+
+            let confirmButton = document.getElementById('confirmButton');
+            let cancelButton = document.getElementById('cancelButton');
+            let closeButton = document.getElementById('closeButton');
+
+            function handleClick() {
+                myModal.hide();
+                if (marker.originalLngLat) {
+                    marker.setLngLat(marker.originalLngLat); // Restore the original marker position
+                    marker.originalLngLat = null; // Reset originalLngLat after restoration
+                }
+            }
+
+            cancelButton.addEventListener('click', handleClick);
+            closeButton.addEventListener('click', handleClick);
+
+            confirmButton.addEventListener('click', () => {
+                myModal.hide();
+                updateContactsJson(some_name, lngLat);
+                marker.originalLngLat = null; // Reset originalLngLat after successful update
+            });
         });
+
 
         marker.getElement().style.visibility = "visible";
         marker.getPopup().options.closeButton = false;
@@ -464,11 +488,12 @@
 
 
                             // // Add the marker to the contacts_markers array
-                            // contacts_markers.push(marker);
+                            contacts_markers.push(marker);
+
                             // // Add the marker to the contacts_markers_dict
-                            // contacts_markers_dict[
-                            //     `${e.lngLat.lng.toFixed(2)}_${e.lngLat.lat.toFixed(2)}`
-                            //     ] = marker;
+                            contacts_markers_dict[
+                                `${e.lngLat.lng.toFixed(2)}_${e.lngLat.lat.toFixed(2)}`
+                                ] = marker;
                         } else {
                             console.log("short press");
                         }
@@ -481,89 +506,69 @@
             });
         });
 
-        // Assuming you have already initialized your Mapbox GL map as 'map'
-
-        let touchStartTime = 0;
-        let touchStartPoint = null;
-        let mapMovedDuringTouch = false;
-
-        // Listen for touchstart event
         map.on("touchstart", (e) => {
-            touchStartTime = new Date().getTime(); // Record start time
-            touchStartPoint = e.point; // Record start position
-            mapMovedDuringTouch = false; // Reset map moved flag
-        });
+            let i = 0;
+            let t = 0;
+            let longtouch = false;
+            const timer = setInterval(() => {
+                i++;
+                if (i === 10) {
+                    console.log("long touch");
+                    longtouch = true;
+                    clearInterval(timer);
 
-        // Listen for any map movement events during the touch
-        map.on("move", () => {
-            debug_textbox.addText("map moved");
-            if (touchStartTime !== 0) {
-                // Ensure this runs only if touchstart has been triggered
-                mapMovedDuringTouch = true;
-            }
-        });
+                    // window.confirm("Are you sure you want to move this marker?");
+                    let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+                    myModal.show();
 
-        // Listen for touchend event
-        map.on("touchend", (e) => {
-            const touchEndTime = new Date().getTime(); // Record start time
-            const duration = touchEndTime - touchStartTime; // Record start position
+                    let confirmButton = document.getElementById('confirmButton');
+                    let cancelButton = document.getElementById('cancelButton');
+                    let closeButton = document.getElementById('closeButton');
 
-            // Check if the touch duration is longer than a threshold (e.g., 500ms for a long press) and the map has not moved
-            if (duration > 500 && !mapMovedDuringTouch) {
-                // Convert the touch point to a geographic coordinate
-                const lngLat = map.unproject(touchStartPoint);
+                    function handleClick() {
+                        longtouch = false;
+                        myModal.hide(); // Not really necessary, but it's a good practice to clean up after yourself
+                        clearInterval(timer);
 
-                // Create a new marker and add it to the map at the long-pressed location
-                const el = document.createElement("div");
-                el.className = "longtouch-marker";
-                new mapboxgl.Marker().setLngLat(lngLat).addTo(map);
-            }
+                        // The cancel or close button was clicked. Do nothing
+                        console.log('Cancel or Close Button clicked');
+                    }
 
-            // Reset touchStartTime to avoid interfering with subsequent moves
-            touchStartTime = 0;
-        });
+                    cancelButton.addEventListener('click', handleClick);
+                    closeButton.addEventListener('click', handleClick);
 
-        /*map.on('touchstart', function (e) {
-                    console.log("touchstart");
-                    debug_textbox.addText("touchstart");
-                    let iter = 0;
-                    let longtouch = false;
-                    const touch_timer = setInterval(() => {
-                        longtouch = true;
-                        iter++;
-                        if (iter === 10) {
-                            console.log("long touch", iter);
-                            debug_textbox.addText("long touch");
-                            clearInterval(touch_timer);
+                    confirmButton.addEventListener('click', function () {
+                        // The confirm button was clicked
+                        myModal.hide();
 
-                            const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
-                            const coordsTxt = JSON.stringify(END);
-                            navigator.clipboard.writeText(coordsTxt).then(r => console.log());
-                            console.log("Map longtoucheded at:", coordsTxt);
-
-                            longtouch = true;
-                        }
-                    }, 100);
-                    map.on('touchend', () => {
-                        console.log("touchend");
-                        debug_textbox.addText("touchend");
-                        clearInterval(touch_timer);
-
+                        clearInterval(timer);
                         if (longtouch) {
                             longtouch = false;
-                            console.warn("###e.lnglat", e.lngLat);
+                            const el = document.createElement("div");
+                            el.className = "longtouch-marker";
 
-                            const el = document.createElement('div');
-                            el.className = 'longtouch-marker';
-                            const marker = new mapboxgl.Marker(el)
-                                .setLngLat(e.lngLat)
-                                .addTo(map);
+                            const marker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map);
+                            marker.setDraggable(true);
+
+                            // Add the marker to the contacts_markers array
+                            contacts_markers.push(marker);
+
+                            // Add the marker to the contacts_markers_dict
+                            contacts_markers_dict[
+                                `${e.lngLat.lng.toFixed(2)}_${e.lngLat.lat.toFixed(2)}`
+                                ] = marker;
+
                         } else {
                             console.log("short touch");
-                            debug_textbox.addText("short touch");
                         }
                     });
-                });*/
+                }
+            }, 100);
+
+            map.on("touchend", () => {
+                clearInterval(timer);
+            });
+        });
 
         map.on("move", function () {
             removeAllPopups();
@@ -691,9 +696,9 @@
                 this.textbox.style.textAlign = "center";
                 this.textbox.style.whiteSpace = "normal";
                 this.textbox.style.maxWidth = "80%";
-                this.textbox.style.width = "auto";
+                this.textbox.style.width = "25%";
                 this.textbox.style.overflow = "auto"; // Add a scrollbar when the content overflows
-                this.textbox.style.maxHeight = "200px"; // Limit the max height of the textbox
+                this.textbox.style.maxHeight = "150px"; // Limit the max height of the textbox
                 this.textbox.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
                 this.textbox.className = "ContactsTextbox";
                 this.textbox.style.visibility = "visible";
@@ -1080,7 +1085,7 @@
             this.monitorTextbox.style.border = "1px solid";
             this.monitorTextbox.style.borderColor = "rgba(194, 181, 181)";
             this.monitorTextbox.style.borderRadius = "10px";
-            this.monitorTextbox.style.top = "50vh";
+            this.monitorTextbox.style.top = "56vh";
             this.monitorTextbox.style.transform = "translateY(-50%)"; // Move the textbox up by half of its height
             this.monitorTextbox.style.textShadow = "1px 1px 1px #ccc";
             this.monitorTextbox.style.color = "rgb(0,0,0)";
@@ -1093,7 +1098,7 @@
             this.monitorTextbox.style.right = "5px";
             this.monitorTextbox.style.zIndex = "1";
             // set width to 30% of the viewport width
-            this.monitorTextbox.style.width = "30%";
+            this.monitorTextbox.style.width = "25%";
             map.getContainer().appendChild(this.monitorTextbox);
         }
     }
@@ -1186,6 +1191,7 @@
             this.geoTextbox.style.position = "absolute";
             this.geoTextbox.style.textAlign = "center";
             this.geoTextbox.style.left = "5px";
+            this.geoTextbox.style.width = "25%";
             this.geoTextbox.style.zIndex = "1";
             map.getContainer().appendChild(this.geoTextbox);
         }

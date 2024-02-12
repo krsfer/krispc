@@ -151,6 +151,7 @@ select option {
     top: 35px;
     left: 10px;
     height: 30px;
+    width: 300px;
 }
 
 /* Change the background color of the dropdown menu */
