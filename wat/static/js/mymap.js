@@ -423,31 +423,61 @@
                 i++;
                 if (i === 10) {
                     console.log("long press");
-                    debug_textbox.addText("long press");
+                    longpress = true;
                     clearInterval(timer);
 
-                    const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
-                    const coordsTxt = JSON.stringify(END);
-                    navigator.clipboard.writeText(coordsTxt).then((r) => console.log());
-                    console.log("Map longpressed at:", coordsTxt);
+                    // window.confirm("Are you sure you want to move this marker?");
+                    let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+                    myModal.show();
 
-                    longpress = true;
+
+                    let confirmButton = document.getElementById('confirmButton');
+                    let cancelButton = document.getElementById('cancelButton');
+                    let closeButton = document.getElementById('closeButton');
+
+                    function handleClick() {
+                        longpress = false;
+                        myModal.hide(); // Not really necessary, but it's a good practice to clean up after yourself
+                        clearInterval(timer);
+
+                        // The cancel or close button was clicked. Do nothing
+                        console.log('Cancel or Close Button clicked');
+                    }
+
+                    cancelButton.addEventListener('click', handleClick);
+
+                    closeButton.addEventListener('click', handleClick);
+
+                    confirmButton.addEventListener('click', function () {
+                        // The confirm button was clicked
+                        console.log('Confirm button clicked');
+                        myModal.hide();
+
+                        clearInterval(timer);
+                        if (longpress) {
+                            longpress = false;
+                            console.warn("###e.lnglat", e.lngLat);
+                            const el = document.createElement("div");
+                            el.className = "longpress-marker";
+
+                            const marker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map);
+
+
+                            // // Add the marker to the contacts_markers array
+                            // contacts_markers.push(marker);
+                            // // Add the marker to the contacts_markers_dict
+                            // contacts_markers_dict[
+                            //     `${e.lngLat.lng.toFixed(2)}_${e.lngLat.lat.toFixed(2)}`
+                            //     ] = marker;
+                        } else {
+                            console.log("short press");
+                        }
+                    });
                 }
             }, 100);
 
             map.on("mouseup", () => {
                 clearInterval(timer);
-
-                if (longpress) {
-                    longpress = false;
-                    console.warn("###e.lnglat", e.lngLat);
-
-                    const el = document.createElement("div");
-                    el.className = "longpress-marker";
-                    const marker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map);
-                } else {
-                    console.log("short press");
-                }
             });
         });
 
