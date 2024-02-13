@@ -421,6 +421,7 @@
             center: [7.008715192368488, 43.64163999646119], // Valbonne 43.64163999646119, 7.008715192368488
             zoom: 11, // Set the initial zoom level
         });
+
         map.on("load", function () {
             addContactMarkers(map); // Add the contact markers when the map initially loads
             addRouteLayers(map); // Add the route layer when the map initially loads
@@ -927,7 +928,69 @@
             }
         }
 
-        compass = new CompassControl(map);
+        // compass = new CompassControl(map);
+
+        // End. Compass ////////////////////////////////////////////////////////////
+
+        // Start. Mock locations to simulate tracking (e.g., a path around a small area)
+        // Mock locations to simulate tracking (e.g., a path around a small area)
+        function generateCirclePoints(centerLat, centerLng, radiusInKm, numPoints) {
+            const points = [];
+            const earthRadiusInKm = 6371;
+            const radiusInDegrees = radiusInKm / earthRadiusInKm;
+
+            for (let i = 0; i < numPoints; i++) {
+                const angle = (i * 360 / numPoints) * Math.PI / 180; // Convert angle to radians
+                const lat = centerLat + (radiusInDegrees * Math.sin(angle)) * (180 / Math.PI);
+                const lng = centerLng + (radiusInDegrees * Math.cos(angle)) * (180 / Math.PI) / Math.cos(centerLat * Math.PI / 180);
+
+                points.push({coords: [lng, lat], heading: i * 360 / numPoints});
+            }
+
+            return points;
+        }
+
+        // Valbonne's approximate center
+        const valbonneCenter = {lat: 43.6415, lng: 7.0092};
+        const locations = generateCirclePoints(valbonneCenter.lat, valbonneCenter.lng, 5, 100);
+
+        let currentIndex = 0;
+
+        // Create a mock marker for the location
+        const mock_marker = new mapboxgl.Marker()
+            .setLngLat(locations[currentIndex]['coords'])
+            .addTo(map);
+
+
+        // Function to simulate geolocation change
+        function simulateGeolocationChange() {
+            if (currentIndex >= locations.length) {
+                currentIndex = 0; // Loop back to the start
+            }
+
+            const [lng, lat] = locations[currentIndex++]['coords'];
+
+            compass.setRotation(90); // Rotate the compass to the new heading (90 degrees in this case)
+
+            // Update the map view to the new location
+            // map.flyTo({
+            //     center: [lng, lat],
+            //     essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+            // });
+
+            compass.setRotation(locations[currentIndex]['heading']); // Rotate the compass to the new heading
+
+            // Update mock marrker  position
+            mock_marker.setLngLat([lng, lat]);
+
+            // Schedule the next location update
+            setTimeout(simulateGeolocationChange, 1000); // Update location every 2 seconds
+        }
+
+        // Start simulating geolocation tracking //////////////////////////////
+        // simulateGeolocationChange();
+
+        // End. Mock locations to simulate tracking (e.g., a path around a small area)
 
         class SearchButton {
             constructor(map, backgroundColor) {
@@ -999,7 +1062,7 @@
             geolocationUserIcon.classList.add('compass-image');
 
             // Remove mapboxgl-user-location-dot
-            geolocationUserIcon.classList.remove('mapboxgl-user-location-dot');
+            // geolocationUserIcon.classList.remove('mapboxgl-user-location-dot');
 
             // Set the opacity to 0.3
             geolocationUserIcon.style.opacity = "0.3";
@@ -1012,7 +1075,7 @@
 
             // Set the rotation of the compass to the current heading of the device if e.coords.heading is defined
             if (e.coords.heading) {
-                // compass.setRotation(e.coords.heading);
+                compass.setRotation(e.coords.heading);
                 // rotate the geolocationUserIcon to match the heading of the device
                 geolocationUserIcon.style.transform = `rotate(${e.coords.heading}deg)`;
             }
