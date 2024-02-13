@@ -124,6 +124,8 @@
             let some_name = marker.contact_name;
 
             let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+            // Remove hidden class from modal
+            myModal._element.classList.remove('hidden');
             myModal.show();
 
             let confirmButton = document.getElementById('confirmButton');
@@ -391,8 +393,11 @@
 
     function removeAllPopups() {
         contacts_markers.forEach((marker) => {
-            if (marker.getPopup().isOpen()) {
-                marker.togglePopup();
+            // test if getPopup is defined
+            if (marker.getPopup()) {
+                if (marker.getPopup().isOpen()) {
+                    marker.togglePopup();
+                }
             }
         });
     }
@@ -452,6 +457,8 @@
 
                     // window.confirm("Are you sure you want to move this marker?");
                     let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+                    // Remove hidden class from modal
+                    myModal._element.classList.remove('hidden');
                     myModal.show();
 
 
@@ -519,6 +526,8 @@
 
                     // window.confirm("Are you sure you want to move this marker?");
                     let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+                    // Remove hidden class from modal
+                    myModal._element.classList.remove('hidden');
                     myModal.show();
 
                     let confirmButton = document.getElementById('confirmButton');
@@ -881,44 +890,44 @@
         // The image comes from compass1.jpg
         // The image of the compass will be rotated to match the current heading of the device.
 
-        // class CompassControl {
-        //     constructor(map) {
-        //         this._map = map;
-        //
-        //         this._container = document.createElement("div");
-        //         this._container.className = "compass-control";
-        //
-        //         this._compass = document.createElement("div");
-        //         this._compass.className = "compass-image";
-        //         this._compass.id = "compass-image-id";
-        //
-        //         this._compass.style.width = "100px";
-        //         this._compass.style.height = "100px";
-        //
-        //         this._compass.style.opacity = "0.3";
-        //
-        //         this._setPosition();
-        //
-        //         this.setRotation(10);
-        //
-        //         this._container.appendChild(this._compass);
-        //
-        //         map.getContainer().appendChild(this._container);
-        //     }
-        //
-        //     _setPosition() {
-        //         this._container.style.position = "absolute";
-        //         this._container.style.left = "5px";
-        //         this._container.style.top = "50%";
-        //         this._container.style.transform = "translateY(-50%)";
-        //     }
-        //
-        //     setRotation(heading) {
-        //         this._compass.style.transform = `rotate(${heading}deg)`;
-        //     }
-        // }
+        class CompassControl {
+            constructor(map) {
+                this._map = map;
 
-        // compass = new CompassControl(map);
+                this._container = document.createElement("div");
+                this._container.className = "compass-control";
+
+                this._compass = document.createElement("div");
+                this._compass.className = "compass-image";
+                this._compass.id = "compass-image-id";
+
+                this._compass.style.width = "100px";
+                this._compass.style.height = "100px";
+
+                this._compass.style.opacity = "0.3";
+
+                this._setPosition();
+
+                this.setRotation(10);
+
+                this._container.appendChild(this._compass);
+
+                map.getContainer().appendChild(this._container);
+            }
+
+            _setPosition() {
+                this._container.style.position = "absolute";
+                this._container.style.left = "5px";
+                this._container.style.top = "50%";
+                this._container.style.transform = "translateY(-50%)";
+            }
+
+            setRotation(heading) {
+                this._compass.style.transform = `rotate(${heading}deg)`;
+            }
+        }
+
+        compass = new CompassControl(map);
 
         class SearchButton {
             constructor(map, backgroundColor) {
@@ -928,7 +937,7 @@
                 // this.button.className = 'mapboxgl-ctrl-icon';
                 this.button.style.backgroundColor = backgroundColor;
                 this.button.style.position = "absolute";
-                this.button.style.top = "35px";
+                this.button.style.top = "45px";
                 // this.button.style.left = '250px'; // debug textbox styles
                 this.button.style.left = "10px";
                 this.button.style.borderRadius = "10px";

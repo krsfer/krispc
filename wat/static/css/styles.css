@@ -137,49 +137,27 @@ select option {
     background: #555; /* Color of the scroll thumb on hover */
 }
 
-/** Geocoder styling **/
-/* Change the background color of the geocoder */
+/** Start. Geocoder styling ******************************************/
 .mapboxgl-ctrl-geocoder {
-    background-color: #fff;
-
-    border: 1px solid rgb(194, 181, 181);
-    border-radius: 8px;
-
-    position: absolute !important;
-
-    margin: 0 !important;
+    position: absolute;
+    width: 30vw;
     top: 35px;
-    left: 10px;
-    height: 30px;
-    width: 300px;
+    transform: translateX(-1%);
 }
-
-/* Change the background color of the dropdown menu */
+.mapboxgl-ctrl-geocoder svg {
+    display: none;
+}
+.mapboxgl-ctrl-geocoder--pin-right {
+    display: none;
+}
+.mapboxgl-ctrl-geocoder input[type="text"] {
+    background-color: rgba(255, 255, 255, 0.9);
+}
 .mapboxgl-ctrl-geocoder .suggestions {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.6);
 }
 
-/* Change the color of the input text */
-.mapboxgl-ctrl-geocoder input[type='text'] {
-    color: #000;
-    height: 30px;
-}
-
-/* Change the color of the dropdown menu items */
-.mapboxgl-ctrl-geocoder .suggestions > div {
-    background-color: #fff;
-    color: #000;
-}
-
-.mapboxgl-ctrl-geocoder .suggestions li {
-    margin: 1px 0;
-}
-
-/* Change the color of the dropdown menu items when they're active */
-.mapboxgl-ctrl-geocoder .suggestions > div.active {
-    color: #fff;
-    background-color: #000;
-}
+/** End. Geocoder styling ******************************************/
 
 @keyframes slideOutRight {
     0% {
