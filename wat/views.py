@@ -77,6 +77,12 @@ def update_contacts_json(request):
     # Load the string as JSON
     body = json.loads(body_unicode)
 
+    print(f'body: {body}')
+    print(f'body type: {type(body)}')
+    print(f'body.keys: {body.keys()}')
+    print(f'body.get(name): {body.get("name")}')
+    print(f'body.get(coords): {body.get("coords")}')
+
     # Extract the values
     name = body.get('name', None)
     coords = body.get('coords', None)

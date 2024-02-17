@@ -1,611 +1,72 @@
-(async function () {
-    "use strict";
-
-    // Start. wakelock ///////////////////////////
-    const canWakeLock = () => "wakeLock" in navigator;
-
-    let wakelock;
-
-    async function lockWakeState() {
-        if (!canWakeLock()) return;
-        try {
-            wakelock = await navigator.wakeLock.request();
-            console.log("WakeLock state:", wakelock.released ? "released" : "active");
-
-            wakelock.addEventListener("release", () => {
-                console.log("WakeLock state: released");
-            });
-        } catch (e) {
-            console.error("Failed to lock wake state with reason:", e.message);
-        }
+class MapInitializer {
+    constructor(containerId, style, center, zoom) {
+        this.initMap(containerId, style, center, zoom);
     }
 
-    function releaseWakeState() {
-        if (wakelock) wakelock.release();
-        wakelock = null;
+    async initMap(containerId, style, center, zoom) {
+        const mapboxToken = await this.getAccessToken("mapbox_token");
+        mapboxgl.accessToken = mapboxToken;
+
+        this.map = new mapboxgl.Map({
+            container: containerId,
+            style: style,
+            center: center,
+            zoom: zoom
+        });
+
+        this.map.on("load", () => {
+            console.log("Map loaded");
+            this.addMapControls();
+            this.modifyAttributionControl();
+            const start = [7.008715192368488, 43.64163999646119];
+            const end = [6.993073, 43.675819];
+            this.addRouteLayer(start, end);
+        });
+
+        this.initWakeLock();
+
+        // Listen for style load event to reapply the route layer when the style changes
+        this.map.on('style.load', () => {
+            console.log('Map style changed');
+            // const start = [7.008715192368488, 43.64163999646119];
+            // const end = [6.993073, 43.675819];
+            // this.addRouteLayer(start, end); // Reapply the route layer
+            this.reAddRouteLayer(); // Re-add the route layer
+        });
     }
 
-    await lockWakeState();
-    const duration = 1000 * 60 * 30; // 30 minutes
-    setTimeout(releaseWakeState, duration);
-
-    // End. wakelock ///////////////////////////
-
-    window.addEventListener("beforeunload", function (e) {
-        e.preventDefault();
-        releaseWakeState();
-        e.returnValue = "";
-    });
-
-    let csrftoken = getCookie("csrftoken");
-
-    let contact_position = null;
-    let contact_name = null;
-    let contact_route = null;
-    let contacts_markers = [];
-    let contacts_markers_dict = {};
-    let monitorTextbox = null;
-    let debug_textbox = null;
-    let isGeolocating = false;
-    let geo = [];
-    let i = 0;
-    let t = 0;
-
-    let contacts_lst_translate = "-90%";
-
-    let compass = null;
-
-    window.backgroundColor = "rgba(255, 255, 255, 0.6)";
-
-    // const bb = document.getElementById('blue_ball').value; // eg. /static/watapp/img/blue_ball.png
-    // const gb = document.getElementById('green_ball').value;
-    const response = await fetch("contacts_json");
-    const contacts_lst = await response.json();
-    const getAccessToken = async (token_id) => {
-        const response = await fetch(token_id);
+    async getAccessToken(tokenId) {
+        const response = await fetch(tokenId);
         const data = await response.json();
         return data.token;
-    };
-    window.mapbox_token = await getAccessToken("mapbox_token");
-    window.googlemaps_token = await getAccessToken("googlemaps_token");
-    const selectedStyle =
-        localStorage.getItem("selectedMapStyle") ||
-        "mapbox://styles/mapbox/dark-v9";
-
-    /* This function takes in three parameters: "pointA", "pointB", and "numSegments". It is used to interpolate between two points,
-          "pointA" and "pointB", by dividing the distance between them into a specified number of segments. */
-    function interpolate(pointA, pointB, numSegments) {
-        const dx = (pointB[0] - pointA[0]) / numSegments;
-        const dy = (pointB[1] - pointA[1]) / numSegments;
-        const points = [];
-        for (let i = 0; i <= numSegments; i++) {
-            const x = pointA[0] + dx * i;
-            const y = pointA[1] + dy * i;
-            points.push([x, y]);
-        }
-        return points;
     }
 
-    function addMarker(map, lngLat, name, address, el) {
-        const marker =
-            contacts_markers.find((marker) => {
-                return (
-                    marker.getLngLat().lng === lngLat[0] &&
-                    marker.getLngLat().lat === lngLat[1]
-                );
-            }) ||
-            new mapboxgl.Marker({
-                element: el,
-                draggable: true, // Make the marker draggable
-            })
-                .setLngLat(lngLat)
-                .setPopup(
-                    new mapboxgl.Popup().setHTML(`<h3>${name}</h3><p>${address}</p>`)
-                )
-                .addTo(map);
+    async initWakeLock() {
+        if ("wakeLock" in navigator) {
+            try {
+                this.wakeLock = await navigator.wakeLock.request("screen");
+                console.log("WakeLock is active");
 
-        // Replace nbsp with space in name
-        name = name.replace(/\u00A0/g, " ");
-        marker.contact_name = name; // Add the custom field to the marker
-        marker.contact_position = lngLat; // Add the custom field to the marker
-
-        // Add event listeners for the dragstart and dragend events
-        marker.on("dragstart", () => {
-            // Test if marker.originalLngLat is not defined
-            if (!marker.originalLngLat) {
-                marker.originalLngLat = marker.getLngLat(); // Save the original marker position
-                console.log("dragstart marker lnglat", marker.originalLngLat);
-            }
-        });
-
-        marker.on("dragend", () => {
-            console.log("dragend marker lnglat", marker.getLngLat());
-            let lngLat = marker.getLngLat();
-            let some_name = marker.contact_name;
-
-            let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
-            // Remove hidden class from modal
-            myModal._element.classList.remove('hidden');
-            myModal.show();
-
-            let confirmButton = document.getElementById('confirmButton');
-            let cancelButton = document.getElementById('cancelButton');
-            let closeButton = document.getElementById('closeButton');
-
-            function handleClick() {
-                myModal.hide();
-                if (marker.originalLngLat) {
-                    marker.setLngLat(marker.originalLngLat); // Restore the original marker position
-                    marker.originalLngLat = null; // Reset originalLngLat after restoration
-                }
-            }
-
-            cancelButton.addEventListener('click', handleClick);
-            closeButton.addEventListener('click', handleClick);
-
-            confirmButton.addEventListener('click', () => {
-                myModal.hide();
-                updateContactsJson(some_name, lngLat);
-                marker.originalLngLat = null; // Reset originalLngLat after successful update
-            });
-        });
-
-
-        marker.getElement().style.visibility = "visible";
-        marker.getPopup().options.closeButton = false;
-        marker.getElement().style.zIndex = 1;
-        marker.getElement().style.cursor = "pointer";
-
-        contacts_markers.push(marker);
-
-        marker.getElement().addEventListener("click", function () {
-            const key = `${lngLat[0].toFixed(2)}_${lngLat[1].toFixed(2)}`;
-            const value = contacts_markers_dict[key];
-            contact_name = value; // Update contact_name
-            contact_position = lngLat; // Update contact_position
-            if (isGeolocating) {
-                resetRoutesExceptSelected(map, contact_name);
-                getDirections([geo[0], geo[1]], contact_position).then(
-                    ({route, distance, durée, eta, address}) => {
-                        if (!monitorTextbox)
-                            monitorTextbox = new Monitor_textbox(map, window.backgroundColor);
-                        displayUpdates(monitorTextbox, distance, durée, eta, address);
-                        setTimeout(() => {
-                            marker.getPopup().getElement().classList.add("fade-out");
-                        }, 500);
-                        marker.getPopup().getElement().style.zIndex = 0;
-                        const routeName =
-                            contacts_markers_dict[
-                                `${contact_position[0].toFixed(
-                                    2
-                                )}_${contact_position[1].toFixed(2)}`
-                                ];
-                        map.getSource(routeName).setData(route.geometry);
-                        contact_route = route.geometry.coordinates;
-                    }
-                );
-            } else {
-                setTimeout(() => {
-                    marker.getPopup().getElement().classList.add("fade-out");
-                }, 500);
-            }
-        });
-    }
-
-    function addRouteLayer(map, routeName, route, destination) {
-        const routeId = routeName; // Identifier for the route layer and source
-        const routeFeature = {
-            type: "Feature",
-            properties: {},
-            geometry: {
-                type: "LineString",
-                coordinates: route,
-            },
-        };
-        if (!map.getSource(routeId)) {
-            map.addSource(routeId, {
-                type: "geojson",
-                data: routeFeature,
-            });
-        }
-        if (!map.getLayer(routeId)) {
-            map.addLayer({
-                id: routeId,
-                type: "line",
-                source: routeId,
-                layout: {
-                    "line-join": "round",
-                    "line-cap": "round",
-                },
-                paint: {
-                    "line-color": "rgba(0,255,0,0.4)",
-                    "line-width": 8,
-                },
-            });
-            map.on("mouseenter", routeId, function () {
-                map.getCanvas().style.cursor = "pointer";
-            });
-            map.on("mouseleave", routeId, function () {
-                map.getCanvas().style.cursor = "";
-            });
-            map.on("click", routeId, function (e) {
-                console.log("Route line clicked:", e);
-                // zoom to instead of pante
-                map.flyTo({
-                    center: destination,
-                    essential: true,
+                this.wakeLock.addEventListener("release", () => {
+                    console.log("WakeLock was released");
                 });
-            });
-        }
-    }
 
-    function createRouteName(contact_name) {
-        return contact_name.replace(/\s/g, "_") + "_route";
-    }
-
-    function updateContactsAndWarnOnError(name, lngLat, errorMessage, contact) {
-        updateContactsJson(name, lngLat).catch((error) => {
-            console.warn(`${errorMessage} > ${error.message} <`, contact);
-        });
-    }
-
-    function updateContactsJson(name, lngLat) {
-        fetch("update_contacts_json", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken,
-            },
-            body: JSON.stringify({
-                name: name,
-                coords: lngLat,
-            }),
-        })
-            .then((response) => response.json())
-            .then((data) => console.log(data))
-            .catch((error) => {
-                console.error("Error:", error);
-            });
-    }
-
-    function addContactMarkers(map) {
-        contacts_lst.contacts.forEach((contact) => {
-            const routeName = createRouteName(contact.name);
-
-            const el = document.createElement("div");
-
-            let lngLat;
-
-            if (contact.tags.includes("home")) {
-                el.className = "home-marker";
-            } else if (contact.tags.includes("private")) {
-                el.className = "private-marker";
-            } else if (contact.tags.includes("work")) {
-                el.className = "work-marker";
-            } else {
-                el.className = "contact-marker";
-            }
-
-            if (contact.coords.length !== 0) {
-                lngLat = contact.coords;
-                addMarker(map, lngLat, contact.name, contact.address, el);
-            } else {
-                getLngLatFromAddress(contact.address)
-                    .then((lngLat) => {
-                        addMarker(map, lngLat, contact.name, contact.address, el);
-                        updateContactsAndWarnOnError(
-                            contact.name,
-                            lngLat,
-                            "!!An error occurred using nominatim:",
-                            contact
-                        );
-                    })
-                    .catch((error) => {
-                        console.warn(
-                            "!!An error occurred using nominatim: >" + error.message + "<",
-                            contact
-                        );
-                        getLngLatFromAddress_mapbox(contact.address).then((lngLat) => {
-                            addMarker(map, lngLat, contact.name, contact.address, el);
-                            updateContactsAndWarnOnError(
-                                contact.name,
-                                lngLat,
-                                "!!An error occurred using mapbox:",
-                                contact
-                            );
-                        });
-                    });
-            }
-            contacts_markers_dict[`${lngLat[0].toFixed(2)}_${lngLat[1].toFixed(2)}`] =
-                routeName;
-        });
-    }
-
-    function addRouteLayers(map) {
-        contacts_lst.contacts.forEach((contact) => {
-            const routeName = createRouteName(contact.name);
-            const startPoint = contact.coords;
-            const endPoint = [startPoint[0], startPoint[1] + 0.045045045]; // 5 km to the north
-            const numSegments = 50;
-            const points = [];
-
-            // resetRoutesExceptSelected(map, routeName);
-            // Remove all route layers
-
-            const layers = map.getStyle().layers;
-            layers.forEach((layer) => {
-                if (layer.id.endsWith("_route")) {
-                    map.getSource(layer.id).setData({
-                        type: "FeatureCollection",
-                        features: [],
-                    });
-                }
-            });
-
-            if (isGeolocating) {
-                addRouteLayer(map, routeName, contact_route, startPoint);
-            } else addRouteLayer(map, routeName, points, startPoint);
-        });
-    }
-
-    function resetRoutesExceptSelected(map, selectedRouteName) {
-        const layers = map.getStyle().layers;
-        layers.forEach((layer) => {
-            if (layer.id.endsWith("_route") && layer.id !== selectedRouteName) {
-                map.getSource(layer.id).setData({
-                    type: "FeatureCollection",
-                    features: [],
+                document.addEventListener("visibilitychange", async () => {
+                    if (document.visibilityState === "visible" && this.wakeLock !== null) {
+                        this.wakeLock = await navigator.wakeLock.request("screen");
+                    }
                 });
-            }
-        });
-    }
-
-    function addMapStyleSelector(map) {
-        const select = document.createElement("select");
-        select.style.position = "absolute";
-        select.style.top = "10px";
-        select.style.right = "50px";
-        select.style.backgroundColor = backgroundColor; // 60% transparent background
-        select.style.textAlign = "center";
-        select.style.borderRadius = "10px";
-        select.style.border = "1px solid lightgrey";
-        select.style.zIndex = "10";
-        const mapStyles = [
-            {name: "Dark", style: "mapbox://styles/mapbox/dark-v9"},
-            {name: "Light", style: "mapbox://styles/mapbox/light-v9"},
-            {name: "Streets", style: "mapbox://styles/mapbox/streets-v11"},
-            {name: "Outdoors", style: "mapbox://styles/mapbox/outdoors-v11"},
-            {name: "Satellite", style: "mapbox://styles/mapbox/satellite-v9"},
-        ];
-        for (const mapStyle of mapStyles) {
-            const option = document.createElement("option");
-            option.value = mapStyle.style;
-            option.text = mapStyle.name;
-            select.appendChild(option);
-        }
-        select.value = selectedStyle;
-        map.getContainer().appendChild(select);
-        select.addEventListener("change", function () {
-            map.setStyle(this.value);
-            localStorage.setItem("selectedMapStyle", this.value);
-        });
-    }
-
-    function removeAllPopups() {
-        contacts_markers.forEach((marker) => {
-            // test if getPopup is defined
-            if (marker.getPopup()) {
-                if (marker.getPopup().isOpen()) {
-                    marker.togglePopup();
-                }
-            }
-        });
-    }
-
-    const state = {
-        map: null,
-    };
-
-    function initializeMap() {
-        console.log("initializeMap");
-
-        const a = 0;
-        const b = convertMetersPerSecondToKilometersPerHour(parseFloat(a));
-
-        // console.log("b", b);
-
-        mapboxgl.accessToken = window.mapbox_token;
-        const map = new mapboxgl.Map({
-            container: "map", // Specify the container ID
-            style: selectedStyle, // Specify the initial map style
-            center: [7.008715192368488, 43.64163999646119], // Valbonne 43.64163999646119, 7.008715192368488
-            zoom: 11, // Set the initial zoom level
-        });
-
-        map.on("load", function () {
-            addContactMarkers(map); // Add the contact markers when the map initially loads
-            addRouteLayers(map); // Add the route layer when the map initially loads
-            if (!debug_textbox)
-                debug_textbox = new Debug_textbox(map, window.backgroundColor);
-        });
-        map.on("style.load", function () {
-            addContactMarkers(map); // Add the contact markers when the map initially loads
-            addRouteLayers(map); // Re-add the route layer every time the map style changes and is fully loaded
-            if (!debug_textbox)
-                debug_textbox = new Debug_textbox(map, window.backgroundColor);
-        });
-        map.on("click", (e) => {
-            const END = Object.keys(e.lngLat).map((key) => e.lngLat[key]);
-            const coordsTxt = JSON.stringify(END);
-            console.log("Map clicked at:", coordsTxt);
-            // If geocoder is visible, hide it using the slide-out-right class
-            let geocoderElement = document.querySelector(".mapboxgl-ctrl-geocoder");
-            if (!geocoderElement.classList.contains("hidden")) {
-                // geocoderElement.classList.add("hidden");
-                geocoderElement.classList.add("slide-out-right");
-            }
-        });
-        map.on("mousedown", (e) => {
-            i = 0;
-            t = 0;
-            let longpress = false;
-            const timer = setInterval(() => {
-                i++;
-                if (i === 10) {
-                    console.log("long press");
-                    longpress = true;
-                    clearInterval(timer);
-
-                    // window.confirm("Are you sure you want to move this marker?");
-                    let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
-                    // Remove hidden class from modal
-                    myModal._element.classList.remove('hidden');
-                    myModal.show();
-
-
-                    let confirmButton = document.getElementById('confirmButton');
-                    let cancelButton = document.getElementById('cancelButton');
-                    let closeButton = document.getElementById('closeButton');
-
-                    function handleClick() {
-                        longpress = false;
-                        myModal.hide(); // Not really necessary, but it's a good practice to clean up after yourself
-                        clearInterval(timer);
-
-                        // The cancel or close button was clicked. Do nothing
-                        console.log('Cancel or Close Button clicked');
-                    }
-
-                    cancelButton.addEventListener('click', handleClick);
-
-                    closeButton.addEventListener('click', handleClick);
-
-                    confirmButton.addEventListener('click', function () {
-                        // The confirm button was clicked
-                        console.log('Confirm button clicked');
-                        myModal.hide();
-
-                        clearInterval(timer);
-                        if (longpress) {
-                            longpress = false;
-                            console.warn("###e.lnglat", e.lngLat);
-                            const el = document.createElement("div");
-                            el.className = "longpress-marker";
-
-                            const marker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map);
-
-
-                            // // Add the marker to the contacts_markers array
-                            contacts_markers.push(marker);
-
-                            // // Add the marker to the contacts_markers_dict
-                            contacts_markers_dict[
-                                `${e.lngLat.lng.toFixed(2)}_${e.lngLat.lat.toFixed(2)}`
-                                ] = marker;
-                        } else {
-                            console.log("short press");
-                        }
-                    });
-                }
-            }, 100);
-
-            map.on("mouseup", () => {
-                clearInterval(timer);
-            });
-        });
-
-        map.on("touchstart", (e) => {
-            let i = 0;
-            let t = 0;
-            let longtouch = false;
-            const timer = setInterval(() => {
-                i++;
-                if (i === 10) {
-                    console.log("long touch");
-                    longtouch = true;
-                    clearInterval(timer);
-
-                    // window.confirm("Are you sure you want to move this marker?");
-                    let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
-                    // Remove hidden class from modal
-                    myModal._element.classList.remove('hidden');
-                    myModal.show();
-
-                    let confirmButton = document.getElementById('confirmButton');
-                    let cancelButton = document.getElementById('cancelButton');
-                    let closeButton = document.getElementById('closeButton');
-
-                    function handleClick() {
-                        longtouch = false;
-                        myModal.hide(); // Not really necessary, but it's a good practice to clean up after yourself
-                        clearInterval(timer);
-
-                        // The cancel or close button was clicked. Do nothing
-                        console.log('Cancel or Close Button clicked');
-                    }
-
-                    cancelButton.addEventListener('click', handleClick);
-                    closeButton.addEventListener('click', handleClick);
-
-                    confirmButton.addEventListener('click', function () {
-                        // The confirm button was clicked
-                        myModal.hide();
-
-                        clearInterval(timer);
-                        if (longtouch) {
-                            longtouch = false;
-                            const el = document.createElement("div");
-                            el.className = "longtouch-marker";
-
-                            const marker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map);
-                            marker.setDraggable(true);
-
-                            // Add the marker to the contacts_markers array
-                            contacts_markers.push(marker);
-
-                            // Add the marker to the contacts_markers_dict
-                            contacts_markers_dict[
-                                `${e.lngLat.lng.toFixed(2)}_${e.lngLat.lat.toFixed(2)}`
-                                ] = marker;
-
-                        } else {
-                            console.log("short touch");
-                        }
-                    });
-                }
-            }, 100);
-
-            map.on("touchend", () => {
-                clearInterval(timer);
-            });
-        });
-
-        map.on("move", function () {
-            removeAllPopups();
-        });
-
-        map.addControl(new mapboxgl.NavigationControl());
-        let attributionControl = null;
-        for (const control of map._controls) {
-            if (control instanceof mapboxgl.AttributionControl) {
-                attributionControl = control;
-                break;
+            } catch (err) {
+                console.error(`WakeLock failed: ${err.message}`);
             }
         }
-        if (attributionControl) {
-            map.removeControl(attributionControl);
-        } else {
-            console.log("Attribution control not found.");
-        }
-        map.attrControl = new mapboxgl.AttributionControl({
-            compact: true,
-            customAttribution:
-                "Made with ❤ by <a href='mailto://archer.chris@gmail.com'>C. Archer.</a> D’après une idée" +
-                " de P. Ricaud",
-        });
-        map.addControl(map.attrControl, "bottom-right");
-        addMapStyleSelector(map);
-        const currentZoom = map.getZoom();
+    }
+
+    addMapControls() {
+        // Add navigation control (zoom in/out)
+        this.map.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+        // Add GeolocateControl
         const geolocate = new mapboxgl.GeolocateControl({
             positionOptions: {
                 enableHighAccuracy: true,
@@ -614,844 +75,492 @@
             showAccuracyCircle: true,
             showUserLocation: true,
         });
-        map.addControl(geolocate, "top-right");
-
-        // Add the search bar to the map
-        let geocoder = null;
-        map.addControl(
-            (geocoder = new MapboxGeocoder({
-                accessToken: mapboxgl.accessToken,
-                mapboxgl: mapboxgl,
-            })),
-            "top-left"
-        );
-
-        // Listen for the 'result' event
-        geocoder.on("result", function (event) {
-            // The event.result object contains the selected suggestion
-            console.log(event.result.place_name);
-
-            // Get the element that contains the geocoder control
-            let geocoderElement = document.querySelector(".mapboxgl-ctrl-geocoder");
-
-            // Add the slide-out-right class to the geocoder control
-            geocoderElement.classList.add("slide-out-right");
-
-            // After the animation ends, remove the slide-out-right class, add the hidden class, and reset the geocoder text
-            geocoderElement.addEventListener(
-                "animationend",
-                function () {
-                    // geocoderElement.classList.remove('slide-out-right');
-                    geocoderElement.classList.add("hidden");
-                    geocoder.clear();
-                },
-                {once: true}
-            );
-        });
-
-        class Display_contacts_markers_btn {
-            constructor(map, backgroundColor) {
-                this.map = map;
-                this.button = document.createElement("button");
-                this.button.innerText = "Display Contacts";
-                this.button.style.backgroundColor = backgroundColor;
-                this.button.style.position = "absolute";
-                this.button.style.top = "10px";
-                this.button.style.left = "10px";
-                this.button.style.borderRadius = "10px";
-                this.button.style.border = "1px solid";
-                this.button.style.borderColor = "rgba(194, 181, 181)";
-
-                this.button.addEventListener(
-                    "click",
-                    this.toggle_contacts_markers_visibility.bind(this)
-                );
-                map.getContainer().appendChild(this.button);
-            }
-
-            toggle_contacts_markers_visibility() {
-                contacts_lst.contacts.forEach((contact) => {
-                    const marker = contacts_markers.find((marker) => {
-                        return (
-                            marker.getLngLat().lng === contact.coords[0] &&
-                            marker.getLngLat().lat === contact.coords[1]
-                        );
-                    });
-                    if (marker) {
-                        const visibility = marker.getElement().style.visibility;
-                        marker.getElement().style.visibility =
-                            visibility === "visible" ? "hidden" : "visible";
-                    }
-                });
-            }
-        }
-
-        let displaylistbtn = new Display_contacts_markers_btn(
-            map,
-            window.backgroundColor
-        );
-
-        class ContactsTextbox {
-            constructor(map, backgroundColor) {
-                this.map = map;
-                this.textbox = document.createElement("div");
-                this.textbox.style.backgroundColor = backgroundColor;
-                this.textbox.style.position = "absolute";
-                this.textbox.style.bottom = "10px";
-                this.textbox.style.left = "10px";
-                // this.textbox.style.transform = 'translateX(-50%)';
-                this.textbox.style.padding = "10px";
-                this.textbox.style.borderRadius = "10px";
-                this.textbox.style.border = "1px solid lightgrey";
-                this.textbox.style.textAlign = "center";
-                this.textbox.style.whiteSpace = "normal";
-                this.textbox.style.maxWidth = "80%";
-                this.textbox.style.width = "25%";
-                this.textbox.style.overflow = "auto"; // Add a scrollbar when the content overflows
-                this.textbox.style.maxHeight = "150px"; // Limit the max height of the textbox
-                this.textbox.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
-                this.textbox.className = "ContactsTextbox";
-                this.textbox.style.visibility = "visible";
-                this.textbox.style.transition = "transform 0.5s ease-out";
-                // add translateX(-100%) to hide the textbox
-                // this.textbox.style.transform = 'translateX(-97%)';
-
-                // Manage click events on the textbox
-                this.textbox.addEventListener("click", (e) => {
-                    // Hide the textbox if it is visible
-                    if (this.textbox.style.transform === "translateX(0%)") {
-                        this.textbox.style.transform = `translateX(${contacts_lst_translate})`;
-
-                        // Remove the scrollbar
-                        this.textbox.style.overflowY = "hidden";
-
-                        // Hide the textbox contents
-                        this.textbox.childNodes.forEach((element) => {
-                            element.style.visibility = "hidden";
-                        });
-
-                        // Set transparency to 0.1
-                        this.textbox.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-
-                    } else {
-                        // If it is not visible, translate it to the right until it is visible
-                        // Show the scrollbar
-                        this.textbox.style.overflowY = "scroll";
-                        this.textbox.style.transform = "translateX(0%)";
-
-                        // Show the textbox contents
-                        this.textbox.childNodes.forEach((element) => {
-                            element.style.visibility = "visible";
-                        });
-
-                        // Set transparency to 0.6
-                        this.textbox.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
-                    }
-                });
-
-                map.getContainer().appendChild(this.textbox);
-            }
-
-            updateContacts(contacts) {
-                this.textbox.innerHTML = ""; // Clear the textbox
-
-                // Sort the contacts by geographic distance from contact with tag "home" using the haversine formula
-                let homeContact = contacts_lst.contacts.find(contact => contact.tags.includes("home"));
-                let homeCoords = homeContact.coords;
-                let sorted_contacts = contacts.sort((a, b) => {
-                    let aDistance = haversineDistance(homeCoords, a.coords);
-                    let bDistance = haversineDistance(homeCoords, b.coords);
-                    return aDistance - bDistance;
-                });
-                // Sort the contacts by route length from contact with tag "home" , using getDirections
-
-                sorted_contacts.forEach((contact, index) => {
-                    // replace spaces in contact.name with nbsp
-                    contact.name = contact.name.replace(/\s/g, "\u00A0");
-                    // contact.name = contact.name.replace(/\s/g, '_');
-
-                    // Highlight the selected contact and reset the others
-                    if (contact.name === contact_name) {
-                        contactElement.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
-                    }
-
-                    const contactElement = document.createElement("span");
-                    contactElement.innerText = contact.name;
-                    contactElement.style.cursor = "pointer";
-                    contactElement.style.marginRight = "0px";
-
-                    // Display contacts list vertically
-                    contactElement.style.display = "block";
-                    contactElement.style.marginBottom = "10px";
-
-                    contactElement.addEventListener("click", () => {
-                        contact_position = contact.coords;
-
-                        this.map.flyTo({
-                            center: contact_position,
-                            essential: true,
-                        });
-
-                        // Highlight the selected contact and reset the others if any is highlighted
-                        if (
-                            contactElement.style.backgroundColor === window.backgroundColor
-                        ) {
-                            contactElement.style.backgroundColor = "rgba(255, 255, 255, 0)";
-                        } else {
-                            this.textbox.childNodes.forEach((element) => {
-                                element.style.backgroundColor = "rgba(255, 255, 255, 0)";
-                            });
-                            contactElement.style.backgroundColor = "rgba(255, 0, 0, 0.3)";
-                        }
-
-                        // Hide the textbox
-                        // this.textbox.style.transform = 'translateX(-100%)';
-
-                        if (isGeolocating) {
-                            resetRoutesExceptSelected(map, contact.name);
-                            getDirections([geo[0], geo[1]], contact.coords).then(
-                                ({route, distance, durée, eta, address}) => {
-                                    if (!monitorTextbox)
-                                        monitorTextbox = new Monitor_textbox(
-                                            map,
-                                            window.backgroundColor
-                                        );
-                                    displayUpdates(monitorTextbox, distance, durée, eta, address);
-
-                                    const routeName =
-                                        contacts_markers_dict[
-                                            `${contact_position[0].toFixed(
-                                                2
-                                            )}_${contact_position[1].toFixed(2)}`
-                                            ];
-                                    map.getSource(routeName).setData(route.geometry);
-                                    contact_route = route.geometry.coordinates;
-                                }
-                            );
-                        } else {
-                            const marker = contacts_markers.find((marker) => {
-                                if (
-                                    marker.getLngLat().lng === contact.coords[0] &&
-                                    marker.getLngLat().lat === contact.coords[1]
-                                ) {
-                                    setTimeout(() => {
-                                        marker.getPopup().getElement().classList.add("fade-out");
-                                    }, 500);
-                                    return (
-                                        marker.getLngLat().lng === contact.coords[0] &&
-                                        marker.getLngLat().lat === contact.coords[1]
-                                    );
-                                } else {
-                                    removeAllPopups();
-                                }
-                            });
-
-                            // if (marker.getPopup().getElement().classList) {
-                            //     setTimeout(() => {
-                            //         marker.getPopup().getElement().classList.add("fade-out");
-                            //     }, 500);
-                            // }
-                        }
-
-                        contact_position = contact.coords;
-
-                        const marker = contacts_markers.find((marker) => {
-                            return (
-                                marker.getLngLat().lng === contact.coords[0] &&
-                                marker.getLngLat().lat === contact.coords[1]
-                            );
-                        });
-                        if (marker) {
-                            // check if the popup is open
-                            if (marker.getPopup().isOpen()) {
-                                marker.togglePopup(); // Close the popup
-                            } else {
-                                // Open the popup
-                                marker.togglePopup();
-                                if (marker.getPopup().getElement.classList) {
-                                    setTimeout(() => {
-                                        marker.getPopup().getElement().classList.add("fade-out"); // Fade out the popup after 500ms
-                                    }, 500);
-                                }
-                            }
-                        }
-                    });
-                    this.textbox.appendChild(contactElement);
-                });
-            }
-        }
-
-        let contactsTextbox = new ContactsTextbox(map, window.backgroundColor);
-        contactsTextbox.updateContacts(contacts_lst.contacts);
-
-        // Begin. Compass ////////////////////////////////////////////////////////////
-
-        // Create a class to display a rotating compass. The compass will be displayed in the center left  of the map.
-        // The compass will be displayed as a div with a background color and a border. The compass will be displayed
-        // The image comes from compass1.jpg
-        // The image of the compass will be rotated to match the current heading of the device.
-
-        class CompassControl {
-            constructor(map) {
-                this._map = map;
-
-                this._container = document.createElement("div");
-                this._container.className = "compass-control";
-
-                this._compass = document.createElement("div");
-                this._compass.className = "compass-image";
-                this._compass.id = "compass-image-id";
-
-                this._compass.style.width = "100px";
-                this._compass.style.height = "100px";
-
-                this._compass.style.opacity = "0.3";
-
-                this._setPosition();
-
-                this.setRotation(10);
-
-                this._container.appendChild(this._compass);
-
-                map.getContainer().appendChild(this._container);
-            }
-
-            _setPosition() {
-                this._container.style.position = "absolute";
-                this._container.style.left = "5px";
-                this._container.style.top = "50%";
-                this._container.style.transform = "translateY(-50%)";
-            }
-
-            setRotation(heading) {
-                this._compass.style.transform = `rotate(${heading}deg)`;
-            }
-        }
-
-        // compass = new CompassControl(map);
-
-        // End. Compass ////////////////////////////////////////////////////////////
-
-        // Start. Mock locations to simulate tracking (e.g., a path around a small area)
-        // Mock locations to simulate tracking (e.g., a path around a small area)
-        function generateCirclePoints(centerLat, centerLng, radiusInKm, numPoints) {
-            const points = [];
-            const earthRadiusInKm = 6371;
-            const radiusInDegrees = radiusInKm / earthRadiusInKm;
-
-            for (let i = 0; i < numPoints; i++) {
-                const angle = (i * 360 / numPoints) * Math.PI / 180; // Convert angle to radians
-                const lat = centerLat + (radiusInDegrees * Math.sin(angle)) * (180 / Math.PI);
-                const lng = centerLng + (radiusInDegrees * Math.cos(angle)) * (180 / Math.PI) / Math.cos(centerLat * Math.PI / 180);
-
-                points.push({coords: [lng, lat], heading: i * 360 / numPoints});
-            }
-
-            return points;
-        }
-
-        // Valbonne's approximate center
-        const valbonneCenter = {lat: 43.6415, lng: 7.0092};
-        const locations = generateCirclePoints(valbonneCenter.lat, valbonneCenter.lng, 5, 100);
-
-        let currentIndex = 0;
-
-        // Create a mock marker for the location
-        const mock_marker = new mapboxgl.Marker()
-            .setLngLat(locations[currentIndex]['coords'])
-            .addTo(map);
-
-
-        // Function to simulate geolocation change
-        function simulateGeolocationChange() {
-            if (currentIndex >= locations.length) {
-                currentIndex = 0; // Loop back to the start
-            }
-
-            const [lng, lat] = locations[currentIndex++]['coords'];
-
-            compass.setRotation(90); // Rotate the compass to the new heading (90 degrees in this case)
-
-            // Update the map view to the new location
-            // map.flyTo({
-            //     center: [lng, lat],
-            //     essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-            // });
-
-            compass.setRotation(locations[currentIndex]['heading']); // Rotate the compass to the new heading
-
-            // Update mock marrker  position
-            mock_marker.setLngLat([lng, lat]);
-
-            // Schedule the next location update
-            setTimeout(simulateGeolocationChange, 1000); // Update location every 2 seconds
-        }
-
-        // Start simulating geolocation tracking //////////////////////////////
-        // simulateGeolocationChange();
-
-        // End. Mock locations to simulate tracking (e.g., a path around a small area)
-
-        class SearchButton {
-            constructor(map, backgroundColor) {
-                this.map = map;
-                this.button = document.createElement("button");
-                this.button.innerText = "Search";
-                // this.button.className = 'mapboxgl-ctrl-icon';
-                this.button.style.backgroundColor = backgroundColor;
-                this.button.style.position = "absolute";
-                this.button.style.top = "45px";
-                // this.button.style.left = '250px'; // debug textbox styles
-                this.button.style.left = "10px";
-                this.button.style.borderRadius = "10px";
-                this.button.style.border = "1px solid";
-                this.button.style.borderColor = "rgba(194, 181, 181)";
-
-                // Start with the geocoder searchbox hidden
-                let geocoderElement = document.querySelector(".mapboxgl-ctrl-geocoder");
-                geocoderElement.classList.remove("slide-in-left");
-                geocoderElement.classList.add("slide-out-right");
-
-                this.button.addEventListener("click", this._showGeocoder.bind(this));
-                map.getContainer().appendChild(this.button);
-            }
-
-            _showGeocoder() {
-                console.log("show geocoder");
-                let geocoderElement = document.querySelector(".mapboxgl-ctrl-geocoder");
-                // geocoderElement.classList.add('hidden');
-                geocoderElement.classList.remove("slide-out-right");
-
-                geocoderElement.classList.add("slide-in-left");
-
-                geocoderElement.addEventListener(
-                    "animationend",
-                    function () {
-                        geocoderElement.classList.remove("hidden");
-                        geocoderElement.classList.remove("slide-in-left");
-                    },
-                    {once: false}
-                );
-            }
-        }
-
-        let searchButton = new SearchButton(map, window.backgroundColor);
-
-        geolocate.on("trackuserlocationend", function () {
-
-            const geolocateButton = document.getElementsByClassName(
-                "mapboxgl-ctrl-geolocate"
-            )[0];
-            const classList = geolocateButton.classList;
-            if (
-                !classList.contains("mapboxgl-ctrl-geolocate-active") &&
-                !classList.contains("mapboxgl-ctrl-geolocate-background")
-            ) {
-                isGeolocating = false;
-                console.log("isGeolocating set to false", isGeolocating);
+        this.map.addControl(geolocate, "top-right");
+
+        // Add geolocate event listener
+        geolocate.on("geolocate", (e) => {
+            console.log("Geolocated:", e.coords);
+            if (this.markerManager.lastClickedMarkerLngLat) {
+                const start = [e.coords.longitude, e.coords.latitude];
+                const end = [this.markerManager.lastClickedMarkerLngLat.lng, this.markerManager.lastClickedMarkerLngLat.lat];
+                this.addRouteLayer(start, end);
             }
         });
 
-        let geo_travelled = []; // Declare geo_travelled as a global variable
-        let geo_textbox = null;
-        let geo_times = 0; // Declare geo_times as a global variable
+        // Add FullscreenControl
+        this.map.addControl(new mapboxgl.FullscreenControl(), "top-right");
 
-        geolocate.on("geolocate", function (e) {
-
-            let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
-            geolocationUserIcon.classList.add('compass-image');
-
-            // Remove mapboxgl-user-location-dot
-            // geolocationUserIcon.classList.remove('mapboxgl-user-location-dot');
-
-            // Set the opacity to 0.3
-            geolocationUserIcon.style.opacity = "0.3";
-
-            isGeolocating = true;
-            geo = [e.coords.longitude, e.coords.latitude];
-            geo_times = geo_times + 1;
-
-            let speed = "no speed";
-
-            // Set the rotation of the compass to the current heading of the device if e.coords.heading is defined
-            if (e.coords.heading) {
-                compass.setRotation(e.coords.heading);
-                // rotate the geolocationUserIcon to match the heading of the device
-                geolocationUserIcon.style.transform = `rotate(${e.coords.heading}deg)`;
+        // Add ScaleControl
+        this.map.addControl(new mapboxgl.ScaleControl({
+            maxWidth: 80,
+            unit: "metric",
+            style: {
+                bottom: 20,
+                left: 20,
+                border: '1px solid black',
+                padding: '5px',
+                color: 'black'
             }
+        }), "bottom-right");
 
-            if (e.coords.speed)
-                // ensure e.coords.speed is numeric
-                speed = convertMetersPerSecondToKilometersPerHour(e.coords.speed);
+        // Add StyleControl
+        new StyleControl(this.map);
 
-            let heading = e.coords.heading
-                ? e.coords.heading.toString()
-                : "no heading";
-            console.log("heading", heading);
-
-            if (!debug_textbox)
-                debug_textbox = new Debug_textbox(map, window.backgroundColor);
-
-            debugDBmgr_0("");
-            debug_textbox.addText(
-                applyColorToText(
-                    debugDBmgr_0(
-                        `e_heading#${e.coords.heading}#red;heading#${heading}°#blue`
-                    )
-                )
-            );
-
-            let accuracy = "no accuracy";
-            if (e.coords.accuracy) accuracy = e.coords.accuracy.toFixed(1) + " m";
-
-            if (!geo_textbox)
-                geo_textbox = new Geo_textbox(map, window.backgroundColor);
-            if (geo_textbox && speed > 0) {
-                setTimeout(() => {
-                    geo_textbox.geoTextbox.classList.add("fade-out");
-                }, 500);
-            }
-
-            geo_textbox.geoTextbox.innerHTML = applyColorToText(
-                debugDBmgr_0(`n#${geo_times}#black;
-            speed#${speed}#red;
-            heading#${heading}#black;
-            accuracy#${accuracy}#black;`)
-            );
-
-            if (contact_position) {
-                resetRoutesExceptSelected(map, contact_name);
-
-                // append the current position to the geo_travelled array
-                geo_travelled.push([e.coords.longitude, e.coords.latitude]);
-                // if the length of the geo_travelled array is greater than 1, draw the geo_travelled  route
-
-                getDirections(
-                    [e.coords.longitude, e.coords.latitude],
-                    contact_position
-                ).then(({route, distance, durée, eta, address}) => {
-                    if (!monitorTextbox)
-                        monitorTextbox = new Monitor_textbox(map, window.backgroundColor);
-                    displayUpdates(monitorTextbox, distance, durée, eta, address);
-                    const routeName =
-                        contacts_markers_dict[
-                            `${contact_position[0].toFixed(2)}_${contact_position[1].toFixed(
-                                2
-                            )}`
-                            ];
-                    map.getSource(routeName).setData(route.geometry);
-                    contact_route = route.geometry.coordinates;
-                });
-            }
-        });
+        // Add MarkerManager
+        this.markerManager = new MarkerManager(this.map);
+        // this.markerManager.addMarker([7.008715192368488, 43.64163999646119], "Valbonne", "Valbonne, France", document.getElementById("marker"));
+        this.markerManager.addContactMarkers('contacts_json'); // Pass the URL or path to your contacts.json
     }
 
-    initializeMap(); // Call the function to initialize the map
-
-    class Monitor_textbox {
-        constructor(map, backgroundColor) {
-            this.monitorTextbox = document.createElement("div");
-            this.monitorTextbox.classList.add("monitor-textbox");
-            this.monitorTextbox.innerText = "";
-            this.monitorTextbox.style.backgroundColor = backgroundColor;
-            this.monitorTextbox.style.border = "1px solid";
-            this.monitorTextbox.style.borderColor = "rgba(194, 181, 181)";
-            this.monitorTextbox.style.borderRadius = "10px";
-            this.monitorTextbox.style.top = "56vh";
-            this.monitorTextbox.style.transform = "translateY(-50%)"; // Move the textbox up by half of its height
-            this.monitorTextbox.style.textShadow = "1px 1px 1px #ccc";
-            this.monitorTextbox.style.color = "rgb(0,0,0)";
-            this.monitorTextbox.style.fontSize = "20px";
-            this.monitorTextbox.style.lineHeight = "0.9";
-            this.monitorTextbox.style.overflow = "auto";
-            this.monitorTextbox.style.padding = "10px";
-            this.monitorTextbox.style.position = "absolute";
-            this.monitorTextbox.style.textAlign = "center";
-            this.monitorTextbox.style.right = "5px";
-            this.monitorTextbox.style.zIndex = "1";
-            // set width to 30% of the viewport width
-            this.monitorTextbox.style.width = "25%";
-            map.getContainer().appendChild(this.monitorTextbox);
-        }
-    }
-
-    class Debug_textbox {
-        constructor(map, backgroundColor) {
-            this.debugTextbox = document.createElement("div");
-            this.debugTextbox.classList.add("debux-textbox");
-            this.debugTextbox.innerText = "";
-            this.debugTextbox.style.backgroundColor = backgroundColor;
-            this.debugTextbox.style.border = "1px solid";
-            this.debugTextbox.style.borderColor = "rgba(194, 181, 181)";
-            this.debugTextbox.style.borderRadius = "10px";
-            this.debugTextbox.style.bottom = "5px";
-            this.debugTextbox.style.textShadow = "1px 1px 1px #ccc";
-            this.debugTextbox.style.color = "rgb(0,0,0)";
-            this.debugTextbox.style.fontSize = "20px";
-            this.debugTextbox.style.lineHeight = "0.9";
-            this.debugTextbox.style.overflow = "auto";
-            this.debugTextbox.style.padding = "10px";
-            this.debugTextbox.style.position = "absolute";
-            this.debugTextbox.style.textAlign = "center";
-            this.debugTextbox.style.left = "50%";
-            this.debugTextbox.style.transform = "translateX(-50%)";
-            this.debugTextbox.style.zIndex = "1";
-            this.debugTextbox.style.cursor = "default";
-            this.debugTextbox.style.transition = "bottom 0.3s";
-
-            // Add the CSS rule for hover
-            this.debugTextbox.style.cursor = "default";
-
-            map.getContainer().appendChild(this.debugTextbox);
-
-            // On click, hide the debug textbox by sliding  it mostlly out of  the bottom of the viewport until the
-            // top 5px remain visible  or show it by moving it up so that the bottom of the textbox is 5px up from
-            // the bottom margin of the viewport
-
-            this.debugTextbox.addEventListener("click", () => {
-                // Get the current bottom value
-                let currentBottom = this.debugTextbox.style.bottom;
-
-                // Toggle between 5px and -n%
-                let textboxHeight = this.debugTextbox.offsetHeight;
-
-                if (currentBottom === "5px") {
-                    this.debugTextbox.style.bottom = `-${textboxHeight - 15}px`;
-                } else {
-                    this.debugTextbox.style.bottom = "5px";
-                }
-
-                // Animate the transition over 3 seconds
-                this.debugTextbox.style.transition = "bottom 0.5s";
-            });
-
-            this.debugTextbox.addEventListener("mouseover", () => {
-                this.debugTextbox.style.cursor = "pointer";
-            });
-            this.debugTextbox.addEventListener("mouseout", () => {
-                this.debugTextbox.style.cursor = "default";
-            });
-
-            // Create a funcsion to handle adding text to the debug textbox
-            this.addText = function (text) {
-                // this.debugTextbox.innerText = text;
-                // this.debugTextbox.innerHTML = "<span style='color: red;'>This is a line in red.</span><br><span" +
-                //     " style='color:" +
-                //     " blue;'>This is a line in blue.</span>";
-                // console.log("text", text);
-                this.debugTextbox.innerHTML = text;
-            };
-        }
-    }
-
-    class Geo_textbox {
-        constructor(map, backgroundColor) {
-            this.geoTextbox = document.createElement("div");
-            this.geoTextbox.classList.add("geo-textbox");
-            this.geoTextbox.innerText = "";
-            this.geoTextbox.style.backgroundColor = backgroundColor;
-            this.geoTextbox.style.border = "1px solid";
-            this.geoTextbox.style.borderColor = "rgba(194, 181, 181)";
-            this.geoTextbox.style.borderRadius = "10px";
-            this.geoTextbox.style.top = "70px"; // Changed from "bottom: 5px"
-            this.geoTextbox.style.textShadow = "1px 1px 1px #ccc";
-            this.geoTextbox.style.color = "rgb(0,0,0)";
-            this.geoTextbox.style.fontSize = "20px";
-            this.geoTextbox.style.lineHeight = "0.9";
-            this.geoTextbox.style.overflow = "auto";
-            this.geoTextbox.style.padding = "10px";
-            this.geoTextbox.style.position = "absolute";
-            this.geoTextbox.style.textAlign = "center";
-            this.geoTextbox.style.left = "5px";
-            this.geoTextbox.style.width = "25%";
-            this.geoTextbox.style.zIndex = "1";
-            map.getContainer().appendChild(this.geoTextbox);
-        }
-    }
-
-    /**
-     * Parse debug DB field data and return formatted string
-     * @param {string} fields - Debug DB field data
-     * @returns {string} Fields formatted as key:value pairs
-     */
-
-    function debugDBmgr_1(fields = "") {
-        let debugDB = {};
-        const defaultColor = "green";
-
-        if (!fields) return Object.entries(debugDB).map(formatEntry).join("\n");
-
-        const fieldArray = fields.split(/,|\\r?\\n/);
-
-        fieldArray.map(parseField).forEach((field) => {
-            if (!field.key) delete debugDB[field.key];
-            else debugDB[field.key] = field.value;
-        });
-
-        return Object.entries(debugDB).map(formatEntry).join("\n");
-
-        function parseField(fieldStr) {
-            const [key, value, color] = fieldStr.split(":");
-            return {key, value, color};
-        }
-
-        function formatEntry([key, value]) {
-            console.log("key", key);
-            const [val, color] = value.split(":");
-            console.log("val", val);
-            console.log("color", color);
-            return `${key}:${val}:${color || defaultColor}`;
-        }
-    }
-
-    function debugDBmgr_2(fields) {
-        // let debugDB = {}; // Ensure debugDB is defined in the function scope
-
-        if (fields !== "") {
-            const fieldArray = fields.split(/,|\r?\n/);
-
-            fieldArray.forEach((field) => {
-                const [k, v, c] = field.split(":"); // Destructure the parts for clarity
-
-                if (!k) {
-                    // Check for falsy values (empty string, null, undefined)
-                    // Potentially log an error or handle the case of an empty key
-                } else {
-                    debugDB[k] = c ? `${v}:${c}` : v; // Use template literals for string construction
-                }
-            });
-        }
-
-        const default_color = "green";
-        return Object.entries(debugDB)
-            .map(([key, value]) => {
-                const [val, color = default_color] = value.split(":"); // Default color if not provided
-                return `${key}:${val}:${color}`; // Simplified return statement
-            })
-            .join("\n");
-    }
-
-    function debugDBmgr_0(fields) {
-        // console.log('fields', fields);
-        // console.log('is fields empty', fields === '');
-
-        let debugDB = {}; // Ensure debugDB is defined in the function scope
-
-        const fieldArray = fields.split(/;|\r?\n/);
-        // console.log('fieldArray', fieldArray);
-
-        fieldArray.forEach((field) => {
-            let parts = field.split("#");
-
-            let k = parts[0];
-            let v = parts[1];
-            let c = parts[2];
-
-            // console.log('k', k);
-            // console.log('v', v);
-            // console.log('c', c);
-
-            if (k === "" || k === undefined) {
-                delete debugDB[k]; // If v is empty or undefined, delete the key k from debugDB
-            } else {
-                if (c) {
-                    // console.log('c is defined');
-                    debugDB[`${k}`] = v + "#" + c;
-                    // console.log('debugDB', debugDB);
-                    // console.log('debugDB[k]', debugDB[k]);
-                } else {
-                    debugDB[k] = v; // No color definition, so add or update k with v in debugDB as before
-                }
-            }
-        });
-
-        const default_color = "green";
-
-        return Object.entries(debugDB)
-            .map(([key, value]) => {
-                const val = value.split("#");
-                if (val) {
-                    const color = val[1];
-                    if (color) {
-                        return `${key}#${val[0]}#${color}`;
-                    } else {
-                        return `${key}#${val[0]}#${default_color}`;
-                    }
-                    return `${key}#${val[0]}${color}`; // Add color to the key#val[0 pair
-                } else {
-                    return `${key}#${val[0]}#${default_color}`; // No $color in key, so return as before
-                }
-            })
-            .join("\n");
-    }
-
-    function applyColorToText(txt) {
-        const lines = txt.split("\n");
-        let result = "";
-        for (let line of lines) {
-            const parts = line.split("#");
-            if (parts.length === 2) {
-                const [key, value] = parts;
-                result += `<span>${value}</span><br>`;
-            } else if (parts.length === 3) {
-                const [key, value, color] = parts;
-                result += `<span style="color:${color};">${value}</span><br>`;
-            }
-        }
-        return result;
-    }
-
-    function displayUpdates(monitor_textbox, distance, durée, eta, address) {
-        // Update the monitorTextbox with the distance, duration, and address
-
-        // Remove numéro de département from address if address is not null it contains the numéro
-        if (address) {
-            const regex = / \b\d{5}\b /g;
-            address = address.replace(regex, ",");
+    modifyAttributionControl() {
+        // Find and remove existing attribution control
+        let attributionControl = this.map._controls.find(control => control instanceof mapboxgl.AttributionControl);
+        if (attributionControl) {
+            this.map.removeControl(attributionControl);
         } else {
-            address = "nono";
+            console.log("Attribution control not found.");
         }
 
-        const txt2 = `Dist#${distance}#;Dur#${durée}#;eta#${eta}#red;address#${address}#`;
-
-        debugDBmgr_0("");
-        const htm = applyColorToText(debugDBmgr_0(txt2));
-
-        monitor_textbox.monitorTextbox.innerHTML = htm;
+        // Create and add new custom attribution control
+        const customAttribution = "Made with ❤ by <a href='mailto://archer.chris@gmail.com'><u>C. Archer.</u></a> D’après une idée de P. Ricaud";
+        const newAttributionControl = new mapboxgl.AttributionControl({
+            compact: true,
+            customAttribution: customAttribution,
+        });
+        this.map.addControl(newAttributionControl, "bottom-right");
     }
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            let cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === name + "=") {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+    // Function to add the route layer
+    async addRouteLayer(start, end) {
+        const startLng = start[0];
+        const startLat = start[1];
+        const endLng = end[0];
+        const endLat = end[1];
+
+        // Fetch the route from OSRM
+        const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`);
+        const data = await response.json();
+
+        // Extract the route geometry
+        const route = data.routes[0];
+        const route_geometry = route.geometry;
+
+        // Add the route as a source and layer if it doesn't already exist
+        if (!this.map.getSource('route')) {
+            this.map.addSource('route', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'Feature',
+                    'properties': {},
+                    'geometry': route_geometry
                 }
+            });
+
+            this.map.addLayer({
+                'id': 'route',
+                'type': 'line',
+                'source': 'route',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                'paint': {
+                    'line-color': '#00ff00', // Transparent green color
+                    'line-opacity': 0.5, // Transparency level
+                    'line-width': 5
+                }
+            });
+        } else {
+            // If the source exists, just update its data
+            this.map.getSource('route').setData({
+                'type': 'Feature',
+                'properties': {},
+                'geometry': route_geometry
+            });
+
+            // Initialize variables at the beginning of the function
+            let distance = '0 m'; // Default value for distance
+            let duration = 0; // Default value for duration
+            let eta = ''; // Default value for estimated time of arrival
+            let address = 'No address found'; // Default default value for address
+            let durée = '00:00:00'; // Default value for duration in HH:MM:SS format
+
+            // Store the route data
+            this.routeData = {
+                start: start,
+                end: end,
+                route: route,
+                distance: distance,
+                durée: durée,
+                eta: eta,
+                address: address
+            };
+
+            return this.routeData;
+        }
+
+        function convertDistance(distance) {
+            if (distance >= 1000) {
+                return (distance / 1000).toFixed(1) + " km";
+            } else {
+                return distance.toFixed(0) + " m";
             }
         }
-        return cookieValue;
+
+        function convertDuration(durationInSeconds) {
+            const hours = Math.floor(durationInSeconds / 3600);
+            const minutes = Math.floor((durationInSeconds % 3600) / 60);
+            const seconds = Math.floor(durationInSeconds % 60);
+            return {hours, minutes, seconds};
+        }
+
+        function formatDuration(hours, minutes, seconds) {
+            let durée = "";
+            if (hours > 0) {
+                durée += hours.toString().padStart(2, '0') + ':';
+            }
+            if (minutes > 0 || hours > 0) {
+                durée += minutes.toString().padStart(2, '0') + ':';
+            }
+            durée += seconds.toString().padStart(2, '0');
+            return durée;
+        }
+
+        let distance = convertDistance(route.distance);
+        let {hours, minutes, seconds} = convertDuration(route.duration);
+        let durée = formatDuration(hours, minutes, seconds);
+
+        let eta = new Date();
+        eta.setHours(eta.getHours() + hours);
+        eta.setMinutes(eta.getMinutes() + minutes);
+        eta.setSeconds(eta.getSeconds() + seconds);
+        eta = eta.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+        // Use googleMapsUrl to get address
+        const googlemaps_token = await this.getAccessToken("googlemaps_token")
+        const googleMapsUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${startLat},${startLng}&key=${googlemaps_token}`;
+        let address = 'No address found';
+        const googleMapsData = await fetch(googleMapsUrl).then(response => response.json());
+        if (googleMapsData.status === 'OK') {
+            address = googleMapsData.results[0].address_components[0].long_name + ' '
+                + googleMapsData.results[0].address_components[1].short_name + ', '
+                + googleMapsData.results[0].address_components[2].long_name;
+        }
+
+        console.log({route, distance, durée, eta, address});
+        return {route, distance, durée, eta, address};
+
     }
 
-    function haversineDistance(coords1, coords2) {
-        const R = 6371e3; // Earth's radius in metres
-        const lat1 = coords1[1] * Math.PI / 180;
-        const lat2 = coords2[1] * Math.PI / 180;
-        const deltaLat = (coords2[1] - coords1[1]) * Math.PI / 180;
-        const deltaLng = (coords2[0] - coords1[0]) * Math.PI / 180;
+    // Add this function to re-add the route layer
+    reAddRouteLayer() {
+        // Check if the route data exists and the map has been initialized
+        if (this.routeData && this.map) {
+            // Check if the route layer exists
+            if (this.map.getLayer('route')) {
+                // Remove the existing route layer
+                this.map.removeLayer('route');
+            }
 
-        const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-            Math.cos(lat1) * Math.cos(lat2) *
-            Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            // Check if the route source exists
+            if (this.map.getSource('route')) {
+                // Remove the existing route source
+                this.map.removeSource('route');
+            }
 
-        return R * c;
+            // Re-add the route layer with the updated route data
+            this.addRouteLayer(this.routeData.start, this.routeData.end);
+        }
     }
 
-    // console.log(debugDBmgr("key3:value3:green,key4:value4:"));
-    // console.log(debugDBmgr("key5::\nkey6:value6:yellow"))
-    // console.log(debugDBmgr("key2"));
-    // console.log(debugDBmgr(""));
-})();
+}
+
+class StyleControl {
+    constructor(map) {
+        this.map = map;
+        this.mapStyles = [
+            {name: "Dark", style: "mapbox://styles/mapbox/dark-v9"},
+            {name: "Light", style: "mapbox://styles/mapbox/light-v9"},
+            {name: "Streets", style: "mapbox://styles/mapbox/streets-v11"},
+            {name: "Outdoors", style: "mapbox://styles/mapbox/outdoors-v11"},
+            {name: "Satellite", style: "mapbox://styles/mapbox/satellite-v9"}
+        ];
+
+        this.init();
+    }
+
+    init() {
+        const select = document.createElement("select");
+        select.style.position = "absolute";
+        select.style.top = "10px";
+        select.style.right = "50px";
+        select.style.backgroundColor = "rgba(255, 255, 255, 0.6)"; // 60% transparent background
+        select.style.textAlign = "center";
+        select.style.borderRadius = "10px";
+        select.style.border = "1px solid lightgrey";
+        select.style.zIndex = "10";
+
+        this.mapStyles.forEach(style => {
+            const option = document.createElement("option");
+            option.value = style.style;
+            option.text = style.name;
+            select.appendChild(option);
+        });
+
+        const selectedStyle = localStorage.getItem("selectedMapStyle") || this.mapStyles[0].style;
+        select.value = selectedStyle;
+
+        select.addEventListener("change", () => {
+            this.map.setStyle(select.value);
+            localStorage.setItem("selectedMapStyle", select.value);
+        });
+
+        this.map.getContainer().appendChild(select);
+    }
+}
+
+class MarkerManager {
+    constructor(map) {
+        this.map = map;
+        this.markers = []; // Array to store all marker instances
+        this.lastClickedMarkerLngLat = null; // To store the lngLat of the last clicked marker
+    }
+
+    addMarker(lngLat, name, address, element) {
+        // Check if a marker at the given position already exists
+        let marker = this.markers.find(marker =>
+            marker.getLngLat().lng === lngLat[0] && marker.getLngLat().lat === lngLat[1]
+        );
+
+        // If no existing marker is found, create a new marker
+        if (!marker) {
+            marker = new mapboxgl.Marker({
+                element: element,
+                draggable: true // Make the marker draggable
+            })
+                .setLngLat(lngLat)
+                .setPopup(new mapboxgl.Popup().setHTML(`<h3>${name}</h3><p>${address}</p>`))
+                .addTo(this.map);
+
+            marker.on('dragstart', this.onDragStart.bind(this, marker));
+            marker.on('dragend', this.onDragEnd.bind(this, marker));
+
+            // Add click event listener to the marker
+            marker.getElement().addEventListener('click', () => {
+                this.lastClickedMarkerLngLat = marker.getLngLat();
+
+                console.log('Contact name:', marker.contact_name);
+                console.log('Clicked marker lngLat:', this.lastClickedMarkerLngLat);
+
+                // Here you can also trigger the geolocate event or any other logic needed
+            });
+
+            // Store the marker for future reference
+            this.markers.push(marker);
+        }
+
+        // Set custom properties for the marker
+        marker.contact_name = name.replace(/\u00A0/g, " "); // Replace nbsp with space in name
+        marker.contact_position = lngLat;
+    }
+
+    onDragStart(marker) {
+        marker.originalLngLat = marker.getLngLat();
+        console.log('Drag start:', marker.originalLngLat);
+    }
+
+    onDragEnd(marker) {
+        const lngLat = marker.getLngLat();
+        // let lngLat = marker.getLngLat();
+        const some_name = marker.contact_name;
+
+        console.log('Drag end:', lngLat);
+
+        // Optionally, update marker position in your data source
+        let myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+        // Remove hidden class from modal
+        myModal._element.classList.remove('hidden');
+        myModal.show();
+
+        let confirmButton = document.getElementById('confirmButton');
+        let cancelButton = document.getElementById('cancelButton');
+        let closeButton = document.getElementById('closeButton');
+
+        function handleClick() {
+            myModal.hide();
+            if (marker.originalLngLat) {
+                marker.setLngLat(marker.originalLngLat); // Restore the original marker position
+                marker.originalLngLat = null; // Reset originalLngLat after restoration
+            }
+        }
+
+        // Get the CSRF token from the cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === name + "=") {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+        let csrftoken = getCookie("csrftoken");
+
+        function updateContactsJson(name, lngLat) {
+            fetch("update_contacts_json", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken,
+                },
+                body: JSON.stringify({
+                    name: name,
+                    coords: lngLat,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => console.log(data))
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        }
+
+        cancelButton.addEventListener('click', handleClick);
+        closeButton.addEventListener('click', handleClick);
+
+        confirmButton.addEventListener('click', () => {
+            myModal.hide();
+
+            // Call updateContactsJson to update the contact information
+            updateContactsJson(some_name, marker.getLngLat());
+
+            marker.originalLngLat = null; // Reset originalLngLat after successful update
+        });
+    }
+
+
+    // Method to remove a marker from the map and the internal array
+    removeMarker(marker) {
+        const index = this.markers.indexOf(marker);
+        if (index > -1) {
+            marker.remove(); // Remove the marker from the map
+            this.markers.splice(index, 1); // Remove the marker from the array
+        }
+    }
+
+    // Method to update a marker's position and/or other properties
+    updateMarker(marker, lngLat, name, address) {
+        marker.setLngLat(lngLat);
+        marker.setPopup(new mapboxgl.Popup().setHTML(`<h3>${name}</h3><p>${address}</p>`));
+        // Update custom properties if needed
+        marker.contact_name = name;
+        marker.contact_position = lngLat;
+    }
+
+    async addContactMarkers(contactsUrl) {
+        try {
+            const response = await fetch(contactsUrl);
+            const data = await response.json();
+            const contacts = data.contacts;
+
+            contacts.forEach(contact => {
+                const el = document.createElement('div');
+                el.className = this.getMarkerClassByTags(contact.tags);
+
+                // Assuming lngLat is directly available on the contact object
+                const lngLat = contact.coords;
+
+                if (lngLat && lngLat.length === 2) {
+                    this.addMarker(lngLat, contact.name, contact.address, el);
+                } else {
+                    console.error('Invalid coordinates for contact:', contact.name);
+                }
+            });
+        } catch (error) {
+            console.error('Failed to load contacts:', error);
+        }
+    }
+
+    getMarkerClassByTags(tags) {
+        if (tags.includes('home')) {
+            return 'home-marker';
+        } else if (tags.includes('private')) {
+            return 'private-marker';
+        } else if (tags.includes('work')) {
+            return 'work-marker';
+        } else {
+            return 'contact-marker';
+        }
+    }
+
+    // Additional methods for marker management can be added here, e.g., getMarkerById, showAllMarkers, hideAllMarkers, etc.
+}
+
+window.addEventListener("beforeunload", () => {
+    if (mapInitializer.wakeLock) {
+        mapInitializer.wakeLock.release();
+        mapInitializer.wakeLock = null;
+    }
+});
+
+// Usage
+const selectedStyle = localStorage.getItem("selectedMapStyle") || "mapbox://styles/mapbox/streets-v11";
+const mapInitializer = new MapInitializer(
+    "map",
+    selectedStyle,
+    [7.008715192368488, 43.64163999646119], // Center coordinates for Valbonne
+    11 // Initial zoom level
+);
+
+/*
+1. Map Initialization: Extract the map initialization logic into a function or class that handles creating the
+ map,
+ setting its initial state, and loading the base map style.
+
+2. Marker Management: Create a module for handling all marker-related functionalities, including adding, removing, and
+ updating markers on the map.
+
+3. Geolocation Handling: Isolate the geolocation functionality into its module, focusing on acquiring the user's
+ location, tracking changes, and updating the map view accordingly.
+
+// TODO Let’s do step 4. 'UI Components: For UI elements like buttons, textboxes, and modals, create a UI module that manages creating,
+    updating, and handling events for these components.'
+
+// TODO Let’s do step 5. 'Utility Functions: Group utility functions like getCookie, interpolate, and any other helper functions that are
+    used across multiple parts of the application into a utilities module.'
+
+// TODO Let’s do step 6. 'WakeLock Management: Since WakeLock is a specific feature that might not be directly related to map
+    functionalities, consider creating a separate module to handle requesting and releasing the WakeLock.'
+
+// TODO Let’s do step 7. 'Contacts Management: If the script involves managing contacts (as suggested by variables like contacts_lst and
+    functions for updating contacts), consider creating a contacts module to handle all operations related to contacts.'
+
+// TODO Let’s do step 8. Event Handling: 'Consolidate event listeners and their callbacks into a module or integrate them into the
+     relevant modules mentioned above, ensuring that each module manages its events.'
+* */
+
+/**
+ * 1. Map Initialization
+ * 2. Marker Management
+ * 3. Geolocation Handling
+ * 4. UI Components/
+ * 5. Utility Functions
+ * 6. WakeLock Management
+ * 7. Contacts Management
+ * 8. Event Handling
+ * */
+/*
+Let’s do step 3 : `Geolocation Handling: Isolate the geolocation functionality into its module, focusing on acquiring the user's location,
+tracking changes, and updating the map view accordingly.` On geolocate track success, if a marker is selected,
+fetch and display the fastest route between the geolocated current lnglat and the selected marker’s lnglat. setSelectedMarker is done
+when the user clicks on a marker.
+async function getDirections uses `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`
+* */

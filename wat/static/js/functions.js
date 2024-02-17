@@ -87,7 +87,6 @@ function formatDuration(hours, minutes, seconds) {
     return durée;
 }
 
-
 /**
  * @param {Array<number>} startPoint - The starting point of the route. It's an array where the first element is the longitude and the second element is the latitude.
  * @param {Array<number>} endPoint - The end point of the route. It's an array where the first element is the longitude and the second element is the latitude.
@@ -100,43 +99,37 @@ async function getDirections(startPoint, endPoint) {
     const endLng = endPoint[0];
     const endLat = endPoint[1];
 
-    // Use OSRM routing API to get the fastest route from startLng, startLat to endLng, endLat
     const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
 
     try {
         const response = await fetch(url);
         const data = await response.json();
 
-
         if (!data.routes || data.routes.length === 0) {
             throw new Error("No routes found");
         }
-        // let address = await getAddressFromLngLat_gouv(startLat, startLng);
 
-        const address = await window.useGooglemaps(startLat, startLng);
-        // console.log('address', address);
+        // Inline useGooglemaps function
+        const googleMapsUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${startLat},${startLng}&key=${window.googlemaps_token}`;
+        let address = 'No address found';
+        const googleMapsData = await fetch(googleMapsUrl).then(response => response.json());
+        if (googleMapsData.status === 'OK') {
+            address = googleMapsData.results[0].address_components[0].long_name + ' '
+                + googleMapsData.results[0].address_components[1].short_name + ', '
+                + googleMapsData.results[0].address_components[2].long_name;
+        }
 
-        // Get the first route from the array of routes
         const route = data.routes[0];
-
-        // Convert distance from meters to kilometers, rounded to I decimal place, or meters if less than 1 kilometer
         let distance = convertDistance(route.distance);
-
-        // Convert duration to hours, minutes, and seconds
         let {hours, minutes, seconds} = convertDuration(route.duration);
-
-        // Format the duration to be displayed in the monitorTextbox
         let durée = formatDuration(hours, minutes, seconds);
 
-        // Calculate the eta based on the current time and durée
         let eta = new Date();
         eta.setHours(eta.getHours() + hours);
         eta.setMinutes(eta.getMinutes() + minutes);
         eta.setSeconds(eta.getSeconds() + seconds);
-        // Convert eta to a string in the format HH:MM
         eta = eta.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
-        // Update the monitorTextbox with the distance, duration, eta and address
         return {route, distance, durée, eta, address};
 
     } catch (error) {
