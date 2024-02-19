@@ -66,7 +66,7 @@ function convertDistance(distance) {
     } else {
         return distance.toFixed(0) + " m";
     }
-}
+};
 
 function convertDuration(durationInSeconds) {
     const hours = Math.floor(durationInSeconds / 3600);
