@@ -334,13 +334,17 @@ class MarkerManager {
 
         // If no existing marker is found, create a new marker
         if (!marker) {
+            const el = document.createElement('div');
+
             marker = new mapboxgl.Marker({
                 element: element,
                 draggable: true // Make the marker draggable
             })
                 .setLngLat(lngLat)
-                .setPopup(new mapboxgl.Popup().setHTML(`<h3>${name}</h3><p>${address}</p>`))
+                .setPopup(new mapboxgl.Popup({ className: 'popup-class' }).setHTML(`<h3>${name}</h3><p>${address}</p>`))
                 .addTo(this.map);
+
+           // Add  'popup-class' to the popup
 
             marker.on('dragstart', this.onDragStart.bind(this, marker));
             marker.on('dragend', this.onDragEnd.bind(this, marker));

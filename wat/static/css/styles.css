@@ -20,6 +20,19 @@ body {
     transition: opacity 1s ease-in;
 }
 
+/* Start. Popup animation */
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+.popup-class {
+    animation: fadeOut 3s forwards;
+    animation-delay: 2s; /* Add a delay of 2 seconds before the animation starts */
+}
+/* End. Popup animation */
+
 .mapboxgl-ctrl-top-left .control-1 {
     margin-bottom: 30px;
 }
