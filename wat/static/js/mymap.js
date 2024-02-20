@@ -1,9 +1,5 @@
-import {hello} from "./functions.js";
-
 (function () {
     "use strict";
-
-    hello();
 
     let geoLngLat = null; // Variable to store the geolocate coordinates
 
