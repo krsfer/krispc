@@ -1,5 +1,9 @@
+import {hello} from "./functions.js";
+
 (function () {
     "use strict";
+
+    hello();
 
     let geoLngLat = null; // Variable to store the geolocate coordinates
 
@@ -59,10 +63,20 @@
 
             // Listen for style load event to reapply the route layer when the style changes
             this.map.on('style.load', () => {
-                // const start = [7.008715192368488, 43.64163999646119];
-                // const end = [6.993073, 43.675819];
-                // this.addRouteLayer(start, end); // Reapply the route layer
-                this.reAddRouteLayer(); // Re-add the route layer
+
+                let mapStyle = this.map.getStyle();
+                let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
+                if (geolocationUserIcon) {
+                    if (mapStyle.name.includes("Dark")) {
+                        geolocationUserIcon.classList.remove('compass-image_black');
+                        geolocationUserIcon.classList.add('compass-image_white');
+                    } else {
+                        geolocationUserIcon.classList.remove('compass-image_white');
+                        geolocationUserIcon.classList.add('compass-image_black');
+                    }
+                }
+
+
             });
         }
 
@@ -118,13 +132,23 @@
                 }
 
                 let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
-                geolocationUserIcon.classList.add('compass-image');
+                // geolocationUserIcon.classList.add('compass-image_black');
 
-                // Set the color of mapboxgl-user-location-dot
+                let mapStyle = this.map.getStyle();
+                if (geolocationUserIcon) {
+                    if (mapStyle.name.includes("Dark")) {
+                        geolocationUserIcon.classList.remove('compass-image_black');
+                        geolocationUserIcon.classList.add('compass-image_white');
+                    } else {
+                        geolocationUserIcon.classList.remove('compass-image_white');
+                        geolocationUserIcon.classList.add('compass-image_black');
+                    }
+                }
+
                 geolocationUserIcon.style.backgroundColor = "rgba(255,255,255,0)";
-
                 // Set the opacity to 0.3
-                geolocationUserIcon.style.opacity = "0.3";
+                // geolocationUserIcon.style.opacity = "0.3";
+
 
                 // Set the rotation of the compass to the current heading of the device if e.coords.heading is defined
                 if (e.coords.heading) {
@@ -134,6 +158,24 @@
                     geolocationUserIcon.style.transform = `rotate(${e.coords.heading}deg)`;
                 }
             });
+
+            // Add trackUserLocation event listener
+            geolocate.on("trackuserlocationstart", () => {
+                console.log("trackuserlocationstart");
+            });
+
+            geolocate.on("trackuserlocationend", () => {
+                console.log("trackuserlocationend");
+            });
+
+            geolocate.on("error", (e) => {
+                console.error("Geolocate1 error:", e);
+            });
+
+            geolocate.on("geolocateerror", (e) => {
+                console.error("Geolocate2 error:", e);
+            });
+
 
             // Add FullscreenControl
             this.map.addControl(new mapboxgl.FullscreenControl(), "top-right");
