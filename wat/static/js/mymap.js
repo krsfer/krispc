@@ -72,6 +72,8 @@
                     }
                 }
 
+                this.reAddRouteLayer();
+
 
             });
         }
@@ -120,7 +122,6 @@
             geolocate.on("geolocate", (e) => {
                 geoLngLat = e.coords; // Store the geolocate coordinates in the global variable
 
-                console.warn("Geolocated:", e.coords);
                 if (this.markerManager.lastClickedMarkerLngLat) {
                     const start = [e.coords.longitude, e.coords.latitude];
                     const end = [this.markerManager.lastClickedMarkerLngLat.lng, this.markerManager.lastClickedMarkerLngLat.lat];
@@ -243,16 +244,31 @@
             eta.setSeconds(eta.getSeconds() + seconds);
             eta = eta.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
+
             // // Use googleMapsUrl to get address
-            // const googlemaps_token = await this.getAccessToken("googlemaps_token")
-            // const googleMapsUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${startLat},${startLng}&key=${googlemaps_token}`;
+            const googlemaps_token = await this.getAccessToken("googlemaps_token")
+            const googleMapsUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${startLat},${startLng}&key=${googlemaps_token}`;
             let address = 'No address found';
-            // const googleMapsData = await fetch(googleMapsUrl).then(response => response.json());
-            // if (googleMapsData.status === 'OK') {
-            //     address = googleMapsData.results[0].address_components[0].long_name + ' '
-            //         + googleMapsData.results[0].address_components[1].short_name + ', '
-            //         + googleMapsData.results[0].address_components[2].long_name;
-            // }
+            const googleMapsData = await fetch(googleMapsUrl).then(response => response.json());
+            if (googleMapsData.status === 'OK') {
+                address = googleMapsData.results[0].address_components[0].long_name + ' '
+                    + googleMapsData.results[0].address_components[1].short_name + ', '
+                    + googleMapsData.results[0].address_components[2].long_name;
+            }
+
+            console.warn({route, address, distance, durée, eta})
+
+            // Store the route data... route, distance, durée, eta, address
+            this.routeData = {
+                start: start,
+                end: end,
+                route: route,
+                distance: distance,
+                durée: durée,
+                eta: eta,
+                address: address
+            };
+            console.log("routeData:", this.routeData);
 
             // Add the route as a source and layer if it doesn't already exist
             if (!this.map.getSource('route')) {
@@ -274,9 +290,9 @@
                         'line-cap': 'round'
                     },
                     'paint': {
-                        'line-color': '#00ff00', // Transparent green color
-                        'line-opacity': 0.5, // Transparency level
-                        'line-width': 5
+                        'line-color': 'rgba(208,79,9,0.7)', // Transparent orange color rgba(255, 165, 0, 0.5)
+                        // 'line-opacity': 0.5, // Transparency level
+                        'line-width': 8
                     }
                 });
                 // Zoom to the route bounds
@@ -298,17 +314,6 @@
                 // let eta = ''; // Default value for estimated time of arrival
                 // let address = 'No address found'; // Default default value for address
                 // let durée = '00:00:00'; // Default value for duration in HH:MM:SS format
-
-                // // Store the route data
-                this.routeData = {
-                    start: start,
-                    end: end,
-                    route: route,
-                    distance: distance,
-                    durée: durée,
-                    eta: eta,
-                    address: address
-                };
 
                 return this.routeData;
             }
