@@ -2,6 +2,8 @@
     "use strict";
 
     let geoLngLat = null; // Variable to store the geolocate coordinates
+    let monitorTextbox = null; // Variable to store the monitor textbox instance
+    let contacts = null; // Variable to store the contacts data
 
     class MapInitializer {
         constructor(containerId, style, center, zoom) {
@@ -107,6 +109,12 @@
             // Add navigation control (zoom in/out)
             this.map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
+            monitorTextbox = new Monitor_textbox(this.map, 'rgba(255, 255, 255, 0.6)');
+            this.map.addControl(monitorTextbox, 'top-left');
+
+            let contactsTextbox = new Contacts_textbox(map, 'rgba(255, 255, 255, 0.6)');
+            this.map.addControl(contactsTextbox, 'top-left');
+
             // Add GeolocateControl
             const geolocate = new mapboxgl.GeolocateControl({
                 positionOptions: {
@@ -129,7 +137,10 @@
                 }
 
                 let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
-                // geolocationUserIcon.classList.add('compass-image_black');
+                // Check if the geolocationUserIcon has class mapboxgl-user-location-dot. If yes, remove the default
+                // blue dot
+                if (geolocationUserIcon)
+                    geolocationUserIcon.classList.remove('mapboxgl-user-location-dot');
 
                 let mapStyle = this.map.getStyle();
                 if (geolocationUserIcon) {
@@ -142,7 +153,7 @@
                     }
                 }
 
-                geolocationUserIcon.style.backgroundColor = "rgba(255,255,255,0)";
+                // geolocationUserIcon.style.backgroundColor = "rgba(255,255,255,0)";
                 // Set the opacity to 0.3
                 // geolocationUserIcon.style.opacity = "0.3";
 
@@ -258,6 +269,10 @@
 
             console.warn({route, address, distance, durée, eta})
 
+            if (!monitorTextbox)
+                monitorTextbox = new Monitor_textbox(this.map, window.backgroundColor);
+            displayUpdates(distance, durée, eta, address);
+
             // Store the route data... route, distance, durée, eta, address
             this.routeData = {
                 start: start,
@@ -345,8 +360,105 @@
                 return durée;
             }
 
-            // console.log({route, distance, durée, eta, address});
-            // return {route, distance, durée, eta, address};
+            function displayUpdates(distance, durée, eta, address) {
+                // monitorTextbox.innerText = `Distance: ${distance}\nDurée: ${durée}\nETA: ${eta}\nAddress: ${address}`;
+
+                // Remove numéro de département from address if address is not null it contains the numéro
+                if (address) {
+                    const regex = / \b\d{5}\b /g;
+                    address = address.replace(regex, ",");
+                } else {
+                    address = "nono";
+                }
+
+                const txt2 = `Dist#${distance}#;Dur#${durée}#;eta#${eta}#red;address#${address}#`;
+
+                debugDBmgr_0("");
+                const htm = applyColorToText(debugDBmgr_0(txt2));
+
+                console.log('htm', htm);
+
+                monitorTextbox.container.innerHTML = htm;
+            }
+
+            function applyColorToText(txt) {
+                const lines = txt.split("\n");
+                let result = "";
+                for (let line of lines) {
+                    const parts = line.split("#");
+                    if (parts.length === 2) {
+                        const [key, value] = parts;
+                        result += `<span>${value}</span><br>`;
+                    } else if (parts.length === 3) {
+                        const [key, value, color] = parts;
+                        result += `<span style="color:${color};">${value}</span><br>`;
+                    }
+                }
+                return result;
+            }
+
+            function xdebugDBmgr_0(txt) {
+                let htm = txt;
+                htm = htm.replace(/Dist#/g, "Distance: ");
+                htm = htm.replace(/Dur#/g, "Durée: ");
+                htm = htm.replace(/eta#/g, "ETA: ");
+                htm = htm.replace(/address#/g, "Address: ");
+                return htm;
+            }
+
+            function debugDBmgr_0(fields) {
+                // console.log('fields', fields);
+                // console.log('is fields empty', fields === '');
+
+                let debugDB = {}; // Ensure debugDB is defined in the function scope
+
+                const fieldArray = fields.split(/;|\r?\n/);
+                // console.log('fieldArray', fieldArray);
+
+                fieldArray.forEach((field) => {
+                    let parts = field.split("#");
+
+                    let k = parts[0];
+                    let v = parts[1];
+                    let c = parts[2];
+
+                    // console.log('k', k);
+                    // console.log('v', v);
+                    // console.log('c', c);
+
+                    if (k === "" || k === undefined) {
+                        delete debugDB[k]; // If v is empty or undefined, delete the key k from debugDB
+                    } else {
+                        if (c) {
+                            // console.log('c is defined');
+                            debugDB[`${k}`] = v + "#" + c;
+                            // console.log('debugDB', debugDB);
+                            // console.log('debugDB[k]', debugDB[k]);
+                        } else {
+                            debugDB[k] = v; // No color definition, so add or update k with v in debugDB as before
+                        }
+                    }
+                });
+
+                const default_color = "green";
+
+                return Object.entries(debugDB)
+                    .map(([key, value]) => {
+                        const val = value.split("#");
+                        if (val) {
+                            const color = val[1];
+                            if (color) {
+                                return `${key}#${val[0]}#${color}`;
+                            } else {
+                                return `${key}#${val[0]}#${default_color}`;
+                            }
+                            return `${key}#${val[0]}${color}`; // Add color to the key#val[0 pair
+                        } else {
+                            return `${key}#${val[0]}#${default_color}`; // No $color in key, so return as before
+                        }
+                    })
+                    .join("\n");
+            }
         }
 
         // Add this function to re-add the route layer
@@ -468,6 +580,14 @@
             marker.contact_position = lngLat;
         }
 
+        zoomToContact(lngLat) {
+            this.map.flyTo({
+                center: lngLat,
+                zoom: 15,
+                essential: true
+            });
+        }
+
         onDragStart(marker) {
             marker.originalLngLat = marker.getLngLat();
         }
@@ -571,13 +691,12 @@
             try {
                 const response = await fetch(contactsUrl);
                 const data = await response.json();
-                const contacts = data.contacts;
+                contacts = data.contacts;
 
                 contacts.forEach(contact => {
                     const el = document.createElement('div');
                     el.className = this.getMarkerClassByTags(contact.tags);
 
-                    // Assuming lngLat is directly available on the contact object
                     const lngLat = contact.coords;
 
                     if (lngLat && lngLat.length === 2) {
@@ -585,8 +704,31 @@
                     } else {
                         console.error('Invalid coordinates for contact:', contact.name);
                     }
+
+                    const contactDiv = document.createElement('div');
+                    contactDiv.className = 'card'; // Bootstrap card class
+                    contactDiv.innerHTML = `
+    <div class="card-body">
+        <h5 class="card-title">${contact.name}</h5>
+        <h6 class="card-text">${contact.address}</h6>
+    </div>`;
+                    document.querySelector('.contacts-textbox').appendChild(contactDiv);
+
+                    // Add event listener to the card-body
+                    contactDiv.querySelector('.card-body').addEventListener('click', () => {
+                        this.zoomToContact(contact.coords);
+
+                        // Remove the 'selected-contact' class from all contacts
+                        document.querySelectorAll('.contacts-textbox .card').forEach(card => {
+                            card.classList.remove('selected-contact');
+                        });
+
+                        // Add the 'selected-contact' class to the clicked contact
+                        contactDiv.classList.add('selected-contact');
+                    });
                 });
-            } catch (error) {
+            } catch
+                (error) {
                 console.error('Failed to load contacts:', error);
             }
         }
@@ -606,6 +748,87 @@
         // Additional methods for marker management can be added here, e.g., getMarkerById, showAllMarkers, hideAllMarkers, etc.
     }
 
+    class Monitor_textbox {
+        constructor(map, backgroundColor) {
+            this.map = map;
+            this.monitorTextbox = document.createElement("div");
+            this.monitorTextbox.classList.add("monitor-textbox");
+
+            this.container = null;
+        }
+
+        onAdd() {
+            this.container = document.createElement('div');
+            this.container.className = 'monitor-textbox mapboxgl-ctrl';
+            this.container.style.backgroundColor = "rgba(255,255,255,0.4)";
+            this.container.innerText = '';
+
+            this.container.style.border = "1px solid";
+            this.container.style.borderColor = "rgba(194, 181, 181)";
+            this.container.style.borderRadius = "10px";
+            this.container.style.textShadow = "1px 1px 1px #ccc";
+            this.container.style.fontSize = "large";
+            this.container.style.lineHeight = "0.9";
+
+            this.container.style.color = "rgb(0,0,0)";
+            // this.container.style.overflow = "auto";
+            this.container.style.textAlign = "center";
+            this.container.style.zIndex = "1";
+            this.container.style.width = "50%";
+
+            return this.container;
+        }
+
+        remove() {
+            this.container.parentNode.removeChild(this.container);
+            this.map = undefined;
+        }
+    }
+
+    class Contacts_textbox {
+        constructor(map, backgroundColor) {
+            this.map = map;
+            this.contactsTextbox = document.createElement("div");
+            this.contactsTextbox.classList.add("contacts-textbox");
+
+            // Set id to Contacts_textbox
+            this.contactsTextbox.id = "Contacts_textbox";
+
+            this.container = null;
+        }
+
+        onAdd() {
+            this.container = document.createElement('div');
+            this.container.className = 'contacts-textbox mapboxgl-ctrl';
+            this.container.style.backgroundColor = "rgba(255,255,255,0.4)";
+            this.container.innerText = '';
+
+            this.container.style.border = "1px solid";
+            this.container.style.borderColor = "rgba(194, 181, 181)";
+            this.container.style.borderRadius = "10px";
+            this.container.style.textShadow = "1px 1px 1px #ccc";
+            this.container.style.fontSize = "large";
+            this.container.style.lineHeight = "0.9";
+
+            this.container.style.color = "rgb(0,0,0)";
+            // this.container.style.overflow = "auto";
+            this.container.style.textAlign = "center";
+            this.container.style.zIndex = "1";
+            this.container.style.width = "50%";
+
+            this.container.style.overflow = "auto"; // Add a scrollbar when the content overflows
+            this.container.style.maxHeight = "200px"; // Limit the max height of the container
+            this.container.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
+
+            return this.container;
+        }
+
+        remove() {
+            this.container.parentNode.removeChild(this.container);
+            this.map = undefined;
+        }
+    }
+
     window.addEventListener("beforeunload", () => {
         if (mapInitializer.wakeLock) {
             mapInitializer.wakeLock.release();
@@ -613,8 +836,16 @@
         }
     });
 
-// Usage
+    // Add event listener to release the WakeLock when the page is closed
+    window.addEventListener("unload", () => {
+        if (mapInitializer.wakeLock) {
+            mapInitializer.wakeLock.release();
+            mapInitializer.wakeLock = null;
+        }
+    });
+
     const selectedStyle = localStorage.getItem("selectedMapStyle") || "mapbox://styles/mapbox/streets-v11";
+
     const mapInitializer = new MapInitializer(
         "map",
         selectedStyle,
@@ -622,7 +853,8 @@
         11 // Initial zoom level
     );
 
-})();
+})
+();
 
 
 /*

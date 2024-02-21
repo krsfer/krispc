@@ -31,6 +31,7 @@ body {
     animation: fadeOut 3s forwards;
     animation-delay: 2s; /* Add a delay of 2 seconds before the animation starts */
 }
+
 /* End. Popup animation */
 
 .mapboxgl-ctrl-top-left .control-1 {
@@ -82,7 +83,6 @@ body {
     background-size: cover; /* Cover the div area with the image */
     background-position: center; /* Center the background image */
 }
-
 
 
 .home-marker {
@@ -154,16 +154,16 @@ select option {
 }
 
 /* Always show scrollbar */
-.ContactsTextbox::-webkit-scrollbar {
+.Contacts_textbox::-webkit-scrollbar {
     width: 5px;
 }
 
-.ContactsTextbox::-webkit-scrollbar-thumb {
+.Contacts_textbox::-webkit-scrollbar-thumb {
     background: #888; /* Color of the scroll thumb */
     border-radius: 5px; /* Roundness of the scroll thumb */
 }
 
-.ContactsTextbox::-webkit-scrollbar-thumb:hover {
+.Contacts_textbox::-webkit-scrollbar-thumb:hover {
     background: #555; /* Color of the scroll thumb on hover */
 }
 
@@ -234,6 +234,29 @@ select option {
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
+
+.selected-contact {
+    background-color: grey;
+}
+
+.card {
+    margin-bottom: 5px; /* Adjust this value to reduce/increase the space between each card */
+}
+
+.card-body {
+    padding: 0.1rem; /* Adjust this value to reduce/increase the space between the card-body and the card-title */
+}
+
+.card-title {
+    font-size: 14px; /* Adjust this value to reduce/increase the font size of the card-title */
+    margin-bottom: 1px; /* Adjust this value to reduce/increase the space between the card-title and the card-text */
+}
+
+.card-text {
+    font-size: 12px; /* Adjust this value to reduce/increase the font size of the card-text */
+    margin-bottom: 1px; /* Adjust this value to reduce/increase the space between the card-text and the card-footer */
+}
+
 
 .hidden {
     visibility: hidden;
