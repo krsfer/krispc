@@ -4,6 +4,7 @@
     const backgroundColor = "rgba(255, 255, 255, 0.6)"; // 60% transparent white background
     let geoLngLat = null; // Variable to store the geolocate coordinates
     let monitorTextbox = null; // Variable to store the monitor textbox instance
+    let contactsTextbox = null; // Variable to store the contacts textbox instance
     let contacts = null; // Variable to store the contacts data
 
     class MapInitializer {
@@ -58,6 +59,18 @@
                 const start = [7.008715192368488, 43.64163999646119];
                 const end = [6.993073, 43.675819];
                 this.addRouteLayer(start, end);
+            });
+
+            // Close the contacts list when the map is clicked
+            this.map.on('click', () => {
+                if (contactsTextbox) {
+                    contactsTextbox.container.style.transform = "translateX(-90%)";
+                    contactsTextbox.container.style.overflowY = "hidden";
+                    contactsTextbox.container.childNodes.forEach((element) => {
+                        element.style.visibility = "hidden";
+                    });
+                    contactsTextbox.container.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+                }
             });
 
             this.initWakeLock();
@@ -181,10 +194,25 @@
             // Add navigation control (zoom in/out)
             this.map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
+            // Add the search bar to the map
+            let geocoder = null;
+            this.map.addControl(
+                (geocoder = new MapboxGeocoder({
+                    accessToken: mapboxgl.accessToken,
+                    mapboxgl: mapboxgl,
+                    marker: {
+                        color: "orange",
+                        draggable: true
+
+                    }
+                })),
+                "top-left"
+            );
+
             monitorTextbox = new Monitor_textbox(this.map, backgroundColor);
             this.map.addControl(monitorTextbox, 'top-left');
 
-            let contactsTextbox = new Contacts_textbox(map, backgroundColor);
+            contactsTextbox = new Contacts_textbox(map, backgroundColor);
             this.map.addControl(contactsTextbox, 'top-left');
 
             // Add GeolocateControl
@@ -213,9 +241,6 @@
                 // blue dot
                 if (geolocationUserIcon) {
                     geolocationUserIcon.style.backgroundColor = backgroundColor;
-
-                    // Set mapboxgl-user-location-dot::before to transparent
-
                 }
 
 
@@ -343,8 +368,6 @@
                     + googleMapsData.results[0].address_components[1].short_name + ', '
                     + googleMapsData.results[0].address_components[2].long_name;
             }
-
-            console.warn({route, address, distance, durée, eta})
 
             if (!monitorTextbox)
                 monitorTextbox = new Monitor_textbox(this.map, window.backgroundColor);
@@ -481,12 +504,23 @@
                 let result = "";
                 for (let line of lines) {
                     const parts = line.split("#");
+
                     if (parts.length === 2) {
+
                         const [key, value] = parts;
-                        result += `<span>${value}</span><br>`;
+                        result += `<span>${value}</span>`;
+
                     } else if (parts.length === 3) {
+
                         const [key, value, color] = parts;
-                        result += `<span style="color:${color};">${value}</span><br>`;
+                        result += `<span style="color:${color};">${value}</span>`;
+
+                        if (line === lines[lines.length - 2]) {
+                            result += '<br>';
+                        } else {
+                            result += '&nbsp;';
+                        }
+
                     }
                 }
                 return result;
@@ -526,7 +560,7 @@
                     }
                 });
 
-                const default_color = "green";
+                const default_color = "black";
 
                 return Object.entries(debugDB)
                     .map(([key, value]) => {
@@ -797,6 +831,8 @@
                             <h5 class="card-title">${contact.name}</h5>
                             <h6 class="card-text">${contact.address}</h6>
                         </div>`;
+                    // Hide the contactDiv by default
+                    contactDiv.style.visibility = "hidden";
                     document.querySelector('.contacts-textbox').appendChild(contactDiv);
 
                     // Add event listener to the card-body
@@ -863,12 +899,12 @@
             this.container.style.border = "1px solid";
             this.container.style.borderColor = "rgba(194, 181, 181)";
             this.container.style.borderRadius = "10px";
-            this.container.style.textShadow = "1px 1px 1px #ccc";
+            // this.container.style.textShadow = "1px 1px 1px #ccc";
             this.container.style.fontSize = "large";
             this.container.style.lineHeight = "0.9";
 
             this.container.style.color = "rgb(0,0,0)";
-            // this.container.style.overflow = "auto";
+            // this.container.style.overflow = "auto";,
             this.container.style.textAlign = "center";
             this.container.style.zIndex = "1";
             this.container.style.width = "50%";
@@ -889,7 +925,7 @@
             this.contactsTextbox.classList.add("contacts-textbox");
 
             // Set id to Contacts_textbox
-            this.contactsTextbox.id = "Contacts_textbox";
+            this.contactsTextbox.id = "contacts_textbox";
 
             this.container = null;
         }
@@ -903,7 +939,7 @@
             this.container.style.border = "1px solid";
             this.container.style.borderColor = "rgba(194, 181, 181)";
             this.container.style.borderRadius = "10px";
-            this.container.style.textShadow = "1px 1px 1px #ccc";
+            // this.container.style.textShadow = "1px 1px 1px #ccc";
             this.container.style.fontSize = "large";
             this.container.style.lineHeight = "0.9";
 
@@ -916,6 +952,42 @@
             this.container.style.overflow = "auto"; // Add a scrollbar when the content overflows
             this.container.style.maxHeight = "250px"; // Limit the max height of the container
             this.container.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
+
+            this.container.style.transition = "transform 0.5s ease-out";
+            this.container.style.transform = "translateX(-90%)";
+
+            // Add the event listener
+            this.container.addEventListener('click', (event) => {
+                if (this.container.style.transform === "translateX(0%)") {
+                    this.container.style.transform = `translateX(-90%)`;
+
+                    // Remove the scrollbar
+                    this.container.style.overflowY = "hidden";
+
+                    // Hide the container contents
+                    this.container.childNodes.forEach((element) => {
+                        element.style.visibility = "hidden";
+                    });
+
+                    // Set transparency to 0.1
+                    this.container.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+
+                } else {
+                    // If it is not visible, translate it to the right until it is visible
+                    // Show the scrollbar
+                    this.container.style.overflowY = "scroll";
+                    this.container.style.transform = "translateX(0%)";
+
+                    // Show the container contents
+                    this.container.childNodes.forEach((element) => {
+                        element.style.visibility = "visible";
+                    });
+
+                    // Set transparency to 0.6
+                    this.container.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
+                }
+
+            });
 
             return this.container;
         }

@@ -154,29 +154,30 @@ select option {
 }
 
 /* Always show scrollbar */
-.Contacts_textbox::-webkit-scrollbar {
-    width: 5px;
+#contacts_textbox::-webkit-scrollbar {
+    width: 50px;
 }
 
-.Contacts_textbox::-webkit-scrollbar-thumb {
+#contacts_textbox::-webkit-scrollbar-thumb {
     background: #888; /* Color of the scroll thumb */
     border-radius: 5px; /* Roundness of the scroll thumb */
 }
 
-.Contacts_textbox::-webkit-scrollbar-thumb:hover {
+#contacts_textbox::-webkit-scrollbar-thumb:hover {
     background: #555; /* Color of the scroll thumb on hover */
 }
 
 /** Start. Geocoder styling ******************************************/
+
 .mapboxgl-ctrl-geocoder {
-    position: absolute;
-    width: 30vw;
-    top: 35px;
-    transform: translateX(-1%);
+    /*position: absolute;*/
+    /*width: 30vw;*/
+    /*top: 35px;*/
+    /*transform: translateX(-1%);*/
 }
 
 .mapboxgl-ctrl-geocoder svg {
-    display: none;
+    /*display: none;*/
 }
 
 .mapboxgl-ctrl-geocoder--pin-right {
@@ -184,7 +185,7 @@ select option {
 }
 
 .mapboxgl-ctrl-geocoder input[type="text"] {
-    background-color: rgba(255, 255, 255, 0.9);
+    /*background-color: rgba(255, 255, 255, 0.9);*/
 }
 
 .mapboxgl-ctrl-geocoder .suggestions {

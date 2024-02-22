@@ -1,7 +1,7 @@
 [
   {
     "name": "Home",
-    "address": "17, rue du Faubourg Saint-Esprit, Valbonne 06560, France",
+    "address": "17, rue du Faubourg Saint-Esprit, Valbonne 06560",
     "coords": [
       7.010886389281268,
       43.6414631094473
@@ -72,7 +72,7 @@
   },
   {
     "name": "Mariani, Sam",
-    "address": "36 Chem. de Blancard, 06130 Grasse, France",
+    "address": "36 Chem. de Blancard, 06130 Grasse",
     "coords": [
       6.980855087328592,
       43.68238597415842
@@ -84,7 +84,7 @@
   },
   {
     "name": "Torres, Nathalie",
-    "address": "2 Chemin des Comtesses, 06130 Grasse",
+    "address": "9 Chem. de la Rouree, 06130 Grasse",
     "coords": [
       6.957840270655554,
       43.65825694244096
@@ -95,7 +95,7 @@
   },
   {
     "name": "Formation En Agence",
-    "address": "500 All. des Terriers, 06600 Antibes, France",
+    "address": "500 All. des Terriers, 06600 Antibes",
     "coords": [
       7.082205665870134,
       43.60167586302774
@@ -107,7 +107,7 @@
   },
   {
     "name": "Denis Cinus",
-    "address": "7 rue du Jardin des Fleurs, S\u00e8te 34200, France",
+    "address": "7 rue du Jardin des Fleurs, S\u00e8te 34200",
     "coords": [
       3.688181051980081,
       43.41096978025445
