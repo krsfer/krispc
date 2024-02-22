@@ -236,11 +236,12 @@ select option {
 }
 
 .selected-contact {
-    background-color: grey;
+    background-color: rgba(255, 255, 255, 0.84) !important;
 }
 
 .card {
-    margin-bottom: 5px; /* Adjust this value to reduce/increase the space between each card */
+    margin-bottom: 0px; /* Adjust this value to reduce/increase the space between each card */
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .card-body {
@@ -255,6 +256,13 @@ select option {
 .card-text {
     font-size: 12px; /* Adjust this value to reduce/increase the font size of the card-text */
     margin-bottom: 1px; /* Adjust this value to reduce/increase the space between the card-text and the card-footer */
+}
+
+.mapboxgl-user-location-dot::before,
+.mapboxgl-user-location-dot::after {
+    /*background-color: transparent !important;*/
+    visibility: hidden !important;
+    /*display: none !important;*/
 }
 
 

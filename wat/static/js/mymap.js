@@ -1,6 +1,7 @@
 (function () {
     "use strict";
 
+    const backgroundColor = "rgba(255, 255, 255, 0.6)"; // 60% transparent white background
     let geoLngLat = null; // Variable to store the geolocate coordinates
     let monitorTextbox = null; // Variable to store the monitor textbox instance
     let contacts = null; // Variable to store the contacts data
@@ -42,6 +43,8 @@
             const mapboxToken = await this.getAccessToken("mapbox_token");
             mapboxgl.accessToken = mapboxToken;
 
+            // mapboxgl.config.ACCESS_TOKEN = null;
+
             this.map = new mapboxgl.Map({
                 container: containerId,
                 style: style,
@@ -78,6 +81,75 @@
 
 
             });
+
+
+            // Start. Mock locations to simulate tracking (e.g., a path around a small area)
+            // Mock locations to simulate tracking (e.g., a path around a small area)
+            function generateCirclePoints(centerLat, centerLng, radiusInKm, numPoints) {
+                const points = [];
+                const earthRadiusInKm = 6371;
+                const radiusInDegrees = radiusInKm / earthRadiusInKm;
+
+                for (let i = 0; i < numPoints; i++) {
+                    const angle = (i * 360 / numPoints) * Math.PI / 180; // Convert angle to radians
+                    const lat = centerLat + (radiusInDegrees * Math.sin(angle)) * (180 / Math.PI);
+                    const lng = centerLng + (radiusInDegrees * Math.cos(angle)) * (180 / Math.PI) / Math.cos(centerLat * Math.PI / 180);
+
+                    points.push({coords: [lng, lat], heading: i * 360 / numPoints});
+                }
+
+                return points;
+            }
+
+            // Valbonne's approximate center
+            const valbonneCenter = {lat: 43.6415, lng: 7.0092};
+            const locations = generateCirclePoints(valbonneCenter.lat, valbonneCenter.lng, 2, 100);
+
+            let currentIndex = 0;
+
+            // Create a mock marker for the location
+            const mock_marker = new mapboxgl.Marker()
+                .setLngLat(locations[currentIndex]['coords'])
+                .addTo(this.map);
+
+
+            // Function to simulate geolocation change
+            function simulateGeolocationChange() {
+                if (currentIndex >= locations.length) {
+                    currentIndex = 0; // Loop back to the start
+                }
+
+                const [lng, lat] = locations[currentIndex++]['coords'];
+
+                // compass.setRotation(90); // Rotate the compass to the new heading (90 degrees in this case)
+
+                // Update the map view to the new location
+                // map.flyTo({
+                //     center: [lng, lat],
+                //     essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                // });
+
+
+                // Update mock marker  position
+                mock_marker.setLngLat([lng, lat]);
+
+                let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
+                if (geolocationUserIcon) {
+                    // Get the heading from valbonne to the current location without using turf.js
+                    const heading = `rotate(${90 - locations[currentIndex - 1]['heading']}deg)`;
+
+                    // Set the rotation of the geolocationUserIcon to the current location heading
+                    geolocationUserIcon.style.transform = heading;
+                }
+
+                // Schedule the next location update
+                setTimeout(simulateGeolocationChange, 1000); // Update location every 2 seconds
+                currentIndex++;
+            }
+
+            // // Start simulating geolocation tracking //////////////////////////////
+            // simulateGeolocationChange();
+
         }
 
         async getAccessToken(tokenId) {
@@ -109,10 +181,10 @@
             // Add navigation control (zoom in/out)
             this.map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-            monitorTextbox = new Monitor_textbox(this.map, 'rgba(255, 255, 255, 0.6)');
+            monitorTextbox = new Monitor_textbox(this.map, backgroundColor);
             this.map.addControl(monitorTextbox, 'top-left');
 
-            let contactsTextbox = new Contacts_textbox(map, 'rgba(255, 255, 255, 0.6)');
+            let contactsTextbox = new Contacts_textbox(map, backgroundColor);
             this.map.addControl(contactsTextbox, 'top-left');
 
             // Add GeolocateControl
@@ -139,8 +211,13 @@
                 let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
                 // Check if the geolocationUserIcon has class mapboxgl-user-location-dot. If yes, remove the default
                 // blue dot
-                if (geolocationUserIcon)
-                    geolocationUserIcon.classList.remove('mapboxgl-user-location-dot');
+                if (geolocationUserIcon) {
+                    geolocationUserIcon.style.backgroundColor = backgroundColor;
+
+                    // Set mapboxgl-user-location-dot::before to transparent
+
+                }
+
 
                 let mapStyle = this.map.getStyle();
                 if (geolocationUserIcon) {
@@ -153,7 +230,7 @@
                     }
                 }
 
-                // geolocationUserIcon.style.backgroundColor = "rgba(255,255,255,0)";
+                // geolocationUserIcon.style.backgroundColor = backgroundColor;
                 // Set the opacity to 0.3
                 // geolocationUserIcon.style.opacity = "0.3";
 
@@ -283,7 +360,7 @@
                 eta: eta,
                 address: address
             };
-            console.log("routeData:", this.routeData);
+            // console.log("routeData:", this.routeData);
 
             // Add the route as a source and layer if it doesn't already exist
             if (!this.map.getSource('route')) {
@@ -310,6 +387,24 @@
                         'line-width': 8
                     }
                 });
+
+                this.map.on('click', 'route', (e) => {
+                    // Fly to the end of the route
+                    this.map.flyTo({
+                        center: this.routeData.end, // Use the end coordinates stored in routeData
+                        zoom: 15, // Set the zoom level to 15
+                        essential: true // This animation is considered essential with respect to prefers-reduced-motion
+                    });
+                });
+
+                this.map.on('mouseenter', 'route', () => {
+                    this.map.getCanvas().style.cursor = 'pointer';
+                });
+
+                this.map.on('mouseleave', 'route', () => {
+                    this.map.getCanvas().style.cursor = '';
+                });
+
                 // Zoom to the route bounds
                 const bounds = new mapboxgl.LngLatBounds();
                 bounds.extend([startLng, startLat]);
@@ -376,7 +471,7 @@
                 debugDBmgr_0("");
                 const htm = applyColorToText(debugDBmgr_0(txt2));
 
-                console.log('htm', htm);
+                // console.log('htm', htm);
 
                 monitorTextbox.container.innerHTML = htm;
             }
@@ -395,15 +490,6 @@
                     }
                 }
                 return result;
-            }
-
-            function xdebugDBmgr_0(txt) {
-                let htm = txt;
-                htm = htm.replace(/Dist#/g, "Distance: ");
-                htm = htm.replace(/Dur#/g, "Durée: ");
-                htm = htm.replace(/eta#/g, "ETA: ");
-                htm = htm.replace(/address#/g, "Address: ");
-                return htm;
             }
 
             function debugDBmgr_0(fields) {
@@ -481,7 +567,6 @@
                 this.addRouteLayer(this.routeData.start, this.routeData.end);
             }
         }
-
     }
 
     class StyleControl {
@@ -503,7 +588,7 @@
             select.style.position = "absolute";
             select.style.top = "10px";
             select.style.right = "50px";
-            select.style.backgroundColor = "rgba(255, 255, 255, 0.6)"; // 60% transparent background
+            select.style.backgroundColor = backgroundColor; // 60% transparent background
             select.style.textAlign = "center";
             select.style.borderRadius = "10px";
             select.style.border = "1px solid lightgrey";
@@ -708,10 +793,10 @@
                     const contactDiv = document.createElement('div');
                     contactDiv.className = 'card'; // Bootstrap card class
                     contactDiv.innerHTML = `
-    <div class="card-body">
-        <h5 class="card-title">${contact.name}</h5>
-        <h6 class="card-text">${contact.address}</h6>
-    </div>`;
+                        <div class="card-body">
+                            <h5 class="card-title">${contact.name}</h5>
+                            <h6 class="card-text">${contact.address}</h6>
+                        </div>`;
                     document.querySelector('.contacts-textbox').appendChild(contactDiv);
 
                     // Add event listener to the card-body
@@ -725,8 +810,20 @@
 
                         // Add the 'selected-contact' class to the clicked contact
                         contactDiv.classList.add('selected-contact');
+
+                        // Add route from geoLngLat  position to the clicked contact
+                        if (geoLngLat) {
+                            const start = [geoLngLat.longitude, geoLngLat.latitude];
+                            const end = contact.coords;
+                            this.mapInitializer.addRouteLayer(start, end);
+                        }
+
+                        // Scroll the clicked contact to the middle of the contacts-textbox
+                        contactDiv.scrollIntoView({block: 'center', behavior: 'smooth'});
+
                     });
                 });
+
             } catch
                 (error) {
                 console.error('Failed to load contacts:', error);
@@ -760,7 +857,7 @@
         onAdd() {
             this.container = document.createElement('div');
             this.container.className = 'monitor-textbox mapboxgl-ctrl';
-            this.container.style.backgroundColor = "rgba(255,255,255,0.4)";
+            this.container.style.backgroundColor = backgroundColor;
             this.container.innerText = '';
 
             this.container.style.border = "1px solid";
@@ -800,7 +897,7 @@
         onAdd() {
             this.container = document.createElement('div');
             this.container.className = 'contacts-textbox mapboxgl-ctrl';
-            this.container.style.backgroundColor = "rgba(255,255,255,0.4)";
+            this.container.style.backgroundColor = backgroundColor;
             this.container.innerText = '';
 
             this.container.style.border = "1px solid";
@@ -817,7 +914,7 @@
             this.container.style.width = "50%";
 
             this.container.style.overflow = "auto"; // Add a scrollbar when the content overflows
-            this.container.style.maxHeight = "200px"; // Limit the max height of the container
+            this.container.style.maxHeight = "250px"; // Limit the max height of the container
             this.container.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
 
             return this.container;
@@ -852,9 +949,7 @@
         [7.008715192368488, 43.64163999646119], // Center coordinates for Valbonne
         11 // Initial zoom level
     );
-
-})
-();
+})();
 
 
 /*

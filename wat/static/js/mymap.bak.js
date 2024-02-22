@@ -55,7 +55,7 @@
 
     let compass = null;
 
-    window.backgroundColor = "rgba(255, 255, 255, 0.6)";
+    // window.backgroundColor = "rgba(255,255,255,0.22)";
 
     // const bb = document.getElementById('blue_ball').value; // eg. /static/watapp/img/blue_ball.png
     // const gb = document.getElementById('green_ball').value;
@@ -178,6 +178,8 @@
                             contacts_markers_dict[
                                 `${contact_position[0].toFixed(
                                     2
+                                    
+                                    
                                 )}_${contact_position[1].toFixed(2)}`
                                 ];
                         map.getSource(routeName).setData(route.geometry);
