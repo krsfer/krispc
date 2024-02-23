@@ -680,14 +680,26 @@
 
                 // Add click event listener to the marker
                 marker.getElement().addEventListener('click', () => {
-                    this.lastClickedMarkerLngLat = marker.getLngLat();
+                    if (this.lastClickedMarkerLngLat && !geoLngLat) {
+                        // Add route from the last clicked marker to the clicked marker
+                        const start = [this.lastClickedMarkerLngLat.lng, this.lastClickedMarkerLngLat.lat];
+                        const end = [marker.getLngLat().lng, marker.getLngLat().lat];
 
-                    // Add route from geoLngLat  position to the clicked marker
-                    if (geoLngLat) {
-                        const start = [geoLngLat.longitude, geoLngLat.latitude];
-                        const end = [this.lastClickedMarkerLngLat.lng, this.lastClickedMarkerLngLat.lat];
+                        this.lastClickedMarkerLngLat= null;
+
                         this.mapInitializer.addRouteLayer(start, end);
+                    } else {
+                        this.lastClickedMarkerLngLat = marker.getLngLat();
+
+                        // Add route from geoLngLat  position to the clicked marker
+                        if (geoLngLat) {
+                            const start = [geoLngLat.longitude, geoLngLat.latitude];
+                            const end = [this.lastClickedMarkerLngLat.lng, this.lastClickedMarkerLngLat.lat];
+
+                            this.mapInitializer.addRouteLayer(start, end);
+                        }
                     }
+
                 });
 
                 // Store the marker for future reference
