@@ -950,16 +950,18 @@
             this.container.style.width = "50%";
 
             this.container.style.overflow = "auto"; // Add a scrollbar when the content overflows
-            this.container.style.maxHeight = "250px"; // Limit the max height of the container
             this.container.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
 
+            this.container.style.maxHeight = "35px"; // Limit the max height of the container
             this.container.style.transition = "transform 0.5s ease-out";
             this.container.style.transform = "translateX(-90%)";
+            this.container.style.overflowY = "hidden";
 
             // Add the event listener
             this.container.addEventListener('click', (event) => {
                 if (this.container.style.transform === "translateX(0%)") {
                     this.container.style.transform = `translateX(-90%)`;
+                    this.container.style.maxHeight = "35px"; // Limit the max height of the container
 
                     // Remove the scrollbar
                     this.container.style.overflowY = "hidden";
@@ -977,6 +979,7 @@
                     // Show the scrollbar
                     this.container.style.overflowY = "scroll";
                     this.container.style.transform = "translateX(0%)";
+                    this.container.style.maxHeight = "250px"; // Limit the max height of the container
 
                     // Show the container contents
                     this.container.childNodes.forEach((element) => {
