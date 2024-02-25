@@ -169,27 +169,176 @@ select option {
 
 /** Start. Geocoder styling ******************************************/
 
+/*.mapboxgl-ctrl-geocoder {*/
+/*    !*position: absolute;*!*/
+/*    !*width: 30vw;*!*/
+/*    !*top: 35px;*!*/
+/*    !*transform: translateX(-1%);*!*/
+/*}*/
+
+/*.mapboxgl-ctrl-geocoder svg {*/
+/*    !*display: none;*!*/
+/*}*/
+
+
+/*.mapboxgl-ctrl-geocoder input[type="text"] {*/
+/*    !*background-color: rgba(255, 255, 255, 0.9);*!*/
+/*}*/
+
+/*.mapboxgl-ctrl-geocoder .suggestions {*/
+/*    background-color: rgba(255, 255, 255, 0.6);*/
+/*}*/
+
+
+/*.mapboxgl-ctrl-geocoder--pin-right {*/
+/*    display: none;*/
+/*}*/
+
+/*.geocoder-slide {*/
+/*    transition: transform 0.3s ease;*/
+/*    transform: translateX(-100%); !* Start off-screen *!*/
+/*}*/
+
+/*.geocoder-slide.expanded {*/
+/*    transform: translateX(0); !* Slide in *!*/
+/*}*/
+
+/*.mapboxgl-ctrl-geocoder {*/
+/*    max-width: 400px; !* Adjust based on your preference *!*/
+/*}*/
+
+/*.mapboxgl-ctrl-geocoder--input:focus {*/
+/*    width: 250px; !* Adjust based on your preference *!*/
+/*}*/
+
+/*.mapboxgl-ctrl-top-right .mapboxgl-ctrl {*/
+/*    margin: 12px 12px 0 0 !important;*/
+/*}*/
+
+/*.mapboxgl-ctrl-icon {*/
+/*    background-size: 18px 18px !important;*/
+/*    background-position: 6px 6px !important;*/
+/*    background-repeat: no-repeat !important;*/
+/*}*/
+
+/*.mapboxgl-ctrl-icon.mapboxgl-ctrl-compass > .mapboxgl-ctrl-compass-arrow {*/
+/*    height: 18px;*/
+/*    margin: 6px;*/
+/*    width: 18px;*/
+/*    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8' standalone='yes'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath fill='%231F3044'%0Ad='M5.5,14.2c-0.9,0.8-1.9,0-1.5-1l4-9c0.2-0.4,0.6-0.8,1-0.8s0.8,0.4,1,0.8l4,9c0.4,1-0.6,1.8-1.5,1l-3.5-3L5.5,14.2z'/%3E%3C/svg%3E");*/
+/*}*/
+
+/*.mapboxgl-ctrl-group {*/
+/*    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1) !important;*/
+/*}*/
+
+/* only hide the logo if title=true is true */
+/*.has-title .mapboxgl-ctrl-logo {*/
+/*    display: none !important;*/
+/*}*/
+
+/* Mapbox GL geocoder */
+/*.mapboxgl-ctrl-geocoder--collapsed {*/
+/*    !*height: 30px !important;*!*/
+/*    min-width: 30px !important;*/
+/*    width: 30px !important;*/
+/*}*/
+
+/*.mapboxgl-ctrl-geocoder {*/
+/*    transition: none !important;*/
+/*}*/
+
+/*.mapboxgl-ctrl-geocoder input[type='text'] {*/
+/*    height: 30px;*/
+/*    padding: 3px 30px;*/
+/*}*/
+
+/* ######################## */
+
 .mapboxgl-ctrl-geocoder {
-    /*position: absolute;*/
-    /*width: 30vw;*/
-    /*top: 35px;*/
-    /*transform: translateX(-1%);*/
+    display: grid;
+    grid-template-columns: auto auto; /* Define two columns */
+    grid-template-rows: auto auto; /* Define two rows */
+
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 5px;
 }
 
-.mapboxgl-ctrl-geocoder svg {
-    /*display: none;*/
+.mapboxgl-ctrl-geocoder--icon {
+    grid-column: 1; /* Place the icon in the first column */
+    grid-row: 1; /* Place the icon in the first row */
+    margin-top: 0 !important;
 }
+
+.mapboxgl-ctrl-geocoder--input {
+    grid-column: 2; /* Place the input in the second column */
+    grid-row: 1; /* Place the input in the first row */
+}
+
+.mapboxgl-ctrl-geocoder .suggestions-wrapper {
+    grid-column: 1 / span 2; /* Place the suggestions in the second row, spanning both columns */
+    grid-row: 2;
+}
+
+/* ################ */
 
 .mapboxgl-ctrl-geocoder--pin-right {
     display: none;
 }
 
-.mapboxgl-ctrl-geocoder input[type="text"] {
-    /*background-color: rgba(255, 255, 255, 0.9);*/
+.mapboxgl-ctrl-geocoder--input {
+    width: 0;
+    padding: 0;
+    border: none;
+    overflow: hidden;
 }
 
-.mapboxgl-ctrl-geocoder .suggestions {
-    background-color: rgba(255, 255, 255, 0.6);
+.mapboxgl-ctrl-geocoder--input.show {
+    width: auto;
+    /*padding: 6px 12px;*/
+    /*border: 1px solid #ccc;*/
+}
+
+.mapboxgl-ctrl-geocoder--icon {
+    fill: #1f3044;
+    margin-top: 2px !important;
+}
+
+/**/
+
+.geocoder-icon-close {
+    margin-top: 0;
+    display: block;
+}
+
+.mapboxgl-ctrl-geocoder--icon-loading {
+    background: white !important;
+    border-radius: 100% !important;
+    top: 5px !important;
+    right: 6px !important;
+    pointer-events: none !important;
+}
+
+.mapboxgl-ctrl-geocoder--icon-search {
+    left: 5px !important;
+    top: 7px !important;
+}
+
+@media only screen and (max-width: 640px) {
+    .mapbox-mark {
+        width: 30px;
+    }
+
+    .infobox-action {
+        display: none;
+    }
+}
+
+/*In css, when a ul in the suggestions class in the suggestions-wrapper is present, set  display to none for mapboxgl-ctrl-geocoder--powered-by*/
+.mapboxgl-ctrl-geocoder--powered-by {
+    display: none !important;
 }
 
 /** End. Geocoder styling ******************************************/

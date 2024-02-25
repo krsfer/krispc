@@ -44,8 +44,6 @@
             const mapboxToken = await this.getAccessToken("mapbox_token");
             mapboxgl.accessToken = mapboxToken;
 
-            // mapboxgl.config.ACCESS_TOKEN = null;
-
             this.map = new mapboxgl.Map({
                 container: containerId,
                 style: style,
@@ -58,22 +56,26 @@
                 this.modifyAttributionControl();
                 const start = [7.008715192368488, 43.64163999646119];
                 const end = [6.993073, 43.675819];
-                this.addRouteLayer(start, end);
+                // this.addRouteLayer(start, end);
             });
 
             // Close the contacts list when the map is clicked
             this.map.on('click', () => {
-                if (contactsTextbox) {
-                    contactsTextbox.container.style.transform = "translateX(-90%)";
-                    contactsTextbox.container.style.overflowY = "hidden";
-                    contactsTextbox.container.childNodes.forEach((element) => {
-                        element.style.visibility = "hidden";
-                    });
-                    contactsTextbox.container.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-                }
+                // if (contactsTextbox) {
+                //     contactsTextbox.container.style.transform = "translateX(-90%)";
+                //     contactsTextbox.container.style.overflowY = "hidden";
+                //     contactsTextbox.container.childNodes.forEach((element) => {
+                //         element.style.visibility = "hidden";
+                //     });
+                //     contactsTextbox.container.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+                // }
+
+                this.resetGeocoderInput();
             });
 
+
             this.initWakeLock();
+
 
             // Listen for style load event to reapply the route layer when the style changes
             this.map.on('style.load', () => {
@@ -91,8 +93,6 @@
                 }
 
                 this.reAddRouteLayer();
-
-
             });
 
 
@@ -121,9 +121,9 @@
             let currentIndex = 0;
 
             // Create a mock marker for the location
-            const mock_marker = new mapboxgl.Marker()
-                .setLngLat(locations[currentIndex]['coords'])
-                .addTo(this.map);
+            // const mock_marker = new mapboxgl.Marker()
+            //     .setLngLat(locations[currentIndex]['coords'])
+            //     .addTo(this.map);
 
 
             // Function to simulate geolocation change
@@ -190,24 +190,61 @@
             }
         }
 
+        initGeocoder() {
+            const geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl,
+                marker: true,
+                collapsed: true, // Start in a collapsed state if true
+            });
+
+            // Custom code to style and add sliding effect to the geocoder
+            const geocoderContainer = geocoder.onAdd(this.map);
+            // geocoderContainer.classList.add('geocoder-slide');
+
+            geocoderContainer.addEventListener('mouseenter', function () {
+                console.log('mouseenter');
+                // this.classList.add('expanded');
+            });
+
+            geocoderContainer.addEventListener('mouseleave', function () {
+                console.log('mouseleave');
+                // if (!this.querySelector('.mapboxgl-ctrl-geocoder--input').value) {
+                // this.classList.remove('expanded');
+                // }
+            });
+
+            geocoder.on('clear', function () {
+                console.log('Geocoder cleared');
+            });
+
+            geocoder.on('result',  () => {
+                this.resetGeocoderInput();
+            });
+
+            this.map.addControl(geocoder, 'top-right');
+        }
+
+
+        resetGeocoderInput() {
+            let geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
+            if (geocoderInput.classList.contains('show')) {
+                geocoderInput.classList.remove('show');
+                geocoderInput.value = '';
+            }
+        }
+
         addMapControls() {
+
+            let styleControl = new StyleControl();
+            this.map.addControl(styleControl, 'top-left');
+
+
+            // Initialize the geocoder after the map is set up
+            this.initGeocoder();
+
             // Add navigation control (zoom in/out)
             this.map.addControl(new mapboxgl.NavigationControl(), "top-right");
-
-            // Add the search bar to the map
-            let geocoder = null;
-            this.map.addControl(
-                (geocoder = new MapboxGeocoder({
-                    accessToken: mapboxgl.accessToken,
-                    mapboxgl: mapboxgl,
-                    marker: {
-                        color: "orange",
-                        draggable: true
-
-                    }
-                })),
-                "top-left"
-            );
 
             monitorTextbox = new Monitor_textbox(this.map, backgroundColor);
             this.map.addControl(monitorTextbox, 'top-left');
@@ -306,6 +343,34 @@
             // Add StyleControl
             new StyleControl(this.map);
 
+
+            let geocoderIcon = document.querySelector('.mapboxgl-ctrl-geocoder--icon.mapboxgl-ctrl-geocoder--icon-search');
+            geocoderIcon.style.zIndex = "9999"; // Set a high value to bring it to the front
+            let geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
+
+            // Add or remove the mapboxgl-ctrl-geocoder--collapsed" of the geocoder input
+            geocoderIcon.addEventListener('click', function () {
+                console.log('geocoderIcon clicked');
+                geocoderInput.classList.toggle('mapboxgl-ctrl-geocoder--collapsed');
+                geocoderInput.classList.toggle('show');
+                if (geocoderInput.classList.contains('show')) {
+                    geocoderInput.focus();
+                }
+            });
+
+            // Add hover event listener to the geocoder input
+            // geocoderInput.addEventListener('mouseenter', function () {
+            //     geocoderInput.classList.add('show');
+            // });
+            //
+            // // Add mouseleave event listener to the geocoder input
+            // geocoderInput.addEventListener('mouseleave', function () {
+            //     if (!geocoderInput.value) {
+            //         geocoderInput.classList.remove('show');
+            //     }
+            // });
+
+
             // Add MarkerManager
             this.markerManager = new MarkerManager(this.map, this);
             // this.markerManager.addMarker([7.008715192368488, 43.64163999646119], "Valbonne", "Valbonne, France", document.getElementById("marker"));
@@ -371,6 +436,7 @@
 
             if (!monitorTextbox)
                 monitorTextbox = new Monitor_textbox(this.map, window.backgroundColor);
+
             displayUpdates(distance, durée, eta, address);
 
             // Store the route data... route, distance, durée, eta, address
@@ -479,7 +545,7 @@
             }
 
             function displayUpdates(distance, durée, eta, address) {
-                // monitorTextbox.innerText = `Distance: ${distance}\nDurée: ${durée}\nETA: ${eta}\nAddress: ${address}`;
+                monitorTextbox.innerText = `Distance: ${distance}\nDurée: ${durée}\nETA: ${eta}\nAddress: ${address}`;
 
                 // Remove numéro de département from address if address is not null it contains the numéro
                 if (address) {
@@ -614,14 +680,18 @@
                 {name: "Satellite", style: "mapbox://styles/mapbox/satellite-v9"}
             ];
 
-            this.init();
+            this.container = null;
+            ;
         }
 
-        init() {
+        onAdd(map) {
+            this.map = map;
+            this.container = document.createElement('div');
+            this.container.className = 'mapboxgl-ctrl';
             const select = document.createElement("select");
-            select.style.position = "absolute";
+            // select.style.position = "absolute";
             select.style.top = "10px";
-            select.style.right = "50px";
+            select.style.right = "200px";
             select.style.backgroundColor = backgroundColor; // 60% transparent background
             select.style.textAlign = "center";
             select.style.borderRadius = "10px";
@@ -643,7 +713,13 @@
                 localStorage.setItem("selectedMapStyle", select.value);
             });
 
-            this.map.getContainer().appendChild(select);
+            this.container.appendChild(select);
+            return this.container;
+        }
+
+        onRemove() {
+            this.container.parentNode.removeChild(this.container);
+            this.map = undefined;
         }
     }
 
@@ -685,7 +761,7 @@
                         const start = [this.lastClickedMarkerLngLat.lng, this.lastClickedMarkerLngLat.lat];
                         const end = [marker.getLngLat().lng, marker.getLngLat().lat];
 
-                        this.lastClickedMarkerLngLat= null;
+                        this.lastClickedMarkerLngLat = null;
 
                         this.mapInitializer.addRouteLayer(start, end);
                     } else {
@@ -844,7 +920,7 @@
                             <h6 class="card-text">${contact.address}</h6>
                         </div>`;
                     // Hide the contactDiv by default
-                    contactDiv.style.visibility = "hidden";
+                    // contactDiv.style.visibility = "hidden";
                     document.querySelector('.contacts-textbox').appendChild(contactDiv);
 
                     // Add event listener to the card-body
@@ -964,44 +1040,55 @@
             this.container.style.overflow = "auto"; // Add a scrollbar when the content overflows
             this.container.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
 
-            this.container.style.maxHeight = "35px"; // Limit the max height of the container
-            this.container.style.transition = "transform 0.5s ease-out";
-            this.container.style.transform = "translateX(-90%)";
+            this.container.style.maxHeight = "300px"; // Limit the max height of the container
+            // this.container.style.transition = "transform 0.5s ease-out";
+            // this.container.style.transform = "translateX(-90%)";
             this.container.style.overflowY = "hidden";
 
             // Add the event listener
             this.container.addEventListener('click', (event) => {
-                if (this.container.style.transform === "translateX(0%)") {
-                    this.container.style.transform = `translateX(-90%)`;
-                    this.container.style.maxHeight = "35px"; // Limit the max height of the container
-
-                    // Remove the scrollbar
-                    this.container.style.overflowY = "hidden";
-
-                    // Hide the container contents
-                    this.container.childNodes.forEach((element) => {
-                        element.style.visibility = "hidden";
-                    });
-
-                    // Set transparency to 0.1
-                    this.container.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-
-                } else {
-                    // If it is not visible, translate it to the right until it is visible
-                    // Show the scrollbar
-                    this.container.style.overflowY = "scroll";
-                    this.container.style.transform = "translateX(0%)";
-                    this.container.style.maxHeight = "250px"; // Limit the max height of the container
-
-                    // Show the container contents
-                    this.container.childNodes.forEach((element) => {
+                console.log('contacts-textbox clicked');
+                // Toggle visibility of each contact
+                this.container.childNodes.forEach((element) => {
+                    if (element.style.visibility === "hidden") {
                         element.style.visibility = "visible";
-                    });
+                    } else {
+                        element.style.visibility = "hidden";
+                    }
+                });
 
-                    // Set transparency to 0.6
-                    this.container.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
-                }
 
+                //     if (this.container.style.transform === "translateX(0%)") {
+                //         this.container.style.transform = `translateX(-90%)`;
+                //         this.container.style.maxHeight = "35px"; // Limit the max height of the container
+                //
+                //         // Remove the scrollbar
+                //         this.container.style.overflowY = "hidden";
+                //
+                //         // Hide the container contents
+                //         this.container.childNodes.forEach((element) => {
+                //             element.style.visibility = "hidden";
+                //         });
+                //
+                //         // Set transparency to 0.1
+                //         this.container.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+                //
+                //     } else {
+                //         // If it is not visible, translate it to the right until it is visible
+                //         // Show the scrollbar
+                //         this.container.style.overflowY = "scroll";
+                //         this.container.style.transform = "translateX(0%)";
+                //         this.container.style.maxHeight = "250px"; // Limit the max height of the container
+                //
+                //         // Show the container contents
+                //         this.container.childNodes.forEach((element) => {
+                //             element.style.visibility = "visible";
+                //         });
+                //
+                //         // Set transparency to 0.6
+                //         this.container.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
+                //     }
+                //
             });
 
             return this.container;
