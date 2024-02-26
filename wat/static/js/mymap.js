@@ -218,7 +218,7 @@
                 console.log('Geocoder cleared');
             });
 
-            geocoder.on('result',  () => {
+            geocoder.on('result', () => {
                 this.resetGeocoderInput();
             });
 
@@ -235,10 +235,8 @@
         }
 
         addMapControls() {
-
             let styleControl = new StyleControl();
             this.map.addControl(styleControl, 'top-left');
-
 
             // Initialize the geocoder after the map is set up
             this.initGeocoder();
@@ -249,8 +247,8 @@
             monitorTextbox = new Monitor_textbox(this.map, backgroundColor);
             this.map.addControl(monitorTextbox, 'top-left');
 
-            contactsTextbox = new Contacts_textbox(map, backgroundColor);
-            this.map.addControl(contactsTextbox, 'top-left');
+            // contactsTextbox = new Contacts_textbox(map, backgroundColor);
+            // this.map.addControl(contactsTextbox);
 
             // Add GeolocateControl
             const geolocate = new mapboxgl.GeolocateControl({
@@ -358,18 +356,8 @@
                 }
             });
 
-            // Add hover event listener to the geocoder input
-            // geocoderInput.addEventListener('mouseenter', function () {
-            //     geocoderInput.classList.add('show');
-            // });
-            //
-            // // Add mouseleave event listener to the geocoder input
-            // geocoderInput.addEventListener('mouseleave', function () {
-            //     if (!geocoderInput.value) {
-            //         geocoderInput.classList.remove('show');
-            //     }
-            // });
-
+            const contactsIcon = new ContactsTextboxIcon();
+            this.map.addControl(contactsIcon, 'top-right');
 
             // Add MarkerManager
             this.markerManager = new MarkerManager(this.map, this);
@@ -1024,38 +1012,47 @@
             this.container.style.backgroundColor = backgroundColor;
             this.container.innerText = '';
 
+            // this.container.style.position = "absolute";
+            // display in middle of the map
+            // this.container.style.top = "50%";
+            // this.container.style.left = "50%";
+            this.container.style.transform = "translate(-105%, -6%)";
+
+            // Set overflow te auto
+            this.container.style.overflow = "auto";
+
+            // Set vertical scroll bar
+            this.container.style.overflowY = "scroll";
+
+
+
+
             this.container.style.border = "1px solid";
             this.container.style.borderColor = "rgba(194, 181, 181)";
             this.container.style.borderRadius = "10px";
-            // this.container.style.textShadow = "1px 1px 1px #ccc";
             this.container.style.fontSize = "large";
             this.container.style.lineHeight = "0.9";
 
             this.container.style.color = "rgb(0,0,0)";
-            // this.container.style.overflow = "auto";
             this.container.style.textAlign = "center";
             this.container.style.zIndex = "1";
             this.container.style.width = "50%";
 
-            this.container.style.overflow = "auto"; // Add a scrollbar when the content overflows
-            this.container.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
+
+            // this.container.style.overflow = "auto"; // Add a scrollbar when the content overflows
+            // this.container.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
 
             this.container.style.maxHeight = "300px"; // Limit the max height of the container
             // this.container.style.transition = "transform 0.5s ease-out";
             // this.container.style.transform = "translateX(-90%)";
-            this.container.style.overflowY = "hidden";
+
+            // Set the visibility of the container to hidden
+            this.container.style.visibility = "hidden";
 
             // Add the event listener
             this.container.addEventListener('click', (event) => {
-                console.log('contacts-textbox clicked');
-                // Toggle visibility of each contact
-                this.container.childNodes.forEach((element) => {
-                    if (element.style.visibility === "hidden") {
-                        element.style.visibility = "visible";
-                    } else {
-                        element.style.visibility = "hidden";
-                    }
-                });
+                // Toggle the visibility of the scrollbar
+                // this.container.style.overflowY = this.container.style.overflowY === "hidden" ? "scroll" : "hidden";
 
 
                 //     if (this.container.style.transform === "translateX(0%)") {
@@ -1099,6 +1096,54 @@
             this.map = undefined;
         }
     }
+
+    class ContactsTextboxIcon {
+        constructor(map) {
+            this._map = map;
+            this.contactsTextbox = new Contacts_textbox(map, backgroundColor); // Create an instance of Contacts_textbox
+            this._container = null;
+        }
+
+        onAdd() {
+            this._container = document.createElement('div');
+            this._container.className = 'mapboxgl-ctrl contacts-textbox-icon';
+            this._container.onclick = this._onClick.bind(this);
+
+            // Append the Contacts_textbox to the container
+            this._container.appendChild(this.contactsTextbox.onAdd());
+
+            return this._container;
+        }
+
+        onRemove() {
+            this._container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+
+        _onClick(event) {
+            // Define what happens when the icon is clicked
+            console.log('Contacts icon clicked!');
+
+            console.log('this.contactsTextbox:', this.contactsTextbox);
+            console.log('this.contactsTextbox.container:', this.contactsTextbox.container);
+            console.log('this.contactsTextbox.container.style.visibility:', this.contactsTextbox.container.style.visibility);
+
+            // Remove the width of  the contacts textbox
+            this.contactsTextbox.container.style.width = '200px'; // or 'initial'
+
+            // Set the height of the contacts textbox to 350px
+            this.contactsTextbox.container.style.height = '350px';
+
+
+            // Toggle the contacts textbox visibility
+            if (this.contactsTextbox.container.style.visibility === "hidden") {
+                this.contactsTextbox.container.style.visibility = "visible";
+            } else {
+                this.contactsTextbox.container.style.visibility = "hidden";
+            }
+        }
+    }
+
 
     window.addEventListener("beforeunload", () => {
         if (mapInitializer.wakeLock) {
