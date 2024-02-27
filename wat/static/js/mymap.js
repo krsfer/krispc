@@ -93,6 +93,44 @@
                 }
 
                 this.reAddRouteLayer('route');
+
+                // Recreate the original route with id 'original_route' and source 'original_route' using the routeData
+                // stored in mapInitializer
+                if (this.routeData) {
+                    const start = this.routeData.start;
+                    const end = this.routeData.end;
+
+                    if (this.map.getSource('original_route')) {
+                        this.map.removeLayer('original_route');
+                        this.map.removeSource('original_route');
+                    }
+
+                    // Displace the original route geometry by 0.0005 degrees in the longitude direction
+                    this.routeData.route.geometry.coordinates = this.routeData.route.geometry.coordinates.map((coord) => {
+                        return [coord[0] + 0.0005, coord[1]];
+                    });
+
+                    // Use route.geometry to  recreate the original route source and layer
+                    this.map.addSource('original_route', {
+                        'type': 'geojson',
+                        'data': this.routeData.route.geometry
+                    });
+
+                    // Add the original route layer
+                    this.map.addLayer({
+                        'id': 'original_route',
+                        'type': 'line',
+                        'source': 'original_route',
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round'
+                        },
+                        'paint': {
+                            'line-color': 'rgba(0,255,21,0.26)',
+                            'line-width': 8
+                        }
+                    });
+                }
             });
 
 
@@ -279,7 +317,6 @@
                     const end = [this.markerManager.lastClickedMarkerLngLat.lng, this.markerManager.lastClickedMarkerLngLat.lat];
                     await this.addRouteLayer(start, end, 'route');
 
-                    console.log("this.routeData:", this.routeData);
                     // Set originalRoute to the routeData if originalRoute is not defined
                     if (!originalRoute) {
                         originalRoute = this.routeData;
@@ -625,6 +662,8 @@
                 // console.log('htm', htm);
 
                 monitorTextbox.container.innerHTML = htm;
+                // Set width of the monitor textbox to xxx
+                monitorTextbox.container.style.width = "50%";
             }
 
             function applyColorToText(txt) {
@@ -632,7 +671,7 @@
                 let result = "";
                 for (let line of lines) {
 
-                    console.log('line', line);
+                    // console.log('line', line);
 
                     const parts = line.split("#");
 
@@ -644,10 +683,12 @@
                     } else if (parts.length === 3) {
 
                         const [key, value, color] = parts;
+
                         let fontsize = "1em";
-                        if (color === "red") {
-                            fontsize = "2em";
+                        if (key === "eta") {
+                            fontsize = "1.5em";
                         }
+
                         result += `<span style="font-size: ${fontsize}; color:${color};">${value}</span>`;
 
                         if (line === lines[lines.length - 2]) {
@@ -824,7 +865,7 @@
                 marker.on('dragend', this.onDragEnd.bind(this, marker));
 
                 // Add click event listener to the marker
-                marker.getElement().addEventListener('click', () => {
+                marker.getElement().addEventListener('click', async () => {
                     if (this.lastClickedMarkerLngLat && !geoLngLat) {
                         // Add route from the last clicked marker to the clicked marker
                         const start = [this.lastClickedMarkerLngLat.lng, this.lastClickedMarkerLngLat.lat];
@@ -834,6 +875,15 @@
 
                         this.mapInitializer.addRouteLayer(start, end, 'route');
                     } else {
+                        // Remove originalRoute if it exists and a layer called 'original_route' exists
+                        if (this.mapInitializer.routeData) {
+                            if (this.map.getSource('original_route')) {
+                                this.map.removeLayer('original_route');
+                                this.map.removeSource('original_route');
+                                this.mapInitializer.routeData = null;
+                            }
+                        }
+
                         this.lastClickedMarkerLngLat = marker.getLngLat();
 
                         // Add route from geoLngLat  position to the clicked marker
@@ -841,7 +891,45 @@
                             const start = [geoLngLat.longitude, geoLngLat.latitude];
                             const end = [this.lastClickedMarkerLngLat.lng, this.lastClickedMarkerLngLat.lat];
 
-                            this.mapInitializer.addRouteLayer(start, end, 'route');
+                            const res = await this.mapInitializer.addRouteLayer(start, end, 'route');
+
+                            // How to recreate the original route with id 'original_route' and source
+                            // 'original_route' using the routeData stored in mapInitializer
+                            if (res) {
+                                const start = res.start;
+                                const end = res.end;
+
+                                if (this.map.getSource('original_route')) {
+                                    this.map.removeLayer('original_route');
+                                    this.map.removeSource('original_route');
+                                }
+
+                                // Displace the original route geometry by 0.0005 degrees in the longitude direction
+                                res.route.geometry.coordinates = res.route.geometry.coordinates.map((coord) => {
+                                    return [coord[0] + 0.0005, coord[1]];
+                                });
+                                // Use route.geometry to  recreate the original route source and layer
+                                this.map.addSource('original_route', {
+                                    'type': 'geojson',
+                                    'data': res.route.geometry
+                                });
+                                // Add the original route layer
+                                this.map.addLayer({
+                                    'id': 'original_route',
+                                    'type': 'line',
+                                    'source': 'original_route',
+                                    'layout': {
+                                        'line-join': 'round',
+                                        'line-cap': 'round'
+                                    },
+                                    'paint': {
+                                        'line-color': 'rgba(0,255,21,0.26)',
+                                        'line-width': 8
+                                    }
+                                });
+                            }
+
+
                         }
                     }
 
