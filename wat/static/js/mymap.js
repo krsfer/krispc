@@ -244,6 +244,8 @@
             let styleControl = new StyleControl();
             this.map.addControl(styleControl, 'top-left');
 
+            let originalRoute = null;
+
             // Initialize the geocoder after the map is set up
             this.initGeocoder();
 
@@ -267,8 +269,6 @@
             });
             this.map.addControl(geolocate, "top-right");
 
-
-            let originalRoute = null;
 
             // Add geolocate event listener
             geolocate.on("geolocate", async (e) => {
@@ -294,7 +294,7 @@
 
                         // Displace the original route geometry by 0.0005 degrees in the longitude direction
                         originalRoute.route.geometry.coordinates = originalRoute.route.geometry.coordinates.map((coord) => {
-                            return [coord[0] + 0.005, coord[1]];
+                            return [coord[0] + 0.0005, coord[1]];
                         });
 
                         this.map.addSource('original_route', {
@@ -397,7 +397,7 @@
 
 
             // Add FullscreenControl
-            this.map.addControl(new mapboxgl.FullscreenControl(), "top-right");
+            this.map.addControl(new mapboxgl.FullscreenControl(), "bottom-right");
 
             // Add ScaleControl
             this.map.addControl(new mapboxgl.ScaleControl({
@@ -631,6 +631,9 @@
                 const lines = txt.split("\n");
                 let result = "";
                 for (let line of lines) {
+
+                    console.log('line', line);
+
                     const parts = line.split("#");
 
                     if (parts.length === 2) {
@@ -641,7 +644,11 @@
                     } else if (parts.length === 3) {
 
                         const [key, value, color] = parts;
-                        result += `<span style="color:${color};">${value}</span>`;
+                        let fontsize = "1em";
+                        if (color === "red") {
+                            fontsize = "2em";
+                        }
+                        result += `<span style="font-size: ${fontsize}; color:${color};">${value}</span>`;
 
                         if (line === lines[lines.length - 2]) {
                             result += '<br>';
