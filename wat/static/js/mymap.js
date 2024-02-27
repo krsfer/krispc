@@ -56,7 +56,6 @@
                 this.modifyAttributionControl();
                 const start = [7.008715192368488, 43.64163999646119];
                 const end = [6.993073, 43.675819];
-                // this.addRouteLayer(start, end);
             });
 
             // Close the contacts list when the map is clicked
@@ -71,6 +70,7 @@
                 // }
 
                 this.resetGeocoderInput();
+                this.resetContactsTextbox();
             });
 
 
@@ -92,7 +92,7 @@
                     }
                 }
 
-                this.reAddRouteLayer();
+                this.reAddRouteLayer('route');
             });
 
 
@@ -234,6 +234,12 @@
             }
         }
 
+        resetContactsTextbox() {
+            let contactsTextbox = document.querySelector('.contacts-textbox');
+            if (contactsTextbox)
+                contactsTextbox.style.visibility = "hidden";
+        }
+
         addMapControls() {
             let styleControl = new StyleControl();
             this.map.addControl(styleControl, 'top-left');
@@ -261,14 +267,82 @@
             });
             this.map.addControl(geolocate, "top-right");
 
+
+            let originalRoute = null;
+
             // Add geolocate event listener
-            geolocate.on("geolocate", (e) => {
+            geolocate.on("geolocate", async (e) => {
                 geoLngLat = e.coords; // Store the geolocate coordinates in the global variable
 
                 if (this.markerManager.lastClickedMarkerLngLat) {
                     const start = [e.coords.longitude, e.coords.latitude];
                     const end = [this.markerManager.lastClickedMarkerLngLat.lng, this.markerManager.lastClickedMarkerLngLat.lat];
-                    this.addRouteLayer(start, end);
+                    await this.addRouteLayer(start, end, 'route');
+
+                    console.log("this.routeData:", this.routeData);
+                    // Set originalRoute to the routeData if originalRoute is not defined
+                    if (!originalRoute) {
+                        originalRoute = this.routeData;
+                    }
+
+                    // Draw the original route defined by route field in originalRoute
+                    if (originalRoute) {
+                        if (this.map.getSource('original_route')) {
+                            this.map.removeLayer('original_route');
+                            this.map.removeSource('original_route');
+                        }
+
+                        // Displace the original route geometry by 0.0005 degrees in the longitude direction
+                        originalRoute.route.geometry.coordinates = originalRoute.route.geometry.coordinates.map((coord) => {
+                            return [coord[0] + 0.005, coord[1]];
+                        });
+
+                        this.map.addSource('original_route', {
+                            'type': 'geojson',
+                            'data': originalRoute.route.geometry
+                        });
+
+                        this.map.addLayer({
+                            'id': 'original_route',
+                            'type': 'line',
+                            'source': 'original_route',
+                            'layout': {
+                                'line-join': 'round',
+                                'line-cap': 'round'
+                            },
+                            'paint': {
+                                'line-color': 'rgba(255,165,0,0.26)',
+                                'line-width': 8
+                            }
+                        });
+                    }
+
+                    // Draw the original route defined by originalRoute
+                    // if (originalRoute) {
+                    //     if (map.getSource('original_route')) {
+                    //         map.removeLayer('original_route');
+                    //         map.removeSource('original_route');
+                    //     }
+                    //
+                    //     map.addSource('original_route', {
+                    //         'type': 'geojson',
+                    //         'data': originalRoute
+                    //     });
+                    //
+                    //     map.addLayer({
+                    //         'id': 'original_route',
+                    //         'type': 'line',
+                    //         'source': 'original_route',
+                    //         'layout': {
+                    //             'line-join': 'round',
+                    //             'line-cap': 'round'
+                    //         },
+                    //         'paint': {
+                    //             'line-color': '#888',
+                    //             'line-width': 8
+                    //         }
+                    //     });
+                    // }
                 }
 
                 let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
@@ -383,7 +457,7 @@
         }
 
         // Function to add the route layer
-        async addRouteLayer(start, end) {
+        async addRouteLayer(start, end, routeId) {
             const startLng = start[0];
             const startLat = start[1];
             const endLng = end[0];
@@ -440,8 +514,8 @@
             // console.log("routeData:", this.routeData);
 
             // Add the route as a source and layer if it doesn't already exist
-            if (!this.map.getSource('route')) {
-                this.map.addSource('route', {
+            if (!this.map.getSource(routeId)) {
+                this.map.addSource(routeId, {
                     'type': 'geojson',
                     'data': {
                         'type': 'Feature',
@@ -451,9 +525,9 @@
                 });
 
                 this.map.addLayer({
-                    'id': 'route',
+                    'id': routeId,
                     'type': 'line',
-                    'source': 'route',
+                    'source': routeId,
                     'layout': {
                         'line-join': 'round',
                         'line-cap': 'round'
@@ -465,7 +539,7 @@
                     }
                 });
 
-                this.map.on('click', 'route', (e) => {
+                this.map.on('click', routeId, (e) => {
                     // Fly to the end of the route
                     this.map.flyTo({
                         center: this.routeData.end, // Use the end coordinates stored in routeData
@@ -474,11 +548,11 @@
                     });
                 });
 
-                this.map.on('mouseenter', 'route', () => {
+                this.map.on('mouseenter', routeId, () => {
                     this.map.getCanvas().style.cursor = 'pointer';
                 });
 
-                this.map.on('mouseleave', 'route', () => {
+                this.map.on('mouseleave', routeId, () => {
                     this.map.getCanvas().style.cursor = '';
                 });
 
@@ -489,7 +563,7 @@
                 this.map.fitBounds(bounds, {padding: 50});
             } else {
                 // If the source exists, just update its data
-                this.map.getSource('route').setData({
+                this.map.getSource(routeId).setData({
                     'type': 'Feature',
                     'properties': {},
                     'geometry': route_geometry
@@ -636,23 +710,23 @@
         }
 
         // Add this function to re-add the route layer
-        reAddRouteLayer() {
+        reAddRouteLayer(route) {
             // Check if the route data exists and the map has been initialized
             if (this.routeData && this.map) {
                 // Check if the route layer exists
-                if (this.map.getLayer('route')) {
+                if (this.map.getLayer(route)) {
                     // Remove the existing route layer
-                    this.map.removeLayer('route');
+                    this.map.removeLayer(route);
                 }
 
                 // Check if the route source exists
-                if (this.map.getSource('route')) {
+                if (this.map.getSource(route)) {
                     // Remove the existing route source
-                    this.map.removeSource('route');
+                    this.map.removeSource(route);
                 }
 
                 // Re-add the route layer with the updated route data
-                this.addRouteLayer(this.routeData.start, this.routeData.end);
+                this.addRouteLayer(this.routeData.start, this.routeData.end, route);
             }
         }
     }
@@ -751,7 +825,7 @@
 
                         this.lastClickedMarkerLngLat = null;
 
-                        this.mapInitializer.addRouteLayer(start, end);
+                        this.mapInitializer.addRouteLayer(start, end, 'route');
                     } else {
                         this.lastClickedMarkerLngLat = marker.getLngLat();
 
@@ -760,7 +834,7 @@
                             const start = [geoLngLat.longitude, geoLngLat.latitude];
                             const end = [this.lastClickedMarkerLngLat.lng, this.lastClickedMarkerLngLat.lat];
 
-                            this.mapInitializer.addRouteLayer(start, end);
+                            this.mapInitializer.addRouteLayer(start, end, 'route');
                         }
                     }
 
@@ -927,7 +1001,7 @@
                         if (geoLngLat) {
                             const start = [geoLngLat.longitude, geoLngLat.latitude];
                             const end = contact.coords;
-                            this.mapInitializer.addRouteLayer(start, end);
+                            this.mapInitializer.addRouteLayer(start, end, 'route');
                         }
 
                         // Scroll the clicked contact to the middle of the contacts-textbox
@@ -975,7 +1049,7 @@
             this.container.style.border = "1px solid";
             this.container.style.borderColor = "rgba(194, 181, 181)";
             this.container.style.borderRadius = "10px";
-            // this.container.style.textShadow = "1px 1px 1px #ccc";
+            this.container.style.textShadow = "1px 1px 1px #ccc";
             this.container.style.fontSize = "large";
             this.container.style.lineHeight = "0.9";
 
@@ -1012,10 +1086,7 @@
             this.container.style.backgroundColor = backgroundColor;
             this.container.innerText = '';
 
-            // this.container.style.position = "absolute";
-            // display in middle of the map
-            // this.container.style.top = "50%";
-            // this.container.style.left = "50%";
+            // Set the position of the container
             this.container.style.transform = "translate(-105%, -6%)";
 
             // Set overflow te auto
@@ -1023,9 +1094,6 @@
 
             // Set vertical scroll bar
             this.container.style.overflowY = "scroll";
-
-
-
 
             this.container.style.border = "1px solid";
             this.container.style.borderColor = "rgba(194, 181, 181)";
@@ -1038,54 +1106,13 @@
             this.container.style.zIndex = "1";
             this.container.style.width = "50%";
 
-
-            // this.container.style.overflow = "auto"; // Add a scrollbar when the content overflows
-            // this.container.style.overflowY = "scroll"; // Add a scrollbar when the content overflows
-
             this.container.style.maxHeight = "300px"; // Limit the max height of the container
-            // this.container.style.transition = "transform 0.5s ease-out";
-            // this.container.style.transform = "translateX(-90%)";
 
             // Set the visibility of the container to hidden
             this.container.style.visibility = "hidden";
 
             // Add the event listener
             this.container.addEventListener('click', (event) => {
-                // Toggle the visibility of the scrollbar
-                // this.container.style.overflowY = this.container.style.overflowY === "hidden" ? "scroll" : "hidden";
-
-
-                //     if (this.container.style.transform === "translateX(0%)") {
-                //         this.container.style.transform = `translateX(-90%)`;
-                //         this.container.style.maxHeight = "35px"; // Limit the max height of the container
-                //
-                //         // Remove the scrollbar
-                //         this.container.style.overflowY = "hidden";
-                //
-                //         // Hide the container contents
-                //         this.container.childNodes.forEach((element) => {
-                //             element.style.visibility = "hidden";
-                //         });
-                //
-                //         // Set transparency to 0.1
-                //         this.container.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-                //
-                //     } else {
-                //         // If it is not visible, translate it to the right until it is visible
-                //         // Show the scrollbar
-                //         this.container.style.overflowY = "scroll";
-                //         this.container.style.transform = "translateX(0%)";
-                //         this.container.style.maxHeight = "250px"; // Limit the max height of the container
-                //
-                //         // Show the container contents
-                //         this.container.childNodes.forEach((element) => {
-                //             element.style.visibility = "visible";
-                //         });
-                //
-                //         // Set transparency to 0.6
-                //         this.container.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
-                //     }
-                //
             });
 
             return this.container;
@@ -1121,19 +1148,11 @@
         }
 
         _onClick(event) {
-            // Define what happens when the icon is clicked
-            console.log('Contacts icon clicked!');
-
-            console.log('this.contactsTextbox:', this.contactsTextbox);
-            console.log('this.contactsTextbox.container:', this.contactsTextbox.container);
-            console.log('this.contactsTextbox.container.style.visibility:', this.contactsTextbox.container.style.visibility);
-
             // Remove the width of  the contacts textbox
             this.contactsTextbox.container.style.width = '200px'; // or 'initial'
 
             // Set the height of the contacts textbox to 350px
             this.contactsTextbox.container.style.height = '350px';
-
 
             // Toggle the contacts textbox visibility
             if (this.contactsTextbox.container.style.visibility === "hidden") {
@@ -1208,10 +1227,3 @@
  * 7. Contacts Management
  * 8. Event Handling
  * */
-/*
-Let’s do step 3 : `Geolocation Handling: Isolate the geolocation functionality into its module, focusing on acquiring the user's location,
-tracking changes, and updating the map view accordingly.` On geolocate track success, if a marker is selected,
-fetch and display the fastest route between the geolocated current lnglat and the selected marker’s lnglat. setSelectedMarker is done
-when the user clicks on a marker.
-async function getDirections uses `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`
-* */
