@@ -9,6 +9,14 @@
 
     class MapInitializer {
         constructor(containerId, style, center, zoom) {
+            // Check if a session ID already exists
+            if (!sessionStorage.getItem('sessionId')) {
+                // Create a new session ID
+                const sessionId = new Date().getTime() + Math.random().toString(36).substring(2);
+                // Store the session ID in sessionStorage
+                sessionStorage.setItem('sessionId', sessionId);
+            }
+
             this.initMap(containerId, style, center, zoom);
         }
 
@@ -57,6 +65,10 @@
                 const start = [7.008715192368488, 43.64163999646119];
                 const end = [6.993073, 43.675819];
             });
+
+            // Add mock_compass CompassControl to the map
+            const mock_compass = new CompassControl();
+            this.map.addControl(mock_compass, 'top-left');
 
             // Close the contacts list when the map is clicked
             this.map.on('click', () => {
@@ -133,7 +145,6 @@
                 }
             });
 
-
             // Start. Mock locations to simulate tracking (e.g., a path around a small area)
             // Mock locations to simulate tracking (e.g., a path around a small area)
             function generateCirclePoints(centerLat, centerLng, radiusInKm, numPoints) {
@@ -159,9 +170,9 @@
             let currentIndex = 0;
 
             // Create a mock marker for the location
-            // const mock_marker = new mapboxgl.Marker()
-            //     .setLngLat(locations[currentIndex]['coords'])
-            //     .addTo(this.map);
+            const mock_marker = new mapboxgl.Marker()
+                .setLngLat(locations[currentIndex]['coords'])
+                .addTo(this.map);
 
 
             // Function to simulate geolocation change
@@ -172,7 +183,19 @@
 
                 const [lng, lat] = locations[currentIndex++]['coords'];
 
-                // compass.setRotation(90); // Rotate the compass to the new heading (90 degrees in this case)
+
+                // Get the mock_compass control and rotate it to 45 degrees
+                // const mock_compass = document.querySelector('compass-control');
+                // console.log('mock_compass', mock_compass);
+
+
+                // this.mock_compass.setRotation(90); // Rotate the compass to the new heading (90 degrees in this case)
+
+                const heading = `rotate(${90 - locations[currentIndex - 1]['heading']}deg)`;
+                mock_compass.setRotation(90 - locations[currentIndex - 1]['heading']); // Rotate the compass to the new heading (90 degrees in this
+                // case
+
+                // Rotate the CompassControl to the new heading
 
                 // Update the map view to the new location
                 // map.flyTo({
@@ -187,10 +210,6 @@
                 let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
                 if (geolocationUserIcon) {
                     // Get the heading from valbonne to the current location without using turf.js
-                    const heading = `rotate(${90 - locations[currentIndex - 1]['heading']}deg)`;
-
-                    // Set the rotation of the geolocationUserIcon to the current location heading
-                    geolocationUserIcon.style.transform = heading;
                 }
 
                 // Schedule the next location update
@@ -199,7 +218,7 @@
             }
 
             // // Start simulating geolocation tracking //////////////////////////////
-            // simulateGeolocationChange();
+            simulateGeolocationChange();
 
         }
 
@@ -217,11 +236,18 @@
                     this.wakeLock.addEventListener("release", () => {
                     });
 
-                    document.addEventListener("visibilitychange", async () => {
-                        if (document.visibilityState === "visible" && this.wakeLock !== null) {
-                            this.wakeLock = await navigator.wakeLock.request("screen");
+                    document.addEventListener('visibilitychange', function () {
+                        if (document.hidden) {
+                            // Page is becoming hidden (e.g., user switches tabs or minimizes the window)
+                            // Perform any necessary actions here.
+                            console.log('Page is hidden');
+                        } else {
+                            // Page is becoming visible again
+                            // Perform any necessary actions here.
+                            console.log('Page is visible');
                         }
                     });
+
                 } catch (err) {
                     console.error(`WakeLock failed: ${err.message}`);
                 }
@@ -310,6 +336,10 @@
 
             // Add geolocate event listener
             geolocate.on("geolocate", async (e) => {
+                // Now retrieve the session ID whenever needed
+                const sessionId = sessionStorage.getItem('sessionId');
+                console.log(sessionId);
+
                 geoLngLat = e.coords; // Store the geolocate coordinates in the global variable
 
                 if (this.markerManager.lastClickedMarkerLngLat) {
@@ -320,6 +350,10 @@
                     // Set originalRoute to the routeData if originalRoute is not defined
                     if (!originalRoute) {
                         originalRoute = this.routeData;
+                        // Displace the original route geometry by 0.0005 degrees in the longitude direction
+                        originalRoute.route.geometry.coordinates = originalRoute.route.geometry.coordinates.map((coord) => {
+                            return [coord[0] + 0.0005, coord[1]];
+                        });
                     }
 
                     // Draw the original route defined by route field in originalRoute
@@ -328,11 +362,6 @@
                             this.map.removeLayer('original_route');
                             this.map.removeSource('original_route');
                         }
-
-                        // Displace the original route geometry by 0.0005 degrees in the longitude direction
-                        originalRoute.route.geometry.coordinates = originalRoute.route.geometry.coordinates.map((coord) => {
-                            return [coord[0] + 0.0005, coord[1]];
-                        });
 
                         this.map.addSource('original_route', {
                             'type': 'geojson',
@@ -605,14 +634,6 @@
                     'properties': {},
                     'geometry': route_geometry
                 });
-
-                // // Initialize variables at the beginning of the function
-                // let distance = '0 m'; // Default value for distance
-                // let duration = 0; // Default value for duration
-                // let eta = ''; // Default value for estimated time of arrival
-                // let address = 'No address found'; // Default default value for address
-                // let durée = '00:00:00'; // Default value for duration in HH:MM:SS format
-
                 return this.routeData;
             }
 
@@ -1255,6 +1276,62 @@
             } else {
                 this.contactsTextbox.container.style.visibility = "hidden";
             }
+        }
+    }
+
+    class CompassControl {
+        constructor(map) {
+            this.map = map;
+            this.compassControl = document.createElement("div");
+            this.compassControl.classList.add("compass-control");
+
+            // Set id to CompassControl
+            this.compassControl.id = "compass_control";
+
+            this.container = null;
+        }
+
+        onAdd() {
+            this.container = document.createElement('div');
+            this.container.className = 'compass-control mapboxgl-ctrl compass-image_green';
+            // this.container.style.backgroundColor = backgroundColor;
+
+
+            // Set size of the container
+            this.container.style.width = "50px";
+            this.container.style.height = "50px";
+
+            this.container.innerText = '';
+            // Set the position of the container
+            // this.container.style.transform = "translate(-105%, -6%)";
+
+            // Set overflow to auto
+            this.container.style.overflow = "auto";
+
+            // Set vertical scroll bar
+            this.container.style.overflowY = "scroll";
+
+            this.container.style.border = "1px solid";
+            this.container.style.borderColor = "rgba(194, 181, 181)";
+            // Add more styles as needed...
+
+            return this.container;
+        }
+
+        onRemove() {
+            this.container.parentNode.removeChild(this._container);
+            this._map = undefined;
+        }
+
+        _setPosition() {
+            this.container.style.position = "absolute";
+            this.container.style.left = "5px";
+            this.container.style.top = "50%";
+            this.container.style.transform = "translateY(-50%)";
+        }
+
+        setRotation(heading) {
+            this.container.style.transform = `rotate(${heading}deg)`;
         }
     }
 
