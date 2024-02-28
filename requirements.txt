@@ -35,7 +35,7 @@ pyasn1-modules==0.3.0
 pycparser==2.21
 pyOpenSSL==24.0.0
 python-http-client==3.3.7
-redis==5.0.1
+redis==5.0.2
 requests==2.31.0
 semver==3.0.2
 sendgrid==6.11.0
