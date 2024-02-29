@@ -21,19 +21,6 @@
 
     <title>Title</title>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #map {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 {% csrf_token %}
@@ -46,8 +33,25 @@
 </div>
 
 <div class="flex-parent flex-parent--column fixed left right top bottom">
-    <div class="w-full h-full flex-child flex-child--grow" id="map"></div>
+    <div class="w-full map-container flex-child flex-child--grow" id="map"></div>
 </div>
+
+<!-- Footer for log -->
+<footer class="footer fixed-bottom bg-light p-0" id="footer">
+    <div id="logContainer" class="overflow-auto">
+    </div>
+    <pre id="scriptContentDisplay">Your script content goes
+        here,
+        possibly
+        loaded
+        dynamically</pre>
+
+    <div class="d-flex justify-content-between" id="buttons-container">
+        <button id="clearLog" class="btn btn-sm btn-danger">Clear log</button>
+        <button id="toggleLog" class="btn btn-sm btn-primary">Show log</button>
+    </div>
+</footer>
+
 
 {#Start. Confirmation dialog#}
 

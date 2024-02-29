@@ -7,6 +7,96 @@
     let contactsTextbox = null; // Variable to store the contacts textbox instance
     let contacts = null; // Variable to store the contacts data
 
+    fetch('..//static/js/mymap.js')
+        .then(response => response.text())
+        .then(data => {
+            // Get the HTML element with id 'scriptContentDisplay'
+            let scriptContentDisplay = document.getElementById('scriptContentDisplay');
+            // Set the content of the HTML element to the data
+            // Wrap each line of `data` in a <div> element
+            // scriptContentDisplay.innerHTML = data.split("\n").map(line => `<div>${line}</div>`).join('');
+            scriptContentDisplay.innerHTML = data;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
+
+    function showLineInScript(lineNumber) {
+        // Get the scriptContentDisplay element
+        const scriptContentDisplay = document.getElementById('scriptContentDisplay');
+
+        // Get the number of lines in the scriptContentDisplay element
+        const lines = scriptContentDisplay.textContent.split("\n");
+
+        console.log('lines length', lines.length);
+        console.log('lineNumber', lineNumber);
+
+        // Check if lineNumber is valid
+        if (lineNumber > 0 && lineNumber <= lines.length) {
+            // Scroll scriptContentDisplay to the specified line number
+            scriptContentDisplay.scrollTop = (lineNumber - 1) * 20;
+
+
+            // Scroll the specified line into view
+            // lines[lineNumber - 1].scrollIntoView();
+        } else {
+            console.warn(lineNumber);
+            console.error('Invalid line number');
+        }
+    }
+
+    function logMessage(message) {
+        const errorStack = new Error().stack;
+        const lineInfo = errorStack.split("\n")[2]; // This might need adjustment
+
+        // Parse `lineInfo` to extract the line number, which is highly dependent on the browser and stack format
+        let parts = lineInfo.split(":");
+        let lineNumber = parts[parts.length - 2]; // The line number is the second last part after splitting by colon
+
+        const container = document.getElementById('logContainer');
+        const newLogEntry = document.createElement('div');
+
+        // Create a new text node for lineNumber and append it to newLogEntry
+        const lineNumberTextNode = document.createTextNode(lineNumber + ". ");
+        newLogEntry.appendChild(lineNumberTextNode);
+
+        // Create a new text node for message and append it to newLogEntry
+        const anchor = document.createElement('a');
+        anchor.href = "#";
+        anchor.onclick = function () {
+            showLineInScript(lineNumber);
+        };
+        anchor.textContent = message;
+        newLogEntry.appendChild(anchor);
+
+
+        container.appendChild(newLogEntry);
+
+        // Scroll to the bottom of the log container
+        container.scrollTop = container.scrollHeight;
+    }
+
+    logMessage('Page loaded.');
+    logMessage(`Current time: ${new Date().toLocaleTimeString()}`);
+
+    // When clearLog is clicked, clear the logContainer content
+    document.getElementById('clearLog').addEventListener('click', () => {
+        const container = document.getElementById('logContainer');
+        container.innerHTML = '';
+    });
+
+    // When the toggleLog button is clicked, show or hide the logContainer
+    document.getElementById('toggleLog').addEventListener('click', () => {
+        const footer = document.getElementById('footer');
+        if (footer.style.height === "50px") {
+            footer.style.height = "300px";
+        } else {
+            footer.style.height = "50px";
+        }
+    });
+
+
     class MapInitializer {
         constructor(containerId, style, center, zoom) {
             // Check if a session ID already exists
@@ -72,15 +162,6 @@
 
             // Close the contacts list when the map is clicked
             this.map.on('click', () => {
-                // if (contactsTextbox) {
-                //     contactsTextbox.container.style.transform = "translateX(-90%)";
-                //     contactsTextbox.container.style.overflowY = "hidden";
-                //     contactsTextbox.container.childNodes.forEach((element) => {
-                //         element.style.visibility = "hidden";
-                //     });
-                //     contactsTextbox.container.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-                // }
-
                 this.resetGeocoderInput();
                 this.resetContactsTextbox();
             });
@@ -116,18 +197,15 @@
                         this.map.removeLayer('original_route');
                         this.map.removeSource('original_route');
                     }
-
                     // Displace the original route geometry by 0.0005 degrees in the longitude direction
                     this.routeData.route.geometry.coordinates = this.routeData.route.geometry.coordinates.map((coord) => {
                         return [coord[0] + 0.0005, coord[1]];
                     });
-
                     // Use route.geometry to  recreate the original route source and layer
                     this.map.addSource('original_route', {
                         'type': 'geojson',
                         'data': this.routeData.route.geometry
                     });
-
                     // Add the original route layer
                     this.map.addLayer({
                         'id': 'original_route',
@@ -138,7 +216,7 @@
                             'line-cap': 'round'
                         },
                         'paint': {
-                            'line-color': 'rgba(0,255,21,0.26)',
+                            'line-color': 'rgba(0,25,180,0.91)',
                             'line-width': 8
                         }
                     });
@@ -177,44 +255,39 @@
 
             // Function to simulate geolocation change
             function simulateGeolocationChange() {
-                if (currentIndex >= locations.length) {
-                    currentIndex = 0; // Loop back to the start
+                let lastLogTime = 0; // Initialize the last log time
+
+                function update() {
+                    if (currentIndex >= locations.length) {
+                        currentIndex = 0; // Loop back to the start
+                    }
+
+                    const location = locations[currentIndex++];
+                    const [lng, lat] = location['coords'];
+                    const heading = 90 - location['heading'];
+
+                    // Update mock compass rotation every 1 second
+                    mock_compass.setRotation(heading);
+
+                    // Update mock marker position
+                    mock_marker.setLngLat([lng, lat]);
+
+                    const now = Date.now(); // Get the current time in milliseconds
+
+                    // logMessage(`Mock heading: ${heading}`); // Log the heading to the console
+
+                    // Check if at least 5 seconds have passed since the last log
+                    if (now - lastLogTime >= 5000) {
+                        logMessage(`Tick. Mock heading: ${heading}`); // Log the heading to the console
+
+                        lastLogTime = now; // Update the last log time
+                    }
+
+                    // Schedule the next location update
+                    setTimeout(update, 1000); // Continue updating location every second
                 }
 
-                const [lng, lat] = locations[currentIndex++]['coords'];
-
-
-                // Get the mock_compass control and rotate it to 45 degrees
-                // const mock_compass = document.querySelector('compass-control');
-                // console.log('mock_compass', mock_compass);
-
-
-                // this.mock_compass.setRotation(90); // Rotate the compass to the new heading (90 degrees in this case)
-
-                const heading = `rotate(${90 - locations[currentIndex - 1]['heading']}deg)`;
-                mock_compass.setRotation(90 - locations[currentIndex - 1]['heading']); // Rotate the compass to the new heading (90 degrees in this
-                // case
-
-                // Rotate the CompassControl to the new heading
-
-                // Update the map view to the new location
-                // map.flyTo({
-                //     center: [lng, lat],
-                //     essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                // });
-
-
-                // Update mock marker  position
-                mock_marker.setLngLat([lng, lat]);
-
-                let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
-                if (geolocationUserIcon) {
-                    // Get the heading from valbonne to the current location without using turf.js
-                }
-
-                // Schedule the next location update
-                setTimeout(simulateGeolocationChange, 1000); // Update location every 2 seconds
-                currentIndex++;
+                update(); // Start the update process
             }
 
             // // Start simulating geolocation tracking //////////////////////////////
@@ -334,6 +407,9 @@
             this.map.addControl(geolocate, "top-right");
 
 
+            let lastLoggedHeading = null; // Variable to store the last logged heading
+            let lastLogTime = 0; // Variable to store the last log time in milliseconds
+
             // Add geolocate event listener
             geolocate.on("geolocate", async (e) => {
                 // Now retrieve the session ID whenever needed
@@ -362,12 +438,10 @@
                             this.map.removeLayer('original_route');
                             this.map.removeSource('original_route');
                         }
-
                         this.map.addSource('original_route', {
                             'type': 'geojson',
                             'data': originalRoute.route.geometry
                         });
-
                         this.map.addLayer({
                             'id': 'original_route',
                             'type': 'line',
@@ -377,38 +451,11 @@
                                 'line-cap': 'round'
                             },
                             'paint': {
-                                'line-color': 'rgba(255,165,0,0.26)',
+                                'line-color': 'rgba(211,0,0,0.75)',
                                 'line-width': 8
                             }
                         });
                     }
-
-                    // Draw the original route defined by originalRoute
-                    // if (originalRoute) {
-                    //     if (map.getSource('original_route')) {
-                    //         map.removeLayer('original_route');
-                    //         map.removeSource('original_route');
-                    //     }
-                    //
-                    //     map.addSource('original_route', {
-                    //         'type': 'geojson',
-                    //         'data': originalRoute
-                    //     });
-                    //
-                    //     map.addLayer({
-                    //         'id': 'original_route',
-                    //         'type': 'line',
-                    //         'source': 'original_route',
-                    //         'layout': {
-                    //             'line-join': 'round',
-                    //             'line-cap': 'round'
-                    //         },
-                    //         'paint': {
-                    //             'line-color': '#888',
-                    //             'line-width': 8
-                    //         }
-                    //     });
-                    // }
                 }
 
                 let geolocationUserIcon = document.querySelector('.mapboxgl-user-location-dot');
@@ -437,10 +484,28 @@
 
                 // Set the rotation of the compass to the current heading of the device if e.coords.heading is defined
                 if (e.coords.heading) {
-                    console.log("Heading:", e.coords.heading);
-                    // compass.setRotation(e.coords.heading);
-                    // rotate the geolocationUserIcon to match the heading of the device
                     geolocationUserIcon.style.transform = `rotate(${e.coords.heading}deg)`;
+                }
+
+                // New logic for heading logging with conditions
+                // Append e.coords.heading to logFooter
+                logMessage(`Heading: ${e.coords.heading}`);
+
+                console.log("e.coords.heading:", e.coords.heading);
+                console.log("lastLoggedHeading:", lastLoggedHeading);
+                if (e.coords.heading !== lastLoggedHeading && (Date.now() - lastLogTime >= 5000)) {
+                    console.log("Heading:", e.coords.heading);
+                    lastLoggedHeading = e.coords.heading; // Update the last logged heading
+                    lastLogTime = Date.now(); // Update the last log time
+                }
+
+                // Existing code to handle heading, such as updating the UI...
+                if (e.coords.heading) {
+                    console.log("Example: Update the UI with the new heading. Heading:", e.coords.heading);
+                    // Example: Update the UI with the new heading
+                    // This is where you would rotate the compass or geolocation icon, for example
+                    // compass.setRotation(e.coords.heading);
+                    // geolocationUserIcon.style.transform = `rotate(${e.coords.heading}deg)`;
                 }
             });
 
@@ -589,7 +654,6 @@
                         'geometry': route_geometry
                     }
                 });
-
                 this.map.addLayer({
                     'id': routeId,
                     'type': 'line',
@@ -599,8 +663,7 @@
                         'line-cap': 'round'
                     },
                     'paint': {
-                        'line-color': 'rgba(208,79,9,0.7)', // Transparent orange color rgba(255, 165, 0, 0.5)
-                        // 'line-opacity': 0.5, // Transparency level
+                        'line-color': 'rgba(208,79,9,0.7)',
                         'line-width': 8
                     }
                 });
@@ -924,17 +987,13 @@
                                     this.map.removeLayer('original_route');
                                     this.map.removeSource('original_route');
                                 }
-
-                                // Displace the original route geometry by 0.0005 degrees in the longitude direction
                                 res.route.geometry.coordinates = res.route.geometry.coordinates.map((coord) => {
                                     return [coord[0] + 0.0005, coord[1]];
                                 });
-                                // Use route.geometry to  recreate the original route source and layer
                                 this.map.addSource('original_route', {
                                     'type': 'geojson',
                                     'data': res.route.geometry
                                 });
-                                // Add the original route layer
                                 this.map.addLayer({
                                     'id': 'original_route',
                                     'type': 'line',
@@ -949,11 +1008,8 @@
                                     }
                                 });
                             }
-
-
                         }
                     }
-
                 });
 
                 // Store the marker for future reference

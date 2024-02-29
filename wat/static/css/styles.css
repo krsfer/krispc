@@ -6,9 +6,89 @@ body {
 #map {
     position: absolute;
     top: 0;
-    bottom: 0;
     width: 100%;
 }
+
+.map-container {
+    bottom: 50px; /* Adjust based on the height of the footer */
+}
+
+#logContainer {
+    counter-reset: line; /* Initialize the line counter */
+    max-height: 200px; /* Adjust based on your requirements */
+    overflow-y: auto; /* Ensure content can scroll vertically */
+
+    background-color: lightgray;
+
+    font-family: 'Courier New', monospace;
+    font-size: small;
+}
+
+#logContainer div::before {
+    counter-increment: line; /* Increment the line counter for each div */
+    content: counter(line) ". "; /* Display the counter value and a period */
+    margin-right: 8px; /* Space between the line number and log message */
+    display: inline-block; /* Ensure the numbering is inline with text */
+    width: 30px; /* Adjust the width as needed to fit larger numbers */
+    text-align: right; /* Align the numbers to the right for consistency */
+}
+
+
+#logMessages {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#logMessages > code {
+    display: block;
+    counter-increment: line;
+}
+
+#logMessages > code:before {
+    content: counter(line);
+    display: inline-block;
+    width: 30px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+#scriptContentDisplay {
+    max-height: 100px; /* Adjust based on your requirements */
+    overflow-y: auto; /* Ensure content can scroll vertically */
+    background-color: lightgray;
+    font-family: 'Courier New', monospace;
+    font-size: xx-small;
+    border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+/* Add line numbers to scriptContentDisplay */
+#scriptContentDisplay div::before {
+    counter-increment: line; /* Increment the line counter for each div */
+    content: counter(line) ". "; /* Display the counter value and a period */
+    margin-right: 8px; /* Space between the line number and log message */
+    display: inline-block; /* Ensure the numbering is inline with text */
+    width: 30px; /* Adjust the width as needed to fit larger numbers */
+    text-align: right; /* Align the numbers to the right for consistency */
+}
+
+
+#buttons-container {
+    position: absolute;
+    flex-direction: row;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    display: flex;
+    /*flex-direction: column;*/
+    align-items: flex-end;
+    padding: 10px;
+}
+
+#buttons-container button {
+    height: 23px;
+    font-size: x-small;
+}
+
 
 .fade-out {
     opacity: 0;
