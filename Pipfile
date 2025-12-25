@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
+django = ">=6.0"
 gunicorn = "*"
 dj-database-url = "*"
 whitenoise = "*"
@@ -12,7 +12,7 @@ psycopg = "*"
 requests = "*"
 psycopg2 = "*"
 django-redis = "*"
-asgiref = "==3.7.2"
+asgiref = "*"
 channels = "*"
 channels-redis = "*"
 daphne = "*"
@@ -26,8 +26,9 @@ crispy-bootstrap5 = "*"
 django-htmx = "*"
 sendgrid = "*"
 django-environ = "*"
+django-vite = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12.2"
+python_version = "3.13"

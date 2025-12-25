@@ -93,6 +93,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Vite integration for modern frontend
+    "django_vite",
     # "django_user_agents",
     "django_htmx",
     "crispy_forms",
@@ -108,6 +110,16 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = '_main.asgi.application'
 WSGI_APPLICATION = '_main.wsgi.application'
 
+# Django Vite configuration for modern frontend assets
+DJANGO_VITE = {
+    'default': {
+        'dev_mode': False,  # Set to False to use production build
+        'dev_server_host': 'localhost',
+        'dev_server_port': 5173,
+        'manifest_path': BASE_DIR / 'krispc' / 'static' / 'dist' / '.vite' / 'manifest.json',
+    }
+}
+
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 
 EMAIL_HOST = 'smtp.sendgrid.net'
@@ -117,14 +129,23 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG':  {
-            'hosts': [REDIS_URL],
+if DEBUG:
+    # Use in-memory channel layer for development
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
         },
-    },
-}
+    }
+else:
+    # Use Redis for production
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG':  {
+                'hosts': [REDIS_URL],
+            },
+        },
+    }
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -134,6 +155,7 @@ MIDDLEWARE = [
     # See: https://whitenoise.readthedocs.io
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",  # Required for i18n URL patterns
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -234,6 +256,12 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
+
+# Additional locations for static files
+STATICFILES_DIRS = [
+    BASE_DIR / "krispc" / "static" / "dist",  # Vite build output
+    BASE_DIR / "krispc" / "static",           # Images and other static assets
+]
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, "krispc/locale"),

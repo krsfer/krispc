@@ -16,3 +16,10 @@ db.sqlite3
 
 # macOS files
 .DS_Store
+
+# Node.js / npm
+node_modules/
+package-lock.json
+
+# Vite build output
+krispc/static/dist/

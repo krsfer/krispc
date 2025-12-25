@@ -126,9 +126,11 @@ msgstr "Support imprimantes"
 #: krispc/lst_products.py:57
 msgid "PTR_0410"
 msgstr ""
-"Les magasins vendent des imprimantes mais n&rsquo;en font pas la "
-"maintenance. Au lieu de jeter votre matériel cassé, faites-le réparer a "
-"moindre coût."
+"Avez-vous remarqué que tous les magasins en ligne et fournisseurs vendent "
+"des imprimantes, mais personne ne les répare&nbsp;? Cela n&rsquo;a pas "
+"changé depuis des années. La plupart des fournisseurs trouvent plus facile "
+"de vendre et d&rsquo;oublier que de fournir un véritable service client. "
+"Ne jetez pas votre équipement cassé&mdash;faites-le réparer à moindre coût."
 
 #: krispc/lst_products.py:58
 msgid "PTR_0420"

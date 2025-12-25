@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 from pprint import pprint
@@ -6,7 +7,7 @@ import coloredlogs
 from crispy_forms.utils import render_crispy_form
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.utils.translation import get_language
+from django.utils.translation import get_language, gettext as _
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import TemplateView
 from django_htmx.middleware import HtmxDetails
@@ -61,16 +62,115 @@ class IndexPageView(TemplateView):
 
     def render_to_response(self, context, **response_kwargs):
         # request.META.get('HTTP_REFERER')
+        prods_data = lst_products.data()
+        colophon_data = colophon.data()
+        marques_data = marques.data()
+        villes_data = lst_villes.data()
+
+        # UI translations for Vue components
+        locale = get_language()
+        is_french = locale.startswith('fr')
+
+        ui_translations = {
+            'nav': {
+                'home': _('PTR_0160'),
+                'about': _('PTR_0190'),
+                'services': _('PTR_0120'),
+                'team': _('PTR_0800'),
+                'contact': 'Contact',
+            },
+            'hero': {
+                'title': _('PTR_0120'),
+                'subtitle': _('PTR_0040'),
+                'note1': _('PTR_2055'),
+                'note2': _('PTR_2057'),
+            },
+            'sections': {
+                'services_title': _('PTR_0120'),
+                'about_title': _('PTR_0190'),
+                'team_title': _('PTR_0800'),
+                'contact_title': 'Contact',
+            },
+            'about': {
+                'subtitle': _('PTR_0180'),
+                'title': 'À propos de KrisPC' if is_french else 'About KrisPC',
+                'description': 'Nous sommes une équipe de professionnels de l\'informatique expérimentés, dédiés à fournir des services de réparation, de maintenance et de support informatique de haute qualité.' if is_french else 'We are a team of experienced IT professionals dedicated to providing top-quality computer repair, maintenance, and support services.',
+                'commitment': 'Notre engagement envers l\'excellence et la satisfaction client a fait de nous un partenaire de confiance pour les entreprises et les particuliers dans toute la région.' if is_french else 'Our commitment to excellence and customer satisfaction has made us a trusted partner for businesses and individuals throughout the region.',
+                'features': [
+                    {'title': 'Rapidité' if is_french else 'Fast Turnaround', 'desc': 'Diagnostics et réparations rapides pour vous remettre en marche' if is_french else 'Quick diagnostics and repairs to get you back up and running'},
+                    {'title': 'Qualité Garantie' if is_french else 'Quality Guaranteed', 'desc': 'Tous nos travaux sont couverts par des garanties complètes' if is_french else 'All our work is backed by comprehensive warranties'},
+                    {'title': 'Équipe Experte' if is_french else 'Expert Team', 'desc': 'Techniciens certifiés avec des années d\'expérience pratique' if is_french else 'Certified technicians with years of hands-on experience'},
+                ],
+                'stats': [
+                    {'value': '10+', 'label': 'Ans d\'Expérience' if is_french else 'Years Experience'},
+                    {'value': '500+', 'label': 'Clients Satisfaits' if is_french else 'Happy Clients'},
+                    {'value': '1000+', 'label': 'Réparations Effectuées' if is_french else 'Repairs Done'},
+                    {'value': '24/7', 'label': 'Support' if is_french else 'Support'},
+                ],
+            },
+            'team': {
+                'title': _('PTR_0800'),
+                'subtitle': _('PTR_0210'),
+                'members': [
+                    {
+                        'name': 'John Doe',
+                        'role': 'Technicien Principal' if is_french else 'Lead Technician',
+                        'bio': 'Plus de 10 ans d\'expérience en réparation d\'ordinateurs et support informatique' if is_french else 'Over 10 years of experience in computer repair and IT support',
+                        'social': {'LinkedIn': '#', 'Twitter': '#'}
+                    },
+                    {
+                        'name': 'Jane Smith',
+                        'role': 'Spécialiste Systèmes' if is_french else 'Systems Specialist',
+                        'bio': 'Experte en administration réseau et cybersécurité' if is_french else 'Expert in network administration and cybersecurity',
+                        'social': {'LinkedIn': '#', 'GitHub': '#'}
+                    },
+                    {
+                        'name': 'Mike Johnson',
+                        'role': 'Expert Matériel' if is_french else 'Hardware Expert',
+                        'bio': 'Spécialisé dans les diagnostics matériels et mises à niveau' if is_french else 'Specializing in hardware diagnostics and upgrades',
+                        'social': {'LinkedIn': '#', 'Twitter': '#'}
+                    }
+                ]
+            },
+            'contact': {
+                'title': 'Contactez-nous' if is_french else 'Get In Touch',
+                'subtitle': 'Vous avez une question ou besoin d\'assistance ? Envoyez-nous un message et nous vous répondrons dans les plus brefs délais' if is_french else 'Have a question or need assistance? Send us a message and we\'ll get back to you as soon as possible',
+                'firstName': 'Prénom' if is_french else 'First Name',
+                'lastName': 'Nom' if is_french else 'Last Name',
+                'email': 'Email',
+                'message': 'Message',
+                'required': '*',
+                'send': 'Envoyer le message' if is_french else 'Send Message',
+                'sending': 'Envoi en cours...' if is_french else 'Sending...',
+                'successMessage': 'Merci pour votre message ! Nous vous répondrons bientôt.' if is_french else 'Thank you for your message! We will get back to you soon.',
+                'errorGeneral': 'Une erreur s\'est produite. Veuillez réessayer plus tard.' if is_french else 'An error occurred. Please try again later.',
+                'errorSubmit': 'Une erreur s\'est produite. Veuillez réessayer.' if is_french else 'Something went wrong. Please try again.',
+            },
+            'footer': {
+                'tagline': 'Services informatiques professionnels et réparation d\'ordinateurs' if is_french else 'Professional IT services and computer repair',
+                'services_title': _('PTR_0120'),
+                'contact_title': 'Contact',
+                'team_title': _('PTR_0800'),
+                'copyright': '© 2025 KrisPC. Tous droits réservés.' if is_french else '© 2025 KrisPC. All rights reserved.',
+            }
+        }
+
         response = super(IndexPageView, self).render_to_response(
             {
                 "redirect_to": "",
                 "locale":      get_language(),
-                "colophon":    colophon.data(),
-                "marques":     marques.data(),
-                "prods":       lst_products.data(),
+                "colophon":    colophon_data,
+                "marques":     marques_data,
+                "prods":       prods_data,
                 "form":        forms.ContactForm(),
-                "villes":      lst_villes.data(),
+                "villes":      villes_data,
                 "VER":         settings.VER,
+                # JSON-serialized versions for Vue
+                "prods_json":    json.dumps(prods_data),
+                "colophon_json": json.dumps(colophon_data),
+                "marques_json":  json.dumps(marques_data),
+                "villes_json":   json.dumps(villes_data),
+                "ui_translations_json": json.dumps(ui_translations),
             },
             **response_kwargs,
         )

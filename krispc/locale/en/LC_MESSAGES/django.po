@@ -133,9 +133,9 @@ msgstr "Printer configuration and troubleshoot"
 msgid "PTR_0410"
 msgstr ""
 "Have you noticed that every online store and supplier sells printers, but no "
-"one repairs them? This hasn't changed in years. It is easier to sell and "
-"forget than to take care of a customer service. Do not throw away your "
-"broken equipment, just have it repaired at a lower cost."
+"one repairs them? This hasn't changed in years. Most suppliers find it easier "
+"to sell and forget than to provide real customer service. Don't throw away your "
+"broken equipment—have it repaired at a lower cost."
 
 #: krispc/lst_products.py:58
 msgid "PTR_0420"

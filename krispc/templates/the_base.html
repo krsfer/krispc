@@ -1,93 +1,46 @@
 {% load i18n %}
 {% load static %}
-{% load crispy_forms_tags %}
-{% load crispy_forms_filters %}
+{% load django_vite %}
 {% load django_htmx %}
 
 <!DOCTYPE html>
-<html lang="fr">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
-    <title>KrisPC.</title>
-    <meta content="" name="description" />
-    <meta content="" name="keywords" />
+    <title>{% block title %}KrisPC.{% endblock %}</title>
+    <meta content="{% block description %}Professional IT services and computer repair{% endblock %}" name="description" />
+    <meta content="{% block keywords %}computer repair, IT support, maintenance{% endblock %}" name="keywords" />
 
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-      rel="stylesheet"
-    />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&display=swap" rel="stylesheet">
 
-    <!-- Vendor CSS Files -->
-    <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet" />
-    <link
-      href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"
-      rel="stylesheet"
-    />
-    <link
-      href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}"
-      rel="stylesheet"
-    />
-    <link
-      href="{% static 'vendor/boxicons/css/boxicons.min.css' %}"
-      rel="stylesheet"
-    />
-    <link
-      href="{% static 'vendor/glightbox/css/glightbox.min.css' %}"
-      rel="stylesheet"
-    />
-    <link
-      href="{% static 'vendor/remixicon/remixicon.css' %}"
-      rel="stylesheet"
-    />
-    <link
-      href="{% static 'vendor/swiper/swiper-bundle.min.css' %}"
-      rel="stylesheet"
-    />
+    <!-- Vite Assets -->
+    {% vite_hmr_client %}
+    {% vite_asset 'main.js' %}
 
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'fonts/lobster/style.css' %}"
-    />
-
-    <!-- Template Main CSS File -->
-    <link href="{% static 'css/the_style.css' %}" rel="stylesheet" />
-
-    <!-- =======================================================
-    * Template Name: Gp - v4.9.1
-    * Template URL: https://bootstrapmade.com/gp-free-multipurpose-html-bootstrap-template/
-    * Author: BootstrapMade.com
-    * License: https://bootstrapmade.com/license/
-    ======================================================== -->
+    {% block extra_css %}{% endblock %}
   </head>
 
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    {% block main %}{% endblock %} {% comment %}See _index.html, {% extends
-    "base.html" %} {% endcomment %}
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="antialiased">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded">
+      Skip to main content
+    </a>
 
-    <div id="preloader"></div>
-    <a
-      href="#"
-      class="back-to-top d-flex align-items-center justify-content-center"
-      ><i class="bi bi-arrow-up-short"></i
-    ></a>
+    <!-- Vue App Root -->
+    <div id="app">
+      {% block main %}{% endblock %}
+    </div>
 
-    <!-- Vendor JS Files -->
-    <script src="{% static 'vendor/aos/aos.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
-    <script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-    <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
-    <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
-
+    <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org" defer></script>
-
     {% django_htmx_script %}
 
-    <!-- Template Main JS File -->
-    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
   </body>
 </html>
