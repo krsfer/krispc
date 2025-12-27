@@ -16,13 +16,25 @@ Including another URLconf
 """
 from django.conf.urls.i18n import i18n_patterns
 # from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import include, path
 
 import hello.views
 import krispc.views
 import wat.views
 
-urlpatterns = i18n_patterns(
+
+def health_check(request):
+    """Health check endpoint for fly.io"""
+    return JsonResponse({"status": "healthy"}, status=200)
+
+
+# Health check endpoint (outside i18n_patterns, no trailing slash to match fly.toml)
+urlpatterns = [
+    path('health', health_check, name='health'),
+]
+
+urlpatterns += i18n_patterns(
     path("", include("krispc.urls")),
     path("wat/", include("wat.urls")),
     #

@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install
 
 # Copy frontend source files
 COPY krispc/static/src ./krispc/static/src
@@ -44,6 +44,11 @@ COPY --from=node-builder /app/krispc/static/dist ./krispc/static/dist
 COPY . .
 
 # Collect static files (includes Vite assets)
+# Use dummy values for build stage (real values set via Fly.io secrets)
+ENV SECRET_KEY="build-stage-dummy-key-not-used-in-production" \
+    MAPBOX_TOKEN="build-dummy" \
+    GOOGLE_MAPS_API_KEY="build-dummy" \
+    SENDGRID_API_KEY="build-dummy"
 RUN python manage.py collectstatic --noinput
 
 # Create non-root user for security
