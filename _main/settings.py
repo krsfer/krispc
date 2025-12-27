@@ -52,8 +52,10 @@ SECRET_KEY = env('SECRET_KEY')
 # IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
 
 IS_HEROKU_APP = env.str("DYNO", default="") and not env.str("CI", default="")
+IS_FLY_APP = env.str("FLY_APP", default="")
+IS_PRODUCTION = IS_HEROKU_APP or IS_FLY_APP
 
-CSRF_TRUSTED_ORIGINS = ['https://krispc-c2edb2fe441a.herokuapp.com', 'https://krispc.fr', 'https://www.krispc.fr']
+CSRF_TRUSTED_ORIGINS = ['https://krispc-c2edb2fe441a.herokuapp.com', 'https://krispc.fr', 'https://www.krispc.fr', 'https://krispc.fly.dev']
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
 GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
@@ -62,19 +64,19 @@ GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
 
 DEBUG = False
 # SECURITY WARNING: don't run with debug turned on in production!
-if not IS_HEROKU_APP:
+if not IS_PRODUCTION:
     DEBUG = True
 
-if not IS_HEROKU_APP:
+if not IS_PRODUCTION:
     SENDGRID_API_KEY = env('SENDGRID_API_KEY')
 else:
     SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
 
-# On Heroku, it's safe to use a wildcard for `ALLOWED_HOSTS``, since the Heroku router performs
+# On Heroku and fly.io, it's safe to use a wildcard for `ALLOWED_HOSTS`, since the proxy performs
 # validation of the Host header in the incoming HTTP request. On other platforms you may need
 # to list the expected hostnames explicitly to prevent HTTP Host header attacks. See:
 # https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-ALLOWED_HOSTS
-if IS_HEROKU_APP:
+if IS_PRODUCTION:
     ALLOWED_HOSTS = ["*"]
 else:
     ALLOWED_HOSTS = []
@@ -138,10 +140,11 @@ if DEBUG:
     }
 else:
     # Use Redis for production
+    # Handle both standard Redis and Upstash Redis (rediss:// with TLS)
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG':  {
+            'CONFIG': {
                 'hosts': [REDIS_URL],
             },
         },
@@ -186,29 +189,12 @@ TEMPLATES = [
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# Uses SQLite by default. Can be overridden with DATABASE_URL environment variable.
+# https://github.com/jazzband/dj-database-url
 
-if IS_HEROKU_APP:
-    # In production on Heroku the database configuration is derived from the `DATABASE_URL`
-    # environment variable by the dj-database-url package. `DATABASE_URL` will be set
-    # automatically by Heroku when a database addon is attached to your Heroku app. See:
-    # https://devcenter.heroku.com/articles/provisioning-heroku-postgres
-    # https://github.com/jazzband/dj-database-url
-    DATABASES = {
-        "default": dj_database_url.config(
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True,
-        ),
-    }
-else:
-    # When running locally in development or in CI, a sqlite database file will be used instead
-    # to simplify initial setup. Longer term it's recommended to use Postgres locally too.
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+DATABASES = {
+    "default": dj_database_url.config(default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')
+}
 
 
 # Password validation
