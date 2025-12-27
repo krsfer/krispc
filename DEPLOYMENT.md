@@ -35,7 +35,7 @@ This guide covers deploying the modernized KrisPC Django application with Vue 3 
 - [ ] Production server provisioned
 - [ ] Python 3.13+ installed
 - [ ] Node.js 18+ installed
-- [ ] PostgreSQL/MySQL configured (if not using SQLite)
+- [ ] Database location confirmed (SQLite at ./db.sqlite3)
 - [ ] Nginx/Apache configured
 - [ ] SSL certificate installed
 - [ ] Domain DNS configured
@@ -82,8 +82,9 @@ DEBUG=False
 SECRET_KEY=your-secure-secret-key-here
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
 
-# Database (example for PostgreSQL)
-DATABASE_URL=postgres://user:password@localhost:5432/krispc
+# Database (SQLite by default, no configuration needed)
+# Optional: Override with DATABASE_URL if needed
+# DATABASE_URL=sqlite:///path/to/custom/db.sqlite3
 
 # Static files
 STATIC_ROOT=/var/www/krispc/static
