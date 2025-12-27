@@ -1,0 +1,60 @@
+# Stage 1: Build frontend assets with Node.js
+FROM node:18-slim AS node-builder
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copy frontend source files
+COPY krispc/static/src ./krispc/static/src
+COPY vite.config.js postcss.config.js tailwind.config.js ./
+
+# Build Vite assets
+RUN npm run build
+
+# Stage 2: Install Python dependencies
+FROM python:3.13-slim AS python-builder
+
+WORKDIR /app
+
+# Install pipenv
+RUN pip install --no-cache-dir pipenv
+
+# Copy Pipfile and Pipfile.lock
+COPY Pipfile Pipfile.lock ./
+
+# Install Python dependencies into system Python
+RUN pipenv install --system --deploy --ignore-pipfile
+
+# Stage 3: Production runtime
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# Copy Python packages from builder stage
+COPY --from=python-builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+COPY --from=python-builder /usr/local/bin /usr/local/bin
+
+# Copy Vite build artifacts from node builder
+COPY --from=node-builder /app/krispc/static/dist ./krispc/static/dist
+
+# Copy application code
+COPY . .
+
+# Collect static files (includes Vite assets)
+RUN python manage.py collectstatic --noinput
+
+# Create non-root user for security
+RUN useradd -m -u 1000 django && \
+    chown -R django:django /app
+
+USER django
+
+# Expose port 8080 (fly.io standard)
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health').read()"
