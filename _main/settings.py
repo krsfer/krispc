@@ -270,7 +270,7 @@ STORAGES = {
 
 # Don't store the original (un-hashed filename) version of static files, to reduce slug size:
 # https://whitenoise.readthedocs.io/en/latest/django.html#WHITENOISE_KEEP_ONLY_HASHED_FILES
-WHITENOISE_KEEP_ONLY_HASHED_FILES = True
+WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 
 WHITENOISE_MANIFEST_STRICT = False
 
