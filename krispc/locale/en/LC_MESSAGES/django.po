@@ -270,8 +270,9 @@ msgstr "About us"
 #: krispc/templates/__about.html:23
 msgid "PTR_1990"
 msgstr ""
-"I am passionate about IT in all its aspects. With more than 20 years of "
-"experience, I'm dedicated to  a vision of precision and excellence."
+"I am passionate about IT in all its aspects (programming, systems). With "
+"more than 20 years of experience, I'm dedicated to  a vision of precision "
+"and excellence."
 
 #: krispc/templates/__about.html:31
 msgid "PTR_1995"

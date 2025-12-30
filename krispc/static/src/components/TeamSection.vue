@@ -66,22 +66,9 @@ const teamSubtitle = computed(() => t.value.subtitle || 'Our experienced profess
 // Load team members from Django data
 const team = computed(() => t.value.members || [
   {
-    name: 'John Doe',
-    role: 'Lead Technician',
-    bio: 'Over 10 years of experience in computer repair and IT support',
-    social: { LinkedIn: '#', Twitter: '#' }
-  },
-  {
-    name: 'Jane Smith',
-    role: 'Systems Specialist',
-    bio: 'Expert in network administration and cybersecurity',
-    social: { LinkedIn: '#', GitHub: '#' }
-  },
-  {
-    name: 'Mike Johnson',
-    role: 'Hardware Expert',
-    bio: 'Specializing in hardware diagnostics and upgrades',
-    social: { LinkedIn: '#', Twitter: '#' }
+    name: 'Christopher',
+    role: 'Technician & Manager',
+    bio: 'Over 20 years of experience in programming, computer repair, and IT support'
   }
 ])
 </script>

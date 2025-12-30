@@ -54,9 +54,9 @@
 
 <script setup>
 import { computed, markRaw } from 'vue'
-import { BoltIcon, ShieldCheckIcon, UserGroupIcon } from '@heroicons/vue/24/solid'
+import { BoltIcon, ShieldCheckIcon, UserIcon } from '@heroicons/vue/24/solid'
 
-const icons = [markRaw(BoltIcon), markRaw(ShieldCheckIcon), markRaw(UserGroupIcon)]
+const icons = [markRaw(BoltIcon), markRaw(ShieldCheckIcon), markRaw(UserIcon)]
 
 // Get translations from Django
 const t = computed(() => window.DJANGO_DATA?.translations?.about || {})

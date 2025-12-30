@@ -256,9 +256,9 @@ msgstr "À propos"
 #: krispc/templates/__about.html:23
 msgid "PTR_1990"
 msgstr ""
-"Je suis passionné d&rsquo;informatique dans tous ses aspects. Avec plus de "
-"20 ans d&rsquo;expérience, je maintiens une vision de précision et d&rsquo;"
-"excellence."
+"Je suis passionné d&rsquo;informatique dans tous ses aspects (programmation, "
+"systèmes). Avec plus de 20 ans d&rsquo;expérience, je maintiens une vision "
+"de précision et d&rsquo;excellence."
 
 #: krispc/templates/__about.html:31
 msgid "PTR_1995"
@@ -334,7 +334,7 @@ msgstr "Réparations uniquement — Pas de vente de matériel"
 
 #: krispc/templates/__hero.html:15
 msgid "PTR_2057"
-msgstr "Mais, conseils gratuits pour la sélection."
+msgstr "Mais, conseils gratuits pour sa sélection."
 
 #: krispc/templates/__services.html:4
 msgid "PTR_6010"

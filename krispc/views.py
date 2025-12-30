@@ -74,9 +74,9 @@ class IndexPageView(TemplateView):
         ui_translations = {
             'nav': {
                 'home': _('PTR_0160'),
-                'about': _('PTR_0190'),
+                'about': 'À propos' if is_french else 'About',
                 'services': _('PTR_0120'),
-                'team': _('PTR_0800'),
+                'team': 'Technicien' if is_french else 'Technician',
                 'contact': 'Contact',
             },
             'hero': {
@@ -87,19 +87,19 @@ class IndexPageView(TemplateView):
             },
             'sections': {
                 'services_title': _('PTR_0120'),
-                'about_title': _('PTR_0190'),
-                'team_title': _('PTR_0800'),
+                'about_title': 'À propos' if is_french else 'About',
+                'team_title': 'Technicien & Gérant' if is_french else 'Technician & Manager',
                 'contact_title': 'Contact',
             },
             'about': {
                 'subtitle': _('PTR_0180'),
                 'title': 'À propos de KrisPC' if is_french else 'About KrisPC',
-                'description': 'Nous sommes une équipe de professionnels de l\'informatique expérimentés, dédiés à fournir des services de réparation, de maintenance et de support informatique de haute qualité.' if is_french else 'We are a team of experienced IT professionals dedicated to providing top-quality computer repair, maintenance, and support services.',
-                'commitment': 'Notre engagement envers l\'excellence et la satisfaction client a fait de nous un partenaire de confiance pour les entreprises et les particuliers dans toute la région.' if is_french else 'Our commitment to excellence and customer satisfaction has made us a trusted partner for businesses and individuals throughout the region.',
+                'description': 'Je suis un professionnel de l\'informatique expérimenté, dédié à fournir des services de réparation, de maintenance et de support informatique de haute qualité.' if is_french else 'I am an experienced IT professional dedicated to providing top-quality computer repair, maintenance, and support services.',
+                'commitment': 'Mon engagement envers l\'excellence et la satisfaction client a fait de moi un partenaire de confiance pour les entreprises et les particuliers dans toute la région.' if is_french else 'My commitment to excellence and customer satisfaction has made me a trusted partner for businesses and individuals throughout the region.',
                 'features': [
                     {'title': 'Rapidité' if is_french else 'Fast Turnaround', 'desc': 'Diagnostics et réparations rapides pour vous remettre en marche' if is_french else 'Quick diagnostics and repairs to get you back up and running'},
-                    {'title': 'Qualité Garantie' if is_french else 'Quality Guaranteed', 'desc': 'Tous nos travaux sont couverts par des garanties complètes' if is_french else 'All our work is backed by comprehensive warranties'},
-                    {'title': 'Équipe Experte' if is_french else 'Expert Team', 'desc': 'Techniciens certifiés avec des années d\'expérience pratique' if is_french else 'Certified technicians with years of hands-on experience'},
+                    {'title': 'Qualité Garantie' if is_french else 'Quality Guaranteed', 'desc': 'Tous mes travaux sont couverts par des garanties complètes' if is_french else 'All my work is backed by comprehensive warranties'},
+                    {'title': 'Expertise' if is_french else 'Expertise', 'desc': 'Technicien certifié avec des années d\'expérience pratique' if is_french else 'Certified technician with years of hands-on experience'},
                 ],
                 'stats': [
                     {'value': '10+', 'label': 'Ans d\'Expérience' if is_french else 'Years Experience'},
@@ -109,26 +109,13 @@ class IndexPageView(TemplateView):
                 ],
             },
             'team': {
-                'title': _('PTR_0800'),
-                'subtitle': _('PTR_0210'),
+                'title': 'Technicien & Gérant' if is_french else 'Technician & Manager',
+                'subtitle': 'Votre expert informatique dédié à votre service' if is_french else 'Your dedicated IT expert at your service',
                 'members': [
                     {
-                        'name': 'John Doe',
-                        'role': 'Technicien Principal' if is_french else 'Lead Technician',
-                        'bio': 'Plus de 10 ans d\'expérience en réparation d\'ordinateurs et support informatique' if is_french else 'Over 10 years of experience in computer repair and IT support',
-                        'social': {'LinkedIn': '#', 'Twitter': '#'}
-                    },
-                    {
-                        'name': 'Jane Smith',
-                        'role': 'Spécialiste Systèmes' if is_french else 'Systems Specialist',
-                        'bio': 'Experte en administration réseau et cybersécurité' if is_french else 'Expert in network administration and cybersecurity',
-                        'social': {'LinkedIn': '#', 'GitHub': '#'}
-                    },
-                    {
-                        'name': 'Mike Johnson',
-                        'role': 'Expert Matériel' if is_french else 'Hardware Expert',
-                        'bio': 'Spécialisé dans les diagnostics matériels et mises à niveau' if is_french else 'Specializing in hardware diagnostics and upgrades',
-                        'social': {'LinkedIn': '#', 'Twitter': '#'}
+                        'name': 'Christopher',
+                        'role': 'Technicien & Gérant' if is_french else 'Technician & Manager',
+                        'bio': 'Plus de 20 ans d\'expérience en programmation, réparation d\'ordinateurs et support informatique' if is_french else 'Over 20 years of experience in programming, computer repair, and IT support',
                     }
                 ]
             },
@@ -150,7 +137,7 @@ class IndexPageView(TemplateView):
                 'tagline': 'Services informatiques professionnels et réparation d\'ordinateurs' if is_french else 'Professional IT services and computer repair',
                 'services_title': _('PTR_0120'),
                 'contact_title': 'Contact',
-                'team_title': _('PTR_0800'),
+                'team_title': 'Technicien' if is_french else 'Technician',
                 'copyright': '© 2025 KrisPC. Tous droits réservés.' if is_french else '© 2025 KrisPC. All rights reserved.',
             }
         }
