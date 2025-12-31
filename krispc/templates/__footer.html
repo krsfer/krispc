@@ -14,9 +14,9 @@
                         <h3>KrisPC<span>.</span></h3>
                         <p>
                             <a class="" target="_blank"
-                               href="https://www.google.com/maps/dir//KrisPC+Informatique/data=!4m8!4m7!1m0!1m5!1m1!1s0x12cc2b830288222b:0xf25428ee82c98a0f!2m2!1d7.010611!2d43.641493499999996"
-                               rel="noopener noreferrer">17 Faubourg St. Esprit<br>
-                                06560 Valbonne</a>
+                               href="https://www.google.com/maps/search/?api=1&query=63+Chem.+du+Claus+06110+Le+Cannet"
+                               rel="noopener noreferrer">63 Chem. du Claus<br>
+                                06110 Le Cannet</a>
                             <br>
                             <br>
                             <strong>{% trans "PTR_5040" %}:</strong> {% trans "PTR_5030" %}<br> {# Phone and rum #}
@@ -36,7 +36,7 @@
                 <ul>
                     {% for prod in prods %}
                         <li><i class="bx bx-chevron-right"></i>
-                            <a href="#prod_{{ forloop.counter0 }}">{{ prod.Prd_Name|safe }}</a>
+                            <a href="/#prod_{{ forloop.counter0 }}">{{ prod.Prd_Name|safe }}</a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -78,7 +78,10 @@
                 // Add the new element to the page
                 parentElement.appendChild(yearElement);
             </script>
-            {% trans 'PTR_2050' %} </div>
+            {% trans 'PTR_2050' %}
+            - <a href="{% url 'privacy' %}" class="text-decoration-underline">{% trans "Privacy Policy" %}</a>
+            - <a href="{% url 'terms' %}" class="text-decoration-underline">{% trans "Terms of Service" %}</a>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-12 copyright fst-italic" style="padding:0; margin: 0; height: 20px">

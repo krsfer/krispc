@@ -381,3 +381,105 @@ msgstr "Bienveillance"
 #: krispc/templates/__team.html:37
 msgid "PTR_0760"
 msgstr "Professionnalisme"
+
+msgid "Privacy Policy"
+msgstr "Politique de confidentialité"
+
+msgid "Terms of Service"
+msgstr "Conditions générales d'utilisation"
+
+msgid "Last updated"
+msgstr "Dernière mise à jour"
+
+msgid "1. Introduction"
+msgstr "1. Introduction"
+
+msgid "Welcome to KrisPC. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you."
+msgstr "Bienvenue chez KrisPC. Nous respectons votre vie privée et nous nous engageons à protéger vos données personnelles. Cette politique de confidentialité vous informera sur la manière dont nous traitons vos données personnelles lorsque vous visitez notre site web et vous informera sur vos droits en matière de confidentialité et sur la manière dont la loi vous protège."
+
+msgid "2. Data Collection"
+msgstr "2. Collecte de données"
+
+msgid "We collect information necessary to provide our services, including:"
+msgstr "Nous collectons les informations nécessaires à la fourniture de nos services, notamment :"
+
+msgid "Contact information (name, email address, phone number) provided via our contact form."
+msgstr "Les coordonnées (nom, adresse e-mail, numéro de téléphone) fournies via notre formulaire de contact."
+
+msgid "Information about your computer or devices that you provide for repair or maintenance services."
+msgstr "Des informations sur votre ordinateur ou vos appareils que vous fournissez pour des services de réparation ou de maintenance."
+
+msgid "Technical data such as IP address, browser type, and version when you access our website."
+msgstr "Données techniques telles que l'adresse IP, le type et la version du navigateur lorsque vous accédez à notre site web."
+
+msgid "3. How We Use Your Data"
+msgstr "3. Comment nous utilisons vos données"
+
+msgid "We use your data to:"
+msgstr "Nous utilisons vos données pour :"
+
+msgid "Provide and manage our IT support and repair services."
+msgstr "Fournir et gérer nos services de support et de réparation informatique."
+
+msgid "Communicate with you regarding your service requests."
+msgstr "Communiquer avec vous concernant vos demandes de service."
+
+msgid "Improve our website and service offerings."
+msgstr "Améliorer notre site web et nos offres de services."
+
+msgid "Comply with legal obligations."
+msgstr "Se conformer aux obligations légales."
+
+msgid "4. Data Security"
+msgstr "4. Sécurité des données"
+
+msgid "We implement appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way. We limit access to your personal data to those who have a business need to know."
+msgstr "Nous mettons en œuvre des mesures de sécurité appropriées pour empêcher que vos données personnelles ne soient accidentellement perdues, utilisées ou consultées de manière non autorisée. Nous limitons l'accès à vos données personnelles à ceux qui ont un besoin professionnel d'en connaître."
+
+msgid "5. Contact Us"
+msgstr "5. Contactez-nous"
+
+msgid "If you have any questions about this Privacy Policy or our privacy practices, please contact us at:"
+msgstr "Si vous avez des questions sur cette politique de confidentialité ou sur nos pratiques en matière de confidentialité, veuillez nous contacter à l'adresse suivante :"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "1. Acceptance of Terms"
+msgstr "1. Acceptation des conditions"
+
+msgid "By accessing and using the KrisPC website and services, you accept and agree to be bound by the terms and provision of this agreement."
+msgstr "En accédant au site web et aux services de KrisPC et en les utilisant, vous acceptez d'être lié par les termes et dispositions du présent accord."
+
+msgid "2. Service Description"
+msgstr "2. Description du service"
+
+msgid "KrisPC provides professional IT services, including but not limited to computer repair, maintenance, software support, and IT consulting."
+msgstr "KrisPC fournit des services informatiques professionnels, y compris, mais sans s'y limiter, la réparation d'ordinateurs, la maintenance, le support logiciel et le conseil informatique."
+
+msgid "3. User Responsibilities"
+msgstr "3. Responsabilités de l'utilisateur"
+
+msgid "When using our services or website, you agree to provide accurate information and to maintain the security of any account details. You are responsible for backing up your data before submitting any device for repair."
+msgstr "Lors de l'utilisation de nos services ou de notre site web, vous acceptez de fournir des informations précises et de maintenir la sécurité de tous les détails de votre compte. Vous êtes responsable de la sauvegarde de vos données avant de soumettre tout appareil pour réparation."
+
+msgid "4. Limitation of Liability"
+msgstr "4. Limitation de responsabilité"
+
+msgid "While we strive for excellence, KrisPC shall not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses."
+msgstr "Bien que nous nous efforcions d'atteindre l'excellence, KrisPC ne sera pas responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, ni de toute perte de profits ou de revenus, qu'ils soient encourus directement ou indirectement, ou de toute perte de données, d'utilisation, de clientèle ou d'autres pertes immatérielles."
+
+msgid "5. Termination"
+msgstr "5. Résiliation"
+
+msgid "We reserve the right to terminate or suspend access to our service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms."
+msgstr "Nous nous réservons le droit de résilier ou de suspendre l'accès à notre service immédiatement, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris, sans s'y limiter, si vous enfreignez les Conditions."
+
+msgid "6. Governing Law"
+msgstr "6. Loi applicable"
+
+msgid "These terms shall be governed and construed in accordance with the laws of France, without regard to its conflict of law provisions."
+msgstr "Ces conditions sont régies et interprétées conformément aux lois de la France, sans égard à ses dispositions en matière de conflit de lois."

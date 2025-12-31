@@ -33,7 +33,7 @@
         <a
           v-for="lang in availableLanguages"
           :key="lang.code"
-          :href="`/${lang.code}${currentPath}`"
+          :href="lang.code === 'fr' ? currentPath : `/${lang.code}${currentPath}`"
           class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           :class="{ 'bg-primary/10': lang.code === currentLanguage.code }"
           @click="isOpen = false"

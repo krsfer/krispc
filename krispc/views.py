@@ -7,6 +7,7 @@ import coloredlogs
 from crispy_forms.utils import render_crispy_form
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.translation import get_language, gettext as _
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import TemplateView
@@ -60,8 +61,9 @@ class HtmxHttpRequest(HttpRequest):
 class IndexPageView(TemplateView):
     template_name = "_index.html"
 
-    def render_to_response(self, context, **response_kwargs):
-        # request.META.get('HTTP_REFERER')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
         prods_data = lst_products.data()
         colophon_data = colophon.data()
         marques_data = marques.data()
@@ -70,6 +72,11 @@ class IndexPageView(TemplateView):
         # UI translations for Vue components
         locale = get_language()
         is_french = locale.startswith('fr')
+
+        from django.utils import translation
+        with translation.override(locale):
+            privacy_url = reverse('privacy')
+            terms_url = reverse('terms')
 
         ui_translations = {
             'nav': {
@@ -139,34 +146,52 @@ class IndexPageView(TemplateView):
                 'contact_title': 'Contact',
                 'team_title': 'Technicien' if is_french else 'Technician',
                 'copyright': '© 2025 KrisPC. Tous droits réservés.' if is_french else '© 2025 KrisPC. All rights reserved.',
+                'privacy': 'Politique de confidentialité' if is_french else 'Privacy Policy',
+                'terms': 'Conditions générales d\'utilisation' if is_french else 'Terms of Service',
+                'privacy_url': privacy_url,
+                'terms_url': terms_url,
             }
         }
 
-        response = super(IndexPageView, self).render_to_response(
-            {
-                "redirect_to": "",
-                "locale":      get_language(),
-                "colophon":    colophon_data,
-                "marques":     marques_data,
-                "prods":       prods_data,
-                "form":        forms.ContactForm(),
-                "villes":      villes_data,
-                "VER":         settings.VER,
-                # JSON-serialized versions for Vue
-                "prods_json":    json.dumps(prods_data),
-                "colophon_json": json.dumps(colophon_data),
-                "marques_json":  json.dumps(marques_data),
-                "villes_json":   json.dumps(villes_data),
-                "ui_translations_json": json.dumps(ui_translations),
-            },
-            **response_kwargs,
-        )
+        context.update({
+            "redirect_to": "",
+            "locale":      get_language(),
+            "colophon":    colophon_data,
+            "marques":     marques_data,
+            "prods":       prods_data,
+            "form":        forms.ContactForm(),
+            "villes":      villes_data,
+            "VER":         settings.VER,
+            # JSON-serialized versions for Vue
+            "prods_json":    json.dumps(prods_data),
+            "colophon_json": json.dumps(colophon_data),
+            "marques_json":  json.dumps(marques_data),
+            "villes_json":   json.dumps(villes_data),
+            "ui_translations_json": json.dumps(ui_translations),
+            "use_vue": True,
+        })
+        return context
 
-        # pprint(response.__dict__)
+    def render_to_response(self, context, **response_kwargs):
+        return super().render_to_response(context, **response_kwargs)
 
-        # return render(request, '_index.html', {"prods": products.data()})
-        # response.set_cookie(settings.LANGUAGE_COOKIE_NAME, user_language)
-        return response
+
+class PrivacyView(IndexPageView):
+    template_name = "privacy.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["use_vue"] = False
+        return context
+
+
+class TermsView(IndexPageView):
+    template_name = "terms.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["use_vue"] = False
+        return context
 
 
 @require_GET

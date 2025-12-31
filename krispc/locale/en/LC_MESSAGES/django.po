@@ -133,9 +133,9 @@ msgstr "Printer configuration and troubleshoot"
 msgid "PTR_0410"
 msgstr ""
 "Have you noticed that every online store and supplier sells printers, but no "
-"one repairs them? This hasn't changed in years. Most suppliers find it easier "
-"to sell and forget than to provide real customer service. Don't throw away your "
-"broken equipment—have it repaired at a lower cost."
+"one repairs them? This hasn't changed in years. Most suppliers find it "
+"easier to sell and forget than to provide real customer service. Don't throw "
+"away your broken equipment—have it repaired at a lower cost."
 
 #: krispc/lst_products.py:58
 msgid "PTR_0420"
@@ -155,8 +155,8 @@ msgid "PTR_0490"
 msgstr ""
 "Modern life can be a challenge for adults who may not be completely computer "
 "literate. Technology is involved in almost every aspect of our lives: we "
-"need it for work, school, social and family contacts_list, day-to-day management, "
-"online learning and even shopping."
+"need it for work, school, social and family contacts_list, day-to-day "
+"management, online learning and even shopping."
 
 #: krispc/lst_products.py:64
 msgid "PTR_0500"
@@ -336,10 +336,7 @@ msgstr "Conveniently &middot; At your home"
 
 #: krispc/templates/__hero.html:11
 msgid "PTR_0220"
-msgstr ""
-"Linux&nbsp;&middot;&nbsp;Windows&nbsp;&middot;&nbsp;macOS&middot;&nbsp;"
-"Troubleshoot&nbsp;&middot;&nbsp;Building&middot;&nbsp;Hardware&nbsp;&middot;"
-"&nbspSoftware&middot;&nbsp;Training&nbsp;&middot;&nbsp;Advice"
+msgstr "Linux&nbsp;&middot;&nbsp;Windows&nbsp;&middot;&nbsp;macOS&middot;&nbsp;Troubleshoot&nbsp;&middot;&nbsp;Building&middot;&nbsp;Hardware&nbsp;&middot;&nbspSoftware&middot;&nbsp;Training&nbsp;&middot;&nbsp;Advice"
 
 #: krispc/templates/__hero.html:14
 msgid "PTR_2055"
@@ -392,6 +389,169 @@ msgstr "Considerate"
 #: krispc/templates/__team.html:37
 msgid "PTR_0760"
 msgstr "Professional"
+
+msgid "Email"
+msgstr "Email"
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+msgid "Terms of Service"
+msgstr "Terms of Service"
+
+msgid "Last updated"
+msgstr "Last updated"
+
+msgid "1. Introduction"
+msgstr "1. Introduction"
+
+msgid ""
+"Welcome to KrisPC. We respect your privacy and are committed to protecting "
+"your personal data. This privacy policy will inform you about how we look "
+"after your personal data when you visit our website and tell you about your "
+"privacy rights and how the law protects you."
+msgstr ""
+"Welcome to KrisPC. We respect your privacy and are committed to protecting "
+"your personal data. This privacy policy will inform you about how we look "
+"after your personal data when you visit our website and tell you about your "
+"privacy rights and how the law protects you."
+
+msgid "2. Data Collection"
+msgstr "2. Data Collection"
+
+msgid "We collect information necessary to provide our services, including:"
+msgstr "We collect information necessary to provide our services, including:"
+
+msgid ""
+"Contact information (name, email address, phone number) provided via our "
+"contact form."
+msgstr ""
+"Contact information (name, email address, phone number) provided via our "
+"contact form."
+
+msgid ""
+"Information about your computer or devices that you provide for repair or "
+"maintenance services."
+msgstr ""
+"Information about your computer or devices that you provide for repair or "
+"maintenance services."
+
+msgid ""
+"Technical data such as IP address, browser type, and version when you access "
+"our website."
+msgstr ""
+"Technical data such as IP address, browser type, and version when you access "
+"our website."
+
+msgid "3. How We Use Your Data"
+msgstr "3. How We Use Your Data"
+
+msgid "We use your data to:"
+msgstr "We use your data to:"
+
+msgid "Provide and manage our IT support and repair services."
+msgstr "Provide and manage our IT support and repair services."
+
+msgid "Communicate with you regarding your service requests."
+msgstr "Communicate with you regarding your service requests."
+
+msgid "Improve our website and service offerings."
+msgstr "Improve our website and service offerings."
+
+msgid "Comply with legal obligations."
+msgstr "Comply with legal obligations."
+
+msgid "4. Data Security"
+msgstr "4. Data Security"
+
+msgid ""
+"We implement appropriate security measures to prevent your personal data "
+"from being accidentally lost, used, or accessed in an unauthorized way. We "
+"limit access to your personal data to those who have a business need to know."
+msgstr ""
+"We implement appropriate security measures to prevent your personal data "
+"from being accidentally lost, used, or accessed in an unauthorized way. We "
+"limit access to your personal data to those who have a business need to know."
+
+msgid "5. Contact Us"
+msgstr "5. Contact Us"
+
+msgid ""
+"If you have any questions about this Privacy Policy or our privacy "
+"practices, please contact us at:"
+msgstr ""
+"If you have any questions about this Privacy Policy or our privacy "
+"practices, please contact us at:"
+
+msgid "Address"
+msgstr "Address"
+
+msgid "1. Acceptance of Terms"
+msgstr "1. Acceptance of Terms"
+
+msgid ""
+"By accessing and using the KrisPC website and services, you accept and agree "
+"to be bound by the terms and provision of this agreement."
+msgstr ""
+"By accessing and using the KrisPC website and services, you accept and agree "
+"to be bound by the terms and provision of this agreement."
+
+msgid "2. Service Description"
+msgstr "2. Service Description"
+
+msgid ""
+"KrisPC provides professional IT services, including but not limited to "
+"computer repair, maintenance, software support, and IT consulting."
+msgstr ""
+"KrisPC provides professional IT services, including but not limited to "
+"computer repair, maintenance, software support, and IT consulting."
+
+msgid "3. User Responsibilities"
+msgstr "3. User Responsibilities"
+
+msgid ""
+"When using our services or website, you agree to provide accurate "
+"information and to maintain the security of any account details. You are "
+"responsible for backing up your data before submitting any device for repair."
+msgstr ""
+"When using our services or website, you agree to provide accurate "
+"information and to maintain the security of any account details. You are "
+"responsible for backing up your data before submitting any device for repair."
+
+msgid "4. Limitation of Liability"
+msgstr "4. Limitation of Liability"
+
+msgid ""
+"While we strive for excellence, KrisPC shall not be liable for any indirect, "
+"incidental, special, consequential or punitive damages, or any loss of "
+"profits or revenues, whether incurred directly or indirectly, or any loss of "
+"data, use, goodwill, or other intangible losses."
+msgstr ""
+"While we strive for excellence, KrisPC shall not be liable for any indirect, "
+"incidental, special, consequential or punitive damages, or any loss of "
+"profits or revenues, whether incurred directly or indirectly, or any loss of "
+"data, use, goodwill, or other intangible losses."
+
+msgid "5. Termination"
+msgstr "5. Termination"
+
+msgid ""
+"We reserve the right to terminate or suspend access to our service "
+"immediately, without prior notice or liability, for any reason whatsoever, "
+"including without limitation if you breach the Terms."
+msgstr ""
+"We reserve the right to terminate or suspend access to our service "
+"immediately, without prior notice or liability, for any reason whatsoever, "
+"including without limitation if you breach the Terms."
+
+msgid "6. Governing Law"
+msgstr "6. Governing Law"
+
+msgid ""
+"These terms shall be governed and construed in accordance with the laws of "
+"France, without regard to its conflict of law provisions."
+msgstr ""
+"These terms shall be governed and construed in accordance with the laws of "
+"France, without regard to its conflict of law provisions."
 
 #~ msgid "Where Are They"
 #~ msgstr "en where are they"
@@ -548,6 +708,3 @@ msgstr "Professional"
 
 #~ msgid "Location"
 #~ msgstr "Address:"
-
-#~ msgid "Email"
-#~ msgstr "Email:"

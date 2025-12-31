@@ -30,7 +30,11 @@
 
       <!-- Copyright -->
       <div class="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
-        <p>{{ copyright }}</p>
+        <p>
+          {{ copyright }}
+          - <a :href="privacyUrl" class="hover:text-primary transition-colors underline decoration-gray-600">{{ privacyLabel }}</a>
+          - <a :href="termsUrl" class="hover:text-primary transition-colors underline decoration-gray-600">{{ termsLabel }}</a>
+        </p>
       </div>
     </div>
   </footer>
@@ -47,4 +51,8 @@ const servicesTitle = computed(() => t.value.services_title || 'Services')
 const contactTitle = computed(() => t.value.contact_title || 'Contact')
 const teamTitle = computed(() => t.value.team_title || 'Our Team')
 const copyright = computed(() => t.value.copyright || `© ${new Date().getFullYear()} KrisPC. All rights reserved.`)
+const privacyLabel = computed(() => t.value.privacy || 'Privacy Policy')
+const termsLabel = computed(() => t.value.terms || 'Terms of Service')
+const privacyUrl = computed(() => t.value.privacy_url || '/privacy/')
+const termsUrl = computed(() => t.value.terms_url || '/terms/')
 </script>
