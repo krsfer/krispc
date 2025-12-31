@@ -55,7 +55,11 @@ IS_HEROKU_APP = env.str("DYNO", default="") and not env.str("CI", default="")
 IS_FLY_APP = env.str("FLY_APP", default="")
 IS_PRODUCTION = IS_HEROKU_APP or IS_FLY_APP
 
-CSRF_TRUSTED_ORIGINS = ['https://krispc-c2edb2fe441a.herokuapp.com', 'https://krispc.fr', 'https://www.krispc.fr', 'https://krispc.fly.dev']
+CSRF_TRUSTED_ORIGINS = [
+    "https://krispc.fr",
+    "https://www.krispc.fr",
+    "https://pdf2cal.fly.dev"
+]
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
 GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
