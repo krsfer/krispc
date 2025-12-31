@@ -9,62 +9,39 @@ primary_region = "cdg"
   PYTHONUNBUFFERED = "1"
   FLY_APP = "true"
 
-# Database: Uses SQLite by default (stored in container filesystem)
-# Database is ephemeral and resets on each deployment
-#
-# For persistent database, create and mount a volume:
-# fly volumes create krispc_data --size 1 --region cdg
-# Then uncomment and configure:
-# [mounts]
-#   source = "krispc_data"
-#   destination = "/data"
-# And set secret: fly secrets set DATABASE_URL=sqlite:////data/db.sqlite3
-
 [processes]
   web = "daphne _main.asgi:application --port 8080 --bind 0.0.0.0 -v2"
   worker = "python manage.py runworker channel_layer -v2"
 
 [[services]]
-  protocol = "tcp"
   internal_port = 8080
+  protocol = "tcp"
   processes = ["web"]
-
-  [[services.ports]]
-    port = 80
-    handlers = ["http"]
-    force_https = true
-
-  [[services.ports]]
-    port = 443
-    handlers = ["http", "tls"]
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
 
   [services.concurrency]
     type = "connections"
     hard_limit = 25
     soft_limit = 20
 
-  [[services.tcp_checks]]
-    grace_period = "10s"
-    interval = "15s"
-    restart_limit = 0
-    timeout = "2s"
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+    # This line forces the redirect
+    force_https = true
 
-  [[services.http_checks]]
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.checks]]
     interval = "10s"
-    grace_period = "5s"
-    method = "get"
-    path = "/health"
-    protocol = "http"
     timeout = "2s"
-    tls_skip_verify = false
-
-[http_service]
-  internal_port = 8080
-  force_https = true
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 1
-  processes = ["web"]
+    grace_period = "5s"
+    method = "GET"
+    path = "/health"
 
 [[vm]]
   cpu_kind = "shared"
