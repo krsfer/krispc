@@ -55,11 +55,11 @@ IS_HEROKU_APP = env.str("DYNO", default="") and not env.str("CI", default="")
 IS_FLY_APP = env.str("FLY_APP", default="")
 IS_PRODUCTION = IS_HEROKU_APP or IS_FLY_APP
 
-CSRF_TRUSTED_ORIGINS = [
+CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "https://krispc.fr",
     "https://www.krispc.fr",
     "https://pdf2cal.fly.dev"
-]
+])
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
 GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
@@ -93,7 +93,7 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     # Uncomment this and the entry in `urls.py` if you wish to use the Django admin feature:
     # https://docs.djangoproject.com/en/4.2/ref/contrib/admin/
-    # "django.contrib.admin",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
