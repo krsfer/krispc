@@ -115,9 +115,12 @@ def home(request):
         state = secrets.token_hex(16)
         request.session['oauth_state'] = state
 
+    # Construct redirect URI dynamically based on request domain
+    redirect_uri = request.build_absolute_uri('/login/google/')
+
     context = {
         "google_oauth2_client_id": client_id,
-        "google_oauth2_redirect_uri": settings.GOOGLE_OAUTH2_REDIRECT_URI,
+        "google_oauth2_redirect_uri": redirect_uri,
         "site_url": settings.SITE_URL,
         "event_settings": load_event_settings(),
         "oauth_scopes_string": get_oauth_scopes_string(),
@@ -453,12 +456,15 @@ def google_login(request):
                 )
 
             # Exchange code for tokens
+            # Construct redirect URI dynamically to match the one used in authorization
+            redirect_uri = request.build_absolute_uri('/login/google/')
+
             token_url = "https://oauth2.googleapis.com/token"
             token_data = {
                 "code": code,
                 "client_id": settings.GOOGLE_OAUTH2_CLIENT_ID,
                 "client_secret": settings.GOOGLE_OAUTH2_CLIENT_SECRET,
-                "redirect_uri": settings.GOOGLE_OAUTH2_REDIRECT_URI,
+                "redirect_uri": redirect_uri,
                 "grant_type": "authorization_code",
                 "scope": get_oauth_scopes_string(),
             }
