@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import secrets
 from pathlib import Path
+import ssl
 
 import dj_database_url
 import semver
@@ -110,7 +111,11 @@ INSTALLED_APPS = [
     "chat",
     "addthem",
     "krispc",
-    "wat"
+    "wat",
+    # pdf2cal apps
+    "celery_progress",
+    "p2c",
+    "rest_framework",
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'
@@ -177,7 +182,10 @@ ROOT_URLCONF = "_main.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "addthem/templates", "chat/templates", "_krispc/templates")],
+        "DIRS": [
+            os.path.join(BASE_DIR, "addthem/templates", "chat/templates", "_krispc/templates"),
+            BASE_DIR / "p2c" / "templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -185,6 +193,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "p2c.context_processors.unread_updates_context",
             ],
         },
     },
@@ -251,10 +260,12 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "krispc" / "static" / "dist",  # Vite build output
     BASE_DIR / "krispc" / "static",           # Images and other static assets
+    BASE_DIR / "p2c" / "static",              # P2C static files
 ]
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, "krispc/locale"),
+    os.path.join(BASE_DIR, "locale"),
 ]
 
 
@@ -308,6 +319,58 @@ VER = semver.VersionInfo.parse("2.3.0")
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- P2C / PDF2Cal Specific Settings ---
+
+# Celery Configuration
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+
+if REDIS_URL and REDIS_URL.startswith("rediss://"):
+    CELERY_BROKER_USE_SSL = {
+        'ssl_cert_reqs': ssl.CERT_REQUIRED,
+        'ssl_ca_certs': os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem'),
+        'ssl_certfile': os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt'),
+        'ssl_keyfile': os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key'),
+    }
+    CELERY_REDIS_BACKEND_USE_SSL = CELERY_BROKER_USE_SSL
+
+# Google OAuth2 Settings
+GOOGLE_OAUTH2_CLIENT_ID = env("GOOGLE_OAUTH2_CLIENT_ID", default=None)
+GOOGLE_OAUTH2_CLIENT_SECRET = env("GOOGLE_OAUTH2_CLIENT_SECRET", default=None)
+GOOGLE_OAUTH2_REDIRECT_URI = env("GOOGLE_OAUTH2_REDIRECT_URI", default="http://localhost:8000/google/callback")
+GOOGLE_OAUTH2_SCOPES = [
+    "openid",
+    "email",
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/calendar.readonly",
+]
+
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_PERMISSION_CLASSES": [],
+    "UNAUTHENTICATED_USER": None,
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "loggers": {
+        "django": {"handlers": ["console"], "level": "INFO"},
+        "p2c": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
+    },
+}
+
+SITE_URL = env("SITE_URL", default="http://localhost:8000")
+
+
 if __name__ == "__main__":
     print(f"DEBUG: {DEBUG}")
     print(f"BASE_DIR: {BASE_DIR}")

@@ -18,10 +18,12 @@ from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import include, path
+from django.contrib.auth import views as auth_views
 
 import hello.views
 import krispc.views
 import wat.views
+import p2c.views
 
 
 def health_check(request):
@@ -32,6 +34,8 @@ def health_check(request):
 # Health check endpoint (outside i18n_patterns, no trailing slash to match fly.toml)
 urlpatterns = [
     path('health', health_check, name='health'),
+    # Legacy Google OAuth callback path to match existing console configuration
+    path("login/google/", p2c.views.google_login, name="google_login_callback"),
 ]
 
 urlpatterns += i18n_patterns(
@@ -42,6 +46,12 @@ urlpatterns += i18n_patterns(
     path("db/", hello.views.db, name="db"),
     path("addthem/", include('addthem.urls')),
     path('chat/', include('chat.urls')),
+    path("logout/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
+    
+    # PDF2Cal app
+    path("importpdf/", include("p2c.urls")),
+    path("celery-progress/", include("celery_progress.urls")),
+
     # path("wat/", wat.views.index, name="wat"),
     #
     path("favicon.ico", krispc.views.favicon),
