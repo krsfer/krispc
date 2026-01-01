@@ -109,10 +109,10 @@ class IndexPageView(TemplateView):
                     {'title': 'Expertise' if is_french else 'Expertise', 'desc': 'Technicien certifié avec des années d\'expérience pratique' if is_french else 'Certified technician with years of hands-on experience'},
                 ],
                 'stats': [
-                    {'value': '10+', 'label': 'Ans d\'Expérience' if is_french else 'Years Experience'},
-                    {'value': '500+', 'label': 'Clients Satisfaits' if is_french else 'Happy Clients'},
-                    {'value': '1000+', 'label': 'Réparations Effectuées' if is_french else 'Repairs Done'},
-                    {'value': '24/7', 'label': 'Support' if is_french else 'Support'},
+                    {'value': '', 'label': 'Plus de 10 Ans d\'Expérience' if is_french else 'Over 10 Years Experience'},
+                    {'value': '', 'label': 'Rejoignez Nos Clients Satisfaits' if is_french else 'Join Our Happy Clients'},
+                    {'value': '', 'label': 'Expertise Qui Fait Ses Preuves' if is_french else 'Proven Expertise'},
+                    {'value': '', 'label': 'Assistance Quand Vous en Avez Besoin' if is_french else 'Help When You Need It'},
                 ],
             },
             'team': {
