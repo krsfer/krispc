@@ -116,8 +116,10 @@ def home(request):
         request.session['oauth_state'] = state
 
     # Construct redirect URI dynamically based on request domain
-    # Force HTTPS since fly.io terminates SSL at proxy level
-    redirect_uri = request.build_absolute_uri('/login/google/').replace('http://', 'https://')
+    # Force HTTPS since fly.io terminates SSL at proxy level (but not for localhost)
+    redirect_uri = request.build_absolute_uri('/login/google/')
+    if 'localhost' not in redirect_uri and '127.0.0.1' not in redirect_uri:
+        redirect_uri = redirect_uri.replace('http://', 'https://')
 
     context = {
         "google_oauth2_client_id": client_id,
@@ -459,8 +461,10 @@ def google_login(request):
 
             # Exchange code for tokens
             # Construct redirect URI dynamically to match the one used in authorization
-            # Force HTTPS since fly.io terminates SSL at proxy level
-            redirect_uri = request.build_absolute_uri('/login/google/').replace('http://', 'https://')
+            # Force HTTPS since fly.io terminates SSL at proxy level (but not for localhost)
+            redirect_uri = request.build_absolute_uri('/login/google/')
+            if 'localhost' not in redirect_uri and '127.0.0.1' not in redirect_uri:
+                redirect_uri = redirect_uri.replace('http://', 'https://')
 
             token_url = "https://oauth2.googleapis.com/token"
             token_data = {

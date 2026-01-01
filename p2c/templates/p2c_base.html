@@ -11,7 +11,7 @@
     <style>
         /* Critical above-the-fold styles */
         body { margin: 0; padding: 0; background-color: #f3f4f6; }
-        nav { background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: fixed; top: 0; left: 0; width: 100%; z-index: 50; height: 64px; }
+        nav { background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: fixed; top: 0; left: 0; width: 100%; z-index: 50; min-height: 64px; }
         .container { max-width: 72rem; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
         #main-container { padding-top: calc(64px + 0.5rem + 2px); /* navbar height (64px) + rounded-lg (0.5rem) + 2px */ }
         .sr-only {
@@ -25,6 +25,11 @@
             white-space: nowrap;
             border-width: 0;
         }
+        /* Mobile responsive text */
+        @media (max-width: 639px) {
+            body { font-size: 16px; }
+            button, .btn { min-height: 44px; }
+        }
     </style>
 
     <!-- Non-critical CSS (deferred) -->
@@ -37,79 +42,88 @@
     <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
 </head>
 <body class="bg-gray-100">
-    <nav class="bg-white shadow-lg fixed top-0 left-0 w-full z-50 h-16">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="flex justify-between">
-                <div class="flex space-x-7">
-                    <div>
-                        <a href="{% url 'home' %}" class="flex items-center py-4">
-                            <img src="{% static 'images/pdf2calendar_grey.svg' %}" alt="App Logo" class="h-8 w-auto">
-                        </a>
-                    </div>
-                    
-                    <div class="flex items-center ml-4">
+    <nav class="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
+        <div class="w-full px-3 sm:px-4 sm:max-w-6xl sm:mx-auto">
+            <div class="flex justify-between items-center py-3 sm:py-4">
+                <!-- Logo - Always visible -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <a href="{% url 'home' %}" class="flex items-center">
+                        <img src="{% static 'images/pdf2calendar_grey.svg' %}" alt="App Logo" class="h-6 sm:h-8 w-auto">
+                    </a>
+
+                    <!-- Language switcher & Info - visible on desktop, hidden on mobile -->
+                    <div class="hidden sm:flex items-center space-x-3">
                         <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-2">
                             {% csrf_token %}
                             <input name="next" type="hidden" value="{{ redirect_to }}">
-                            <button type="submit" name="language" value="fr" class="text-sm font-medium {% if LANGUAGE_CODE == 'fr' %}text-indigo-600 font-bold{% else %}text-gray-500 hover:text-gray-900{% endif %}">FR</button>
+                            <button type="submit" name="language" value="fr" class="text-sm font-medium min-h-[36px] px-2 {% if LANGUAGE_CODE == 'fr' %}text-indigo-600 font-bold{% else %}text-gray-500 hover:text-gray-900{% endif %}">FR</button>
                             <span class="text-gray-300">|</span>
-                            <button type="submit" name="language" value="en" class="text-sm font-medium {% if LANGUAGE_CODE == 'en' %}text-indigo-600 font-bold{% else %}text-gray-500 hover:text-gray-900{% endif %}">EN</button>
+                            <button type="submit" name="language" value="en" class="text-sm font-medium min-h-[36px] px-2 {% if LANGUAGE_CODE == 'en' %}text-indigo-600 font-bold{% else %}text-gray-500 hover:text-gray-900{% endif %}">EN</button>
                         </form>
-                    </div>
-
-                    <div class="flex items-center ml-2">
-                        <button id="info-button" class="text-gray-500 hover:text-gray-900 transition duration-300">
+                        <button id="info-button" class="text-gray-500 hover:text-gray-900 transition duration-300 p-2 min-h-[36px]">
                             <span class="text-xl">ⓘ</span>
                         </button>
                     </div>
-                    {% if user.is_authenticated %}
-                    <div class="flex items-center">
-                        <a href="{% url 'event_settings' %}"
-                           class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            {% trans "Event Settings" %}
-                        </a>
-                        <a href="{% url 'pay_view' %}"
-                           class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4">
-                            <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            {% trans "Pay View" %}
-                        </a>
-                        <a href="{% url 'updates' %}"
-                           class="relative inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4">
-                            {% trans "Updates" %}
-                            {% if has_unread_updates %}
-                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                            {% endif %}
-                        </a>
-                        <a href="{% url 'json_ingest' %}"
-                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4">
-                            {% trans "JSON Ingest" %}
-                        </a>
-                        <a href="{% url 'calendar_editor' %}"
-                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4">
-                            <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                            {% trans "Calendar Editor" %}
-                        </a>
-                    </div>
-                    {% endif %}
                 </div>
+
+                <!-- Desktop navigation - Hidden on mobile -->
                 {% if user.is_authenticated %}
-                <div class="flex items-center space-x-4">
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="p-2 rounded-md text-gray-500 hover:text-gray-900 focus:outline-none">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        </button>
+                <div class="hidden lg:flex items-center space-x-2">
+                    <a href="{% url 'event_settings' %}"
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span class="hidden xl:inline">{% trans "Event Settings" %}</span>
+                        <span class="xl:hidden">{% trans "Settings" %}</span>
+                    </a>
+                    <a href="{% url 'pay_view' %}"
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="hidden xl:inline">{% trans "Pay View" %}</span>
+                        <span class="xl:hidden">{% trans "Pay" %}</span>
+                    </a>
+                    <a href="{% url 'updates' %}"
+                       class="relative inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        {% trans "Updates" %}
+                        {% if has_unread_updates %}
+                        <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'json_ingest' %}"
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        {% trans "JSON" %}
+                    </a>
+                    <a href="{% url 'calendar_editor' %}"
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        <span class="hidden xl:inline">{% trans "Calendar Editor" %}</span>
+                        <span class="xl:hidden">{% trans "Editor" %}</span>
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Right side - Profile & Mobile menu toggle -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- Mobile: Language & Info -->
+                    <div class="flex sm:hidden items-center space-x-2">
+                        <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-1">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ redirect_to }}">
+                            <button type="submit" name="language" value="fr" class="text-xs font-medium min-h-[44px] px-2 {% if LANGUAGE_CODE == 'fr' %}text-indigo-600 font-bold{% else %}text-gray-500{% endif %}">FR</button>
+                            <span class="text-gray-300 text-xs">|</span>
+                            <button type="submit" name="language" value="en" class="text-xs font-medium min-h-[44px] px-2 {% if LANGUAGE_CODE == 'en' %}text-indigo-600 font-bold{% else %}text-gray-500{% endif %}">EN</button>
+                        </form>
                     </div>
-                    <div class="flex items-center space-x-2">
+
+                    {% if user.is_authenticated %}
+                    <!-- Profile -->
+                    <div class="hidden sm:flex items-center space-x-2">
                         <div class="relative flex items-center space-x-2" id="profile-container">
                             <img src="https://www.gravatar.com/avatar/{{ user.email|md5_hash }}?d=identicon"
                                  alt="Profile"
@@ -118,11 +132,86 @@
                             <span class="text-gray-700 opacity-0 max-w-0 overflow-hidden transition-all duration-300 ease-in-out whitespace-nowrap" id="user-email">{{ user.email }}</span>
                         </div>
                     </div>
-                    <form action="{% url 'logout' %}" method="post" class="m-0">
+
+                    <!-- Logout button - hidden on mobile -->
+                    <form action="{% url 'logout' %}" method="post" class="m-0 hidden sm:block">
                         {% csrf_token %}
                         <button type="submit"
-                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           class="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 min-h-[44px]">
+                            <svg class="h-4 w-4 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            <span class="hidden sm:inline">{% trans "Logout" %}</span>
+                        </button>
+                    </form>
+
+                    <!-- Mobile menu toggle -->
+                    <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 focus:outline-none min-h-[44px] min-w-[44px] flex items-center justify-center">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white border-t">
+            <div class="px-3 pt-3 pb-4 space-y-2">
+                {% if user.is_authenticated %}
+                <!-- Info button for mobile -->
+                <button id="info-button-mobile" class="w-full flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    <span class="text-xl mr-2">ⓘ</span>
+                    {% trans "About PDF2Cal" %}
+                </button>
+
+                <a href="{% url 'event_settings' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    {% trans "Event Settings" %}
+                </a>
+                <a href="{% url 'pay_view' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% trans "Pay View" %}
+                </a>
+                <a href="{% url 'updates' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    {% trans "Updates" %}
+                    {% if has_unread_updates %}
+                    <span class="ml-2 inline-block h-2 w-2 rounded-full bg-red-500"></span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'json_ingest' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    {% trans "JSON Ingest" %}
+                </a>
+                <a href="{% url 'calendar_editor' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    {% trans "Calendar Editor" %}
+                </a>
+
+                <!-- User info & Logout for mobile -->
+                <div class="pt-3 border-t border-gray-200">
+                    <div class="flex items-center px-3 py-2 text-sm text-gray-600">
+                        <img src="https://www.gravatar.com/avatar/{{ user.email|md5_hash }}?d=identicon"
+                             alt="Profile"
+                             class="w-8 h-8 rounded-full mr-3">
+                        <span class="truncate">{{ user.email }}</span>
+                    </div>
+                    <form action="{% url 'logout' %}" method="post" class="mt-2">
+                        {% csrf_token %}
+                        <button type="submit"
+                               class="w-full flex items-center justify-center px-3 py-3 rounded-md text-base font-medium text-white bg-red-600 hover:bg-red-700 min-h-[44px]">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                             </svg>
                             {% trans "Logout" %}
@@ -132,42 +221,9 @@
                 {% endif %}
             </div>
         </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                {% if user.is_authenticated %}
-                <a href="{% url 'event_settings' %}"
-                   class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
-                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    {% trans "Event Settings" %}
-                </a>
-                <a href="{% url 'pay_view' %}"
-                   class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
-                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {% trans "Pay View" %}
-                </a>
-                <a href="{% url 'updates' %}"
-                   class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
-                    {% trans "Updates" %}
-                </a>
-                <a href="{% url 'calendar_editor' %}"
-                   class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
-                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                    </svg>
-                    {% trans "Calendar Editor" %}
-                </a>
-                {% endif %}
-            </div>
-        </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8" id="main-container">
+    <div class="w-full px-3 sm:px-4 sm:max-w-7xl sm:mx-auto py-4 sm:py-6 lg:py-8" id="main-container">
         {% if messages %}
         <div class="mb-8">
             {% for message in messages %}
@@ -182,17 +238,17 @@
     </div>
 
     <footer class="bg-white shadow-lg mt-8" id="main-footer">
-        <div class="container mx-auto px-4 py-4">
-            <p class="text-center text-gray-500">
-                2024 PDF2Cal · {% trans "All rights reserved" %} · 
+        <div class="w-full px-3 sm:px-4 sm:max-w-7xl sm:mx-auto py-4">
+            <p class="text-center text-sm sm:text-base text-gray-500">
+                2024 PDF2Cal · {% trans "All rights reserved" %} ·
                 {% if LANGUAGE_CODE == 'fr' %}
-                <a href="https://www.krispc.fr/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a> · 
-                <a href="https://www.krispc.fr/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a> · 
+                <a href="https://www.krispc.fr/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a> ·
+                <a href="https://www.krispc.fr/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a> ·
                 {% else %}
-                <a href="https://www.krispc.fr/en/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a> · 
-                <a href="https://www.krispc.fr/en/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a> · 
+                <a href="https://www.krispc.fr/en/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a> ·
+                <a href="https://www.krispc.fr/en/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a> ·
                 {% endif %}
-                {% trans "Made with ❤️ by" %} <a href="mailto:archer.chris@gmail.com" class="font-['Pacifico'] italic underline decoration-[#880000] decoration-2 hover:text-[#880000] transition-colors duration-300 text-lg">Christopher Archer</a>
+                {% trans "Made with ❤️ by" %} <a href="mailto:archer.chris@gmail.com" class="font-['Pacifico'] italic underline decoration-[#880000] decoration-2 hover:text-[#880000] transition-colors duration-300 text-base sm:text-lg">Christopher Archer</a>
             </p>
         </div>
     </footer>
@@ -286,31 +342,48 @@
         // Info modal functionality
         const infoModal = document.getElementById('info-modal');
         const infoButton = document.getElementById('info-button');
+        const infoButtonMobile = document.getElementById('info-button-mobile');
         const closeModal = document.getElementById('close-modal');
 
-        infoButton.addEventListener('click', () => {
+        function openInfoModal() {
             infoModal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-        });
+            document.body.style.overflow = 'hidden';
+            // Close mobile menu if open
+            if (mobileMenu) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
 
-        closeModal.addEventListener('click', () => {
+        function closeInfoModal() {
             infoModal.classList.add('hidden');
-            document.body.style.overflow = 'auto'; // Restore scrolling
-        });
+            document.body.style.overflow = 'auto';
+        }
+
+        if (infoButton) {
+            infoButton.addEventListener('click', openInfoModal);
+        }
+
+        if (infoButtonMobile) {
+            infoButtonMobile.addEventListener('click', openInfoModal);
+        }
+
+        if (closeModal) {
+            closeModal.addEventListener('click', closeInfoModal);
+        }
 
         // Close modal when clicking outside
-        infoModal.addEventListener('click', (e) => {
-            if (e.target === infoModal) {
-                infoModal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
-        });
+        if (infoModal) {
+            infoModal.addEventListener('click', (e) => {
+                if (e.target === infoModal) {
+                    closeInfoModal();
+                }
+            });
+        }
 
         // Close modal with Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !infoModal.classList.contains('hidden')) {
-                infoModal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
+            if (e.key === 'Escape' && infoModal && !infoModal.classList.contains('hidden')) {
+                closeInfoModal();
             }
         });
     </script>
