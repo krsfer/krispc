@@ -205,9 +205,17 @@ TEMPLATES = [
 # Uses SQLite by default. Can be overridden with DATABASE_URL environment variable.
 # https://github.com/jazzband/dj-database-url
 
-DATABASES = {
-    "default": dj_database_url.config(default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')
-}
+if IS_FLY_APP:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": "/data/db.sqlite3",
+        }
+    }
+else:
+    DATABASES = {
+        "default": dj_database_url.config(default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')
+    }
 
 
 # Password validation

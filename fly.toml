@@ -7,6 +7,10 @@ primary_region = "cdg"
 [deploy]
   release_command = "python manage.py migrate"
 
+[mounts]
+  source = "krispc_data"
+  destination = "/data"
+
 [env]
   PORT = "8080"
   PYTHONUNBUFFERED = "1"
