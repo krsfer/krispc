@@ -4,6 +4,9 @@ primary_region = "cdg"
 [build]
   dockerfile = "Dockerfile"
 
+[deploy]
+  release_command = "python manage.py migrate"
+
 [env]
   PORT = "8080"
   PYTHONUNBUFFERED = "1"
