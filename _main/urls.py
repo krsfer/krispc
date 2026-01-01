@@ -39,7 +39,8 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
-    path("", include("krispc.urls")),
+    path("", include("hub.urls")),
+    path("krispc/", include("krispc.urls")),
     path("wat/", include("wat.urls")),
     #
     path("start/", hello.views.index, name="index"),
