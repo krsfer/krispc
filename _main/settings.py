@@ -298,28 +298,28 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 
 WHITENOISE_MANIFEST_STRICT = False
 
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": os.environ.get('REDIS_URL'),
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#         }
-#     }
-# }
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get('REDIS_URL'),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {
-                "ssl_cert_reqs": None
-            },
+# Configure caching - use Redis in production, in-memory cache for development and tests
+if os.environ.get('REDIS_URL'):
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get('REDIS_URL'),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "CONNECTION_POOL_KWARGS": {
+                    "ssl_cert_reqs": None
+                },
+            }
         }
     }
-}
+else:
+    # Use in-memory cache for development and tests
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
 
 VER = semver.VersionInfo.parse("2.3.0")
 
