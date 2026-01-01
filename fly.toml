@@ -4,9 +4,6 @@ primary_region = "cdg"
 [build]
   dockerfile = "Dockerfile"
 
-[deploy]
-  release_command = "python manage.py migrate"
-
 [mounts]
   source = "krispc_data"
   destination = "/data"
@@ -17,7 +14,7 @@ primary_region = "cdg"
   FLY_APP = "true"
 
 [processes]
-  app = "bash -c 'python manage.py runworker channel_layer -v2 & celery -A _main worker -l info & daphne _main.asgi:application --port 8080 --bind 0.0.0.0 -v2'"
+  app = "bash -c 'python manage.py migrate && python manage.py runworker channel_layer -v2 & celery -A _main worker -l info & daphne _main.asgi:application --port 8080 --bind 0.0.0.0 -v2'"
 
 [[services]]
   internal_port = 8080
