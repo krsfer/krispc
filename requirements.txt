@@ -53,4 +53,4 @@ pdfminer.six==20251107
 pdfplumber>=0.10.3
 pandas>=2.2.0
 celery==5.3.4
-celery-progress==0.5
+celery-progress==0.5pytesseract

@@ -19,6 +19,12 @@ FROM python:3.13-slim AS python-builder
 
 WORKDIR /app
 
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install pipenv
 RUN pip install --no-cache-dir pipenv
 
@@ -32,6 +38,12 @@ RUN pipenv install --system --deploy --ignore-pipfile
 FROM python:3.13-slim
 
 WORKDIR /app
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    tesseract-ocr \
+    tesseract-ocr-fra \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy Python packages from builder stage
 COPY --from=python-builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
