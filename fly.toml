@@ -17,13 +17,12 @@ primary_region = "cdg"
   FLY_APP = "true"
 
 [processes]
-  web = "daphne _main.asgi:application --port 8080 --bind 0.0.0.0 -v2"
-  worker = "python manage.py runworker channel_layer -v2"
+  app = "bash -c 'python manage.py runworker channel_layer -v2 & daphne _main.asgi:application --port 8080 --bind 0.0.0.0 -v2'"
 
 [[services]]
   internal_port = 8080
   protocol = "tcp"
-  processes = ["web"]
+  processes = ["app"]
   auto_stop_machines = true
   auto_start_machines = true
   min_machines_running = 1
@@ -36,7 +35,6 @@ primary_region = "cdg"
   [[services.ports]]
     handlers = ["http"]
     port = 80
-    # This line forces the redirect
     force_https = true
 
   [[services.ports]]
@@ -54,10 +52,4 @@ primary_region = "cdg"
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 512
-  processes = ["web"]
-
-[[vm]]
-  cpu_kind = "shared"
-  cpus = 1
-  memory_mb = 256
-  processes = ["worker"]
+  processes = ["app"]
