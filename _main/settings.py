@@ -115,6 +115,7 @@ INSTALLED_APPS = [
     # pdf2cal apps
     "celery_progress",
     "p2c",
+    "hub",
     "rest_framework",
 ]
 
