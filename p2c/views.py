@@ -423,7 +423,8 @@ def google_login(request):
                 # Log the user in
                 login(request, user)
 
-                return JsonResponse({"success": True, "redirect": settings.SITE_URL})
+                # Redirect to /importpdf/ after successful login
+                return JsonResponse({"success": True, "redirect": "/importpdf/"})
 
             except ValueError as e:
                 error_msg = str(e)
@@ -542,7 +543,8 @@ def google_login(request):
                 # Log the user in
                 login(request, user)
 
-                return redirect(settings.SITE_URL)
+                # Redirect to /importpdf/ after successful login
+                return redirect('/importpdf/')
 
             except requests.RequestException as e:
                 return JsonResponse(
