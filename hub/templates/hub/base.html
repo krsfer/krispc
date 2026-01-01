@@ -1,0 +1,53 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Christopher{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'hub/css/style.css' %}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="brand">Christopher</h1>
+            <nav class="language-toggle">
+                <form action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    <select name="language" onchange="this.form.submit()" class="language-select">
+                        <option value="fr" {% if LANGUAGE_CODE == 'fr' %}selected{% endif %}>Français</option>
+                        <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+                    </select>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <nav class="footer-nav">
+                <a href="{% url 'hub:privacy' %}">{% trans "Privacy" %}</a>
+                <span class="separator">|</span>
+                <a href="{% url 'hub:terms' %}">{% trans "Terms" %}</a>
+                <span class="separator">|</span>
+                <span>&copy; 2026</span>
+            </nav>
+            <div class="language-footer">
+                <form action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    <button type="submit" name="language" value="fr" class="lang-btn {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">Français</button>
+                    <span class="separator">|</span>
+                    <button type="submit" name="language" value="en" class="lang-btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}">English</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

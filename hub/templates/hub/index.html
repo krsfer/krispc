@@ -1,0 +1,24 @@
+{% extends "hub/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="hero">
+        <h2 class="hero-title">{{ page_title }}</h2>
+        <p class="hero-tagline">{{ tagline }}</p>
+    </section>
+
+    <section class="apps-grid">
+        {% for app in apps %}
+        <div class="app-card">
+            <div class="app-icon">{{ app.icon }}</div>
+            <h3 class="app-name">{{ app.name }}</h3>
+            <p class="app-description">{{ app.description }}</p>
+            <a href="{{ app.url }}" class="app-button">{{ app.button_text }}</a>
+        </div>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}
