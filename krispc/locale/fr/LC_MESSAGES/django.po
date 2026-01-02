@@ -68,7 +68,7 @@ msgstr "Réparation smartphones et tablettes"
 #: krispc/lst_products.py:39
 msgid "PTR_0380"
 msgstr ""
-"J&rsquo;ai les compétences et les outils pour réparer l&rsquo;écran cassé ou "
+"J'ai les compétences et les outils pour réparer l'écran cassé ou "
 "la batterie faible de votre téléphone. Je peux aussi vous aider à installer "
 "des applis et à le régler, que vous soyez sur Android, iOS ou même "
 "Blackberry."
@@ -77,7 +77,7 @@ msgstr ""
 msgid "PTR_3330"
 msgstr ""
 "Réparer un vieux smartphone coûte souvent moins cher que les nouveaux "
-"modèles. Si votre téléphone a pris l&rsquo;eau, je fais un diagnostic avant "
+"modèles. Si votre téléphone a pris l'eau, je fais un diagnostic avant "
 "de vous donner un prix. {0} par heure et toute heure commencée est due."
 
 #: krispc/lst_products.py:44
@@ -87,8 +87,8 @@ msgstr "Maintenance PC fixes"
 #: krispc/lst_products.py:45
 msgid "PTR_0240"
 msgstr ""
-"Pourquoi acheter un nouvel ordi alors qu&rsquo;un mise à jour peut suffire ? "
-"Boostez votre ordinateur pour qu&rsquo;il dure plus longtemps !"
+"Pourquoi acheter un nouvel ordi alors qu'un mise à jour peut suffire ? "
+"Boostez votre ordinateur pour qu'il dure plus longtemps !"
 
 #: krispc/lst_products.py:46
 msgid "PTR_3000"
@@ -104,7 +104,7 @@ msgstr "Entretien ordinateurs portables"
 msgid "PTR_0320"
 msgstr ""
 "Votre ordinateur portable est-il devenu extrêmement lent ? Au lieu "
-"d&rsquo;en acheter un nouveau, pourquoi ne pas le mettre à jour ? Plusieurs "
+"d'en acheter un nouveau, pourquoi ne pas le mettre à jour ? Plusieurs "
 "options possibles : nouvelle batterie, plus de mémoire, disque dur plus "
 "rapide, etc."
 
@@ -120,15 +120,15 @@ msgstr "Support imprimantes"
 msgid "PTR_0410"
 msgstr ""
 "Avez-vous remarqué que tous les magasins en ligne et fournisseurs vendent "
-"des imprimantes, mais personne ne les répare&nbsp;? Cela n&rsquo;a pas "
+"des imprimantes, mais personne ne les répare ? Cela n'a pas "
 "changé depuis des années. La plupart des fournisseurs trouvent plus facile "
-"de vendre et d&rsquo;oublier que de fournir un véritable service client. Ne "
+"de vendre et d'oublier que de fournir un véritable service client. Ne "
 "jetez pas votre équipement cassé&mdash;faites-le réparer à moindre coût."
 
 #: krispc/lst_products.py:58
 msgid "PTR_0420"
 msgstr ""
-"Que vous ayez une imprimante à jet d&rsquo;encre ou thermique, je peux "
+"Que vous ayez une imprimante à jet d'encre ou thermique, je peux "
 "résoudre divers problèmes comme les bourrages papier ou les erreurs de "
 "connexion. Le coût dépend de plusieurs facteurs. {0} par heure et toute "
 "heure commencée est due."
@@ -140,16 +140,16 @@ msgstr "Formation informatique"
 #: krispc/lst_products.py:63
 msgid "PTR_0490"
 msgstr ""
-"L&rsquo;informatique, c&rsquo;est pas toujours facile, surtout quand on est "
-"pas né avec. C&rsquo;est pourtant essentiel pour le travail, l&rsquo;école, "
+"L'informatique, c'est pas toujours facile, surtout quand on est "
+"pas né avec. C'est pourtant essentiel pour le travail, l'école, "
 "les démarches du quotidien, etc."
 
 #: krispc/lst_products.py:64
 msgid "PTR_0500"
 msgstr ""
 "Je vous apprends à vous servir des outils numériques dont vous avez besoin "
-"pour être à l&rsquo;aise avec votre ordinateur ou votre tablette. {0} de "
-"l&rsquo;heure. Toute heure commencée est due."
+"pour être à l'aise avec votre ordinateur ou votre tablette. {0} de "
+"l'heure. Toute heure commencée est due."
 
 #: krispc/lst_products.py:68
 msgid "PTR_0510"
@@ -158,7 +158,7 @@ msgstr "Sécurité et nettoyage logiciels malveillants"
 #: krispc/lst_products.py:69
 msgid "PTR_0520"
 msgstr ""
-"Des programmes malveillants peuvent s&rsquo;infiltrer dans votre ordinateur "
+"Des programmes malveillants peuvent s'infiltrer dans votre ordinateur "
 "sans que vous le sachiez. Ça inclut des virus, des logiciels espions, etc."
 
 #: krispc/lst_products.py:70
@@ -175,14 +175,14 @@ msgstr "Conseil connexions internet"
 msgid "PTR_0570"
 msgstr ""
 "Protégez-vous et protégez votre famille. Votre ordinateur est-il à jour et "
-"sécurisé ? Le risque est plus grand avec l&rsquo;usage croissant "
-"d&rsquo;Internet."
+"sécurisé ? Le risque est plus grand avec l'usage croissant "
+"d'Internet."
 
 #: krispc/lst_products.py:76
 msgid "PTR_0580"
 msgstr ""
 "Configurer les contrôles parentaux coûte {0}. Mon assistance technique est à "
-"{1} de l&rsquo;heure. Toute heure commencée est due."
+"{1} de l'heure. Toute heure commencée est due."
 
 #: krispc/lst_products.py:80
 msgid "PTR_0600"
@@ -191,7 +191,7 @@ msgstr "Configuration box et réseau"
 #: krispc/lst_products.py:81
 msgid "PTR_0610"
 msgstr ""
-"Changement de fournisseur Internet ? Pas de panique, je m&rsquo;occupe de "
+"Changement de fournisseur Internet ? Pas de panique, je m'occupe de "
 "configurer votre nouveau WiFi... du mot de passe à la clé de sécurité."
 
 #: krispc/lst_products.py:82
@@ -207,14 +207,14 @@ msgstr "Assistance à distance"
 #: krispc/lst_products.py:87
 msgid "PTR_0680"
 msgstr ""
-"Grâce à une prise en main à distance, je peux évaluer l&rsquo;état de votre "
+"Grâce à une prise en main à distance, je peux évaluer l'état de votre "
 "ordinateur et proposer des solutions de maintenance."
 
 #: krispc/lst_products.py:88
 msgid "PTR_0690"
 msgstr ""
 "Exemples de ce que je peux faire à distance : supprimer des virus, installer "
-"des périphériques, mettre à jour des logiciels, etc. {0} de l&rsquo;heure."
+"des périphériques, mettre à jour des logiciels, etc. {0} de l'heure."
 
 #: krispc/lst_products.py:89
 msgid "PTR_0692"
@@ -249,14 +249,14 @@ msgstr "À propos"
 #: krispc/templates/__about.html:23
 msgid "PTR_1990"
 msgstr ""
-"Je suis passionné d&rsquo;informatique dans tous ses aspects (programmation, "
-"systèmes). Avec plus de 20 ans d&rsquo;expérience, je maintiens une vision "
-"de précision et d&rsquo;excellence."
+"Je suis passionné d'informatique dans tous ses aspects (programmation, "
+"systèmes). Avec plus de 20 ans d'expérience, je maintiens une vision "
+"de précision et d'excellence."
 
 #: krispc/templates/__about.html:31
 msgid "PTR_1995"
 msgstr ""
-"N&rsquo;hésitez pas à poser vos questions, même si elles vous semblent "
+"N'hésitez pas à poser vos questions, même si elles vous semblent "
 "simplistes. Je suis là pour vous aider à résoudre vos problèmes. Ma patience "
 "et mon écoute sont là pour vous."
 
@@ -315,7 +315,7 @@ msgstr "Services Informatiques"
 
 #: krispc/templates/__header.html:21
 msgid "PTR_0800"
-msgstr "Voici l&rsquo;équipe"
+msgstr "Voici l'équipe"
 
 #: krispc/templates/__hero.html:9
 msgid "French English"
@@ -328,9 +328,9 @@ msgstr "À Domicile &middot; Aux Particuliers"
 #: krispc/templates/__hero.html:11
 msgid "PTR_0220"
 msgstr ""
-"Linux&nbsp;&middot; Windows&nbsp;&middot; macOS&nbsp;&middot; "
-"Dépannage&nbsp;&middot; Montage&nbsp;&middot; Équipement&nbsp;&middot; "
-"Logiciel&nbsp;&middot; Formation&nbsp;&middot; Conseil"
+"Linux &middot; Windows &middot; macOS &middot; "
+"Dépannage &middot; Montage &middot; Équipement &middot; "
+"Logiciel &middot; Formation &middot; Conseil"
 
 #: krispc/templates/__hero.html:14 krispc/views.py:92
 msgid "PTR_2055"
@@ -352,11 +352,11 @@ msgstr "Commander"
 
 #: krispc/templates/__services.html:55
 msgid "Call"
-msgstr "Téléphone&nbsp;:"
+msgstr "Téléphone :"
 
 #: krispc/templates/__services.html:77
 msgid "PTR_0150"
-msgstr "En savoir plus&nbsp;&euro;"
+msgstr "En savoir plus &euro;"
 
 #: krispc/templates/__team.html:8 krispc/templates/__team.html:21
 msgid "PTR_0710"
@@ -569,7 +569,7 @@ msgstr ""
 #~ msgstr "Français &middot; Anglais"
 
 #~ msgid "PTR_0210"
-#~ msgstr "Notre talent&nbsp;: dévouement à votre solution"
+#~ msgstr "Notre talent : dévouement à votre solution"
 
 #~ msgid "PTR_0720"
 #~ msgstr "Expérience"
