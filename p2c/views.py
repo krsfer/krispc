@@ -21,7 +21,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, get_language
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from google.auth.transport.requests import Request
@@ -121,6 +121,9 @@ def home(request):
     if 'localhost' not in redirect_uri and '127.0.0.1' not in redirect_uri:
         redirect_uri = redirect_uri.replace('http://', 'https://')
 
+    # Get current active language (set by middleware)
+    current_lang = get_language()
+
     context = {
         "google_oauth2_client_id": client_id,
         "google_oauth2_redirect_uri": redirect_uri,
@@ -129,6 +132,7 @@ def home(request):
         "oauth_scopes_string": get_oauth_scopes_string(),
         "gap_warnings": [],
         "oauth_state": state,
+        "current_language": current_lang[:2],  # Pass 2-char language code
     }
     # Prefill textarea with last submitted text (if any)
     context["schedule_text"] = request.session.get("text_content")

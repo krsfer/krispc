@@ -1,4 +1,6 @@
-from django.utils.translation import activate
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class EnsureDefaultLanguageMiddleware:
@@ -28,14 +30,16 @@ class EnsureDefaultLanguageMiddleware:
             # No prefix means French (default language with prefix_default_language=False)
             language = 'fr'
 
-        # Set language in session to maintain across requests
-        # Only set if not already set or if different from current
-        session_lang = request.session.get('_language')
-        if session_lang != language:
-            request.session['_language'] = language
+        # Log what we're setting
+        logger.info(f"EnsureDefaultLanguageMiddleware: path={path}, setting language={language}, session_before={request.session.get('_language', 'NOT_SET')}")
 
-        # Also activate it for this request
-        activate(language)
+        # Set language in session
+        # LocaleMiddleware will pick this up and activate it
+        request.session['_language'] = language
+        # Mark session as modified to ensure it's saved
+        request.session.modified = True
+
+        logger.info(f"EnsureDefaultLanguageMiddleware: session_after={request.session.get('_language')}")
 
         response = self.get_response(request)
         return response

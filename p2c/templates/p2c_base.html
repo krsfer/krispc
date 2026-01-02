@@ -55,7 +55,7 @@
                     <div class="hidden sm:flex items-center space-x-3">
                         <div class="relative lang-dropdown-desktop">
                             <button type="button" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[36px]" onclick="toggleLanguageDropdown('desktop')">
-                                {% if LANGUAGE_CODE == 'fr' %}
+                                {% if current_language == 'fr' %}
                                 <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="w-8 h-6 object-contain">
                                 {% else %}
                                 <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="w-8 h-6 object-contain">
@@ -68,19 +68,19 @@
                                 <form action="{% url 'set_language' %}" method="post">
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ redirect_to }}">
-                                    <button type="submit" name="language" value="fr" class="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left {% if LANGUAGE_CODE == 'fr' %}bg-indigo-50{% endif %}">
+                                    <button type="submit" name="language" value="fr" class="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left {% if current_language == 'fr' %}bg-indigo-50{% endif %}">
                                         <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="w-8 h-6 object-contain">
                                         <span class="text-sm font-medium text-gray-700">Français</span>
-                                        {% if LANGUAGE_CODE == 'fr' %}
+                                        {% if current_language == 'fr' %}
                                         <svg class="w-4 h-4 text-indigo-600 ml-auto" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                                         </svg>
                                         {% endif %}
                                     </button>
-                                    <button type="submit" name="language" value="en" class="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left {% if LANGUAGE_CODE == 'en' %}bg-indigo-50{% endif %}">
+                                    <button type="submit" name="language" value="en" class="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left {% if current_language == 'en' %}bg-indigo-50{% endif %}">
                                         <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="w-8 h-6 object-contain">
                                         <span class="text-sm font-medium text-gray-700">English</span>
-                                        {% if LANGUAGE_CODE == 'en' %}
+                                        {% if current_language == 'en' %}
                                         <svg class="w-4 h-4 text-indigo-600 ml-auto" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                                         </svg>
@@ -143,7 +143,7 @@
                     <div class="flex sm:hidden items-center space-x-2">
                         <div class="relative lang-dropdown-mobile">
                             <button type="button" class="flex items-center gap-1.5 px-2 py-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px]" onclick="toggleLanguageDropdown('mobile')">
-                                {% if LANGUAGE_CODE == 'fr' %}
+                                {% if current_language == 'fr' %}
                                 <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="w-7 h-5 object-contain">
                                 {% else %}
                                 <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="w-7 h-5 object-contain">
@@ -156,19 +156,19 @@
                                 <form action="{% url 'set_language' %}" method="post">
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ redirect_to }}">
-                                    <button type="submit" name="language" value="fr" class="flex items-center gap-2.5 w-full px-3.5 py-3 hover:bg-gray-50 transition-colors text-left min-h-[44px] {% if LANGUAGE_CODE == 'fr' %}bg-indigo-50{% endif %}">
+                                    <button type="submit" name="language" value="fr" class="flex items-center gap-2.5 w-full px-3.5 py-3 hover:bg-gray-50 transition-colors text-left min-h-[44px] {% if current_language == 'fr' %}bg-indigo-50{% endif %}">
                                         <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="w-7 h-5 object-contain">
                                         <span class="text-sm font-medium text-gray-700">Français</span>
-                                        {% if LANGUAGE_CODE == 'fr' %}
+                                        {% if current_language == 'fr' %}
                                         <svg class="w-4 h-4 text-indigo-600 ml-auto" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                                         </svg>
                                         {% endif %}
                                     </button>
-                                    <button type="submit" name="language" value="en" class="flex items-center gap-2.5 w-full px-3.5 py-3 hover:bg-gray-50 transition-colors text-left min-h-[44px] {% if LANGUAGE_CODE == 'en' %}bg-indigo-50{% endif %}">
+                                    <button type="submit" name="language" value="en" class="flex items-center gap-2.5 w-full px-3.5 py-3 hover:bg-gray-50 transition-colors text-left min-h-[44px] {% if current_language == 'en' %}bg-indigo-50{% endif %}">
                                         <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="w-7 h-5 object-contain">
                                         <span class="text-sm font-medium text-gray-700">English</span>
-                                        {% if LANGUAGE_CODE == 'en' %}
+                                        {% if current_language == 'en' %}
                                         <svg class="w-4 h-4 text-indigo-600 ml-auto" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                                         </svg>
@@ -299,7 +299,7 @@
         <div class="w-full px-3 sm:px-4 sm:max-w-7xl sm:mx-auto py-4">
             <p class="text-center text-sm sm:text-base text-gray-500">
                 2024 PDF2Cal · {% trans "All rights reserved" %} ·
-                {% if LANGUAGE_CODE == 'fr' %}
+                {% if current_language == 'fr' %}
                 <a href="https://www.krispc.fr/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a> ·
                 <a href="https://www.krispc.fr/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a> ·
                 {% else %}
@@ -334,7 +334,7 @@
                 </ul>
                 <div class="pt-4 border-t border-gray-200">
                     <p class="text-sm text-gray-500">
-                        {% if LANGUAGE_CODE == 'fr' %}
+                        {% if current_language == 'fr' %}
                         <a href="https://www.krispc.fr/privacy/" class="text-indigo-600 hover:text-indigo-900 underline">{% trans "Privacy Policy" %}</a>
                         <span class="mx-2">·</span>
                         <a href="https://www.krispc.fr/terms/" class="text-indigo-600 hover:text-indigo-900 underline">{% trans "Terms of Service" %}</a>
