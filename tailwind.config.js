@@ -3,6 +3,8 @@ export default {
   content: [
     './krispc/templates/**/*.html',
     './krispc/static/src/**/*.{vue,js}',
+    './p2c/templates/**/*.html',
+    './hub/templates/**/*.html',
   ],
   darkMode: 'class',
   theme: {
