@@ -30,7 +30,7 @@ msgstr ""
 #: p2c/templates/p2c_base.html:303 p2c/templates/p2c_base.html:306
 #: p2c/templates/p2c_base.html:338 p2c/templates/p2c_base.html:342
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Politique de confidentialité"
 
 #: p2c/json_views.py:276 p2c/views.py:572
 msgid "No file provided"
@@ -306,7 +306,7 @@ msgstr ""
 #: p2c/templates/calendar_editor.html:5 p2c/templates/p2c_base.html:134
 #: p2c/templates/p2c_base.html:257
 msgid "Calendar Editor"
-msgstr ""
+msgstr "Éditeur de calendrier"
 
 #: p2c/templates/calendar_editor.html:11
 msgid "Google Calendar Editor"
@@ -468,7 +468,7 @@ msgstr ""
 #: p2c/templates/home.html:526 p2c/templates/json_ingest.html:44
 #: p2c/templates/json_ingest.html:706
 msgid "Show All"
-msgstr ""
+msgstr "Tout afficher"
 
 #: p2c/templates/calendar_editor.html:157
 msgid "events modified"
@@ -528,15 +528,15 @@ msgstr ""
 #: p2c/templates/calendar_editor.html:426 p2c/templates/home.html:228
 #: p2c/templates/home.html:621 p2c/templates/json_ingest.html:501
 msgid "Day"
-msgstr ""
+msgstr "Jour"
 
 #: p2c/templates/calendar_editor.html:426 p2c/templates/json_ingest.html:502
 msgid "from"
-msgstr ""
+msgstr "de"
 
 #: p2c/templates/calendar_editor.html:426 p2c/templates/json_ingest.html:503
 msgid "to"
-msgstr ""
+msgstr "à"
 
 #: p2c/templates/calendar_editor.html:434 p2c/templates/json_ingest.html:504
 msgid "Click to edit"
@@ -789,7 +789,7 @@ msgstr "Se connecter avec Google"
 #: p2c/templates/p2c_base.html:304 p2c/templates/p2c_base.html:307
 #: p2c/templates/p2c_base.html:340 p2c/templates/p2c_base.html:344
 msgid "Terms of Service"
-msgstr ""
+msgstr "Conditions d'utilisation"
 
 #: p2c/templates/home.html:33
 msgid "Google Sign-In is currently unavailable. Please try again later."
@@ -797,94 +797,94 @@ msgstr ""
 
 #: p2c/templates/home.html:45
 msgid "Paste Schedule Text"
-msgstr ""
+msgstr "Coller le texte du planning"
 
 #: p2c/templates/home.html:49
 msgid "Paste text here"
-msgstr ""
+msgstr "Coller le texte ici"
 
 #: p2c/templates/home.html:55
 msgid "Process Text"
-msgstr ""
+msgstr "Traiter le texte"
 
 #: p2c/templates/home.html:63 p2c/templates/json_ingest.html:11
 msgid "Import PDF Schedule"
-msgstr ""
+msgstr "Importer le planning PDF"
 
 #: p2c/templates/home.html:73 p2c/templates/json_ingest.html:15
 msgid "Choose a PDF file"
-msgstr ""
+msgstr "Choisir un fichier PDF"
 
 #: p2c/templates/home.html:77 p2c/templates/json_ingest.html:19
 msgid "No file chosen"
-msgstr ""
+msgstr "Aucun fichier choisi"
 
 #: p2c/templates/home.html:81 p2c/templates/json_ingest.html:23
 msgid "Browse..."
-msgstr ""
+msgstr "Parcourir..."
 
 #: p2c/templates/home.html:94
 msgid "Import and Process"
-msgstr ""
+msgstr "Importer et traiter"
 
 #: p2c/templates/home.html:101
 msgid "Select Calendar"
-msgstr ""
+msgstr "Sélectionner le calendrier"
 
 #: p2c/templates/home.html:112
 msgid "Choose the calendar where events will be created or deleted"
-msgstr ""
+msgstr "Choisissez le calendrier où les événements seront créés ou supprimés"
 
 #: p2c/templates/home.html:142
 #, python-format
 msgid "Flush %(current_month_name)s Events"
-msgstr ""
+msgstr "Supprimer les événements de %(current_month_name)s"
 
 #: p2c/templates/home.html:153 p2c/templates/home.html:168
 #, python-format
 msgid "Create %(current_month_name)s Calendar Events"
-msgstr ""
+msgstr "Créer les événements de %(current_month_name)s"
 
 #: p2c/templates/home.html:159 p2c/templates/home.html:166
 msgid "Please upload a PDF or paste text first"
-msgstr ""
+msgstr "Veuillez d'abord télécharger un PDF ou coller du texte"
 
 #: p2c/templates/home.html:161
 msgid "Flush Events"
-msgstr ""
+msgstr "Supprimer les événements"
 
 #: p2c/templates/home.html:187 p2c/templates/home.html:408
 msgid "Pending Appointments"
-msgstr ""
+msgstr "Rendez-vous en attente"
 
 #: p2c/templates/home.html:224
 msgid "Time Gap Warnings"
-msgstr ""
+msgstr "Avertissements d'intervalle de temps"
 
 #: p2c/templates/home.html:229
 msgid "between"
-msgstr ""
+msgstr "entre"
 
 #: p2c/templates/home.html:229
 msgid "ends"
-msgstr ""
+msgstr "finit"
 
 #: p2c/templates/home.html:229
 msgid "and"
-msgstr ""
+msgstr "et"
 
 #: p2c/templates/home.html:229
 msgid "starts"
-msgstr ""
+msgstr "commence"
 
 #: p2c/templates/home.html:254
 msgid "Short time gap with another appointment"
-msgstr ""
+msgstr "Court intervalle avec un autre rendez-vous"
 
 #: p2c/templates/home.html:260
 #, python-format
 msgid "Day %(day)s from %(start)s to %(end)s"
-msgstr ""
+msgstr "Jour %(day)s de %(start)s à %(end)s"
 
 #: p2c/templates/home.html:622
 msgid "AM"
@@ -897,15 +897,15 @@ msgstr ""
 #: p2c/templates/home.html:675
 msgid ""
 "No appointments to display yet. Upload a PDF or paste schedule text above."
-msgstr ""
+msgstr "Aucun rendez-vous à afficher pour le moment. Téléchargez un PDF ou collez le texte du planning ci-dessus."
 
 #: p2c/templates/json_ingest.html:5 p2c/templates/p2c_base.html:250
 msgid "JSON Ingest"
-msgstr ""
+msgstr "Ingestion JSON"
 
 #: p2c/templates/json_ingest.html:36
 msgid "Process PDF"
-msgstr ""
+msgstr "Traiter le PDF"
 
 #: p2c/templates/json_ingest.html:43 p2c/templates/json_ingest.html:733
 msgid "Parsed Appointments"
@@ -1023,41 +1023,41 @@ msgstr ""
 
 #: p2c/templates/p2c_base.html:107 p2c/templates/p2c_base.html:232
 msgid "Event Settings"
-msgstr ""
+msgstr "Paramètres d'événements"
 
 #: p2c/templates/p2c_base.html:108
 msgid "Settings"
-msgstr ""
+msgstr "Paramètres"
 
 #: p2c/templates/p2c_base.html:115 p2c/templates/p2c_base.html:239
 #: p2c/templates/pay_view.html:6
 msgid "Pay View"
-msgstr ""
+msgstr "Calcul salaire"
 
 #: p2c/templates/p2c_base.html:116
 msgid "Pay"
-msgstr ""
+msgstr "Paye"
 
 #: p2c/templates/p2c_base.html:120 p2c/templates/p2c_base.html:243
 #: p2c/templates/updates.html:6
 msgid "Updates"
-msgstr ""
+msgstr "Mises à jour"
 
 #: p2c/templates/p2c_base.html:127
 msgid "JSON"
-msgstr ""
+msgstr "JSON"
 
 #: p2c/templates/p2c_base.html:135
 msgid "Editor"
-msgstr ""
+msgstr "Éditeur"
 
 #: p2c/templates/p2c_base.html:202 p2c/templates/p2c_base.html:275
 msgid "Logout"
-msgstr ""
+msgstr "Déconnexion"
 
 #: p2c/templates/p2c_base.html:223 p2c/templates/p2c_base.html:318
 msgid "About PDF2Cal"
-msgstr ""
+msgstr "À propos de PDF2Cal"
 
 #: p2c/templates/p2c_base.html:301
 msgid "All rights reserved"
@@ -1071,33 +1071,33 @@ msgstr "Fait avec ❤️ par"
 msgid ""
 "PDF2Cal is a powerful tool that helps you convert PDF documents containing "
 "event information into calendar events. Here's what you can do:"
-msgstr ""
+msgstr "PDF2Cal est un outil puissant qui vous aide à convertir des documents PDF contenant des informations d'événements en événements de calendrier. Voici ce que vous pouvez faire :"
 
 #: p2c/templates/p2c_base.html:328
 msgid "Import PDF documents containing event details"
-msgstr ""
+msgstr "Importer des documents PDF contenant des détails d'événements"
 
 #: p2c/templates/p2c_base.html:329
 msgid ""
 "Automatically extract event information including dates, times, and "
 "descriptions"
-msgstr ""
+msgstr "Extraire automatiquement les informations d'événements, y compris les dates, heures et descriptions"
 
 #: p2c/templates/p2c_base.html:330
 msgid "Review and edit extracted events before saving"
-msgstr ""
+msgstr "Revoir et modifier les événements extraits avant de les enregistrer"
 
 #: p2c/templates/p2c_base.html:331
 msgid "Export events to your calendar"
-msgstr ""
+msgstr "Exporter des événements vers votre calendrier"
 
 #: p2c/templates/p2c_base.html:332
 msgid "Customize event extraction settings"
-msgstr ""
+msgstr "Personnaliser les paramètres d'extraction d'événements"
 
 #: p2c/templates/p2c_base.html:333
 msgid "Manage your event preferences"
-msgstr ""
+msgstr "Gérer vos préférences d'événements"
 
 #: p2c/templates/pay_view.html:14
 msgid "Pay Calculator"
