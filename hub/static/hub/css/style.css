@@ -98,9 +98,13 @@ body {
     transform: translateY(0);
 }
 
-.lang-dropdown-menu form {
+.lang-dropdown-menu {
     display: flex;
     flex-direction: column;
+}
+
+.lang-dropdown-menu form {
+    margin: 0;
 }
 
 .lang-option {

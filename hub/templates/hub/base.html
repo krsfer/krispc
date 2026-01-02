@@ -27,7 +27,7 @@
                     <div id="langDropdownMenu" class="lang-dropdown-menu">
                         <form action="{% url 'set_language' %}" method="post">
                             {% csrf_token %}
-                            <input name="next" type="hidden" value="{{ request.path }}">
+                            <input name="next" type="hidden" value="/">
                             <button type="submit" name="language" value="fr" class="lang-option {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">
                                 <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
                                 <span>Français</span>
@@ -37,6 +37,10 @@
                                 </svg>
                                 {% endif %}
                             </button>
+                        </form>
+                        <form action="{% url 'set_language' %}" method="post">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="/en/">
                             <button type="submit" name="language" value="en" class="lang-option {% if LANGUAGE_CODE == 'en' %}active{% endif %}">
                                 <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
                                 <span>English</span>
