@@ -266,6 +266,10 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
 
+# Media files (uploaded by users)
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "media/"
+
 # Additional locations for static files
 STATICFILES_DIRS = [
     BASE_DIR / "krispc" / "static" / "dist",  # Vite build output
