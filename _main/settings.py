@@ -270,16 +270,6 @@ STATIC_URL = "static/"
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "media/"
 
-# Storage configuration (Django 4.2+)
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
-
 # Additional locations for static files
 STATICFILES_DIRS = [
     BASE_DIR / "krispc" / "static" / "dist",  # Vite build output
@@ -300,6 +290,10 @@ LANGUAGES = [
 
 
 STORAGES = {
+    # Default file storage for uploaded files
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     # Enable WhiteNoise's GZip and Brotli compression of static assets:
     # https://whitenoise.readthedocs.io/en/latest/django.html#add-compression-and-caching-support
     "staticfiles": {
