@@ -677,21 +677,23 @@ def upload_pdf(request):
 
     except ValidationError as e:
         messages.error(request, str(e))
+        logger.error(f"ValidationError during PDF upload: {e}", exc_info=True)
     except ValueError as e:
         messages.error(request, _("[Unknown Parser] %(error)s") % {"error": str(e)})
+        logger.error(f"ValueError during PDF upload: {e}", exc_info=True)
     except Exception as e:
+        # Log the full exception for debugging
+        logger.error(f"Exception during PDF upload: {e}", exc_info=True)
+
+        # Try to get parser name if parser exists
         try:
             parser_name = parser.__class__.__name__
-            messages.error(
-                request,
-                _("[%(parser)s] Upload failed. %(error)s")
-                % {"parser": parser_name, "error": str(e)},
-            )
+            error_msg = _("[%(parser)s] Upload failed. %(error)s") % {"parser": parser_name, "error": str(e)}
         except:
-            messages.error(
-                request,
-                _("[Unknown Parser] Upload failed. Please make sure the file is a valid PDF schedule."),
-            )
+            # Parser doesn't exist or error accessing it
+            error_msg = _("[Unknown Parser] Upload failed. Error: %(error)s") % {"error": str(e)}
+
+        messages.error(request, error_msg)
 
     return redirect("home")
 
