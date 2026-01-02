@@ -14,6 +14,9 @@ example.json
 staticfiles/
 db.sqlite3
 
+# Media files (user uploads)
+media/
+
 # macOS files
 .DS_Store
 
