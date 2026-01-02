@@ -53,13 +53,42 @@
 
                     <!-- Language switcher & Info - visible on desktop, hidden on mobile -->
                     <div class="hidden sm:flex items-center space-x-3">
-                        <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-2">
-                            {% csrf_token %}
-                            <input name="next" type="hidden" value="{{ redirect_to }}">
-                            <button type="submit" name="language" value="fr" class="text-sm font-medium min-h-[36px] px-2 {% if LANGUAGE_CODE == 'fr' %}text-indigo-600 font-bold{% else %}text-gray-500 hover:text-gray-900{% endif %}">FR</button>
-                            <span class="text-gray-300">|</span>
-                            <button type="submit" name="language" value="en" class="text-sm font-medium min-h-[36px] px-2 {% if LANGUAGE_CODE == 'en' %}text-indigo-600 font-bold{% else %}text-gray-500 hover:text-gray-900{% endif %}">EN</button>
-                        </form>
+                        <div class="relative lang-dropdown-desktop">
+                            <button type="button" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[36px]" onclick="toggleLanguageDropdown('desktop')">
+                                {% if LANGUAGE_CODE == 'fr' %}
+                                <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="w-8 h-6 object-contain">
+                                {% else %}
+                                <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="w-8 h-6 object-contain">
+                                {% endif %}
+                                <svg class="w-4 h-4 text-gray-500 transition-transform lang-chevron-desktop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="lang-dropdown-menu-desktop hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                                    <button type="submit" name="language" value="fr" class="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left {% if LANGUAGE_CODE == 'fr' %}bg-indigo-50{% endif %}">
+                                        <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="w-8 h-6 object-contain">
+                                        <span class="text-sm font-medium text-gray-700">Français</span>
+                                        {% if LANGUAGE_CODE == 'fr' %}
+                                        <svg class="w-4 h-4 text-indigo-600 ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                    <button type="submit" name="language" value="en" class="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left {% if LANGUAGE_CODE == 'en' %}bg-indigo-50{% endif %}">
+                                        <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="w-8 h-6 object-contain">
+                                        <span class="text-sm font-medium text-gray-700">English</span>
+                                        {% if LANGUAGE_CODE == 'en' %}
+                                        <svg class="w-4 h-4 text-indigo-600 ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                         <button id="info-button" class="text-gray-500 hover:text-gray-900 transition duration-300 p-2 min-h-[36px]">
                             <span class="text-xl">ⓘ</span>
                         </button>
@@ -112,13 +141,42 @@
                 <div class="flex items-center space-x-2 sm:space-x-3">
                     <!-- Mobile: Language & Info -->
                     <div class="flex sm:hidden items-center space-x-2">
-                        <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-1">
-                            {% csrf_token %}
-                            <input name="next" type="hidden" value="{{ redirect_to }}">
-                            <button type="submit" name="language" value="fr" class="text-xs font-medium min-h-[44px] px-2 {% if LANGUAGE_CODE == 'fr' %}text-indigo-600 font-bold{% else %}text-gray-500{% endif %}">FR</button>
-                            <span class="text-gray-300 text-xs">|</span>
-                            <button type="submit" name="language" value="en" class="text-xs font-medium min-h-[44px] px-2 {% if LANGUAGE_CODE == 'en' %}text-indigo-600 font-bold{% else %}text-gray-500{% endif %}">EN</button>
-                        </form>
+                        <div class="relative lang-dropdown-mobile">
+                            <button type="button" class="flex items-center gap-1.5 px-2 py-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px]" onclick="toggleLanguageDropdown('mobile')">
+                                {% if LANGUAGE_CODE == 'fr' %}
+                                <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="w-7 h-5 object-contain">
+                                {% else %}
+                                <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="w-7 h-5 object-contain">
+                                {% endif %}
+                                <svg class="w-3.5 h-3.5 text-gray-500 transition-transform lang-chevron-mobile" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="lang-dropdown-menu-mobile hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                                    <button type="submit" name="language" value="fr" class="flex items-center gap-2.5 w-full px-3.5 py-3 hover:bg-gray-50 transition-colors text-left min-h-[44px] {% if LANGUAGE_CODE == 'fr' %}bg-indigo-50{% endif %}">
+                                        <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="w-7 h-5 object-contain">
+                                        <span class="text-sm font-medium text-gray-700">Français</span>
+                                        {% if LANGUAGE_CODE == 'fr' %}
+                                        <svg class="w-4 h-4 text-indigo-600 ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                    <button type="submit" name="language" value="en" class="flex items-center gap-2.5 w-full px-3.5 py-3 hover:bg-gray-50 transition-colors text-left min-h-[44px] {% if LANGUAGE_CODE == 'en' %}bg-indigo-50{% endif %}">
+                                        <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="w-7 h-5 object-contain">
+                                        <span class="text-sm font-medium text-gray-700">English</span>
+                                        {% if LANGUAGE_CODE == 'en' %}
+                                        <svg class="w-4 h-4 text-indigo-600 ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
 
                     {% if user.is_authenticated %}
@@ -338,6 +396,57 @@
                 toggleEmail();
             });
         }
+
+        // Language dropdown toggle
+        function toggleLanguageDropdown(device) {
+            const menu = device === 'desktop' ?
+                document.querySelector('.lang-dropdown-menu-desktop') :
+                document.querySelector('.lang-dropdown-menu-mobile');
+            const chevron = device === 'desktop' ?
+                document.querySelector('.lang-chevron-desktop') :
+                document.querySelector('.lang-chevron-mobile');
+
+            if (menu && chevron) {
+                const isHidden = menu.classList.contains('hidden');
+                menu.classList.toggle('hidden');
+                chevron.style.transform = isHidden ? 'rotate(180deg)' : '';
+            }
+        }
+
+        // Close language dropdown on click outside
+        document.addEventListener('click', (e) => {
+            const desktopDropdown = document.querySelector('.lang-dropdown-desktop');
+            const mobileDropdown = document.querySelector('.lang-dropdown-mobile');
+
+            if (desktopDropdown && !desktopDropdown.contains(e.target)) {
+                const menu = document.querySelector('.lang-dropdown-menu-desktop');
+                const chevron = document.querySelector('.lang-chevron-desktop');
+                if (menu) menu.classList.add('hidden');
+                if (chevron) chevron.style.transform = '';
+            }
+
+            if (mobileDropdown && !mobileDropdown.contains(e.target)) {
+                const menu = document.querySelector('.lang-dropdown-menu-mobile');
+                const chevron = document.querySelector('.lang-chevron-mobile');
+                if (menu) menu.classList.add('hidden');
+                if (chevron) chevron.style.transform = '';
+            }
+        });
+
+        // Close language dropdown on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const desktopMenu = document.querySelector('.lang-dropdown-menu-desktop');
+                const mobileMenu = document.querySelector('.lang-dropdown-menu-mobile');
+                const desktopChevron = document.querySelector('.lang-chevron-desktop');
+                const mobileChevron = document.querySelector('.lang-chevron-mobile');
+
+                if (desktopMenu) desktopMenu.classList.add('hidden');
+                if (mobileMenu) mobileMenu.classList.add('hidden');
+                if (desktopChevron) desktopChevron.style.transform = '';
+                if (mobileChevron) mobileChevron.style.transform = '';
+            }
+        });
 
         // Info modal functionality
         const infoModal = document.getElementById('info-modal');

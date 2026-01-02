@@ -41,18 +41,100 @@ body {
     color: #4F46E5;
 }
 
-.language-select {
-    padding: 0.5rem 1rem;
-    border: 1px solid #E5E7EB;
-    border-radius: 0.5rem;
-    background: white;
-    color: #1F2937;
-    cursor: pointer;
-    font-size: 0.875rem;
+/* Language Dropdown */
+.language-dropdown {
+    position: relative;
 }
 
-.language-select:hover {
-    border-color: #4F46E5;
+.lang-btn-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 200ms ease;
+}
+
+.lang-btn-dropdown:hover {
+    background: #F3F4F6;
+}
+
+.flag-icon {
+    width: 32px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.chevron {
+    width: 1rem;
+    height: 1rem;
+    color: #6B7280;
+    transition: transform 200ms ease;
+}
+
+.lang-dropdown-menu {
+    position: absolute;
+    right: 0;
+    margin-top: 0.5rem;
+    min-width: 12rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #E5E7EB;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 200ms ease;
+    z-index: 50;
+}
+
+.lang-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.lang-dropdown-menu form {
+    display: flex;
+    flex-direction: column;
+}
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: white;
+    cursor: pointer;
+    transition: background-color 200ms ease;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.lang-option:hover {
+    background: #F9FAFB;
+}
+
+.lang-option.active {
+    background: rgba(79, 70, 229, 0.1);
+}
+
+.lang-option span {
+    flex: 1;
+}
+
+.checkmark {
+    width: 1rem;
+    height: 1rem;
+    color: #4F46E5;
+    margin-left: auto;
 }
 
 /* Main content */

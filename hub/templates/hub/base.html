@@ -13,14 +13,42 @@
         <div class="container">
             <h1 class="brand">Christopher</h1>
             <nav class="language-toggle">
-                <form action="{% url 'set_language' %}" method="post">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ request.path }}">
-                    <select name="language" onchange="this.form.submit()" class="language-select">
-                        <option value="fr" {% if LANGUAGE_CODE == 'fr' %}selected{% endif %}>Français</option>
-                        <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
-                    </select>
-                </form>
+                <div class="language-dropdown">
+                    <button id="langDropdownBtn" class="lang-btn-dropdown" aria-expanded="false">
+                        {% if LANGUAGE_CODE == 'fr' %}
+                        <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
+                        {% else %}
+                        <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
+                        {% endif %}
+                        <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="langDropdownMenu" class="lang-dropdown-menu">
+                        <form action="{% url 'set_language' %}" method="post">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.path }}">
+                            <button type="submit" name="language" value="fr" class="lang-option {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">
+                                <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
+                                <span>Français</span>
+                                {% if LANGUAGE_CODE == 'fr' %}
+                                <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                {% endif %}
+                            </button>
+                            <button type="submit" name="language" value="en" class="lang-option {% if LANGUAGE_CODE == 'en' %}active{% endif %}">
+                                <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
+                                <span>English</span>
+                                {% if LANGUAGE_CODE == 'en' %}
+                                <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
@@ -49,5 +77,36 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Language dropdown toggle
+        const dropdownBtn = document.getElementById('langDropdownBtn');
+        const dropdownMenu = document.getElementById('langDropdownMenu');
+
+        if (dropdownBtn && dropdownMenu) {
+            dropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = dropdownMenu.classList.toggle('show');
+                dropdownBtn.setAttribute('aria-expanded', isOpen);
+                dropdownBtn.querySelector('.chevron').style.transform = isOpen ? 'rotate(180deg)' : '';
+            });
+
+            // Close on click outside
+            document.addEventListener('click', () => {
+                dropdownMenu.classList.remove('show');
+                dropdownBtn.setAttribute('aria-expanded', 'false');
+                dropdownBtn.querySelector('.chevron').style.transform = '';
+            });
+
+            // Close on ESC key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && dropdownMenu.classList.contains('show')) {
+                    dropdownMenu.classList.remove('show');
+                    dropdownBtn.setAttribute('aria-expanded', 'false');
+                    dropdownBtn.querySelector('.chevron').style.transform = '';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
