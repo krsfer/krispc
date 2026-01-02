@@ -4,7 +4,7 @@
       <div class="flex justify-between items-center h-16">
         <!-- Logo -->
         <div class="flex-shrink-0">
-          <a href="#home" class="font-brand text-2xl text-primary">KrisPC</a>
+          <a :href="hubUrl" class="font-brand text-2xl text-primary">KrisPC</a>
         </div>
 
         <!-- Desktop Navigation -->
@@ -63,6 +63,13 @@ const mobileMenuOpen = ref(false)
 
 // Get translations from Django
 const translations = computed(() => window.DJANGO_DATA?.translations?.nav || {})
+
+// Get hub URL (language-aware)
+const hubUrl = computed(() => {
+  const currentPath = window.location.pathname
+  // If on English version (/en/...), link to /en/, otherwise to /
+  return currentPath.startsWith('/en/') ? '/en/' : '/'
+})
 
 const navLinks = computed(() => [
   { href: '#home', label: translations.value.home || 'Home' },
