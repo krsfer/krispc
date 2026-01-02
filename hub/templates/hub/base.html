@@ -15,7 +15,7 @@
             <nav class="language-toggle">
                 <div class="language-dropdown">
                     <button id="langDropdownBtn" class="lang-btn-dropdown" aria-expanded="false">
-                        {% if LANGUAGE_CODE == 'fr' %}
+                        {% if LANGUAGE_CODE|slice:":2" == 'fr' %}
                         <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
                         {% else %}
                         <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
@@ -28,10 +28,10 @@
                         <form action="{% url 'set_language' %}" method="post">
                             {% csrf_token %}
                             <input name="next" type="hidden" value="/">
-                            <button type="submit" name="language" value="fr" class="lang-option {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">
+                            <button type="submit" name="language" value="fr" class="lang-option {% if LANGUAGE_CODE|slice:":2" == 'fr' %}active{% endif %}">
                                 <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
                                 <span>Français</span>
-                                {% if LANGUAGE_CODE == 'fr' %}
+                                {% if LANGUAGE_CODE|slice:":2" == 'fr' %}
                                 <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                                 </svg>
@@ -41,10 +41,10 @@
                         <form action="{% url 'set_language' %}" method="post">
                             {% csrf_token %}
                             <input name="next" type="hidden" value="/en/">
-                            <button type="submit" name="language" value="en" class="lang-option {% if LANGUAGE_CODE == 'en' %}active{% endif %}">
+                            <button type="submit" name="language" value="en" class="lang-option {% if LANGUAGE_CODE|slice:":2" == 'en' %}active{% endif %}">
                                 <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
                                 <span>English</span>
-                                {% if LANGUAGE_CODE == 'en' %}
+                                {% if LANGUAGE_CODE|slice:":2" == 'en' %}
                                 <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                                 </svg>
@@ -71,12 +71,16 @@
                 <span>&copy; 2026</span>
             </nav>
             <div class="language-footer">
-                <form action="{% url 'set_language' %}" method="post">
+                <form action="{% url 'set_language' %}" method="post" style="display: inline;">
                     {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ request.path }}">
-                    <button type="submit" name="language" value="fr" class="lang-btn {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">Français</button>
-                    <span class="separator">|</span>
-                    <button type="submit" name="language" value="en" class="lang-btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}">English</button>
+                    <input name="next" type="hidden" value="/">
+                    <button type="submit" name="language" value="fr" class="lang-btn {% if LANGUAGE_CODE|slice:":2" == 'fr' %}active{% endif %}">Français</button>
+                </form>
+                <span class="separator">|</span>
+                <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="/en/">
+                    <button type="submit" name="language" value="en" class="lang-btn {% if LANGUAGE_CODE|slice:":2" == 'en' %}active{% endif %}">English</button>
                 </form>
             </div>
         </div>
