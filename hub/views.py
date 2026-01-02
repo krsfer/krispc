@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
 from django.utils.translation import get_language, activate
-from django.utils import translation
+from django.conf import settings
 
 
 class IndexView(TemplateView):
@@ -22,7 +22,8 @@ class IndexView(TemplateView):
         activate(current_lang)
 
         # Also set in session to maintain across requests
-        self.request.session[translation.LANGUAGE_SESSION_KEY] = current_lang
+        # Django uses '_language' as the session key for language preference
+        self.request.session['_language'] = current_lang
 
         is_french = current_lang == 'fr'
 
@@ -78,7 +79,7 @@ class PrivacyView(TemplateView):
 
         # Explicitly activate and set in session
         activate(current_lang)
-        self.request.session[translation.LANGUAGE_SESSION_KEY] = current_lang
+        self.request.session['_language'] = current_lang
 
         context['current_language'] = current_lang
         return context
@@ -99,7 +100,7 @@ class TermsView(TemplateView):
 
         # Explicitly activate and set in session
         activate(current_lang)
-        self.request.session[translation.LANGUAGE_SESSION_KEY] = current_lang
+        self.request.session['_language'] = current_lang
 
         context['current_language'] = current_lang
         return context
