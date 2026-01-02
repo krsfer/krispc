@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-02 00:33+0100\n"
+"POT-Creation-Date: 2026-01-02 13:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-#: templates/hub/base.html:35
+
+#: hub/templates/hub/base.html:67
 msgid "Privacy"
 msgstr "Confidentialité"
 
-#: templates/hub/base.html:37
+#: hub/templates/hub/base.html:69
 msgid "Terms"
 msgstr "Conditions"
 
-#: templates/hub/privacy.html:4 templates/hub/privacy.html:9
+#: hub/templates/hub/privacy.html:4 hub/templates/hub/privacy.html:9
 msgid "Privacy Policy"
 msgstr "Politique de confidentialité"
 
-#: templates/hub/terms.html:4 templates/hub/terms.html:9
+#: hub/templates/hub/terms.html:4 hub/templates/hub/terms.html:9
 msgid "Terms of Service"
 msgstr "Conditions d'utilisation"

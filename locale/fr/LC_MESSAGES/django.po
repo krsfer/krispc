@@ -1,0 +1,1305 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-02 13:36+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: _main/settings.py:283
+msgid "French"
+msgstr ""
+
+#: _main/settings.py:284
+msgid "English"
+msgstr ""
+
+#: check_urls.py:17 p2c/templates/home.html:22 p2c/templates/home.html:26
+#: p2c/templates/p2c_base.html:303 p2c/templates/p2c_base.html:306
+#: p2c/templates/p2c_base.html:338 p2c/templates/p2c_base.html:342
+msgid "Privacy Policy"
+msgstr ""
+
+#: p2c/json_views.py:276 p2c/views.py:572
+msgid "No file provided"
+msgstr ""
+
+#: p2c/json_views.py:405
+msgid "Calendar name is required"
+msgstr ""
+
+#: p2c/json_views.py:408 p2c/templates/json_ingest.html:242
+msgid "No appointments to sync"
+msgstr ""
+
+#: p2c/json_views.py:505
+msgid "No valid appointments to sync"
+msgstr ""
+
+#: p2c/models.py:41
+msgid "Pending"
+msgstr ""
+
+#: p2c/models.py:42
+msgid "Processing"
+msgstr ""
+
+#: p2c/models.py:43
+msgid "Completed"
+msgstr ""
+
+#: p2c/models.py:44
+msgid "Error"
+msgstr ""
+
+#: p2c/tasks.py:133 p2c/tasks.py:134
+msgid "No events found to delete"
+msgstr ""
+
+#: p2c/tasks.py:683
+msgid "No events to restore"
+msgstr ""
+
+#: p2c/templates/backup_history.html:4 p2c/templates/backup_history.html:10
+msgid "Calendar Backup History"
+msgstr ""
+
+#: p2c/templates/backup_history.html:12
+msgid "Total backups:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:21
+msgid "No backups yet"
+msgstr ""
+
+#: p2c/templates/backup_history.html:22
+msgid "Backups are automatically created before syncing calendars."
+msgstr ""
+
+#: p2c/templates/backup_history.html:25
+msgid "Go to JSON Ingest"
+msgstr ""
+
+#: p2c/templates/backup_history.html:36 p2c/templates/calendar_editor.html:18
+msgid "Calendar"
+msgstr ""
+
+#: p2c/templates/backup_history.html:39
+msgid "Period"
+msgstr ""
+
+#: p2c/templates/backup_history.html:42
+msgid "Backup Date"
+msgstr ""
+
+#: p2c/templates/backup_history.html:45
+msgid "Events"
+msgstr ""
+
+#: p2c/templates/backup_history.html:48 p2c/templates/event_settings.html:247
+msgid "Actions"
+msgstr ""
+
+#: p2c/templates/backup_history.html:67
+msgid "event"
+msgid_plural "events"
+msgstr[0] ""
+msgstr[1] ""
+
+#: p2c/templates/backup_history.html:73
+msgid "Preview events and select which ones to restore"
+msgstr ""
+
+#: p2c/templates/backup_history.html:74
+msgid "Preview & Restore"
+msgstr ""
+
+#: p2c/templates/backup_history.html:78
+msgid "Download"
+msgstr ""
+
+#: p2c/templates/backup_history.html:82 p2c/templates/event_settings.html:221
+#: p2c/templates/event_settings.html:275 p2c/templates/event_settings.html:438
+#: p2c/templates/json_ingest.html:510
+msgid "Delete"
+msgstr ""
+
+#: p2c/templates/backup_history.html:98
+msgid "Backup Preview"
+msgstr ""
+
+#: p2c/templates/backup_history.html:111 p2c/templates/calendar_editor.html:138
+msgid "Select All"
+msgstr ""
+
+#: p2c/templates/backup_history.html:114 p2c/templates/calendar_editor.html:139
+msgid "Deselect All"
+msgstr ""
+
+#: p2c/templates/backup_history.html:119 p2c/templates/backup_history.html:485
+msgid "Close"
+msgstr ""
+
+#: p2c/templates/backup_history.html:122
+msgid "Restore Selected"
+msgstr ""
+
+#: p2c/templates/backup_history.html:133
+msgid "Confirm Restore"
+msgstr ""
+
+#: p2c/templates/backup_history.html:147
+msgid "Starting restore..."
+msgstr ""
+
+#: p2c/templates/backup_history.html:158 p2c/templates/calendar_editor.html:203
+#: p2c/templates/calendar_editor.html:484 p2c/templates/event_settings.html:104
+#: p2c/templates/event_settings.html:181 p2c/templates/event_settings.html:217
+#: p2c/templates/event_settings.html:329 p2c/templates/event_settings.html:410
+#: p2c/templates/event_settings.html:437 p2c/templates/json_ingest.html:509
+msgid "Cancel"
+msgstr ""
+
+#: p2c/templates/backup_history.html:161
+msgid "Restore Backup"
+msgstr ""
+
+#: p2c/templates/backup_history.html:186 p2c/templates/backup_history.html:300
+msgid "Calendar:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:187 p2c/templates/backup_history.html:301
+msgid "Period:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:188
+msgid "Backup Date:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:189
+msgid "Events:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:190
+msgid "Select events to restore:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:191 p2c/templates/backup_history.html:244
+msgid "selected"
+msgstr ""
+
+#: p2c/templates/backup_history.html:192 p2c/templates/backup_history.html:304
+msgid "No title"
+msgstr ""
+
+#: p2c/templates/backup_history.html:193 p2c/templates/backup_history.html:305
+msgid "No start time"
+msgstr ""
+
+#: p2c/templates/backup_history.html:234
+msgid "Error loading preview: "
+msgstr ""
+
+#: p2c/templates/backup_history.html:292
+msgid "Please select at least one event to restore"
+msgstr ""
+
+#: p2c/templates/backup_history.html:298
+msgid "Warning:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:299
+#, python-format
+msgid "This will restore %%(count)s selected events to your calendar."
+msgstr ""
+
+#: p2c/templates/backup_history.html:302
+msgid "Events to restore:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:303
+msgid "Selected events:"
+msgstr ""
+
+#: p2c/templates/backup_history.html:306
+msgid "of"
+msgstr ""
+
+#: p2c/templates/backup_history.html:408 p2c/templates/json_ingest.html:274
+msgid "Unknown error: no task_id returned"
+msgstr ""
+
+#: p2c/templates/backup_history.html:412
+msgid "Error launching restore: "
+msgstr ""
+
+#: p2c/templates/backup_history.html:431
+msgid "Restore failed"
+msgstr ""
+
+#: p2c/templates/backup_history.html:436
+msgid "Restoring..."
+msgstr ""
+
+#: p2c/templates/backup_history.html:445 p2c/templates/json_ingest.html:311
+msgid "Error checking progress: "
+msgstr ""
+
+#: p2c/templates/backup_history.html:452
+#, python-format
+msgid "Restored %%(count)s events"
+msgstr ""
+
+#: p2c/templates/backup_history.html:453
+msgid "Restore Complete!"
+msgstr ""
+
+#: p2c/templates/backup_history.html:454
+#, python-format
+msgid "%%(count)s duplicate events were skipped"
+msgstr ""
+
+#: p2c/templates/backup_history.html:455
+#, python-format
+msgid "%%(count)s events failed to restore"
+msgstr ""
+
+#: p2c/templates/backup_history.html:456
+msgid "Close & Refresh"
+msgstr ""
+
+#: p2c/templates/backup_history.html:484
+msgid "Restore Failed"
+msgstr ""
+
+#: p2c/templates/backup_history.html:506
+msgid ""
+"Are you sure you want to delete this backup? This action cannot be undone."
+msgstr ""
+
+#: p2c/templates/backup_history.html:519 p2c/templates/calendar_editor.html:335
+#: p2c/templates/calendar_editor.html:941
+#: p2c/templates/calendar_editor.html:985 p2c/templates/json_ingest.html:406
+msgid "Error: "
+msgstr ""
+
+#: p2c/templates/backup_history.html:521
+msgid "Backup deleted successfully"
+msgstr ""
+
+#: p2c/templates/backup_history.html:526
+msgid "Error deleting backup: "
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:5 p2c/templates/p2c_base.html:134
+#: p2c/templates/p2c_base.html:257
+msgid "Calendar Editor"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:11
+msgid "Google Calendar Editor"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:12
+msgid ""
+"Edit existing events in your Google Calendar. Select a calendar and month to "
+"load events."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:21
+msgid "Loading calendars..."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:25
+msgid "Month"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:28 p2c/views.py:95
+msgid "January"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:29 p2c/views.py:95
+msgid "February"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:30 p2c/views.py:95
+msgid "March"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:31 p2c/views.py:95
+msgid "April"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:32 p2c/views.py:96
+msgid "May"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:33 p2c/views.py:96
+msgid "June"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:34 p2c/views.py:96
+msgid "July"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:35 p2c/views.py:96
+msgid "August"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:36 p2c/views.py:97
+msgid "September"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:37 p2c/views.py:97
+msgid "October"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:38 p2c/views.py:97
+msgid "November"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:39 p2c/views.py:97
+msgid "December"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:43
+msgid "Year"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:51 p2c/templates/calendar_editor.html:351
+msgid "Load Events"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:58
+msgid "Bulk Actions"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:64 p2c/templates/json_ingest.html:56
+msgid "Re-apply Caregiver Settings"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:65
+msgid ""
+"Update all events with colors, location, Tél, and description from saved "
+"caregiver settings"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:69 p2c/templates/calendar_editor.html:767
+msgid "Re-apply Settings"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:77
+msgid "Batch Rename Caregiver"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:80
+msgid "From"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:82 p2c/templates/calendar_editor.html:582
+msgid "Select caregiver..."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:86
+msgid "To"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:87
+msgid "New name"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:92
+msgid "Apply Rename"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:99
+msgid "Bulk Description Update"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:102
+msgid "Apply to"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:104
+msgid "All events"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:105
+msgid "Selected events only"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:109
+msgid "Description to add"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:110
+msgid "Enter description text..."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:116
+msgid "Append"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:120
+msgid "Replace"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:125
+msgid "Apply Description"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:135
+msgid "Calendar Events"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:137 p2c/templates/home.html:191
+#: p2c/templates/home.html:526 p2c/templates/json_ingest.html:44
+#: p2c/templates/json_ingest.html:706
+msgid "Show All"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:157
+msgid "events modified"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:163
+#: p2c/templates/calendar_editor.html:190
+msgid "Preview Changes"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:168
+msgid "Submit Changes"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:176
+#: p2c/templates/calendar_editor.html:991
+msgid "Processing..."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:207
+msgid "Confirm & Submit"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:272 p2c/templates/home.html:109
+msgid "Select a calendar..."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:277
+msgid "Primary"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:310 p2c/views.py:1053
+msgid "Please select a calendar"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:316
+msgid "Loading..."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:348
+msgid "Failed to load events"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:421
+#: p2c/templates/calendar_editor.html:597
+msgid "Untitled"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:422
+msgid "Recurring"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:423 p2c/templates/updates.html:24
+msgid "Modified"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:426 p2c/templates/home.html:228
+#: p2c/templates/home.html:621 p2c/templates/json_ingest.html:501
+msgid "Day"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:426 p2c/templates/json_ingest.html:502
+msgid "from"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:426 p2c/templates/json_ingest.html:503
+msgid "to"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:434 p2c/templates/json_ingest.html:504
+msgid "Click to edit"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:434
+msgid "Part of recurring series"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:439
+msgid "Summary/Name"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:444
+#: p2c/templates/calendar_editor.html:838 p2c/templates/event_settings.html:86
+#: p2c/templates/event_settings.html:156 p2c/templates/event_settings.html:246
+#: p2c/templates/event_settings.html:324 p2c/templates/event_settings.html:396
+#: p2c/templates/updates.html:32
+msgid "Location"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:445
+msgid "Address or location"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:448
+#: p2c/templates/calendar_editor.html:839 p2c/templates/event_settings.html:93
+#: p2c/templates/event_settings.html:163
+msgid "Tél"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:449
+msgid "Phone number"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:453 p2c/templates/event_settings.html:170
+#: p2c/templates/event_settings.html:245 p2c/templates/event_settings.html:320
+#: p2c/templates/event_settings.html:388 p2c/templates/updates.html:33
+msgid "Description"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:458 p2c/templates/updates.html:30
+msgid "Start Time"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:462 p2c/templates/updates.html:31
+msgid "End Time"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:467
+#: p2c/templates/calendar_editor.html:841 p2c/templates/event_settings.html:244
+#: p2c/templates/event_settings.html:303 p2c/templates/event_settings.html:367
+msgid "Color"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:478
+msgid "Apply to all events in this series"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:483 p2c/templates/json_ingest.html:508
+msgid "Save"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:485
+msgid "Revert"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:681
+msgid "No events with caregiver names found"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:686
+msgid "Loading settings..."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:702
+msgid "Error fetching settings: "
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:764
+msgid "Failed to fetch caregiver settings"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:777
+msgid "Please select a name and enter the new name"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:799
+msgid "Please enter description text to append"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:830
+msgid "No changes to preview."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:837 p2c/templates/event_settings.html:243
+#: p2c/templates/event_settings.html:299 p2c/templates/event_settings.html:357
+#: p2c/templates/json_ingest.html:505
+msgid "Name"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:840
+msgid "Description changed"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:842
+msgid "Will update entire recurring series"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:913
+msgid "No changes to submit"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:922
+msgid "Submitting changes..."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:947
+#: p2c/templates/calendar_editor.html:976
+msgid "Success!"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:947
+#: p2c/templates/calendar_editor.html:976
+msgid "event(s) updated."
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:959
+msgid "Error: Failed to submit changes"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:985
+msgid "Task failed"
+msgstr ""
+
+#: p2c/templates/calendar_editor.html:998
+msgid "Error checking task status"
+msgstr ""
+
+#: p2c/templates/event_settings.html:32
+msgid "Event Settings Management"
+msgstr ""
+
+#: p2c/templates/event_settings.html:36
+msgid "Caregiver Settings"
+msgstr ""
+
+#: p2c/templates/event_settings.html:38
+msgid ""
+"Assign persistent settings to caregivers. These settings are automatically "
+"applied when events are created."
+msgstr ""
+
+#: p2c/templates/event_settings.html:43
+msgid "+ Add Caregiver Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:57
+msgid "Add Caregiver Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:70 p2c/templates/event_settings.html:134
+msgid "Caregiver Name"
+msgstr ""
+
+#: p2c/templates/event_settings.html:75
+msgid "e.g., ARCHER, CHRISTOPHER"
+msgstr ""
+
+#: p2c/templates/event_settings.html:79 p2c/templates/event_settings.html:142
+msgid "Select Color"
+msgstr ""
+
+#: p2c/templates/event_settings.html:108
+msgid "Add Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:121
+msgid "Edit Caregiver Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:149
+msgid "Diminutive"
+msgstr ""
+
+#: p2c/templates/event_settings.html:185
+msgid "Save Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:198
+msgid "Delete Caregiver Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:211
+msgid ""
+"Are you sure you want to delete this setting? The caregiver will be assigned "
+"a new setting automatically on the next event creation."
+msgstr ""
+
+#: p2c/templates/event_settings.html:231
+msgid "Beneficiary Settings"
+msgstr ""
+
+#: p2c/templates/event_settings.html:235 p2c/templates/event_settings.html:292
+msgid "Add New Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:270
+msgid "Edit"
+msgstr ""
+
+#: p2c/templates/event_settings.html:330
+msgid "Add"
+msgstr ""
+
+#: p2c/templates/event_settings.html:342
+msgid "Edit Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:414
+msgid "Save Changes"
+msgstr ""
+
+#: p2c/templates/event_settings.html:427
+msgid "Delete Setting"
+msgstr ""
+
+#: p2c/templates/event_settings.html:434
+msgid ""
+"Are you sure you want to delete this setting? This action cannot be undone."
+msgstr ""
+
+#: p2c/templates/home.html:6
+msgid "Home"
+msgstr ""
+
+#: p2c/templates/home.html:11
+msgid "Welcome to PDF2Calendar"
+msgstr "Bienvenue sur PDF2Calendar"
+
+#: p2c/templates/home.html:12
+msgid "Please sign in with Google to get started."
+msgstr "Veuillez vous connecter avec Google pour commencer."
+
+#: p2c/templates/home.html:17
+msgid "Sign in with Google"
+msgstr "Se connecter avec Google"
+
+#: p2c/templates/home.html:24 p2c/templates/home.html:28
+#: p2c/templates/p2c_base.html:304 p2c/templates/p2c_base.html:307
+#: p2c/templates/p2c_base.html:340 p2c/templates/p2c_base.html:344
+msgid "Terms of Service"
+msgstr ""
+
+#: p2c/templates/home.html:33
+msgid "Google Sign-In is currently unavailable. Please try again later."
+msgstr ""
+
+#: p2c/templates/home.html:45
+msgid "Paste Schedule Text"
+msgstr ""
+
+#: p2c/templates/home.html:49
+msgid "Paste text here"
+msgstr ""
+
+#: p2c/templates/home.html:55
+msgid "Process Text"
+msgstr ""
+
+#: p2c/templates/home.html:63 p2c/templates/json_ingest.html:11
+msgid "Import PDF Schedule"
+msgstr ""
+
+#: p2c/templates/home.html:73 p2c/templates/json_ingest.html:15
+msgid "Choose a PDF file"
+msgstr ""
+
+#: p2c/templates/home.html:77 p2c/templates/json_ingest.html:19
+msgid "No file chosen"
+msgstr ""
+
+#: p2c/templates/home.html:81 p2c/templates/json_ingest.html:23
+msgid "Browse..."
+msgstr ""
+
+#: p2c/templates/home.html:94
+msgid "Import and Process"
+msgstr ""
+
+#: p2c/templates/home.html:101
+msgid "Select Calendar"
+msgstr ""
+
+#: p2c/templates/home.html:112
+msgid "Choose the calendar where events will be created or deleted"
+msgstr ""
+
+#: p2c/templates/home.html:142
+#, python-format
+msgid "Flush %(current_month_name)s Events"
+msgstr ""
+
+#: p2c/templates/home.html:153 p2c/templates/home.html:168
+#, python-format
+msgid "Create %(current_month_name)s Calendar Events"
+msgstr ""
+
+#: p2c/templates/home.html:159 p2c/templates/home.html:166
+msgid "Please upload a PDF or paste text first"
+msgstr ""
+
+#: p2c/templates/home.html:161
+msgid "Flush Events"
+msgstr ""
+
+#: p2c/templates/home.html:187 p2c/templates/home.html:408
+msgid "Pending Appointments"
+msgstr ""
+
+#: p2c/templates/home.html:224
+msgid "Time Gap Warnings"
+msgstr ""
+
+#: p2c/templates/home.html:229
+msgid "between"
+msgstr ""
+
+#: p2c/templates/home.html:229
+msgid "ends"
+msgstr ""
+
+#: p2c/templates/home.html:229
+msgid "and"
+msgstr ""
+
+#: p2c/templates/home.html:229
+msgid "starts"
+msgstr ""
+
+#: p2c/templates/home.html:254
+msgid "Short time gap with another appointment"
+msgstr ""
+
+#: p2c/templates/home.html:260
+#, python-format
+msgid "Day %(day)s from %(start)s to %(end)s"
+msgstr ""
+
+#: p2c/templates/home.html:622
+msgid "AM"
+msgstr ""
+
+#: p2c/templates/home.html:623
+msgid "PM"
+msgstr ""
+
+#: p2c/templates/home.html:675
+msgid ""
+"No appointments to display yet. Upload a PDF or paste schedule text above."
+msgstr ""
+
+#: p2c/templates/json_ingest.html:5 p2c/templates/p2c_base.html:250
+msgid "JSON Ingest"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:36
+msgid "Process PDF"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:43 p2c/templates/json_ingest.html:733
+msgid "Parsed Appointments"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:53
+msgid "Sync to Google Calendar"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:61
+msgid "Calendar Name"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:63
+msgid "Enter calendar name (creates if doesn't exist)"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:69
+msgid "Sync to Calendar"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:73
+msgid ""
+"This will delete all existing events for the month and create new ones. "
+"Events marked with «keep» will be preserved."
+msgstr ""
+
+#: p2c/templates/json_ingest.html:78
+msgid "Starting sync..."
+msgstr ""
+
+#: p2c/templates/json_ingest.html:91
+msgid "A backup was created before syncing."
+msgstr ""
+
+#: p2c/templates/json_ingest.html:92
+msgid "View Backup History"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:221
+msgid "No appointments to apply settings to."
+msgstr ""
+
+#: p2c/templates/json_ingest.html:229
+msgid "Caregiver settings (including diminutives) have been applied."
+msgstr ""
+
+#: p2c/templates/json_ingest.html:237
+msgid "Please enter a calendar name"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:279
+msgid "Failed to start sync: "
+msgstr ""
+
+#: p2c/templates/json_ingest.html:297
+msgid "Sync failed"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:302
+msgid "Syncing..."
+msgstr ""
+
+#: p2c/templates/json_ingest.html:318
+msgid "Sync completed successfully"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:319
+msgid "Sync Complete!"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:320
+msgid "Created"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:321 p2c/templates/updates.html:42
+msgid "Deleted"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:322
+msgid "events"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:323
+msgid "old events"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:359
+msgid "Sync Failed"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:389
+msgid "Please select a PDF file"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:420
+msgid "An error occurred while processing the PDF."
+msgstr ""
+
+#: p2c/templates/json_ingest.html:506
+msgid "Start"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:507
+msgid "End"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:585
+msgid "Please fill in all fields"
+msgstr ""
+
+#: p2c/templates/json_ingest.html:621
+msgid "Delete this appointment?"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:107 p2c/templates/p2c_base.html:232
+msgid "Event Settings"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:108
+msgid "Settings"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:115 p2c/templates/p2c_base.html:239
+#: p2c/templates/pay_view.html:6
+msgid "Pay View"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:116
+msgid "Pay"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:120 p2c/templates/p2c_base.html:243
+#: p2c/templates/updates.html:6
+msgid "Updates"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:127
+msgid "JSON"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:135
+msgid "Editor"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:202 p2c/templates/p2c_base.html:275
+msgid "Logout"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:223 p2c/templates/p2c_base.html:318
+msgid "About PDF2Cal"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:301
+msgid "All rights reserved"
+msgstr "Tous droits réservés"
+
+#: p2c/templates/p2c_base.html:309
+msgid "Made with ❤️ by"
+msgstr "Fait avec ❤️ par"
+
+#: p2c/templates/p2c_base.html:326
+msgid ""
+"PDF2Cal is a powerful tool that helps you convert PDF documents containing "
+"event information into calendar events. Here's what you can do:"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:328
+msgid "Import PDF documents containing event details"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:329
+msgid ""
+"Automatically extract event information including dates, times, and "
+"descriptions"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:330
+msgid "Review and edit extracted events before saving"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:331
+msgid "Export events to your calendar"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:332
+msgid "Customize event extraction settings"
+msgstr ""
+
+#: p2c/templates/p2c_base.html:333
+msgid "Manage your event preferences"
+msgstr ""
+
+#: p2c/templates/pay_view.html:14
+msgid "Pay Calculator"
+msgstr ""
+
+#: p2c/templates/pay_view.html:18
+msgid "Rate Configuration"
+msgstr ""
+
+#: p2c/templates/pay_view.html:21
+msgid "Weekday Rate (€/hour)"
+msgstr ""
+
+#: p2c/templates/pay_view.html:27
+msgid "Sunday Rate (€/hour)"
+msgstr ""
+
+#: p2c/templates/pay_view.html:35
+msgid "Save Rates"
+msgstr ""
+
+#: p2c/templates/pay_view.html:43
+msgid "Time Summary"
+msgstr ""
+
+#: p2c/templates/pay_view.html:49
+msgid "Weekday Hours"
+msgstr ""
+
+#: p2c/templates/pay_view.html:54
+msgid "Sunday Hours"
+msgstr ""
+
+#: p2c/templates/pay_view.html:59
+msgid "Total Hours"
+msgstr ""
+
+#: p2c/templates/pay_view.html:68
+msgid "Pay Calculation"
+msgstr ""
+
+#: p2c/templates/pay_view.html:72
+msgid "Differential Rate Method"
+msgstr ""
+
+#: p2c/templates/pay_view.html:75
+msgid "Weekday Pay"
+msgstr ""
+
+#: p2c/templates/pay_view.html:79
+msgid "Sunday Pay"
+msgstr ""
+
+#: p2c/templates/pay_view.html:83
+msgid "Total Pay"
+msgstr ""
+
+#: p2c/templates/pay_view.html:89
+msgid "Flat Rate Method"
+msgstr ""
+
+#: p2c/templates/pay_view.html:92
+msgid "Total Hours × Weekday Rate"
+msgstr ""
+
+#: p2c/templates/pay_view.html:96
+msgid "Difference"
+msgstr ""
+
+#: p2c/templates/pay_view.html:157
+msgid "Rates saved successfully!"
+msgstr ""
+
+#: p2c/templates/pay_view.html:161
+msgid "Failed to save rates: "
+msgstr ""
+
+#: p2c/templates/pay_view.html:161
+msgid "Unknown error"
+msgstr ""
+
+#: p2c/templates/pay_view.html:165
+msgid "Failed to save rates"
+msgstr ""
+
+#: p2c/templates/pay_view.html:263
+msgid "Please upload a PDF schedule first to view pay calculations."
+msgstr ""
+
+#: p2c/templates/pay_view.html:269
+msgid "Access Denied"
+msgstr ""
+
+#: p2c/templates/pay_view.html:270
+msgid "Please sign in to view pay calculations."
+msgstr ""
+
+#: p2c/templates/updates.html:9
+msgid "Not enough snapshots to compare. At least two are required."
+msgstr ""
+
+#: p2c/templates/updates.html:11
+msgid "Changes Summary"
+msgstr ""
+
+#: p2c/templates/updates.html:12
+#, python-format
+msgid "Comparing snapshot from %(prev_date)s with snapshot from %(curr_date)s"
+msgstr ""
+
+#: p2c/templates/updates.html:15
+msgid "Added"
+msgstr ""
+
+#: p2c/templates/updates.html:18 p2c/templates/updates.html:45
+msgid "on"
+msgstr ""
+
+#: p2c/templates/updates.html:18 p2c/templates/updates.html:45
+msgid "at"
+msgstr ""
+
+#: p2c/views.py:107
+msgid ""
+"Google OAuth configuration is missing. Please contact the administrator."
+msgstr ""
+
+#: p2c/views.py:233
+msgid "Previous upload was incomplete. Please upload your PDF again."
+msgstr ""
+
+#: p2c/views.py:311
+msgid "Error processing the PDF. Please try uploading again."
+msgstr ""
+
+#: p2c/views.py:579
+msgid "The submitted file is empty."
+msgstr ""
+
+#: p2c/views.py:584
+msgid "Invalid file type. Only PDF files are allowed"
+msgstr ""
+
+#: p2c/views.py:588
+msgid "File too large. Maximum size is 10.0MB"
+msgstr ""
+
+#: p2c/views.py:673
+#, python-format
+msgid "[%(parser)s] PDF uploaded successfully. Found %(count)d appointments."
+msgstr ""
+
+#: p2c/views.py:681
+#, python-format
+msgid "[Unknown Parser] %(error)s"
+msgstr ""
+
+#: p2c/views.py:687
+#, python-format
+msgid "[%(parser)s] Upload failed. %(error)s"
+msgstr ""
+
+#: p2c/views.py:693
+msgid ""
+"[Unknown Parser] Upload failed. Please make sure the file is a valid PDF "
+"schedule."
+msgstr ""
+
+#: p2c/views.py:704
+msgid "No text provided"
+msgstr ""
+
+#: p2c/views.py:749
+#, python-format
+msgid "Successfully processed %(count)d appointments from text input."
+msgstr ""
+
+#: p2c/views.py:767
+#, python-format
+msgid "Error processing text: %(error)s"
+msgstr ""
+
+#: p2c/views.py:1059
+msgid "No appointments found"
+msgstr ""
+
+#: p2c/views.py:1067 p2c/views.py:1309
+msgid "Invalid session data"
+msgstr ""
+
+#: p2c/views.py:1076
+msgid "Google credentials not found"
+msgstr ""
+
+#: p2c/views.py:1083
+msgid "Invalid or corrupted Google credentials. Please re-authenticate."
+msgstr ""
+
+#: p2c/views.py:1296
+msgid "Calendar ID is required"
+msgstr ""
+
+#: p2c/views.py:1301
+msgid "No appointments found in session"
+msgstr ""

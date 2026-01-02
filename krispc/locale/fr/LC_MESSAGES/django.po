@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-29 22:25+0000\n"
+"POT-Creation-Date: 2026-01-02 13:36+0000\n"
 "PO-Revision-Date: 2022-11-06 22:12+0000\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,14 +12,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Translated-Using: django-rosetta 0.9.8\n"
-
-#: _main/settings.py:246
-msgid "French"
-msgstr "Français &middot; Anglais"
-
-#: _main/settings.py:247
-msgid "English"
-msgstr "Français &middot; Anglais"
 
 #: krispc/colophon.py:9
 msgid "py_lnk"
@@ -76,9 +68,9 @@ msgstr "Réparation smartphones et tablettes"
 #: krispc/lst_products.py:39
 msgid "PTR_0380"
 msgstr ""
-"J&rsquo;ai les compétences et les outils pour réparer l&rsquo;écran cassé "
-"ou la batterie faible de votre téléphone. Je peux aussi vous aider à "
-"installer des applis et à le régler, que vous soyez sur Android, iOS ou même "
+"J&rsquo;ai les compétences et les outils pour réparer l&rsquo;écran cassé ou "
+"la batterie faible de votre téléphone. Je peux aussi vous aider à installer "
+"des applis et à le régler, que vous soyez sur Android, iOS ou même "
 "Blackberry."
 
 #: krispc/lst_products.py:40
@@ -111,9 +103,10 @@ msgstr "Entretien ordinateurs portables"
 #: krispc/lst_products.py:51
 msgid "PTR_0320"
 msgstr ""
-"Votre ordinateur portable est-il devenu extrêmement lent ? Au lieu d&rsquo;"
-"en acheter un nouveau, pourquoi ne pas le mettre à jour ? Plusieurs options "
-"possibles : nouvelle batterie, plus de mémoire, disque dur plus rapide, etc."
+"Votre ordinateur portable est-il devenu extrêmement lent ? Au lieu "
+"d&rsquo;en acheter un nouveau, pourquoi ne pas le mettre à jour ? Plusieurs "
+"options possibles : nouvelle batterie, plus de mémoire, disque dur plus "
+"rapide, etc."
 
 #: krispc/lst_products.py:52
 msgid "PTR_0200"
@@ -129,8 +122,8 @@ msgstr ""
 "Avez-vous remarqué que tous les magasins en ligne et fournisseurs vendent "
 "des imprimantes, mais personne ne les répare&nbsp;? Cela n&rsquo;a pas "
 "changé depuis des années. La plupart des fournisseurs trouvent plus facile "
-"de vendre et d&rsquo;oublier que de fournir un véritable service client. "
-"Ne jetez pas votre équipement cassé&mdash;faites-le réparer à moindre coût."
+"de vendre et d&rsquo;oublier que de fournir un véritable service client. Ne "
+"jetez pas votre équipement cassé&mdash;faites-le réparer à moindre coût."
 
 #: krispc/lst_products.py:58
 msgid "PTR_0420"
@@ -182,8 +175,8 @@ msgstr "Conseil connexions internet"
 msgid "PTR_0570"
 msgstr ""
 "Protégez-vous et protégez votre famille. Votre ordinateur est-il à jour et "
-"sécurisé ? Le risque est plus grand avec l&rsquo;usage croissant d&rsquo;"
-"Internet."
+"sécurisé ? Le risque est plus grand avec l&rsquo;usage croissant "
+"d&rsquo;Internet."
 
 #: krispc/lst_products.py:76
 msgid "PTR_0580"
@@ -245,7 +238,7 @@ msgstr ""
 msgid "Awaiting interaction"
 msgstr "En attente de votre input"
 
-#: krispc/templates/__about.html:15
+#: krispc/templates/__about.html:15 krispc/views.py:102
 msgid "PTR_0180"
 msgstr "Faire connaissance"
 
@@ -293,23 +286,34 @@ msgstr "Nos services"
 msgid "PTR_2050"
 msgstr "Tous droits réservés"
 
-#: krispc/templates/__footer.html:85
+#: krispc/templates/__footer.html:82 krispc/templates/privacy.html:5
+#: krispc/templates/privacy.html:10
+msgid "Privacy Policy"
+msgstr "Politique de confidentialité"
+
+#: krispc/templates/__footer.html:83 krispc/templates/terms.html:5
+#: krispc/templates/terms.html:10
+msgid "Terms of Service"
+msgstr "Conditions générales d'utilisation"
+
+#: krispc/templates/__footer.html:88
 msgid "PTR_2052"
 msgstr "Faite avec"
 
-#: krispc/templates/__footer.html:89
+#: krispc/templates/__footer.html:92
 msgid "PTR_2060"
 msgstr "par"
 
-#: krispc/templates/__header.html:18
+#: krispc/templates/__header.html:18 krispc/views.py:83
 msgid "PTR_0160"
 msgstr "Accueil"
 
 #: krispc/templates/__header.html:20 krispc/templates/__hero.html:8
+#: krispc/views.py:85 krispc/views.py:90 krispc/views.py:96 krispc/views.py:145
 msgid "PTR_0120"
 msgstr "Services Informatiques"
 
-#: krispc/templates/__header.html:21 krispc/templates/__team.html:8
+#: krispc/templates/__header.html:21
 msgid "PTR_0800"
 msgstr "Voici l&rsquo;équipe"
 
@@ -317,22 +321,22 @@ msgstr "Voici l&rsquo;équipe"
 msgid "French English"
 msgstr "Français &middot; Anglais"
 
-#: krispc/templates/__hero.html:10
+#: krispc/templates/__hero.html:10 krispc/views.py:91
 msgid "PTR_0040"
 msgstr "À Domicile &middot; Aux Particuliers"
 
 #: krispc/templates/__hero.html:11
 msgid "PTR_0220"
 msgstr ""
-"Linux&nbsp;&middot; Windows&nbsp;&middot; macOS&nbsp;&middot; Dépannage&nbsp;"
-"&middot; Montage&nbsp;&middot; Équipement&nbsp;&middot; Logiciel&nbsp;"
-"&middot; Formation&nbsp;&middot; Conseil"
+"Linux&nbsp;&middot; Windows&nbsp;&middot; macOS&nbsp;&middot; "
+"Dépannage&nbsp;&middot; Montage&nbsp;&middot; Équipement&nbsp;&middot; "
+"Logiciel&nbsp;&middot; Formation&nbsp;&middot; Conseil"
 
-#: krispc/templates/__hero.html:14
+#: krispc/templates/__hero.html:14 krispc/views.py:92
 msgid "PTR_2055"
 msgstr "Réparations uniquement — Pas de vente de matériel"
 
-#: krispc/templates/__hero.html:15
+#: krispc/templates/__hero.html:15 krispc/views.py:93
 msgid "PTR_2057"
 msgstr "Mais, conseils gratuits pour sa sélection."
 
@@ -354,132 +358,230 @@ msgstr "Téléphone&nbsp;:"
 msgid "PTR_0150"
 msgstr "En savoir plus&nbsp;&euro;"
 
-#: krispc/templates/__team.html:9
-msgid "PTR_0210"
-msgstr "Notre talent&nbsp;: dévouement à votre solution"
-
-#: krispc/templates/__team.html:21
+#: krispc/templates/__team.html:8 krispc/templates/__team.html:21
 msgid "PTR_0710"
 msgstr "Technicien"
 
-#: krispc/templates/__team.html:23
-msgid "PTR_0720"
-msgstr "Expérience"
-
-#: krispc/templates/__team.html:23
-msgid "PTR_0730"
-msgstr "Compétence"
-
-#: krispc/templates/__team.html:35
-msgid "PTR_0740"
-msgstr "Rélations publiques"
-
-#: krispc/templates/__team.html:37
-msgid "PTR_0750"
-msgstr "Bienveillance"
-
-#: krispc/templates/__team.html:37
-msgid "PTR_0760"
-msgstr "Professionnalisme"
-
-msgid "Privacy Policy"
-msgstr "Politique de confidentialité"
-
-msgid "Terms of Service"
-msgstr "Conditions générales d'utilisation"
-
+#: krispc/templates/privacy.html:12 krispc/templates/terms.html:12
 msgid "Last updated"
 msgstr "Dernière mise à jour"
 
+#: krispc/templates/privacy.html:14
 msgid "1. Introduction"
 msgstr "1. Introduction"
 
-msgid "Welcome to KrisPC. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you."
-msgstr "Bienvenue chez KrisPC. Nous respectons votre vie privée et nous nous engageons à protéger vos données personnelles. Cette politique de confidentialité vous informera sur la manière dont nous traitons vos données personnelles lorsque vous visitez notre site web et vous informera sur vos droits en matière de confidentialité et sur la manière dont la loi vous protège."
+#: krispc/templates/privacy.html:15
+msgid ""
+"Welcome to KrisPC. We respect your privacy and are committed to protecting "
+"your personal data. This privacy policy will inform you about how we look "
+"after your personal data when you visit our website and tell you about your "
+"privacy rights and how the law protects you."
+msgstr ""
+"Bienvenue chez KrisPC. Nous respectons votre vie privée et nous nous "
+"engageons à protéger vos données personnelles. Cette politique de "
+"confidentialité vous informera sur la manière dont nous traitons vos données "
+"personnelles lorsque vous visitez notre site web et vous informera sur vos "
+"droits en matière de confidentialité et sur la manière dont la loi vous "
+"protège."
 
+#: krispc/templates/privacy.html:17
 msgid "2. Data Collection"
 msgstr "2. Collecte de données"
 
+#: krispc/templates/privacy.html:18
 msgid "We collect information necessary to provide our services, including:"
-msgstr "Nous collectons les informations nécessaires à la fourniture de nos services, notamment :"
+msgstr ""
+"Nous collectons les informations nécessaires à la fourniture de nos "
+"services, notamment :"
 
-msgid "Contact information (name, email address, phone number) provided via our contact form."
-msgstr "Les coordonnées (nom, adresse e-mail, numéro de téléphone) fournies via notre formulaire de contact."
+#: krispc/templates/privacy.html:20
+msgid ""
+"Contact information (name, email address, phone number) provided via our "
+"contact form."
+msgstr ""
+"Les coordonnées (nom, adresse e-mail, numéro de téléphone) fournies via "
+"notre formulaire de contact."
 
-msgid "Information about your computer or devices that you provide for repair or maintenance services."
-msgstr "Des informations sur votre ordinateur ou vos appareils que vous fournissez pour des services de réparation ou de maintenance."
+#: krispc/templates/privacy.html:21
+msgid ""
+"Information about your computer or devices that you provide for repair or "
+"maintenance services."
+msgstr ""
+"Des informations sur votre ordinateur ou vos appareils que vous fournissez "
+"pour des services de réparation ou de maintenance."
 
-msgid "Technical data such as IP address, browser type, and version when you access our website."
-msgstr "Données techniques telles que l'adresse IP, le type et la version du navigateur lorsque vous accédez à notre site web."
+#: krispc/templates/privacy.html:22
+msgid ""
+"Technical data such as IP address, browser type, and version when you access "
+"our website."
+msgstr ""
+"Données techniques telles que l'adresse IP, le type et la version du "
+"navigateur lorsque vous accédez à notre site web."
 
+#: krispc/templates/privacy.html:25
 msgid "3. How We Use Your Data"
 msgstr "3. Comment nous utilisons vos données"
 
+#: krispc/templates/privacy.html:26
 msgid "We use your data to:"
 msgstr "Nous utilisons vos données pour :"
 
+#: krispc/templates/privacy.html:28
 msgid "Provide and manage our IT support and repair services."
-msgstr "Fournir et gérer nos services de support et de réparation informatique."
+msgstr ""
+"Fournir et gérer nos services de support et de réparation informatique."
 
+#: krispc/templates/privacy.html:29
 msgid "Communicate with you regarding your service requests."
 msgstr "Communiquer avec vous concernant vos demandes de service."
 
+#: krispc/templates/privacy.html:30
 msgid "Improve our website and service offerings."
 msgstr "Améliorer notre site web et nos offres de services."
 
+#: krispc/templates/privacy.html:31
 msgid "Comply with legal obligations."
 msgstr "Se conformer aux obligations légales."
 
+#: krispc/templates/privacy.html:34
 msgid "4. Data Security"
 msgstr "4. Sécurité des données"
 
-msgid "We implement appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way. We limit access to your personal data to those who have a business need to know."
-msgstr "Nous mettons en œuvre des mesures de sécurité appropriées pour empêcher que vos données personnelles ne soient accidentellement perdues, utilisées ou consultées de manière non autorisée. Nous limitons l'accès à vos données personnelles à ceux qui ont un besoin professionnel d'en connaître."
+#: krispc/templates/privacy.html:35
+msgid ""
+"We implement appropriate security measures to prevent your personal data "
+"from being accidentally lost, used, or accessed in an unauthorized way. We "
+"limit access to your personal data to those who have a business need to know."
+msgstr ""
+"Nous mettons en œuvre des mesures de sécurité appropriées pour empêcher que "
+"vos données personnelles ne soient accidentellement perdues, utilisées ou "
+"consultées de manière non autorisée. Nous limitons l'accès à vos données "
+"personnelles à ceux qui ont un besoin professionnel d'en connaître."
 
+#: krispc/templates/privacy.html:37
 msgid "5. Contact Us"
 msgstr "5. Contactez-nous"
 
-msgid "If you have any questions about this Privacy Policy or our privacy practices, please contact us at:"
-msgstr "Si vous avez des questions sur cette politique de confidentialité ou sur nos pratiques en matière de confidentialité, veuillez nous contacter à l'adresse suivante :"
+#: krispc/templates/privacy.html:38
+msgid ""
+"If you have any questions about this Privacy Policy or our privacy "
+"practices, please contact us at:"
+msgstr ""
+"Si vous avez des questions sur cette politique de confidentialité ou sur nos "
+"pratiques en matière de confidentialité, veuillez nous contacter à l'adresse "
+"suivante :"
 
+#: krispc/templates/privacy.html:40
 msgid "Email"
 msgstr "E-mail"
 
+#: krispc/templates/privacy.html:41
 msgid "Address"
 msgstr "Adresse"
 
+#: krispc/templates/terms.html:14
 msgid "1. Acceptance of Terms"
 msgstr "1. Acceptation des conditions"
 
-msgid "By accessing and using the KrisPC website and services, you accept and agree to be bound by the terms and provision of this agreement."
-msgstr "En accédant au site web et aux services de KrisPC et en les utilisant, vous acceptez d'être lié par les termes et dispositions du présent accord."
+#: krispc/templates/terms.html:15
+msgid ""
+"By accessing and using the KrisPC website and services, you accept and agree "
+"to be bound by the terms and provision of this agreement."
+msgstr ""
+"En accédant au site web et aux services de KrisPC et en les utilisant, vous "
+"acceptez d'être lié par les termes et dispositions du présent accord."
 
+#: krispc/templates/terms.html:17
 msgid "2. Service Description"
 msgstr "2. Description du service"
 
-msgid "KrisPC provides professional IT services, including but not limited to computer repair, maintenance, software support, and IT consulting."
-msgstr "KrisPC fournit des services informatiques professionnels, y compris, mais sans s'y limiter, la réparation d'ordinateurs, la maintenance, le support logiciel et le conseil informatique."
+#: krispc/templates/terms.html:18
+msgid ""
+"KrisPC provides professional IT services, including but not limited to "
+"computer repair, maintenance, software support, and IT consulting."
+msgstr ""
+"KrisPC fournit des services informatiques professionnels, y compris, mais "
+"sans s'y limiter, la réparation d'ordinateurs, la maintenance, le support "
+"logiciel et le conseil informatique."
 
+#: krispc/templates/terms.html:20
 msgid "3. User Responsibilities"
 msgstr "3. Responsabilités de l'utilisateur"
 
-msgid "When using our services or website, you agree to provide accurate information and to maintain the security of any account details. You are responsible for backing up your data before submitting any device for repair."
-msgstr "Lors de l'utilisation de nos services ou de notre site web, vous acceptez de fournir des informations précises et de maintenir la sécurité de tous les détails de votre compte. Vous êtes responsable de la sauvegarde de vos données avant de soumettre tout appareil pour réparation."
+#: krispc/templates/terms.html:21
+msgid ""
+"When using our services or website, you agree to provide accurate "
+"information and to maintain the security of any account details. You are "
+"responsible for backing up your data before submitting any device for repair."
+msgstr ""
+"Lors de l'utilisation de nos services ou de notre site web, vous acceptez de "
+"fournir des informations précises et de maintenir la sécurité de tous les "
+"détails de votre compte. Vous êtes responsable de la sauvegarde de vos "
+"données avant de soumettre tout appareil pour réparation."
 
+#: krispc/templates/terms.html:23
 msgid "4. Limitation of Liability"
 msgstr "4. Limitation de responsabilité"
 
-msgid "While we strive for excellence, KrisPC shall not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses."
-msgstr "Bien que nous nous efforcions d'atteindre l'excellence, KrisPC ne sera pas responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, ni de toute perte de profits ou de revenus, qu'ils soient encourus directement ou indirectement, ou de toute perte de données, d'utilisation, de clientèle ou d'autres pertes immatérielles."
+#: krispc/templates/terms.html:24
+msgid ""
+"While we strive for excellence, KrisPC shall not be liable for any indirect, "
+"incidental, special, consequential or punitive damages, or any loss of "
+"profits or revenues, whether incurred directly or indirectly, or any loss of "
+"data, use, goodwill, or other intangible losses."
+msgstr ""
+"Bien que nous nous efforcions d'atteindre l'excellence, KrisPC ne sera pas "
+"responsable des dommages indirects, accessoires, spéciaux, consécutifs ou "
+"punitifs, ni de toute perte de profits ou de revenus, qu'ils soient encourus "
+"directement ou indirectement, ou de toute perte de données, d'utilisation, "
+"de clientèle ou d'autres pertes immatérielles."
 
+#: krispc/templates/terms.html:26
 msgid "5. Termination"
 msgstr "5. Résiliation"
 
-msgid "We reserve the right to terminate or suspend access to our service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms."
-msgstr "Nous nous réservons le droit de résilier ou de suspendre l'accès à notre service immédiatement, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris, sans s'y limiter, si vous enfreignez les Conditions."
+#: krispc/templates/terms.html:27
+msgid ""
+"We reserve the right to terminate or suspend access to our service "
+"immediately, without prior notice or liability, for any reason whatsoever, "
+"including without limitation if you breach the Terms."
+msgstr ""
+"Nous nous réservons le droit de résilier ou de suspendre l'accès à notre "
+"service immédiatement, sans préavis ni responsabilité, pour quelque raison "
+"que ce soit, y compris, sans s'y limiter, si vous enfreignez les Conditions."
 
+#: krispc/templates/terms.html:29
 msgid "6. Governing Law"
 msgstr "6. Loi applicable"
 
-msgid "These terms shall be governed and construed in accordance with the laws of France, without regard to its conflict of law provisions."
-msgstr "Ces conditions sont régies et interprétées conformément aux lois de la France, sans égard à ses dispositions en matière de conflit de lois."
+#: krispc/templates/terms.html:30
+msgid ""
+"These terms shall be governed and construed in accordance with the laws of "
+"France, without regard to its conflict of law provisions."
+msgstr ""
+"Ces conditions sont régies et interprétées conformément aux lois de la "
+"France, sans égard à ses dispositions en matière de conflit de lois."
+
+#~ msgid "French"
+#~ msgstr "Français &middot; Anglais"
+
+#~ msgid "English"
+#~ msgstr "Français &middot; Anglais"
+
+#~ msgid "PTR_0210"
+#~ msgstr "Notre talent&nbsp;: dévouement à votre solution"
+
+#~ msgid "PTR_0720"
+#~ msgstr "Expérience"
+
+#~ msgid "PTR_0730"
+#~ msgstr "Compétence"
+
+#~ msgid "PTR_0740"
+#~ msgstr "Rélations publiques"
+
+#~ msgid "PTR_0750"
+#~ msgstr "Bienveillance"
+
+#~ msgid "PTR_0760"
+#~ msgstr "Professionnalisme"
