@@ -215,6 +215,13 @@ class AuxiliadomPDFParser(PDFParser):
                         if not description:
                             continue
 
+                        # Skip pause meals
+                        if any(
+                            word.lower() in description.lower()
+                            for word in ["pause", "repas"]
+                        ):
+                            continue
+
                         # Extract the normalized name from the description
                         name_match = self.name_pattern.search(description)
                         normalized_name = ""

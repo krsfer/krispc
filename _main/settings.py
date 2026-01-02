@@ -348,12 +348,16 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
 
+REDIS_CA_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem')
+REDIS_CLIENT_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt')
+REDIS_CLIENT_KEY_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key')
+
 if REDIS_URL and REDIS_URL.startswith("rediss://"):
     CELERY_BROKER_USE_SSL = {
         'ssl_cert_reqs': ssl.CERT_REQUIRED,
-        'ssl_ca_certs': os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem'),
-        'ssl_certfile': os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt'),
-        'ssl_keyfile': os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key'),
+        'ssl_ca_certs': REDIS_CA_CERT_PATH,
+        'ssl_certfile': REDIS_CLIENT_CERT_PATH,
+        'ssl_keyfile': REDIS_CLIENT_KEY_PATH,
     }
     CELERY_REDIS_BACKEND_USE_SSL = CELERY_BROKER_USE_SSL
 

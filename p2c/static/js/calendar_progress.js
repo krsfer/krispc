@@ -13,7 +13,7 @@ window.CalendarProgress = class CalendarProgress {
     constructor(taskId, taskType) {
         this.taskId = taskId;
         this.taskType = taskType;
-        this.progressUrl = `/celery-progress/task_status/${taskId}/`;
+        this.progressUrl = `/importpdf/celery-progress/task_status/${taskId}/`;
         this.progressContainer = document.getElementById('progress-container');
         this.progressBar = document.getElementById('progress-bar');
         this.progressPercentage = document.getElementById('progress-percentage');
