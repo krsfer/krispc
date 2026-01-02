@@ -7,7 +7,11 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        is_french = get_language() == 'fr'
+        current_lang = get_language()
+        is_french = current_lang == 'fr'
+
+        # Build language-aware URLs (prefix_default_language=False means no prefix for French)
+        lang_prefix = '' if is_french else f'/{current_lang}'
 
         context['page_title'] = 'Christopher'
         context['tagline'] = (
@@ -23,7 +27,7 @@ class IndexView(TemplateView):
                     'Réparations informatiques professionnelles' if is_french
                     else 'Professional computer repairs'
                 ),
-                'url': '/krispc/',
+                'url': f'{lang_prefix}/krispc/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             },
             {
@@ -33,7 +37,7 @@ class IndexView(TemplateView):
                     'Convertissez vos PDF en calendriers' if is_french
                     else 'Convert your PDFs to calendars'
                 ),
-                'url': '/importpdf/',
+                'url': f'{lang_prefix}/importpdf/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             }
         ]

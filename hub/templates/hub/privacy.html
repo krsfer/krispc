@@ -24,8 +24,8 @@
         <h2>Contact</h2>
         <p>Pour toute question concernant cette politique, veuillez consulter les pages de confidentialité spécifiques à chaque application:</p>
         <ul>
-            <li><a href="/krispc/privacy/">Politique de confidentialité KrisPC</a></li>
-            <li><a href="/importpdf/privacy/">Politique de confidentialité Pdf2Cal</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/krispc/privacy/">Politique de confidentialité KrisPC</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/importpdf/privacy/">Politique de confidentialité Pdf2Cal</a></li>
         </ul>
         {% else %}
         <p>This privacy policy applies to all services provided by Christopher.</p>
@@ -43,8 +43,8 @@
         <h2>Contact</h2>
         <p>For questions about this policy, please see the application-specific privacy pages:</p>
         <ul>
-            <li><a href="/krispc/privacy/">KrisPC Privacy Policy</a></li>
-            <li><a href="/importpdf/privacy/">Pdf2Cal Privacy Policy</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/krispc/privacy/">KrisPC Privacy Policy</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/importpdf/privacy/">Pdf2Cal Privacy Policy</a></li>
         </ul>
         {% endif %}
     </div>

@@ -24,8 +24,8 @@
         <h2>Conditions Spécifiques</h2>
         <p>Pour les conditions spécifiques à chaque application, veuillez consulter:</p>
         <ul>
-            <li><a href="/krispc/terms/">Conditions d'utilisation KrisPC</a></li>
-            <li><a href="/importpdf/terms/">Conditions d'utilisation Pdf2Cal</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/krispc/terms/">Conditions d'utilisation KrisPC</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/importpdf/terms/">Conditions d'utilisation Pdf2Cal</a></li>
         </ul>
         {% else %}
         <p>These terms of service apply to all services provided by Christopher.</p>
@@ -43,8 +43,8 @@
         <h2>Application-Specific Terms</h2>
         <p>For application-specific terms, please see:</p>
         <ul>
-            <li><a href="/krispc/terms/">KrisPC Terms of Service</a></li>
-            <li><a href="/importpdf/terms/">Pdf2Cal Terms of Service</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/krispc/terms/">KrisPC Terms of Service</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/importpdf/terms/">Pdf2Cal Terms of Service</a></li>
         </ul>
         {% endif %}
     </div>

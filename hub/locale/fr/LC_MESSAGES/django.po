@@ -19,16 +19,16 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 #: templates/hub/base.html:35
 msgid "Privacy"
-msgstr ""
+msgstr "Confidentialité"
 
 #: templates/hub/base.html:37
 msgid "Terms"
-msgstr ""
+msgstr "Conditions"
 
 #: templates/hub/privacy.html:4 templates/hub/privacy.html:9
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Politique de confidentialité"
 
 #: templates/hub/terms.html:4 templates/hub/terms.html:9
 msgid "Terms of Service"
-msgstr ""
+msgstr "Conditions d'utilisation"
