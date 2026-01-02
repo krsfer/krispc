@@ -1,6 +1,5 @@
 from django.views.generic import TemplateView
-from django.utils.translation import get_language, activate
-from django.conf import settings
+from django.utils.translation import get_language
 
 
 class IndexView(TemplateView):
@@ -9,29 +8,15 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Determine language from URL path
-        # No language prefix = French (default), /en/ prefix = English
-        path = self.request.path
-        if path.startswith('/en/'):
-            current_lang = 'en'
-        else:
-            # No prefix means French (default language with prefix_default_language=False)
-            current_lang = 'fr'
-
-        # Explicitly activate this language for the request
-        activate(current_lang)
-
-        # Also set in session to maintain across requests
-        # Django uses '_language' as the session key for language preference
-        self.request.session['_language'] = current_lang
-
-        is_french = current_lang == 'fr'
+        # Get current language (set by middleware)
+        current_lang = get_language()
+        is_french = current_lang.startswith('fr')
 
         # Build language-aware URLs (prefix_default_language=False means no prefix for French)
-        lang_prefix = '' if is_french else f'/{current_lang}'
+        lang_prefix = '' if is_french else f'/{current_lang[:2]}'
 
         # Explicitly pass language to template
-        context['current_language'] = current_lang
+        context['current_language'] = current_lang[:2]
         context['page_title'] = 'Christopher'
         context['tagline'] = (
             'Services et Outils Professionnels' if is_french
@@ -69,19 +54,9 @@ class PrivacyView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Determine language from URL path
-        path = self.request.path
-        if path.startswith('/en/'):
-            current_lang = 'en'
-        else:
-            current_lang = 'fr'
-
-        # Explicitly activate and set in session
-        activate(current_lang)
-        self.request.session['_language'] = current_lang
-
-        context['current_language'] = current_lang
+        # Get current language (set by middleware)
+        current_lang = get_language()
+        context['current_language'] = current_lang[:2]
         return context
 
 
@@ -90,17 +65,7 @@ class TermsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Determine language from URL path
-        path = self.request.path
-        if path.startswith('/en/'):
-            current_lang = 'en'
-        else:
-            current_lang = 'fr'
-
-        # Explicitly activate and set in session
-        activate(current_lang)
-        self.request.session['_language'] = current_lang
-
-        context['current_language'] = current_lang
+        # Get current language (set by middleware)
+        current_lang = get_language()
+        context['current_language'] = current_lang[:2]
         return context

@@ -168,6 +168,7 @@ MIDDLEWARE = [
     # See: https://whitenoise.readthedocs.io
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "hub.middleware.EnsureDefaultLanguageMiddleware",  # Set default language before LocaleMiddleware
     "django.middleware.locale.LocaleMiddleware",  # Required for i18n URL patterns
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
