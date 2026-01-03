@@ -24,8 +24,15 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'), override=True)
 
+# Log the loaded Redis URL (masked) for debugging
+redis_url = os.environ.get('REDIS_URL', 'Not Set')
+if redis_url.startswith('rediss://'):
+    masked_url = redis_url.replace(redis_url.split('@')[0], 'rediss://***')
+    print(f"Loading settings with REDIS_URL: {masked_url}")
+else:
+    print(f"Loading settings with REDIS_URL: {redis_url}")
 
 # Before using your Heroku app in production, make sure to review Django's deployment checklist:
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
