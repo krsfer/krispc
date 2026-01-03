@@ -1,0 +1,28 @@
+[Unit]
+Description=Celery Beat Service (Scheduler)
+After=network.target redis.target
+
+[Service]
+Type=simple
+User=chris
+Group=chris
+WorkingDirectory=/Users/chris/dev/src/py/krispcBase
+
+Environment="PATH=/Users/chris/dev/src/py/krispcBase/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="DJANGO_SETTINGS_MODULE=_main.settings"
+
+ExecStart=/Users/chris/dev/src/py/krispcBase/venv/bin/celery -A _main beat \
+    --loglevel=info \
+    --pidfile=/var/run/celery/beat.pid \
+    --schedule=/var/run/celery/celerybeat-schedule
+
+ExecStop=/bin/kill -s TERM $MAINPID
+
+Restart=always
+RestartSec=10s
+
+StandardOutput=append:/var/log/celery/beat.log
+StandardError=append:/var/log/celery/beat-error.log
+
+[Install]
+WantedBy=multi-user.target

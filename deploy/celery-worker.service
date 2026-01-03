@@ -1,0 +1,34 @@
+[Unit]
+Description=Celery Worker Service
+After=network.target redis.target
+
+[Service]
+Type=forking
+User=chris
+Group=chris
+WorkingDirectory=/Users/chris/dev/src/py/krispcBase
+
+Environment="PATH=/Users/chris/dev/src/py/krispcBase/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="DJANGO_SETTINGS_MODULE=_main.settings"
+
+ExecStart=/Users/chris/dev/src/py/krispcBase/venv/bin/celery -A _main worker \
+    --loglevel=info \
+    --concurrency=4 \
+    --pidfile=/var/run/celery/worker.pid \
+    --logfile=/var/log/celery/worker.log
+
+ExecStop=/bin/kill -s TERM $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+
+Restart=always
+RestartSec=10s
+
+StandardOutput=append:/var/log/celery/worker.log
+StandardError=append:/var/log/celery/worker-error.log
+
+# Security
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
