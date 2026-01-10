@@ -1,20 +1,44 @@
+"""
+URL Configuration for KrisPC API.
+
+Provides versioned REST API endpoints with OpenAPI documentation.
+"""
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import (
+    SpectacularAPIView, 
+    SpectacularRedocView, 
+    SpectacularSwaggerView
+)
 from . import api
 
+# Create router for viewsets
 router = DefaultRouter()
-router.register(r'contacts', api.ContactViewSet)
+router.register(r'contacts', api.ContactViewSet, basename='contact')
 
-urlpatterns = [
+# API v1 endpoints
+v1_patterns = [
+    # ViewSet endpoints (with router)
     path('', include(router.urls)),
+    
+    # Simple API views
     path('products/', api.ProductsView.as_view(), name='api-products'),
     path('colophon/', api.ColophonView.as_view(), name='api-colophon'),
     path('marques/', api.MarquesView.as_view(), name='api-marques'),
     path('villes/', api.VillesView.as_view(), name='api-villes'),
-    # Schema
+]
+
+# Main URL patterns
+urlpatterns = [
+    # API Version 1
+    path('v1/', include(v1_patterns)),
+    
+    # Schema and Documentation
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
-    path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    
+    # Backward compatibility - redirect /api/krispc/* to /api/krispc/v1/*
+    # This maintains existing integrations while encouraging migration to versioned URLs
+    path('', include(v1_patterns)),  # Fallback to v1 for non-versioned requests
 ]

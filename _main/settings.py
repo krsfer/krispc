@@ -93,6 +93,33 @@ if IS_PRODUCTION:
 else:
     ALLOWED_HOSTS = []
 
+# CORS Configuration for API
+# Allow API access from specific origins
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
+    "https://krispc.fr",
+    "https://www.krispc.fr",
+    "http://localhost:3000",
+    "http://localhost:5173",
+])
+
+# Allow credentials (cookies, authorization headers, etc.)
+CORS_ALLOW_CREDENTIALS = True
+
+# Additional CORS settings
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'accept-language',
+]
+
+
 
 # Application definition
 
@@ -125,6 +152,8 @@ INSTALLED_APPS = [
     "hub",
     "rest_framework",
     "drf_spectacular",
+    "django_filters",
+    "corsheaders",
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'
@@ -175,15 +204,18 @@ MIDDLEWARE = [
     # after Django's `SecurityMiddleware` so that security redirects are still performed.
     # See: https://whitenoise.readthedocs.io
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # CORS - must be before CommonMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "hub.middleware.EnsureDefaultLanguageMiddleware",  # Set default language before LocaleMiddleware
     "django.middleware.locale.LocaleMiddleware",  # Required for i18n URL patterns
+    "krispc.middleware.APILanguageMiddleware",  # API-specific language detection
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "krispc.middleware.APIRequestLoggingMiddleware",  # API request logging
     # "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
@@ -382,18 +414,61 @@ GOOGLE_OAUTH2_SCOPES = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
-    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    # Renderers
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",  # For development
+    ],
+    
+    # Authentication
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    
+    # Permissions - Allow per-view control (views explicitly set their permissions)
     "DEFAULT_PERMISSION_CLASSES": [],
+    
+    # User settings
     "UNAUTHENTICATED_USER": None,
+    
+    # Schema generation
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    
+    # Throttling
     "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
         "rest_framework.throttling.ScopedRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "contacts": "5/minute",
-        "read_only": "60/minute",
+        "anon": "100/hour",           # Anonymous users: 100 requests per hour
+        "user": "1000/hour",          # Authenticated users: 1000 requests per hour
+        "contacts": "5/minute",       # Contact form: 5 per minute
+        "read_only": "60/minute",     # Read-only endpoints: 60 per minute
     },
+    
+    # Pagination
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 50,
+    
+    # Filtering
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+    
+    # Versioning
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_VERSION": "v1",
+    "ALLOWED_VERSIONS": ["v1"],
+    "VERSION_PARAM": "version",
+    
+    # Exception handling
+    "EXCEPTION_HANDLER": "krispc.exceptions.custom_exception_handler",
+    
+    # Datetime format
+    "DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S",
 }
 
 SPECTACULAR_SETTINGS = {

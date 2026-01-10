@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "krispc": {
+            "command": "python",
+            "args": [
+                "/Users/chris/dev/src/py/krispcBase/mcp_server.py"
+            ],
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "_main.settings",
+                "PYTHONPATH": "/Users/chris/dev/src/py/krispcBase"
+            }
+        }
+    }
+}

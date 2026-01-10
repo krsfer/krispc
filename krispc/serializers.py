@@ -7,8 +7,8 @@ class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = ['id', 'firstname', 'surname', 'from_email', 'message', 'website']
-        read_only_fields = ['id']
+        fields = ['id', 'firstname', 'surname', 'from_email', 'message', 'website', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
     def validate(self, data):
         # If the honeypot field 'website' is filled, it's likely a bot.
