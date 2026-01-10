@@ -147,8 +147,9 @@
         <div class="w-full px-3 sm:px-4 sm:max-w-6xl sm:mx-auto">
             <div class="flex justify-between items-center py-3 sm:py-4">
                 <!-- Logo - Always visible -->
-                <div class="flex items-center space-x-3 sm:space-x-4">
-                    <a href="{% url 'home' %}" class="flex items-center">
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <a data-v-6646fce4="" href="{% url 'hub:index' %}" class="font-brand text-2xl text-primary">KrisPC</a>
+                    <a href="{% url 'home' %}" class="flex items-center ml-2 sm:ml-4">
                         <img src="{% static 'images/pdf2calendar_grey.svg' %}" alt="App Logo" class="h-6 sm:h-8 w-auto">
                     </a>
 
@@ -325,6 +326,9 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="lg:hidden hidden bg-white border-t">
             <div class="px-3 pt-3 pb-4 space-y-2">
+                <a data-v-6646fce4="" href="{% url 'hub:index' %}" class="flex items-center px-3 py-3 rounded-md font-brand text-2xl text-primary hover:bg-gray-50 min-h-[44px]">
+                    KrisPC
+                </a>
                 {% if user.is_authenticated %}
                 <!-- Info button for mobile -->
                 <button id="info-button-mobile" class="w-full flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">

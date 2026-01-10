@@ -38,6 +38,9 @@ urlpatterns = [
     path('health', health_check, name='health'),
     # Legacy Google OAuth callback path to match existing console configuration
     path("login/google/", p2c.views.google_login, name="google_login_callback"),
+    
+    # KrisPC API
+    path("api/krispc/", include("krispc.api_urls")),
 ]
 
 urlpatterns += i18n_patterns(

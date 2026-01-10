@@ -26,6 +26,10 @@ msgstr ""
 msgid "English"
 msgstr ""
 
+#: p2c/templates/p2c_base.html
+msgid "KrisPC Home"
+msgstr "Accueil KrisPC"
+
 #: check_urls.py:17 p2c/templates/home.html:22 p2c/templates/home.html:26
 #: p2c/templates/p2c_base.html:303 p2c/templates/p2c_base.html:306
 #: p2c/templates/p2c_base.html:338 p2c/templates/p2c_base.html:342
@@ -771,7 +775,7 @@ msgstr ""
 
 #: p2c/templates/home.html:6
 msgid "Home"
-msgstr ""
+msgstr "Accueil"
 
 #: p2c/templates/home.html:11
 msgid "Welcome to PDF2Calendar"
