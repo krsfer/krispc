@@ -124,6 +124,7 @@ INSTALLED_APPS = [
     "p2c",
     "hub",
     "rest_framework",
+    "drf_spectacular",
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'
@@ -385,6 +386,14 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [],
     "DEFAULT_PERMISSION_CLASSES": [],
     "UNAUTHENTICATED_USER": None,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'KrisPC API',
+    'DESCRIPTION': 'API for KrisPC IT services and products.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 LOGGING = {

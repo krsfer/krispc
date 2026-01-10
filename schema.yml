@@ -1,0 +1,282 @@
+openapi: 3.0.3
+info:
+  title: KrisPC API
+  version: 1.0.0
+  description: API for KrisPC IT services and products.
+paths:
+  /api/krispc/colophon/:
+    get:
+      operationId: colophon_list
+      description: Returns the colophon data (technologies used).
+      tags:
+      - colophon
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Colophon'
+          description: ''
+  /api/krispc/contacts/:
+    get:
+      operationId: contacts_list
+      description: API endpoint that allows contacts to be viewed or edited.
+      tags:
+      - contacts
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+          description: ''
+    post:
+      operationId: contacts_create
+      description: API endpoint that allows contacts to be viewed or edited.
+      tags:
+      - contacts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Contact'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Contact'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+          description: ''
+  /api/krispc/contacts/{id}/:
+    get:
+      operationId: contacts_retrieve
+      description: API endpoint that allows contacts to be viewed or edited.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this contact.
+        required: true
+      tags:
+      - contacts
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+          description: ''
+    put:
+      operationId: contacts_update
+      description: API endpoint that allows contacts to be viewed or edited.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this contact.
+        required: true
+      tags:
+      - contacts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Contact'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Contact'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+          description: ''
+    patch:
+      operationId: contacts_partial_update
+      description: API endpoint that allows contacts to be viewed or edited.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this contact.
+        required: true
+      tags:
+      - contacts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedContact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedContact'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedContact'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+          description: ''
+    delete:
+      operationId: contacts_destroy
+      description: API endpoint that allows contacts to be viewed or edited.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this contact.
+        required: true
+      tags:
+      - contacts
+      responses:
+        '204':
+          description: No response body
+  /api/krispc/marques/:
+    get:
+      operationId: marques_list
+      description: Returns the list of brands (marques).
+      tags:
+      - marques
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Marque'
+          description: ''
+  /api/krispc/products/:
+    get:
+      operationId: products_list
+      description: Returns the list of products/services.
+      tags:
+      - products
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+          description: ''
+  /api/krispc/villes/:
+    get:
+      operationId: villes_retrieve
+      description: Returns the list of cities (villes) covered.
+      tags:
+      - villes
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+          description: ''
+components:
+  schemas:
+    Colophon:
+      type: object
+      properties:
+        Colophon_Title:
+          type: string
+        Colophon_Icon:
+          type: string
+        Colophon_Link:
+          type: string
+      required:
+      - Colophon_Icon
+      - Colophon_Link
+      - Colophon_Title
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 100
+        surname:
+          type: string
+          maxLength: 500
+        from_email:
+          type: string
+          format: email
+          maxLength: 254
+        message:
+          type: string
+      required:
+      - firstname
+      - from_email
+      - id
+      - message
+      - surname
+    Marque:
+      type: object
+      properties:
+        Marque_Title:
+          type: string
+        Marque_Icon:
+          type: string
+      required:
+      - Marque_Icon
+      - Marque_Title
+    PatchedContact:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 100
+        surname:
+          type: string
+          maxLength: 500
+        from_email:
+          type: string
+          format: email
+          maxLength: 254
+        message:
+          type: string
+    Product:
+      type: object
+      properties:
+        Prd_Icon:
+          type: string
+        Prd_Name:
+          type: string
+        Prd_Desc:
+          type: string
+        Prd_More:
+          type: string
+      required:
+      - Prd_Desc
+      - Prd_Icon
+      - Prd_More
+      - Prd_Name
