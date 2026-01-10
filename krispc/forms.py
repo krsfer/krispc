@@ -53,7 +53,10 @@ custom_errors = {
 }
 
 
+from krispc.services import send_contact_email
+
 class ContactForm(forms.ModelForm):
+    # ... (init and Meta remain unchanged)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         super(ContactForm, self).__init__(*args, **kwargs)
@@ -132,140 +135,12 @@ class ContactForm(forms.ModelForm):
         self.helper.add_input(Submit("submit", _("Submit"), css_class="btn-success"))
 
     def send_email(self):
-
-        sender_email = 'hello.krispc@gmail.com'  # self.cleaned_data["from_email"]
-
-        now = datetime.now(tz=ZoneInfo("Europe/Paris"))
-        dt_string = now.strftime("%A %d/%m/%Y %H:%M:%S")
-
-        suj = f"Demande de devis. {self.cleaned_data['firstname']}. {dt_string}"
-
         firstname = self.cleaned_data['firstname']
         surname = self.cleaned_data['surname']
         msg = self.cleaned_data['message']
         client_email = self.cleaned_data["from_email"]
 
-        str_ua = "some user agent info"
-
-        text = f'Prénom {firstname} Nom :{surname} Message : {msg}, Email : {client_email}'
-        html = html = f"""\
-<html>
-    <body>
-    <table>
-        <tr>
-            <td>Prenom:</td>
-            <td>{firstname}</td>
-        </tr>
-        <tr>
-            <td>Nom:</td>
-            <td>{surname}</td>
-        </tr>
-        <tr>
-            <td>Email:</td>
-            <td>{client_email}</td>
-        </tr>
-    </table>
-    <p>Message:</p>{msg}
-    <hr />
-    <p>User agent:</p>{str_ua}
-    </body>
-</html>
-"""
-
-        # message = MIMEMultipart("alternative")
-        # message["Subject"] = suj
-        # message["From"] = sender_email
-        # message["To"] = "hello.krispc@gmail.com"
-        #
-        # part1 = MIMEText(text, 'plain')
-        # part2 = MIMEText(html, "html")
-        #
-        # message.attach(part1)
-        # message.attach(part2)
-
-
-        """
-        def send_mail(subject: Any,
-            message: Any,
-            from_email: Any,
-            recipient_list: Any,
-            fail_silently: bool = False,
-            auth_user: Any = None,
-            auth_password: Any = None,
-            connection: Any = None,
-            html_message: Any = None) -> int
-            
-        from django.core.mail import send_mail
-        send_mail(
-            'Subject here',
-            'Here is the message.',
-            'from@example.com',
-            ['to@example.com'],
-            fail_silently=False
-        )
-        
-        
-        
-        from sendgrid import SendGridAPIClient
-        from sendgrid.helpers.mail import Mail
-        
-        message = Mail(
-            from_email='from_email@example.com',
-            to_emails='to@example.com',
-            subject='Sending with Twilio SendGrid is Fun',
-            html_content='<strong>and easy to do anywhere, even with Python</strong>')
-        
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
-
-        """
-
-        message_1 = Mail(
-
-            from_email="archer.chris@gmx.com",
-            to_emails='hello.krispc@gmail.com',
-            subject=suj,
-            plain_text_content=text,
-            html_content=html)
-
-
-        if DEBUG:
-            LG.warning(f"from:{message_1.from_email.email}")
-
-        status = "ok"
-
-        try:
-            if DEBUG:
-                LG.debug("sending message")
-
-            # response = send_mail(
-            #     subject=suj,
-            #     message=text,
-            #     from_email='archer.chris@gmx.com',
-            #     recipient_list=["hello.krispc@gmail.com"],
-            #     fail_silently=False,
-            #     # auth_user=sender_email,
-            #     # auth_password=os.environ.get('GMAIL_PASS'),
-            #     # connection=None,
-            #     html_message=html
-            # )
-
-            sg = SendGridAPIClient(SENDGRID_API_KEY)
-            response = sg.send(message_1)
-
-            if DEBUG:
-                LG.warning(f'response:{response}')
-                LG.debug("message sent")
-
-        except Exception as e:
-            LG.error(e)
-            LG.error(message_1.from_email.email)
-
-        if DEBUG:
-            LG.debug("End send_email")
-
-        return status
+        return send_contact_email(firstname, surname, client_email, msg)
 
 
 class LanguageForm(forms.Form):
