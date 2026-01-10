@@ -19,6 +19,10 @@ class EnsureDefaultLanguageMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # Skip API paths - let LocaleMiddleware handle them via headers
+        if request.path.startswith('/api/'):
+            return self.get_response(request)
+
         # Determine language from URL path
         # No /en/ prefix = French (default)
         # /en/ prefix = English
