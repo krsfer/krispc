@@ -2,6 +2,7 @@ from rest_framework import viewsets, views, permissions
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from drf_spectacular.utils import extend_schema, OpenApiTypes
+from django.utils.translation import get_language, activate
 from .models import Contact
 from .serializers import ContactSerializer
 from .api_serializers import ProductSerializer, ColophonSerializer, MarqueSerializer
@@ -42,6 +43,15 @@ class ContactViewSet(viewsets.ModelViewSet):
             msg=contact.message
         )
 
+def activate_header_language(request):
+    """Helper to activate language from request header."""
+    lang = request.META.get('HTTP_ACCEPT_LANGUAGE')
+    if lang:
+        # Simple parsing: take the first 2 characters or the full code
+        lang_code = lang.split(',')[0].split('-')[0] # e.g. "en-US,en;q=0.9" -> "en"
+        if lang_code in ['en', 'fr']:
+            activate(lang_code)
+
 class ProductsView(views.APIView):
     """
     Returns the list of products/services.
@@ -51,6 +61,7 @@ class ProductsView(views.APIView):
     
     @extend_schema(responses=ProductSerializer(many=True))
     def get(self, request):
+        activate_header_language(request)
         return Response(lst_products.data())
 
 class ColophonView(views.APIView):
@@ -62,6 +73,7 @@ class ColophonView(views.APIView):
 
     @extend_schema(responses=ColophonSerializer(many=True))
     def get(self, request):
+        activate_header_language(request)
         return Response(colophon.data())
 
 class MarquesView(views.APIView):
@@ -73,6 +85,7 @@ class MarquesView(views.APIView):
 
     @extend_schema(responses=MarqueSerializer(many=True))
     def get(self, request):
+        activate_header_language(request)
         return Response(marques.data())
 
 class VillesView(views.APIView):
@@ -84,4 +97,5 @@ class VillesView(views.APIView):
 
     @extend_schema(responses=OpenApiTypes.STR) # Returns a list of strings
     def get(self, request):
+        activate_header_language(request)
         return Response(lst_villes.data())
