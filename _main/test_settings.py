@@ -8,5 +8,8 @@ CACHES = {
     }
 }
 
-# Disable rate limiting for tests if needed, or keep it to test logic
-# We keep it but since we use LocMemCache, it won't fail on Redis connection
+# Ensure throttles are defined for tests
+REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
+    "contacts": "100/minute",  # Higher limit for tests
+    "read_only": "100/minute",
+}
