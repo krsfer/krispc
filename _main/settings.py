@@ -188,14 +188,41 @@ if DEBUG:
 else:
     # Use Redis for production
     # Handle both standard Redis and Upstash Redis (rediss:// with TLS)
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': {
-                'hosts': [REDIS_URL],
+    # Check if we have SSL certificates for mTLS (Redis Cloud)
+    _redis_ca_cert = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem')
+    _redis_client_cert = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt')
+    _redis_client_key = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key')
+    
+    if os.path.exists(_redis_ca_cert) and os.path.exists(_redis_client_cert) and os.path.exists(_redis_client_key):
+        # Use mTLS with client certificates
+        import ssl as _ssl
+        _ssl_context = _ssl.create_default_context(
+            purpose=_ssl.Purpose.SERVER_AUTH,
+            cafile=_redis_ca_cert
+        )
+        _ssl_context.load_cert_chain(certfile=_redis_client_cert, keyfile=_redis_client_key)
+        
+        CHANNEL_LAYERS = {
+            'default': {
+                'BACKEND': 'channels_redis.core.RedisChannelLayer',
+                'CONFIG': {
+                    'hosts': [{
+                        'address': REDIS_URL,
+                        'ssl': _ssl_context,
+                    }],
+                },
             },
-        },
-    }
+        }
+    else:
+        # Fallback: Use rediss:// URL with basic SSL (no client cert verification)
+        CHANNEL_LAYERS = {
+            'default': {
+                'BACKEND': 'channels_redis.core.RedisChannelLayer',
+                'CONFIG': {
+                    'hosts': [REDIS_URL],
+                },
+            },
+        }
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
