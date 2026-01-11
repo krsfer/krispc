@@ -212,7 +212,6 @@ class ProductsView(views.APIView):
         ],
         tags=['Products & Services'],
     )
-    @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
     def get(self, request):
         logger.debug(f"Products endpoint accessed - Language: {request.LANGUAGE_CODE}")
         
@@ -294,7 +293,6 @@ class PricelistView(views.APIView):
         ],
         tags=['Products & Services'],
     )
-    @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
     def get(self, request):
         logger.debug(f"Pricelist endpoint accessed - Language: {request.LANGUAGE_CODE}")
         
