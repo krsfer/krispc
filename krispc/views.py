@@ -194,6 +194,11 @@ class TermsView(IndexPageView):
         return context
 
 
+class MCPDocsView(TemplateView):
+    """MCP Server documentation page."""
+    template_name = "mcp_docs.html"
+
+
 @require_GET
 def favicon(request) -> HttpResponse:
     return HttpResponse(

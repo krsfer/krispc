@@ -1,0 +1,155 @@
+{% extends "the_base.html" %}
+{% load static %}
+
+{% block title %}MCP Server Documentation - KrisPC{% endblock %}
+
+{% block description %}Documentation for integrating KrisPC's MCP (Model Context Protocol) server with AI assistants
+like Claude Desktop.{% endblock %}
+
+{% block main %}
+<section class="docs-section" style="padding: 60px 0; min-height: 80vh;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <h1 class="mb-4" style="color: var(--primary-color, #eeb442);">
+                    <i class="ri-robot-line"></i> MCP Server for AI Assistants
+                </h1>
+
+                <div class="card mb-4"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <h2 class="h4 mb-3">What is MCP?</h2>
+                        <p>
+                            The <strong>Model Context Protocol (MCP)</strong> allows AI assistants like Claude Desktop
+                            to interact
+                            with external services. KrisPC provides an MCP server that enables AI assistants to:
+                        </p>
+                        <ul>
+                            <li>Query available repair services and pricing</li>
+                            <li>Get information about supported computer brands</li>
+                            <li>Check service areas and coverage</li>
+                            <li>Access technology stack information</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <h2 class="h4 mb-3"><i class="ri-download-line"></i> Quick Setup</h2>
+
+                        <h5 class="mt-4">1. Install Dependencies</h5>
+                        <pre
+                            style="background: #1a1a2e; padding: 15px; border-radius: 8px; overflow-x: auto;"><code>pip install mcp httpx</code></pre>
+
+                        <h5 class="mt-4">2. Download the MCP Server</h5>
+                        <pre
+                            style="background: #1a1a2e; padding: 15px; border-radius: 8px; overflow-x: auto;"><code>curl -O https://krispc.fly.dev/static/mcp/krispc_mcp_server.py</code></pre>
+
+                        <h5 class="mt-4">3. Configure Claude Desktop</h5>
+                        <p>Add to your <code>claude_desktop_config.json</code>:</p>
+                        <pre style="background: #1a1a2e; padding: 15px; border-radius: 8px; overflow-x: auto;"><code>{
+  "mcpServers": {
+    "krispc": {
+      "command": "python",
+      "args": ["/path/to/krispc_mcp_server.py"],
+      "env": {
+        "KRISPC_API_URL": "https://krispc.fly.dev/api/krispc"
+      }
+    }
+  }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <h2 class="h4 mb-3"><i class="ri-tools-line"></i> Available Tools</h2>
+
+                        <div class="table-responsive">
+                            <table class="table" style="color: inherit;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                        <th>Tool Name</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td><code>get_products</code></td>
+                                        <td>List all repair services with descriptions and pricing</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td><code>get_brands</code></td>
+                                        <td>List supported computer manufacturers</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td><code>get_service_areas</code></td>
+                                        <td>Get list of cities covered for on-site services</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td><code>get_technologies</code></td>
+                                        <td>View technologies used to build the website</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td><code>submit_contact</code></td>
+                                        <td>Submit a contact request for repair services</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <h2 class="h4 mb-3"><i class="ri-links-line"></i> Related Resources</h2>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="ri-arrow-right-s-line"></i>
+                                <a href="/api/krispc/swagger/" target="_blank"
+                                    style="color: var(--primary-color, #eeb442);">
+                                    Interactive API Documentation (Swagger)
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <i class="ri-arrow-right-s-line"></i>
+                                <a href="/api/krispc/redoc/" target="_blank"
+                                    style="color: var(--primary-color, #eeb442);">
+                                    API Reference (ReDoc)
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <i class="ri-arrow-right-s-line"></i>
+                                <a href="/api/krispc/schema/" target="_blank"
+                                    style="color: var(--primary-color, #eeb442);">
+                                    OpenAPI Schema (JSON)
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <i class="ri-arrow-right-s-line"></i>
+                                <a href="https://modelcontextprotocol.io/docs" target="_blank" rel="noopener"
+                                    style="color: var(--primary-color, #eeb442);">
+                                    MCP Protocol Documentation
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="/" class="btn btn-outline-light me-3">
+                        <i class="ri-arrow-left-line"></i> Back to Home
+                    </a>
+                    <a href="/api/krispc/swagger/" class="btn btn-primary" target="_blank"
+                        style="background: var(--primary-color, #eeb442); border: none; color: #000;">
+                        <i class="ri-code-s-slash-line"></i> Try the API
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

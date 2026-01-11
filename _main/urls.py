@@ -41,6 +41,9 @@ urlpatterns = [
     
     # KrisPC API
     path("api/krispc/", include("krispc.api_urls")),
+    
+    # Documentation
+    path("docs/mcp/", krispc.views.MCPDocsView.as_view(), name="mcp-docs"),
 ]
 
 urlpatterns += i18n_patterns(
