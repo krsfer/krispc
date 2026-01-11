@@ -3,6 +3,7 @@ API Views for the KrisPC API.
 
 Provides RESTful endpoints for contacts, products, technologies, brands, and cities.
 """
+import html
 import logging
 from rest_framework import viewsets, views, permissions, filters
 from rest_framework.response import Response
@@ -31,6 +32,29 @@ from . import lst_products, colophon, marques, lst_villes
 from .services import send_contact_email
 
 logger = logging.getLogger(__name__)
+
+
+def decode_html_entities(data):
+    """
+    Recursively decode HTML entities in strings within data structures.
+    
+    This ensures API responses contain clean Unicode data rather than
+    HTML entities like &nbsp;, &euro;, &mdash;, etc.
+    
+    Args:
+        data: Can be a string, dict, list, or other type
+        
+    Returns:
+        Data with all HTML entities decoded to proper Unicode characters
+    """
+    if isinstance(data, str):
+        return html.unescape(data)
+    elif isinstance(data, dict):
+        return {key: decode_html_entities(value) for key, value in data.items()}
+    elif isinstance(data, list):
+        return [decode_html_entities(item) for item in data]
+    else:
+        return data
 
 
 class ContactViewSet(viewsets.ModelViewSet):
@@ -177,7 +201,7 @@ class ProductsView(views.APIView):
     @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
     def get(self, request):
         logger.debug(f"Products endpoint accessed - Language: {request.LANGUAGE_CODE}")
-        return Response(lst_products.data())
+        return Response(decode_html_entities(lst_products.data()))
 
 
 class ColophonView(views.APIView):
@@ -293,4 +317,4 @@ class VillesView(views.APIView):
     @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
     def get(self, request):
         logger.debug("Cities endpoint accessed")
-        return Response(lst_villes.data())
+        return Response(decode_html_entities(lst_villes.data()))
