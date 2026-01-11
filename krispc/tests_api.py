@@ -30,9 +30,8 @@ class KrisPCAPIBasicTests(APITestCase):
         # Clear cache before each test
         cache.clear()
         
-        # URLs (testing both versioned and non-versioned)
+        # URLs
         self.products_url = reverse('api-products')
-        self.products_url_v1 = '/api/krispc/v1/products/'
         self.colophon_url = reverse('api-colophon')
         self.marques_url = reverse('api-marques')
         self.villes_url = reverse('api-villes')
@@ -43,11 +42,6 @@ class KrisPCAPIBasicTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(isinstance(response.data, list))
 
-    def test_get_products_versioned(self):
-        """Test products endpoint with explicit v1 version."""
-        response = self.client.get(self.products_url_v1)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(isinstance(response.data, list))
 
     def test_get_colophon(self):
         """Test colophon endpoint returns successfully."""
@@ -359,7 +353,7 @@ class ErrorHandlingTests(APITestCase):
 
     def test_404_error_format(self):
         """Test 404 errors follow standard format."""
-        response = self.client.get('/api/krispc/v1/nonexistent/')
+        response = self.client.get('/api/krispc/nonexistent/')
         
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         # DRF may return JSON or HTML depending on settings - just check it's not successful

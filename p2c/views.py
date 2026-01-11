@@ -1136,12 +1136,19 @@ def create_events(request, document_id):
         if not events_data:
             return JsonResponse({"error": "No valid appointments to process"}, status=400)
 
-        # Create the task
-        task = create_events_task.delay(
-            calendar_id=calendar_id,
-            credentials=credentials,
-            appointments=events_data
-        )
+        # Create the task with error handling for connection issues
+        try:
+            task = create_events_task.delay(
+                calendar_id=calendar_id,
+                credentials=credentials,
+                appointments=events_data
+            )
+        except Exception as celery_error:
+            # This catches connection errors when Redis/Celery broker is unavailable
+            logger.error(f"Failed to submit Celery task: {str(celery_error)}")
+            return JsonResponse({
+                'error': _('Task queue is temporarily unavailable. Please try again in a few moments.')
+            }, status=503)  # HTTP 503 Service Unavailable
 
         logger.info("Task created with ID: %s", task.id)
 
@@ -1355,13 +1362,20 @@ def flush_events(request, document_id):
             # Log the error but continue in development mode
             logger.warning(f"Redis lock unavailable (continuing anyway): {str(redis_error)}")
 
-        # Start the Celery task
-        task = delete_events_task.delay(
-            calendar_id=calendar_id,
-            credentials=credentials,
-            target_month=target_month,
-            target_year=target_year
-        )
+        # Start the Celery task with error handling for connection issues
+        try:
+            task = delete_events_task.delay(
+                calendar_id=calendar_id,
+                credentials=credentials,
+                target_month=target_month,
+                target_year=target_year
+            )
+        except Exception as celery_error:
+            # This catches connection errors when Redis/Celery broker is unavailable
+            logger.error(f"Failed to submit Celery task: {str(celery_error)}")
+            return JsonResponse({
+                'error': _('Task queue is temporarily unavailable. Please try again in a few moments.')
+            }, status=503)  # HTTP 503 Service Unavailable
 
         # Mark document as processed if it's a real PDF document
         if document_id and document_id != 0:
@@ -2068,13 +2082,19 @@ def backup_restore(request, backup_id):
                 status=401
             )
 
-        # Launch async restore task
-        task = restore_backup_task.delay(
-            backup_id=backup_id,
-            user_id=request.user.id,
-            credentials=credentials,
-            event_indices=event_indices
-        )
+        # Launch async restore task with error handling for connection issues
+        try:
+            task = restore_backup_task.delay(
+                backup_id=backup_id,
+                user_id=request.user.id,
+                credentials=credentials,
+                event_indices=event_indices
+            )
+        except Exception as celery_error:
+            logger.error(f"Failed to submit restore task: {str(celery_error)}")
+            return JsonResponse({
+                'error': _('Task queue is temporarily unavailable. Please try again in a few moments.')
+            }, status=503)
 
         return JsonResponse({
             'success': True,

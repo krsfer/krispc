@@ -181,13 +181,19 @@ def process_json_events(request):
             staff_name = event["summary"]
             event["colorId"] = caregiver_colors.get(staff_name, "1")
 
-        # Create the task
-        task = create_events_task.delay(
-            calendar_id=calendar_id,
-            credentials=credentials,
-            appointments=events_data,
-            update_existing=True,
-        )
+        # Create the task with error handling for connection issues
+        try:
+            task = create_events_task.delay(
+                calendar_id=calendar_id,
+                credentials=credentials,
+                appointments=events_data,
+                update_existing=True,
+            )
+        except Exception as celery_error:
+            logger.error(f"Failed to submit Celery task: {str(celery_error)}")
+            return JsonResponse({
+                'error': _('Task queue is temporarily unavailable. Please try again in a few moments.')
+            }, status=503)
 
         return JsonResponse(
             {"task_id": task.id, "status": "started", "appointments": events_data}
@@ -518,15 +524,22 @@ def sync_pdf_to_calendar(request):
         target_year = first_date.year
 
         # Create the Celery task that deletes existing events first, then creates new ones
-        task = sync_calendar_task.delay(
-            user_id=request.user.id,
-            calendar_id=calendar_id,
-            calendar_name=calendar_name,
-            credentials=credentials,
-            appointments=events_data,
-            target_month=target_month,
-            target_year=target_year,
-        )
+        # with error handling for connection issues
+        try:
+            task = sync_calendar_task.delay(
+                user_id=request.user.id,
+                calendar_id=calendar_id,
+                calendar_name=calendar_name,
+                credentials=credentials,
+                appointments=events_data,
+                target_month=target_month,
+                target_year=target_year,
+            )
+        except Exception as celery_error:
+            logger.error(f"Failed to submit Celery task: {str(celery_error)}")
+            return JsonResponse({
+                'error': _('Task queue is temporarily unavailable. Please try again in a few moments.')
+            }, status=503)
 
         return JsonResponse(
             {

@@ -31,15 +31,11 @@ v1_patterns = [
 
 # Main URL patterns
 urlpatterns = [
-    # API Version 1
-    path('v1/', include(v1_patterns)),
+    # API endpoints
+    path('', include(v1_patterns)),
     
     # Schema and Documentation
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    
-    # Backward compatibility - redirect /api/krispc/* to /api/krispc/v1/*
-    # This maintains existing integrations while encouraging migration to versioned URLs
-    path('', include(v1_patterns)),  # Fallback to v1 for non-versioned requests
 ]

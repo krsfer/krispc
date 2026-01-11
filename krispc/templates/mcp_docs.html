@@ -11,38 +11,67 @@ like Claude Desktop.{% endblock %}
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 <style>
     :root {
-        --primary-color: #eeb442;
+        --primary-color: #f5c25a;
+        --primary-hover: #ffd77a;
         --bg-dark: #0f0f23;
-        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-card: rgba(255, 255, 255, 0.08);
+        --text-primary: #f5f5f5;
+        --text-secondary: #d0d0d0;
     }
 
     body {
         background: var(--bg-dark);
-        color: #e0e0e0;
+        color: var(--text-primary);
         font-family: 'Inter', sans-serif;
     }
 
     .card {
         background: var(--bg-card);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 12px;
     }
 
+    .card-body {
+        color: var(--text-primary);
+    }
+
+    .card-body p,
+    .card-body li {
+        color: var(--text-secondary);
+        line-height: 1.7;
+    }
+
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6 {
+        color: var(--text-primary) !important;
+    }
+
     code {
-        background: rgba(238, 180, 66, 0.15);
+        background: rgba(245, 194, 90, 0.2);
         padding: 2px 6px;
         border-radius: 4px;
         color: var(--primary-color);
+        font-weight: 500;
     }
 
     pre {
         background: #1a1a2e !important;
-        color: #e0e0e0;
+        color: var(--text-primary);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     pre code {
         background: transparent;
         padding: 0;
+        color: #e8e8e8;
     }
 
     a {
@@ -51,12 +80,42 @@ like Claude Desktop.{% endblock %}
     }
 
     a:hover {
-        color: #d4a13a;
+        color: var(--primary-hover);
         text-decoration: underline;
     }
 
+    /* Improved list styling */
+    ul li {
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    ul li::marker {
+        color: var(--primary-color);
+    }
+
+    .list-unstyled li {
+        color: var(--text-primary);
+    }
+
+    /* Table improvements */
     .table {
-        --bs-table-color: #e0e0e0;
+        --bs-table-color: var(--text-primary);
+        --bs-table-bg: transparent;
+    }
+
+    .table th {
+        color: var(--primary-color) !important;
+        font-weight: 600;
+    }
+
+    .table td {
+        color: var(--text-secondary) !important;
+    }
+
+    /* Icons in lists */
+    .ri-arrow-right-s-line {
+        color: var(--primary-color);
     }
 </style>
 {% endblock %}
@@ -66,12 +125,11 @@ like Claude Desktop.{% endblock %}
     <div class="container">
         <div class="row">
             <div class="col-lg-10 mx-auto">
-                <h1 class="mb-4" style="color: var(--primary-color, #eeb442);">
+                <h1 class="mb-4" style="color: var(--primary-color);">
                     <i class="ri-robot-line"></i> MCP Server for AI Assistants
                 </h1>
 
-                <div class="card mb-4"
-                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+                <div class="card mb-4">
                     <div class="card-body p-4">
                         <h2 class="h4 mb-3">What is MCP?</h2>
                         <p>
@@ -88,8 +146,7 @@ like Claude Desktop.{% endblock %}
                     </div>
                 </div>
 
-                <div class="card mb-4"
-                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+                <div class="card mb-4">
                     <div class="card-body p-4">
                         <h2 class="h4 mb-3"><i class="ri-download-line"></i> Quick Setup</h2>
 
@@ -117,37 +174,36 @@ like Claude Desktop.{% endblock %}
                     </div>
                 </div>
 
-                <div class="card mb-4"
-                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+                <div class="card mb-4">
                     <div class="card-body p-4">
                         <h2 class="h4 mb-3"><i class="ri-tools-line"></i> Available Tools</h2>
 
                         <div class="table-responsive">
                             <table class="table" style="color: inherit;">
                                 <thead>
-                                    <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                    <tr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
                                         <th>Tool Name</th>
                                         <th>Description</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
                                         <td><code>get_products</code></td>
                                         <td>List all repair services with descriptions and pricing</td>
                                     </tr>
-                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
                                         <td><code>get_brands</code></td>
                                         <td>List supported computer manufacturers</td>
                                     </tr>
-                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
                                         <td><code>get_service_areas</code></td>
                                         <td>Get list of cities covered for on-site services</td>
                                     </tr>
-                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
                                         <td><code>get_technologies</code></td>
                                         <td>View technologies used to build the website</td>
                                     </tr>
-                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
                                         <td><code>submit_contact</code></td>
                                         <td>Submit a contact request for repair services</td>
                                     </tr>
@@ -157,57 +213,49 @@ like Claude Desktop.{% endblock %}
                     </div>
                 </div>
 
-                <div class="card mb-4"
-                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+                <div class="card mb-4">
                     <div class="card-body p-4">
                         <h2 class="h4 mb-3"><i class="ri-links-line"></i> Related Resources</h2>
                         <ul class="list-unstyled">
                             <li class="mb-2">
                                 <i class="ri-arrow-right-s-line"></i>
-                                <a href="/api/krispc/swagger/" target="_blank"
-                                    style="color: var(--primary-color, #eeb442);">
+                                <a href="/api/krispc/swagger/" target="_blank">
                                     Interactive API Documentation (Swagger)
                                 </a>
                             </li>
                             <li class="mb-2">
                                 <i class="ri-arrow-right-s-line"></i>
-                                <a href="/api/krispc/redoc/" target="_blank"
-                                    style="color: var(--primary-color, #eeb442);">
+                                <a href="/api/krispc/redoc/" target="_blank">
                                     API Reference (ReDoc)
                                 </a>
                             </li>
                             <li class="mb-2">
                                 <i class="ri-arrow-right-s-line"></i>
-                                <a href="/api/krispc/schema/" target="_blank"
-                                    style="color: var(--primary-color, #eeb442);">
+                                <a href="/api/krispc/schema/" target="_blank">
                                     OpenAPI Schema (JSON)
                                 </a>
                             </li>
                             <li class="mb-2">
                                 <i class="ri-arrow-right-s-line"></i>
-                                <a href="/api/krispc/pricelist/" target="_blank"
-                                    style="color: var(--primary-color, #eeb442);">
+                                <a href="/api/krispc/pricelist/" target="_blank">
                                     Pricelist API (JSON)
                                 </a>
                             </li>
                             <li class="mb-2">
                                 <i class="ri-arrow-right-s-line"></i>
-                                <a href="/api/krispc/pricelist/?output=text" target="_blank"
-                                    style="color: var(--primary-color, #eeb442);">
+                                <a href="/api/krispc/pricelist/?output=text" target="_blank">
                                     Pricelist (Plain Text)
                                 </a>
                             </li>
                             <li class="mb-2">
                                 <i class="ri-arrow-right-s-line"></i>
-                                <a href="/api/krispc/products/?output=text" target="_blank"
-                                    style="color: var(--primary-color, #eeb442);">
+                                <a href="/api/krispc/products/?output=text" target="_blank">
                                     Services List (Plain Text)
                                 </a>
                             </li>
                             <li class="mb-2">
                                 <i class="ri-arrow-right-s-line"></i>
-                                <a href="https://modelcontextprotocol.io/docs" target="_blank" rel="noopener"
-                                    style="color: var(--primary-color, #eeb442);">
+                                <a href="https://modelcontextprotocol.io/docs" target="_blank" rel="noopener">
                                     MCP Protocol Documentation
                                 </a>
                             </li>
@@ -220,7 +268,7 @@ like Claude Desktop.{% endblock %}
                         <i class="ri-arrow-left-line"></i> Back to Home
                     </a>
                     <a href="/api/krispc/swagger/" class="btn btn-primary" target="_blank"
-                        style="background: var(--primary-color, #eeb442); border: none; color: #000;">
+                        style="background: var(--primary-color); border: none; color: #000;">
                         <i class="ri-code-s-slash-line"></i> Try the API
                     </a>
                 </div>

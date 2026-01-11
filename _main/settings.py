@@ -388,6 +388,15 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
 
+# Connection timeout settings to prevent hanging when Redis is unavailable
+CELERY_BROKER_CONNECTION_TIMEOUT = 10  # 10 seconds timeout for broker connection
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BROKER_CONNECTION_MAX_RETRIES = 3
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'socket_timeout': 10,
+    'socket_connect_timeout': 10,
+}
+
 REDIS_CA_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem')
 REDIS_CLIENT_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt')
 REDIS_CLIENT_KEY_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key')
