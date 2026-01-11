@@ -33,6 +33,9 @@
           <ul class="space-y-2 text-sm">
             <li><a href="/api/krispc/swagger/" target="_blank" class="hover:text-primary transition-colors">API Docs (Swagger)</a></li>
             <li><a href="/api/krispc/redoc/" target="_blank" class="hover:text-primary transition-colors">API Docs (ReDoc)</a></li>
+            <li><a href="/api/krispc/pricelist/" target="_blank" class="hover:text-primary transition-colors">Pricelist (JSON)</a></li>
+            <li><a href="/api/krispc/pricelist/?output=text" target="_blank" class="hover:text-primary transition-colors">Pricelist (Text)</a></li>
+            <li><a href="/api/krispc/products/?output=text" target="_blank" class="hover:text-primary transition-colors">Services (Text)</a></li>
             <li><a href="/docs/mcp/" target="_blank" class="hover:text-primary transition-colors">MCP Server for AI</a></li>
           </ul>
         </div>
