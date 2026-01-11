@@ -182,15 +182,15 @@ class ProductsView(views.APIView):
         Results are localized based on the Accept-Language header.
         
         **Query Parameters**:
-        - `format=text`: Returns plain text format instead of JSON
+        - `output=text`: Returns plain text format instead of JSON
         
         Response is cached for 15 minutes for better performance.
         """,
         parameters=[
             OpenApiParameter(
-                name='format',
+                name='output',
                 type=str,
-                description='Response format: json (default) or text',
+                description='Response output: json (default) or text',
                 required=False,
                 enum=['json', 'text']
             ),
@@ -217,9 +217,9 @@ class ProductsView(views.APIView):
         
         products_data = decode_html_entities(lst_products.data())
         
-        # Check for text format
-        output_format = request.query_params.get('format', 'json').lower()
-        if output_format == 'text':
+        # Check for text output
+        output_type = request.query_params.get('output', 'json').lower()
+        if output_type == 'text':
             text_output = format_products_as_text(products_data, request.LANGUAGE_CODE)
             return HttpResponse(text_output, content_type='text/plain; charset=utf-8')
         
@@ -258,15 +258,15 @@ class PricelistView(views.APIView):
         - Minimum charge amounts
         
         **Query Parameters**:
-        - `format=text`: Returns human-readable plain text format
+        - `output=text`: Returns human-readable plain text format
         
         Response is cached for 15 minutes for better performance.
         """,
         parameters=[
             OpenApiParameter(
-                name='format',
+                name='output',
                 type=str,
-                description='Response format: json (default) or text',
+                description='Response output: json (default) or text',
                 required=False,
                 enum=['json', 'text']
             ),
@@ -298,9 +298,9 @@ class PricelistView(views.APIView):
         
         pricelist_data = get_pricelist()
         
-        # Check for text format
-        output_format = request.query_params.get('format', 'json').lower()
-        if output_format == 'text':
+        # Check for text output
+        output_type = request.query_params.get('output', 'json').lower()
+        if output_type == 'text':
             text_output = format_pricelist_as_text(pricelist_data, request.LANGUAGE_CODE)
             return HttpResponse(text_output, content_type='text/plain; charset=utf-8')
         
