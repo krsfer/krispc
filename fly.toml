@@ -14,7 +14,11 @@ primary_region = "cdg"
   FLY_APP = "true"
 
 [processes]
-  app = "bash -c 'python manage.py migrate && python manage.py runworker channel_layer -v2 & celery -A _main worker -l info & daphne _main.asgi:application --port 8080 --bind 0.0.0.0 -v2'"
+  # Note: runworker is temporarily disabled because channels_redis doesn't support Redis mTLS
+  # To re-enable, you need to either:
+  # 1. Reconfigure Redis Cloud to allow password-only auth (no client certs)
+  # 2. Use a different Redis provider (Upstash, Fly Redis, etc.)
+  app = "bash -c 'python manage.py migrate && celery -A _main worker -l info & daphne _main.asgi:application --port 8080 --bind 0.0.0.0 -v2'"
 
 [[services]]
   internal_port = 8080
