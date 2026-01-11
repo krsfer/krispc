@@ -23,6 +23,7 @@ v1_patterns = [
     
     # Simple API views
     path('products/', api.ProductsView.as_view(), name='api-products'),
+    path('pricelist/', api.PricelistView.as_view(), name='api-pricelist'),
     path('colophon/', api.ColophonView.as_view(), name='api-colophon'),
     path('marques/', api.MarquesView.as_view(), name='api-marques'),
     path('villes/', api.VillesView.as_view(), name='api-villes'),

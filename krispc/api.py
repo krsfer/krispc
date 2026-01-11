@@ -30,6 +30,8 @@ from .api_serializers import (
 from .permissions import ContactCreatePermission
 from . import lst_products, colophon, marques, lst_villes
 from .services import send_contact_email
+from .pricelist import get_pricelist, format_pricelist_as_text, format_products_as_text
+from django.http import HttpResponse
 
 logger = logging.getLogger(__name__)
 
@@ -179,8 +181,20 @@ class ProductsView(views.APIView):
         Returns a list of IT products and services offered by KrisPC.
         Results are localized based on the Accept-Language header.
         
+        **Query Parameters**:
+        - `format=text`: Returns plain text format instead of JSON
+        
         Response is cached for 15 minutes for better performance.
         """,
+        parameters=[
+            OpenApiParameter(
+                name='format',
+                type=str,
+                description='Response format: json (default) or text',
+                required=False,
+                enum=['json', 'text']
+            ),
+        ],
         responses={200: ProductSerializer(many=True)},
         examples=[
             OpenApiExample(
@@ -201,7 +215,98 @@ class ProductsView(views.APIView):
     @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
     def get(self, request):
         logger.debug(f"Products endpoint accessed - Language: {request.LANGUAGE_CODE}")
-        return Response(decode_html_entities(lst_products.data()))
+        
+        products_data = decode_html_entities(lst_products.data())
+        
+        # Check for text format
+        output_format = request.query_params.get('format', 'json').lower()
+        if output_format == 'text':
+            text_output = format_products_as_text(products_data, request.LANGUAGE_CODE)
+            return HttpResponse(text_output, content_type='text/plain; charset=utf-8')
+        
+        return Response(products_data)
+
+
+class PricelistView(views.APIView):
+    """
+    Returns structured pricing information for KrisPC services.
+    
+    This endpoint provides clean, structured pricing data separate from 
+    marketing descriptions. Ideal for:
+    - AI assistants and chatbots
+    - Price comparison tools
+    - Programmatic access
+    - Plain text consumption
+    
+    **Supported Formats**:
+    - JSON (default): Structured pricing data
+    - Text (?format=text): Human-readable plain text
+    """
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'read_only'
+    permission_classes = [permissions.AllowAny]
+
+    @extend_schema(
+        summary="Get service pricelist",
+        description="""
+        Returns a structured pricelist of all KrisPC services with pricing information.
+        
+        Each service includes:
+        - Service ID and name (translated)
+        - Category (mobile, computer, security, etc.)
+        - Pricing type (hourly, fixed, or mixed)
+        - Hourly rates and/or fixed prices
+        - Minimum charge amounts
+        
+        **Query Parameters**:
+        - `format=text`: Returns human-readable plain text format
+        
+        Response is cached for 15 minutes for better performance.
+        """,
+        parameters=[
+            OpenApiParameter(
+                name='format',
+                type=str,
+                description='Response format: json (default) or text',
+                required=False,
+                enum=['json', 'text']
+            ),
+        ],
+        responses={200: OpenApiTypes.OBJECT},
+        examples=[
+            OpenApiExample(
+                'Pricelist Response (JSON)',
+                value={
+                    "currency": "EUR",
+                    "currency_symbol": "€",
+                    "services": [
+                        {
+                            "id": "smartphones",
+                            "name": "Smartphone & Tablet Repair",
+                            "pricing_type": "hourly",
+                            "hourly_rate": 30,
+                            "minimum_charge": 30
+                        }
+                    ]
+                },
+                response_only=True,
+            ),
+        ],
+        tags=['Products & Services'],
+    )
+    @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
+    def get(self, request):
+        logger.debug(f"Pricelist endpoint accessed - Language: {request.LANGUAGE_CODE}")
+        
+        pricelist_data = get_pricelist()
+        
+        # Check for text format
+        output_format = request.query_params.get('format', 'json').lower()
+        if output_format == 'text':
+            text_output = format_pricelist_as_text(pricelist_data, request.LANGUAGE_CODE)
+            return HttpResponse(text_output, content_type='text/plain; charset=utf-8')
+        
+        return Response(pricelist_data)
 
 
 class ColophonView(views.APIView):
