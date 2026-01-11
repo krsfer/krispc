@@ -9,8 +9,8 @@ MIDDLEWARE_WITHOUT_CUSTOM = [m for m in settings.MIDDLEWARE if 'EnsureDefaultLan
 
 class I18nTests(APITestCase):
     @override_settings(MIDDLEWARE=MIDDLEWARE_WITHOUT_CUSTOM)
-    def test_products_localization(self):
-        url = reverse('api-products')
+    def test_services_localization(self):
+        url = reverse('api-services')
 
         # Ensure clean state
         self.client.cookies.clear()

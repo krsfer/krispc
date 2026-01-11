@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 from rest_framework import serializers as drf_serializers
 from krispc.models import Contact
 from krispc.serializers import ContactSerializer
-from krispc.api_serializers import ProductSerializer, ColophonSerializer, MarqueSerializer
+from krispc.api_serializers import ServiceSerializer, ColophonSerializer, MarqueSerializer
 
 
 class ContactSerializerTest(TestCase):
@@ -150,11 +150,11 @@ class ContactSerializerTest(TestCase):
         self.assertIn('<script>', contact.message)
 
 
-class ProductSerializerTest(TestCase):
-    """Test cases for ProductSerializer."""
+class ServiceSerializerTest(TestCase):
+    """Test cases for ServiceSerializer."""
     
-    def test_product_serializer_structure(self):
-        """Test product serializer validates expected structure."""
+    def test_service_serializer_structure(self):
+        """Test service serializer validates expected structure."""
         data = {
             'Prd_Icon': 'bi-laptop',
             'Prd_Name': 'Computer Repair',
@@ -162,7 +162,7 @@ class ProductSerializerTest(TestCase):
             'Prd_More': 'Learn more'
         }
         
-        serializer = ProductSerializer(data=data)
+        serializer = ServiceSerializer(data=data)
         self.assertTrue(serializer.is_valid(), serializer.errors)
 
 

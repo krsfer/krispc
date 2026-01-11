@@ -216,12 +216,12 @@ def format_pricelist_as_text(pricelist, language='fr'):
     return "\n".join(lines)
 
 
-def format_products_as_text(products, language='fr'):
+def format_services_as_text(services, language='fr'):
     """
-    Format the products list as plain text.
+    Format the services list as plain text.
     
     Args:
-        products: List of product dictionaries from lst_products.data()
+        services: List of service dictionaries from lst_products.data()
         language: 'fr' or 'en'
     
     Returns:
@@ -243,12 +243,12 @@ def format_products_as_text(products, language='fr'):
     
     lines.append("")
     
-    for i, product in enumerate(products, 1):
-        lines.append(f"{i}. {product['Prd_Name']}")
-        lines.append(f"   {product['Prd_Desc']}")
+    for i, service in enumerate(services, 1):
+        lines.append(f"{i}. {service['Prd_Name']}")
+        lines.append(f"   {service['Prd_Desc']}")
         
         # Clean up Prd_More (remove HTML tags for text output)
-        more = product['Prd_More']
+        more = service['Prd_More']
         # Simple HTML tag removal
         import re
         more = re.sub(r'<[^>]+>', '', more)

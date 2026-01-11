@@ -23,7 +23,7 @@ class ThrottlingTests(APITestCase):
         # Force reload of api_settings if needed (usually handled by override_settings)
         api_settings.reload()
         
-        url = reverse('api-products')
+        url = reverse('api-services')
         
         # Request 1: Should be OK (1/minute allowed)
         response = self.client.get(url)

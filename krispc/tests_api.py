@@ -31,14 +31,14 @@ class KrisPCAPIBasicTests(APITestCase):
         cache.clear()
         
         # URLs
-        self.products_url = reverse('api-products')
+        self.services_url = reverse('api-services')
         self.colophon_url = reverse('api-colophon')
         self.marques_url = reverse('api-marques')
         self.villes_url = reverse('api-villes')
         
-    def test_get_products(self):
-        """Test products endpoint returns successfully."""
-        response = self.client.get(self.products_url)
+    def test_get_services(self):
+        """Test services endpoint returns successfully."""
+        response = self.client.get(self.services_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(isinstance(response.data, list))
 
@@ -260,12 +260,12 @@ class InternationalizationTests(APITestCase):
     
     def setUp(self):
         """Set up test URLs."""
-        self.products_url = reverse('api-products')
+        self.services_url = reverse('api-services')
 
     def test_french_language_header(self):
         """Test Accept-Language header sets French."""
         response = self.client.get(
-            self.products_url,
+            self.services_url,
             HTTP_ACCEPT_LANGUAGE='fr-FR,fr;q=0.9'
         )
         
@@ -274,7 +274,7 @@ class InternationalizationTests(APITestCase):
     def test_english_language_header(self):
         """Test Accept-Language header sets English."""
         response = self.client.get(
-            self.products_url,
+            self.services_url,
             HTTP_ACCEPT_LANGUAGE='en-US,en;q=0.9'
         )
         
@@ -283,7 +283,7 @@ class InternationalizationTests(APITestCase):
     def test_language_query_parameter(self):
         """Test lang query parameter overrides header."""
         response = self.client.get(
-            self.products_url + '?lang=en',
+            self.services_url + '?lang=en',
             HTTP_ACCEPT_LANGUAGE='fr-FR,fr;q=0.9'
         )
         
@@ -296,16 +296,16 @@ class CachingTests(APITestCase):
     def setUp(self):
         """Clear cache and set up URLs."""
         cache.clear()
-        self.products_url = reverse('api-products')
+        self.services_url = reverse('api-services')
 
     def test_response_is_cached(self):
         """Test that responses are cached."""
         # First request
-        response1 = self.client.get(self.products_url)
+        response1 = self.client.get(self.services_url)
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
         
         # Second request should be cached (faster)
-        response2 = self.client.get(self.products_url)
+        response2 = self.client.get(self.services_url)
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         
         # Data should be identical

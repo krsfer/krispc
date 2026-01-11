@@ -45,23 +45,24 @@ class ErrorResponse(serializers.Serializer):
     )
 
 
-class ProductSerializer(serializers.Serializer):
+class ServiceSerializer(serializers.Serializer):
     """
-    Serializer for product/service information.
+    Serializer for service information.
     
-    Represents a product or service offered by KrisPC.
+    Represents a service offered by KrisPC.
+    Note: KrisPC provides IT services only and does not sell hardware products.
     """
     Prd_Icon = serializers.CharField(
         max_length=100,
-        help_text="Icon identifier or CSS class for the product"
+        help_text="Icon identifier or CSS class for the service"
     )
     Prd_Name = serializers.CharField(
         max_length=200,
-        help_text="Product name"
+        help_text="Service name"
     )
     Prd_Desc = serializers.CharField(
         max_length=1000,
-        help_text="Product description"
+        help_text="Service description"
     )
     Prd_More = serializers.CharField(
         max_length=500,

@@ -37,7 +37,7 @@ fly deploy
 ```
 
 Your API endpoints will be accessible at:
-- `https://krispc.fly.dev/api/krispc/products/`
+- `https://krispc.fly.dev/api/krispc/services/`
 - `https://krispc.fly.dev/api/krispc/contacts/`
 - `https://krispc.fly.dev/api/krispc/marques/`
 - `https://krispc.fly.dev/api/krispc/villes/`
@@ -99,8 +99,8 @@ Public REST API for accessing KrisPC services and data.
 
 ### Endpoints
 
-#### Products
-`GET /products/` - List all products/services
+#### Services
+`GET /services/` - List all services
 
 #### Brands
 `GET /marques/` - List supported brands
@@ -127,7 +127,7 @@ Public REST API for accessing KrisPC services and data.
 
 **JavaScript/Fetch:**
 \`\`\`javascript
-fetch('https://api.krispc.com/api/krispc/products/')
+fetch('https://api.krispc.com/api/krispc/services/')
   .then(res => res.json())
   .then(data => console.log(data));
 \`\`\`
@@ -135,13 +135,13 @@ fetch('https://api.krispc.com/api/krispc/products/')
 **Python:**
 \`\`\`python
 import requests
-response = requests.get('https://api.krispc.com/api/krispc/products/')
+response = requests.get('https://api.krispc.com/api/krispc/services/')
 data = response.json()
 \`\`\`
 
 **cURL:**
 \`\`\`bash
-curl https://api.krispc.com/api/krispc/products/
+curl https://api.krispc.com/api/krispc/services/
 \`\`\`
 ```
 
@@ -184,9 +184,9 @@ async def handle_list_resources() -> list[types.Resource]:
     """
     return [
         types.Resource(
-            uri="krispc://products",
-            name="KrisPC Products",
-            description="List of IT services and products offered by KrisPC",
+            uri="krispc://services",
+            name="KrisPC Services",
+            description="List of IT services offered by KrisPC",
             mimeType="application/json",
         ),
         types.Resource(
@@ -214,7 +214,7 @@ async def handle_read_resource(uri: str) -> str:
     """
     Read and return resource content
     """
-    if uri == "krispc://products":
+    if uri == "krispc://services":
         return json.dumps(lst_products.data(), indent=2)
     elif uri == "krispc://brands":
         return json.dumps(marques.data(), indent=2)
@@ -232,14 +232,14 @@ async def handle_list_tools() -> list[types.Tool]:
     """
     return [
         types.Tool(
-            name="search_products",
-            description="Search KrisPC products and services by keyword",
+            name="search_services",
+            description="Search KrisPC services by keyword",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "query": {
                         "type": "string",
-                        "description": "Search term to find products",
+                        "description": "Search term to find services",
                     }
                 },
                 "required": ["query"],
@@ -268,13 +268,13 @@ async def handle_call_tool(
     """
     Execute tool functions
     """
-    if name == "search_products":
+    if name == "search_services":
         query = arguments.get("query", "").lower()
-        products = lst_products.data()
+        services = lst_products.data()
         results = [
-            p for p in products
-            if query in p.get("Prd_Name", "").lower()
-            or query in p.get("Prd_Desc", "").lower()
+            s for s in services
+            if query in s.get("Prd_Name", "").lower()
+            or query in s.get("Prd_Desc", "").lower()
         ]
         return [
             types.TextContent(
@@ -476,9 +476,9 @@ class KrisPCClient:
             'User-Agent': 'KrisPC-Python-Client/1.0.0'
         })
     
-    def get_products(self) -> List[Dict]:
-        """Get all products/services"""
-        response = self.session.get(f"{self.base_url}/products/")
+    def get_services(self) -> List[Dict]:
+        """Get all services"""
+        response = self.session.get(f"{self.base_url}/services/")
         response.raise_for_status()
         return response.json()
     

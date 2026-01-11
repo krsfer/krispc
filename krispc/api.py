@@ -1,7 +1,7 @@
 """
 API Views for the KrisPC API.
 
-Provides RESTful endpoints for contacts, products, technologies, brands, and cities.
+Provides RESTful endpoints for contacts, services, technologies, brands, and cities.
 """
 import html
 import logging
@@ -22,7 +22,7 @@ from django.utils.translation import activate
 from .models import Contact
 from .serializers import ContactSerializer
 from .api_serializers import (
-    ProductSerializer, 
+    ServiceSerializer, 
     ColophonSerializer, 
     MarqueSerializer,
     StandardAPIResponse
@@ -30,7 +30,7 @@ from .api_serializers import (
 from .permissions import ContactCreatePermission
 from . import lst_products, colophon, marques, lst_villes
 from .services import send_contact_email
-from .pricelist import get_pricelist, format_pricelist_as_text, format_products_as_text
+from .pricelist import get_pricelist, format_pricelist_as_text, format_services_as_text
 from django.http import HttpResponse
 
 logger = logging.getLogger(__name__)
@@ -162,9 +162,12 @@ class ContactViewSet(viewsets.ModelViewSet):
             # Don't fail the request if email fails
 
 
-class ProductsView(views.APIView):
+class ServicesView(views.APIView):
     """
-    Returns the list of products and services offered by KrisPC.
+    Returns the list of IT services offered by KrisPC.
+    
+    KrisPC provides IT services only and does not sell hardware products.
+    Hardware recommendations can be provided as part of consultation services.
     
     This endpoint is cached for 15 minutes to improve performance.
     Supports internationalization via the Accept-Language header.
@@ -176,9 +179,10 @@ class ProductsView(views.APIView):
     permission_classes = [permissions.AllowAny]
     
     @extend_schema(
-        summary="Get list of products/services",
+        summary="Get list of services",
         description="""
-        Returns a list of IT products and services offered by KrisPC.
+        Returns a list of IT services offered by KrisPC.
+        KrisPC provides IT services only and can recommend hardware, but does not sell products.
         Results are localized based on the Accept-Language header.
         
         **Query Parameters**:
@@ -195,10 +199,10 @@ class ProductsView(views.APIView):
                 enum=['json', 'text']
             ),
         ],
-        responses={200: ProductSerializer(many=True)},
+        responses={200: ServiceSerializer(many=True)},
         examples=[
             OpenApiExample(
-                'Products Response',
+                'Services Response',
                 value=[
                     {
                         'Prd_Icon': 'bi-laptop',
@@ -210,20 +214,20 @@ class ProductsView(views.APIView):
                 response_only=True,
             ),
         ],
-        tags=['Products & Services'],
+        tags=['Services'],
     )
     def get(self, request):
-        logger.debug(f"Products endpoint accessed - Language: {request.LANGUAGE_CODE}")
+        logger.debug(f"Services endpoint accessed - Language: {request.LANGUAGE_CODE}")
         
-        products_data = decode_html_entities(lst_products.data())
+        services_data = decode_html_entities(lst_products.data())
         
         # Check for text output
         output_type = request.query_params.get('output', 'json').lower()
         if output_type == 'text':
-            text_output = format_products_as_text(products_data, request.LANGUAGE_CODE)
+            text_output = format_services_as_text(services_data, request.LANGUAGE_CODE)
             return HttpResponse(text_output, content_type='text/plain; charset=utf-8')
         
-        return Response(products_data)
+        return Response(services_data)
 
 
 class PricelistView(views.APIView):
@@ -291,7 +295,7 @@ class PricelistView(views.APIView):
                 response_only=True,
             ),
         ],
-        tags=['Products & Services'],
+        tags=['Services'],
     )
     def get(self, request):
         logger.debug(f"Pricelist endpoint accessed - Language: {request.LANGUAGE_CODE}")
