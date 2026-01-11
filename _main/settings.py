@@ -350,28 +350,16 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 
 WHITENOISE_MANIFEST_STRICT = False
 
-# Configure caching - use Redis in production, in-memory cache for development and tests
-if os.environ.get('REDIS_URL'):
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": os.environ.get('REDIS_URL'),
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "CONNECTION_POOL_KWARGS": {
-                    "ssl_cert_reqs": None
-                },
-            }
-        }
+# Configure caching - use in-memory cache for all environments
+# Note: Redis Cloud requires mTLS (client certificates) which django_redis doesn't support well.
+# Celery uses redis-py directly which does support mTLS.
+# For caching, we use in-memory cache which is sufficient for single-instance deployments.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
     }
-else:
-    # Use in-memory cache for development and tests
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "unique-snowflake",
-        }
-    }
+}
 
 VER = semver.VersionInfo.parse("2.3.0")
 
