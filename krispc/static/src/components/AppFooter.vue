@@ -1,7 +1,7 @@
 <template>
   <footer class="bg-gray-900 text-gray-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Brand -->
         <div>
           <h3 class="font-brand text-2xl text-primary mb-4">KrisPC</h3>
@@ -24,6 +24,16 @@
           <ul class="space-y-2 text-sm">
             <li><a href="#contact" class="hover:text-primary transition-colors">{{ contactTitle }}</a></li>
             <li><a href="#team" class="hover:text-primary transition-colors">{{ teamTitle }}</a></li>
+          </ul>
+        </div>
+
+        <!-- For Developers -->
+        <div>
+          <h4 class="font-semibold text-white mb-4">For Developers</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/api/krispc/swagger/" target="_blank" class="hover:text-primary transition-colors">API Docs (Swagger)</a></li>
+            <li><a href="/api/krispc/redoc/" target="_blank" class="hover:text-primary transition-colors">API Docs (ReDoc)</a></li>
+            <li><a href="/docs/mcp/" target="_blank" class="hover:text-primary transition-colors">MCP Server for AI</a></li>
           </ul>
         </div>
       </div>
