@@ -92,6 +92,9 @@ if IS_PRODUCTION:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # Redirect non-www to www
+    PREPEND_WWW = True
 else:
     ALLOWED_HOSTS = []
 
