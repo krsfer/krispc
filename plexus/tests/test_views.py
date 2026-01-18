@@ -123,3 +123,24 @@ class DashboardViewTest(APITestCase):
         response = self.client.get(self.url, {"type": "ideation"})
         self.assertContains(response, "Structured thought")
         self.assertNotContains(response, "Shopping list")
+
+    def test_dashboard_links(self):
+        from plexus.models import ThoughtLink
+        
+        target_thought = Thought.objects.create(
+            input=self.input_obj,
+            content="Linked Target",
+            type="reference",
+            confidence_score=0.9
+        )
+        
+        ThoughtLink.objects.create(
+            source=self.thought,
+            target=target_thought,
+            reason="Because they are related"
+        )
+        
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Linked Target")
+        self.assertContains(response, "Related Thoughts:")

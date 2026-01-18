@@ -30,7 +30,11 @@ class DashboardView(LoginRequiredMixin, ListView):
     context_object_name = "thoughts"
 
     def get_queryset(self):
-        queryset = Thought.objects.select_related("input").all().order_by("-input__timestamp")
+        queryset = Thought.objects.select_related("input").prefetch_related(
+            "actions", 
+            "outgoing_links", 
+            "outgoing_links__target"
+        ).all().order_by("-input__timestamp")
         
         # Search
         query = self.request.GET.get("q")

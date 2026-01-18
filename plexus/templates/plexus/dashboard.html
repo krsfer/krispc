@@ -55,6 +55,19 @@
                         <h5 class="card-title">{{ thought.content }}</h5>
                         <p class="card-text text-muted small">Raw: {{ thought.input.content|truncatechars:100 }}</p>
                         
+                        {% if thought.outgoing_links.all %}
+                            <hr>
+                            <h6 class="card-subtitle mb-2 text-muted">Related Thoughts:</h6>
+                            <ul class="list-unstyled small">
+                                {% for link in thought.outgoing_links.all %}
+                                    <li class="mb-1">
+                                        <span class="text-muted">🔗</span>
+                                        <span title="{{ link.reason }}">{{ link.target.content|truncatechars:50 }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        
                         {% if thought.actions.all %}
                             <hr>
                             <h6 class="card-subtitle mb-2 text-muted">Extracted Actions:</h6>
