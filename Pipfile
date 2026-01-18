@@ -64,6 +64,9 @@ drf-spectacular = "*"
 mcp = "*"
 django-filter = "*"
 django-cors-headers = "*"
+google-generativeai = "*"
+openai = "*"
+anthropic = "*"
 
 [dev-packages]
 pytest = "*"
