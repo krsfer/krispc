@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
-from plexus.models import Input, Thought, Action
-from plexus.serializers import InputSerializer, ThoughtSerializer, ActionSerializer
+from plexus.models import Input, Thought, Action, ThoughtLink
+from plexus.serializers import InputSerializer, ThoughtSerializer, ActionSerializer, ThoughtLinkSerializer
 
 class InputViewSet(viewsets.ModelViewSet):
     queryset = Input.objects.all().order_by("-timestamp")
@@ -53,11 +53,13 @@ class SyncView(APIView):
             updated_inputs = Input.objects.filter(updated_at__gt=last_sync_dt)
             updated_thoughts = Thought.objects.filter(updated_at__gt=last_sync_dt)
             updated_actions = Action.objects.filter(updated_at__gt=last_sync_dt)
+            updated_links = ThoughtLink.objects.filter(created_at__gt=last_sync_dt)
         else:
             # Initial sync: get everything
             updated_inputs = Input.objects.all()
             updated_thoughts = Thought.objects.all()
             updated_actions = Action.objects.all()
+            updated_links = ThoughtLink.objects.all()
 
         return Response({
             "sync_timestamp": timezone.now(),
@@ -65,6 +67,7 @@ class SyncView(APIView):
                 "inputs": InputSerializer(updated_inputs, many=True).data,
                 "thoughts": ThoughtSerializer(updated_thoughts, many=True).data,
                 "actions": ActionSerializer(updated_actions, many=True).data,
+                "links": ThoughtLinkSerializer(updated_links, many=True).data,
             }
         })
 

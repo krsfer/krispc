@@ -2,6 +2,7 @@ from celery import shared_task
 from django.db.models import Q
 from .models import Input, Thought, Action, ReviewQueue
 from .services.llm import classify_input
+from .services.linking import find_relevant_links
 
 @shared_task
 def process_input(input_id):
@@ -65,6 +66,9 @@ def process_input(input_id):
             reason=f"Low confidence score: {thought.confidence_score}",
             status="pending"
         )
+
+    # Trigger Auto-Linking
+    find_relevant_links(thought)
 
     # Mark input as processed
     input_obj.processed = True

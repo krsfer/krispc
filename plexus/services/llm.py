@@ -21,6 +21,47 @@ def classify_input(text):
     else:
         return _classify_gemini(text)
 
+def query_llm(prompt):
+    """
+    Generic function to query the active LLM provider.
+    Returns the raw text response.
+    """
+    config = SystemConfiguration.get_solo()
+    provider = config.active_ai_provider
+    
+    try:
+        if provider == "openai":
+            api_key = os.environ.get("OPENAI_API_KEY")
+            if not api_key: return None
+            client = OpenAI(api_key=api_key)
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.choices[0].message.content
+            
+        elif provider == "anthropic":
+            api_key = os.environ.get("ANTHROPIC_API_KEY")
+            if not api_key: return None
+            client = anthropic.Anthropic(api_key=api_key)
+            response = client.messages.create(
+                model="claude-3-haiku-20240307",
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.content[0].text
+            
+        else: # gemini
+            api_key = os.environ.get("GEMINI_API_KEY")
+            if not api_key: return None
+            client = genai.Client(api_key=api_key)
+            model_name = getattr(settings, "GEMINI_MODEL", "gemini-pro-latest")
+            response = client.models.generate_content(model=model_name, contents=prompt)
+            return response.text
+    except Exception as e:
+        print(f"LLM Query Error: {e}")
+        return None
+
 def _classify_gemini(text):
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:

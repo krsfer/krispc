@@ -40,6 +40,18 @@ class Thought(SyncableModel):
     def __str__(self):
         return f"{self.type}: {self.content[:30]}..."
 
+class ThoughtLink(models.Model):
+    source = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="outgoing_links")
+    target = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="incoming_links")
+    reason = models.TextField(help_text="Why these thoughts are connected")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('source', 'target')
+
+    def __str__(self):
+        return f"{self.source.id} -> {self.target.id}"
+
 class Action(SyncableModel):
 
     STATUS_CHOICES = [
