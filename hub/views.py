@@ -46,7 +46,7 @@ class IndexView(TemplateView):
             },
             {
                 'name': 'Plexus',
-                'icon': '🧠',
+                'icon': '🪞',
                 'description': (
                     'Système de déchargement cognitif' if is_french
                     else 'Cognitive offloading system'
