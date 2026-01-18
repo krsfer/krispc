@@ -1,7 +1,15 @@
 from django.db import models
 from django.utils import timezone
 
-class Input(models.Model):
+class SyncableModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+class Input(SyncableModel):
     SOURCE_CHOICES = [
         ("web", "Web"),
         ("mobile", "Mobile"),
@@ -16,7 +24,7 @@ class Input(models.Model):
     def __str__(self):
         return (self.content[:50] + '...') if len(self.content) > 50 else self.content
 
-class Thought(models.Model):
+class Thought(SyncableModel):
     TYPE_CHOICES = [
         ("ideation", "Ideation"),
         ("reference", "Reference"),
@@ -32,7 +40,7 @@ class Thought(models.Model):
     def __str__(self):
         return f"{self.type}: {self.content[:30]}..."
 
-class Action(models.Model):
+class Action(SyncableModel):
 
     STATUS_CHOICES = [
 
