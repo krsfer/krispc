@@ -22,10 +22,12 @@
                 <div style="font-size: 0.7rem;">{% trans "Voice" %}</div>
             </a>
             
+            {% if user.is_superuser %}
             <a href="{% url 'plexus:admin_dashboard' %}" class="nav-link text-center py-2 {% if request.resolver_match.url_name == 'admin_dashboard' %}text-warning{% else %}text-muted{% endif %}">
                 <div class="fs-4">⚙️</div>
                 <div style="font-size: 0.7rem;">{% trans "Admin" %}</div>
             </a>
+            {% endif %}
         </div>
     </div>
 </nav>

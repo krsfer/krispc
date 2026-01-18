@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-02 13:36+0000\n"
+"POT-Creation-Date: 2026-01-18 23:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,37 +18,39 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: _main/settings.py:283
+#: _main/settings.py:342
 msgid "French"
 msgstr ""
 
-#: _main/settings.py:284
+#: _main/settings.py:343
 msgid "English"
 msgstr ""
 
-#: p2c/templates/p2c_base.html
-msgid "KrisPC Home"
-msgstr "Accueil KrisPC"
-
 #: check_urls.py:17 p2c/templates/home.html:22 p2c/templates/home.html:26
-#: p2c/templates/p2c_base.html:303 p2c/templates/p2c_base.html:306
-#: p2c/templates/p2c_base.html:338 p2c/templates/p2c_base.html:342
+#: p2c/templates/p2c_base.html:416 p2c/templates/p2c_base.html:419
+#: p2c/templates/p2c_base.html:451 p2c/templates/p2c_base.html:455
 msgid "Privacy Policy"
 msgstr "Politique de confidentialité"
 
-#: p2c/json_views.py:276 p2c/views.py:572
+#: p2c/json_views.py:195 p2c/json_views.py:541 p2c/views.py:1150
+#: p2c/views.py:1377 p2c/views.py:2096
+msgid ""
+"Task queue is temporarily unavailable. Please try again in a few moments."
+msgstr ""
+
+#: p2c/json_views.py:282 p2c/views.py:572
 msgid "No file provided"
 msgstr ""
 
-#: p2c/json_views.py:405
+#: p2c/json_views.py:411
 msgid "Calendar name is required"
 msgstr ""
 
-#: p2c/json_views.py:408 p2c/templates/json_ingest.html:242
+#: p2c/json_views.py:414 p2c/templates/json_ingest.html:242
 msgid "No appointments to sync"
 msgstr ""
 
-#: p2c/json_views.py:505
+#: p2c/json_views.py:511
 msgid "No valid appointments to sync"
 msgstr ""
 
@@ -307,8 +309,8 @@ msgstr ""
 msgid "Error deleting backup: "
 msgstr ""
 
-#: p2c/templates/calendar_editor.html:5 p2c/templates/p2c_base.html:134
-#: p2c/templates/p2c_base.html:257
+#: p2c/templates/calendar_editor.html:5 p2c/templates/p2c_base.html:240
+#: p2c/templates/p2c_base.html:370
 msgid "Calendar Editor"
 msgstr "Éditeur de calendrier"
 
@@ -504,7 +506,7 @@ msgstr ""
 msgid "Primary"
 msgstr ""
 
-#: p2c/templates/calendar_editor.html:310 p2c/views.py:1053
+#: p2c/templates/calendar_editor.html:310 p2c/views.py:1055
 msgid "Please select a calendar"
 msgstr ""
 
@@ -790,8 +792,8 @@ msgid "Sign in with Google"
 msgstr "Se connecter avec Google"
 
 #: p2c/templates/home.html:24 p2c/templates/home.html:28
-#: p2c/templates/p2c_base.html:304 p2c/templates/p2c_base.html:307
-#: p2c/templates/p2c_base.html:340 p2c/templates/p2c_base.html:344
+#: p2c/templates/p2c_base.html:417 p2c/templates/p2c_base.html:420
+#: p2c/templates/p2c_base.html:453 p2c/templates/p2c_base.html:457
 msgid "Terms of Service"
 msgstr "Conditions d'utilisation"
 
@@ -901,9 +903,11 @@ msgstr ""
 #: p2c/templates/home.html:675
 msgid ""
 "No appointments to display yet. Upload a PDF or paste schedule text above."
-msgstr "Aucun rendez-vous à afficher pour le moment. Téléchargez un PDF ou collez le texte du planning ci-dessus."
+msgstr ""
+"Aucun rendez-vous à afficher pour le moment. Téléchargez un PDF ou collez le "
+"texte du planning ci-dessus."
 
-#: p2c/templates/json_ingest.html:5 p2c/templates/p2c_base.html:250
+#: p2c/templates/json_ingest.html:5 p2c/templates/p2c_base.html:363
 msgid "JSON Ingest"
 msgstr "Ingestion JSON"
 
@@ -1025,81 +1029,86 @@ msgstr ""
 msgid "Delete this appointment?"
 msgstr ""
 
-#: p2c/templates/p2c_base.html:107 p2c/templates/p2c_base.html:232
+#: p2c/templates/p2c_base.html:213 p2c/templates/p2c_base.html:345
 msgid "Event Settings"
 msgstr "Paramètres d'événements"
 
-#: p2c/templates/p2c_base.html:108
+#: p2c/templates/p2c_base.html:214
 msgid "Settings"
 msgstr "Paramètres"
 
-#: p2c/templates/p2c_base.html:115 p2c/templates/p2c_base.html:239
+#: p2c/templates/p2c_base.html:221 p2c/templates/p2c_base.html:352
 #: p2c/templates/pay_view.html:6
 msgid "Pay View"
 msgstr "Calcul salaire"
 
-#: p2c/templates/p2c_base.html:116
+#: p2c/templates/p2c_base.html:222
 msgid "Pay"
 msgstr "Paye"
 
-#: p2c/templates/p2c_base.html:120 p2c/templates/p2c_base.html:243
+#: p2c/templates/p2c_base.html:226 p2c/templates/p2c_base.html:356
 #: p2c/templates/updates.html:6
 msgid "Updates"
 msgstr "Mises à jour"
 
-#: p2c/templates/p2c_base.html:127
+#: p2c/templates/p2c_base.html:233
 msgid "JSON"
 msgstr "JSON"
 
-#: p2c/templates/p2c_base.html:135
+#: p2c/templates/p2c_base.html:241
 msgid "Editor"
 msgstr "Éditeur"
 
-#: p2c/templates/p2c_base.html:202 p2c/templates/p2c_base.html:275
+#: p2c/templates/p2c_base.html:312 p2c/templates/p2c_base.html:388
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: p2c/templates/p2c_base.html:223 p2c/templates/p2c_base.html:318
+#: p2c/templates/p2c_base.html:336 p2c/templates/p2c_base.html:431
 msgid "About PDF2Cal"
 msgstr "À propos de PDF2Cal"
 
-#: p2c/templates/p2c_base.html:301
+#: p2c/templates/p2c_base.html:414
 msgid "All rights reserved"
 msgstr "Tous droits réservés"
 
-#: p2c/templates/p2c_base.html:309
+#: p2c/templates/p2c_base.html:422
 msgid "Made with ❤️ by"
 msgstr "Fait avec ❤️ par"
 
-#: p2c/templates/p2c_base.html:326
+#: p2c/templates/p2c_base.html:439
 msgid ""
 "PDF2Cal is a powerful tool that helps you convert PDF documents containing "
 "event information into calendar events. Here's what you can do:"
-msgstr "PDF2Cal est un outil puissant qui vous aide à convertir des documents PDF contenant des informations d'événements en événements de calendrier. Voici ce que vous pouvez faire :"
+msgstr ""
+"PDF2Cal est un outil puissant qui vous aide à convertir des documents PDF "
+"contenant des informations d'événements en événements de calendrier. Voici "
+"ce que vous pouvez faire :"
 
-#: p2c/templates/p2c_base.html:328
+#: p2c/templates/p2c_base.html:441
 msgid "Import PDF documents containing event details"
 msgstr "Importer des documents PDF contenant des détails d'événements"
 
-#: p2c/templates/p2c_base.html:329
+#: p2c/templates/p2c_base.html:442
 msgid ""
 "Automatically extract event information including dates, times, and "
 "descriptions"
-msgstr "Extraire automatiquement les informations d'événements, y compris les dates, heures et descriptions"
+msgstr ""
+"Extraire automatiquement les informations d'événements, y compris les dates, "
+"heures et descriptions"
 
-#: p2c/templates/p2c_base.html:330
+#: p2c/templates/p2c_base.html:443
 msgid "Review and edit extracted events before saving"
 msgstr "Revoir et modifier les événements extraits avant de les enregistrer"
 
-#: p2c/templates/p2c_base.html:331
+#: p2c/templates/p2c_base.html:444
 msgid "Export events to your calendar"
 msgstr "Exporter des événements vers votre calendrier"
 
-#: p2c/templates/p2c_base.html:332
+#: p2c/templates/p2c_base.html:445
 msgid "Customize event extraction settings"
 msgstr "Personnaliser les paramètres d'extraction d'événements"
 
-#: p2c/templates/p2c_base.html:333
+#: p2c/templates/p2c_base.html:446
 msgid "Manage your event preferences"
 msgstr "Gérer vos préférences d'événements"
 
@@ -1254,56 +1263,58 @@ msgstr ""
 msgid "[%(parser)s] PDF uploaded successfully. Found %(count)d appointments."
 msgstr ""
 
-#: p2c/views.py:681
+#: p2c/views.py:682
 #, python-format
 msgid "[Unknown Parser] %(error)s"
 msgstr ""
 
-#: p2c/views.py:687
+#: p2c/views.py:691
 #, python-format
 msgid "[%(parser)s] Upload failed. %(error)s"
 msgstr ""
 
-#: p2c/views.py:693
-msgid ""
-"[Unknown Parser] Upload failed. Please make sure the file is a valid PDF "
-"schedule."
+#: p2c/views.py:694
+#, python-format
+msgid "[Unknown Parser] Upload failed. Error: %(error)s"
 msgstr ""
 
-#: p2c/views.py:704
+#: p2c/views.py:706
 msgid "No text provided"
 msgstr ""
 
-#: p2c/views.py:749
+#: p2c/views.py:751
 #, python-format
 msgid "Successfully processed %(count)d appointments from text input."
 msgstr ""
 
-#: p2c/views.py:767
+#: p2c/views.py:769
 #, python-format
 msgid "Error processing text: %(error)s"
 msgstr ""
 
-#: p2c/views.py:1059
+#: p2c/views.py:1061
 msgid "No appointments found"
 msgstr ""
 
-#: p2c/views.py:1067 p2c/views.py:1309
+#: p2c/views.py:1069 p2c/views.py:1318
 msgid "Invalid session data"
 msgstr ""
 
-#: p2c/views.py:1076
+#: p2c/views.py:1078
 msgid "Google credentials not found"
 msgstr ""
 
-#: p2c/views.py:1083
+#: p2c/views.py:1085
 msgid "Invalid or corrupted Google credentials. Please re-authenticate."
 msgstr ""
 
-#: p2c/views.py:1296
+#: p2c/views.py:1305
 msgid "Calendar ID is required"
 msgstr ""
 
-#: p2c/views.py:1301
+#: p2c/views.py:1310
 msgid "No appointments found in session"
 msgstr ""
+
+#~ msgid "KrisPC Home"
+#~ msgstr "Accueil KrisPC"
