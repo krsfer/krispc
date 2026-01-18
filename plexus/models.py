@@ -1,53 +1,64 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 class SyncableModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    deleted_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+    deleted_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Deleted at"))
 
     class Meta:
         abstract = True
 
 class Input(SyncableModel):
     SOURCE_CHOICES = [
-        ("web", "Web"),
-        ("mobile", "Mobile"),
-        ("api", "API"),
+        ("web", _("Web")),
+        ("mobile", _("Mobile")),
+        ("api", _("API")),
     ]
 
-    content = models.TextField()
-    source = models.CharField(max_length=50, choices=SOURCE_CHOICES, default="web")
-    timestamp = models.DateTimeField(default=timezone.now)
-    processed = models.BooleanField(default=False)
+    content = models.TextField(verbose_name=_("Content"))
+    source = models.CharField(max_length=50, choices=SOURCE_CHOICES, default="web", verbose_name=_("Source"))
+    timestamp = models.DateTimeField(default=timezone.now, verbose_name=_("Timestamp"))
+    processed = models.BooleanField(default=False, verbose_name=_("Processed"))
+
+    class Meta:
+        verbose_name = _("Input")
+        verbose_name_plural = _("Inputs")
 
     def __str__(self):
         return (self.content[:50] + '...') if len(self.content) > 50 else self.content
 
 class Thought(SyncableModel):
     TYPE_CHOICES = [
-        ("ideation", "Ideation"),
-        ("reference", "Reference"),
-        ("task", "Task"),
+        ("ideation", _("Ideation")),
+        ("reference", _("Reference")),
+        ("task", _("Task")),
     ]
 
-    input = models.ForeignKey(Input, on_delete=models.CASCADE, related_name="thoughts")
-    content = models.TextField()
-    type = models.CharField(max_length=50, choices=TYPE_CHOICES)
-    confidence_score = models.FloatField()
-    ai_model = models.CharField(max_length=100, null=True, blank=True, help_text="The AI model used for processing")
+    input = models.ForeignKey(Input, on_delete=models.CASCADE, related_name="thoughts", verbose_name=_("Input"))
+    content = models.TextField(verbose_name=_("Content"))
+    type = models.CharField(max_length=50, choices=TYPE_CHOICES, verbose_name=_("Type"))
+    confidence_score = models.FloatField(verbose_name=_("Confidence Score"))
+    ai_model = models.CharField(max_length=100, null=True, blank=True, help_text=_("The AI model used for processing"), verbose_name=_("AI Model"))
+
+    class Meta:
+        verbose_name = _("Thought")
+        verbose_name_plural = _("Thoughts")
 
     def __str__(self):
         return f"{self.type}: {self.content[:30]}..."
 
 class ThoughtLink(models.Model):
-    source = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="outgoing_links")
-    target = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="incoming_links")
-    reason = models.TextField(help_text="Why these thoughts are connected")
-    created_at = models.DateTimeField(auto_now_add=True)
+    source = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="outgoing_links", verbose_name=_("Source Thought"))
+    target = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="incoming_links", verbose_name=_("Target Thought"))
+    reason = models.TextField(help_text=_("Why these thoughts are connected"), verbose_name=_("Connection Reason"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
 
     class Meta:
         unique_together = ('source', 'target')
+        verbose_name = _("Thought Link")
+        verbose_name_plural = _("Thought Links")
 
     def __str__(self):
         return f"{self.source.id} -> {self.target.id}"
@@ -56,23 +67,26 @@ class Action(SyncableModel):
 
     STATUS_CHOICES = [
 
-        ("pending", "Pending"),
+        ("pending", _("Pending")),
 
-        ("done", "Done"),
+        ("done", _("Done")),
 
-        ("dismissed", "Dismissed"),
+        ("dismissed", _("Dismissed")),
 
     ]
 
 
 
-    thought = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="actions")
+    thought = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="actions", verbose_name=_("Thought"))
 
-    description = models.TextField()
+    description = models.TextField(verbose_name=_("Description"))
 
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="pending")
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="pending", verbose_name=_("Status"))
 
 
+    class Meta:
+        verbose_name = _("Action")
+        verbose_name_plural = _("Actions")
 
     def __str__(self):
 
@@ -84,25 +98,28 @@ class ReviewQueue(models.Model):
 
     STATUS_CHOICES = [
 
-        ("pending", "Pending"),
+        ("pending", _("Pending")),
 
-        ("resolved", "Resolved"),
+        ("resolved", _("Resolved")),
 
-        ("dismissed", "Dismissed"),
+        ("dismissed", _("Dismissed")),
 
     ]
 
 
 
-    thought = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="reviews")
+    thought = models.ForeignKey(Thought, on_delete=models.CASCADE, related_name="reviews", verbose_name=_("Thought"))
 
-    reason = models.TextField()
+    reason = models.TextField(verbose_name=_("Reason"))
 
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="pending")
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="pending", verbose_name=_("Status"))
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
 
 
+    class Meta:
+        verbose_name = _("Review Queue Item")
+        verbose_name_plural = _("Review Queue Items")
 
     def __str__(self):
 
@@ -123,21 +140,23 @@ class SystemConfiguration(models.Model):
     active_ai_provider = models.CharField(
         max_length=50, 
         choices=AI_PROVIDERS, 
-        default="gemini"
+        default="gemini",
+        verbose_name=_("Active AI Provider")
     )
 
     active_redis_env = models.CharField(
         max_length=50,
         choices=REDIS_ENVS,
-        default="local"
+        default="local",
+        verbose_name=_("Active Redis Env")
     )
 
     class Meta:
-        verbose_name = "System Configuration"
-        verbose_name_plural = "System Configuration"
+        verbose_name = _("System Configuration")
+        verbose_name_plural = _("System Configurations")
 
     def __str__(self):
-        return "System Configuration"
+        return str(_("System Configuration"))
 
     @classmethod
     def get_solo(cls):

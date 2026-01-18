@@ -1,40 +1,40 @@
 {% extends "plexus/plexus_base.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Capture - Second Brain{% endblock %}
+{% block title %}{% trans "Capture" %} - {% trans "Second Brain" %}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow">
             <div class="card-header bg-primary text-white">
-                <h3 class="card-title mb-0">Capture New Thought</h3>
+                <h3 class="card-title mb-0">{% trans "Capture New Thought" %}</h3>
             </div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+                        <label for="{{ form.content.id_for_label }}" class="form-label">{% trans "Content" %}</label>
                         {{ form.content }}
                         {% if form.content.errors %}
                             <div class="text-danger small">{{ form.content.errors }}</div>
                         {% endif %}
                     </div>
                     <div class="mb-3">
-                        <label for="{{ form.source.id_for_label }}" class="form-label">Source</label>
+                        <label for="{{ form.source.id_for_label }}" class="form-label">{% trans "Source" %}</label>
                         {{ form.source }}
                         {% if form.source.errors %}
                             <div class="text-danger small">{{ form.source.errors }}</div>
                         {% endif %}
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">Capture</button>
+                        <button type="submit" class="btn btn-primary btn-lg">{% trans "Capture" %}</button>
                     </div>
                 </form>
 
                 <div class="text-center my-4">
                     <hr class="border-secondary">
-                    <span class="bg-dark px-2 text-muted small uppercase">OR</span>
+                    <span class="bg-dark px-2 text-muted small uppercase">{% trans "OR" %}</span>
                 </div>
 
                 <!-- Voice Capture UI -->
@@ -42,16 +42,16 @@
                     <div id="voice-status" class="mb-3" style="min-height: 24px;"></div>
                     <div class="d-grid gap-2">
                         <button id="record-button" class="btn btn-outline-danger btn-lg py-4">
-                            🎙️ Start Voice Note
+                            🎙️ {% trans "Start Voice Note" %}
                         </button>
                     </div>
                     <p class="text-muted small mt-3 italic">
-                        Speak your thought and we'll transcribe it automatically.
+                        {% trans "Speak your thought and we'll transcribe it automatically." %}
                     </p>
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="{% url 'plexus:index' %}" class="btn btn-link text-muted">Cancel</a>
+                    <a href="{% url 'plexus:index' %}" class="btn btn-link text-muted">{% trans "Cancel" %}</a>
                 </div>
             </div>
         </div>

@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from .models import Input, Thought
 
 class InputForm(forms.ModelForm):
@@ -9,7 +10,7 @@ class InputForm(forms.ModelForm):
             "content": forms.Textarea(attrs={
                 "class": "form-control",
                 "rows": 5,
-                "placeholder": "What's on your mind?"
+                "placeholder": _("What's on your mind?")
             }),
             "source": forms.Select(attrs={
                 "class": "form-control"
@@ -19,8 +20,8 @@ class InputForm(forms.ModelForm):
 class ThoughtForm(forms.ModelForm):
     reclassify = forms.BooleanField(
         required=False,
-        label="Re-classify with AI",
-        help_text="Check this to let AI process the new content and suggest a type/actions."
+        label=_("Re-classify with AI"),
+        help_text=_("Check this to let AI process the new content and suggest a type/actions.")
     )
 
     class Meta:

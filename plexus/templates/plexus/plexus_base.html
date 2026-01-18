@@ -1,10 +1,10 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="{{ LANGUAGE_CODE }}" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Second Brain{% endblock %}</title>
+    <title>{% block title %}{% trans "Second Brain" %}{% endblock %}</title>
     <!-- Favicon -->
     <link rel="icon" href="{% static 'plexus/images/favicon.svg' %}">
     <!-- Bootstrap CSS -->
@@ -15,44 +15,62 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary d-none d-md-block">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'plexus:index' %}">🪞 Second Brain</a>
+            <a class="navbar-brand" href="{% url 'plexus:index' %}">🪞 {% trans "Second Brain" %}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'plexus:capture' %}">Capture</a>
+                            <a class="nav-link" href="{% url 'plexus:capture' %}">{% trans "Capture" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'plexus:capture' %}?mode=voice">🎙️ Voice</a>
+                            <a class="nav-link" href="{% url 'plexus:capture' %}?mode=voice">🎙️ {% trans "Voice" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'plexus:dashboard' %}">Dashboard</a>
+                            <a class="nav-link" href="{% url 'plexus:dashboard' %}">{% trans "Dashboard" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'plexus:action_center' %}">Action Center</a>
+                            <a class="nav-link" href="{% url 'plexus:action_center' %}">{% trans "Action Center" %}</a>
                         </li>
                         {% if user.is_superuser %}
                         <li class="nav-item">
-                            <a class="nav-link text-warning" href="{% url 'plexus:admin_dashboard' %}">System Admin</a>
+                            <a class="nav-link text-warning" href="{% url 'plexus:admin_dashboard' %}">{% trans "System Admin" %}</a>
                         </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'plexus:review_queue' %}">Review Queue</a>
+                            <a class="nav-link" href="{% url 'plexus:review_queue' %}">{% trans "Review Queue" %}</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item me-3">
                             <form action="{% url 'logout' %}" method="post" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit" class="nav-link btn btn-link" style="text-decoration: none;">Logout</button>
+                                <button type="submit" class="nav-link btn btn-link" style="text-decoration: none;">{% trans "Logout" %}</button>
                             </form>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <li class="nav-item me-3">
+                            <a class="nav-link" href="{% url 'login' %}">{% trans "Login" %}</a>
                         </li>
                     {% endif %}
+                    
+                    <!-- Language Switcher -->
+                    <li class="nav-item">
+                        <form action="{% url 'set_language' %}" method="post" class="d-flex align-items-center">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.path }}">
+                            <select name="language" class="form-select form-select-sm bg-dark text-white border-secondary" onchange="this.form.submit()" style="width: auto; min-width: 70px;">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_available_languages as LANGUAGES %}
+                                {% get_language_info_list for LANGUAGES as languages %}
+                                {% for language in languages %}
+                                    <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                        {{ language.code|upper }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -61,12 +79,25 @@
     <!-- Mobile Header (Minimal) -->
     <div class="d-md-none bg-dark border-bottom border-secondary py-2 px-3 d-flex justify-content-between align-items-center sticky-top">
         <a class="navbar-brand fs-4" href="{% url 'plexus:index' %}">🪞</a>
-        {% if user.is_authenticated %}
-            <form action="{% url 'logout' %}" method="post" class="d-inline">
+        <div class="d-flex align-items-center">
+            {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" class="d-inline me-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary" style="font-size: 0.7rem;">{% trans "LOGOUT" %}</button>
+                </form>
+            {% endif %}
+            <!-- Mobile Language Switcher (Compact) -->
+            <form action="{% url 'set_language' %}" method="post" class="d-inline">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-outline-secondary" style="font-size: 0.7rem;">LOGOUT</button>
+                <input name="next" type="hidden" value="{{ request.path }}">
+                <select name="language" class="form-select form-select-sm bg-dark text-white border-secondary py-0" onchange="this.form.submit()" style="font-size: 0.7rem; width: auto;">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% for lang in LANGUAGES %}
+                        <option value="{{ lang.0 }}"{% if lang.0 == LANGUAGE_CODE %} selected{% endif %}>{{ lang.0|upper }}</option>
+                    {% endfor %}
+                </select>
             </form>
-        {% endif %}
+        </div>
     </div>
 
     <main class="container py-4">
@@ -79,7 +110,7 @@
 
     <footer class="footer mt-auto py-3 bg-dark border-top border-secondary text-center d-none d-md-block">
         <div class="container">
-            <span class="text-muted">© 2026 Second Brain</span>
+            <span class="text-muted">© 2026 {% trans "Second Brain" %}</span>
         </div>
     </footer>
 
