@@ -54,7 +54,7 @@ env = environ.Env(
 SECRET_KEY = env('SECRET_KEY')
 
 IS_FLY_APP = env.str("FLY_APP", default="")
-IS_PRODUCTION = bool(IS_FLY_APP)
+IS_PRODUCTION = bool(IS_FLY_APP) or env.str("ENVIRONMENT", default="") == "production"
 
 CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "https://krispc.fr",
