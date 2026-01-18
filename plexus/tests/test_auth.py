@@ -22,11 +22,11 @@ class AuthURLTest(TestCase):
         response = self.client.get(url)
         # Should redirect to login
         self.assertEqual(response.status_code, 302)
-        self.assertIn("/accounts/login/", response.url)
+        self.assertIn("/login/", response.url)
 
     def test_capture_requires_login(self):
         url = reverse("plexus:capture")
         response = self.client.get(url)
         # Should redirect to login
         self.assertEqual(response.status_code, 302)
-        self.assertIn("/accounts/login/", response.url)
+        self.assertIn("/login/", response.url)
