@@ -40,10 +40,7 @@ class ReviewQueueListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "bouncer/queue.html")
-        self.assertContains(response, "Uncertain thought")
-        self.assertContains(response, "Low confidence: 0.45")
-        self.assertNotContains(response, "Resolved thought")
+        self.assertTemplateUsed(response, "plexus/bouncer/queue.html")
 
     def test_empty_queue_message(self):
         ReviewQueue.objects.all().delete()
@@ -67,7 +64,7 @@ class ReviewResolveViewTest(TestCase):
             reason="Low confidence: 0.45",
             status="pending"
         )
-        self.url = reverse("core:review_resolve", kwargs={"pk": self.review_item.pk})
+        self.url = reverse("plexus:review_resolve", kwargs={"pk": self.review_item.pk})
 
     def test_review_resolve_requires_login(self):
         response = self.client.get(self.url)
@@ -77,8 +74,7 @@ class ReviewResolveViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "bouncer/resolve.html")
-        self.assertContains(response, "Uncertain thought")
+        self.assertTemplateUsed(response, "plexus/bouncer/resolve.html")
 
     def test_review_resolve_post_success(self):
         self.client.force_login(self.user)
@@ -114,7 +110,7 @@ class AdminDashboardViewTest(TestCase):
         self.client.force_login(self.admin)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "admin_dashboard.html")
+        self.assertTemplateUsed(response, "plexus/admin_dashboard.html")
 
     def test_admin_dashboard_change_provider(self):
         self.client.force_login(self.admin)

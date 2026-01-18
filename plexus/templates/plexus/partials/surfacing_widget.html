@@ -24,7 +24,7 @@
                         <small class="text-muted">{{ thought.input.timestamp|date:"M d, Y" }}</small>
                     </div>
                     <h6 class="mb-1">{{ thought.content }}</h6>
-                    <a href="{% url 'core:thought_edit' thought.pk %}" class="btn btn-sm btn-link p-0 text-decoration-none">View Thought →</a>
+                    <a href="{% url 'plexus:thought_edit' thought.pk %}" class="btn btn-sm btn-link p-0 text-decoration-none">View Thought →</a>
                 </div>
                 {% endfor %}
             </div>
@@ -51,7 +51,7 @@
                 <p class="card-text text-muted small italic">"{{ random_thought.input.content|truncatechars:150 }}"</p>
                 
                 <div class="mt-3 d-flex gap-2">
-                    <a href="{% url 'core:thought_edit' random_thought.pk %}" class="btn btn-sm btn-outline-info">Elaborate</a>
+                    <a href="{% url 'plexus:thought_edit' random_thought.pk %}" class="btn btn-sm btn-outline-info">Elaborate</a>
                     <form method="get" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-link text-muted text-decoration-none">Refresh 🔄</button>
                     </form>

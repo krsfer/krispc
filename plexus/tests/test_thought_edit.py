@@ -15,7 +15,7 @@ class ThoughtEditTest(TestCase):
             type="ideation",
             confidence_score=0.9
         )
-        self.edit_url = reverse("core:thought_edit", kwargs={"pk": self.thought.pk})
+        self.edit_url = reverse("plexus:thought_edit", kwargs={"pk": self.thought.pk})
 
     def test_thought_edit_requires_login(self):
         self.client.logout()
@@ -25,7 +25,7 @@ class ThoughtEditTest(TestCase):
     def test_thought_edit_get(self):
         response = self.client.get(self.edit_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "thought_edit.html")
+        self.assertTemplateUsed(response, "plexus/thought_edit.html")
         self.assertContains(response, "Original content")
 
     def test_thought_edit_post_success(self):
@@ -52,17 +52,17 @@ class ThoughtRetryViewTest(TestCase):
             confidence_score=0.0,
             ai_model="gemini-error"
         )
-        self.url = reverse("core:thought_retry", kwargs={"pk": self.thought.pk})
+        self.url = reverse("plexus:thought_retry", kwargs={"pk": self.thought.pk})
 
-    @patch("core.tasks.process_input.delay")
+    @patch("plexus.tasks.process_input.delay")
     def test_thought_retry_triggers_task(self, mock_task_delay):
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 302)
         mock_task_delay.assert_called_once_with(self.input_obj.id)
 
-    @patch("core.tasks.process_input.delay")
+    @patch("plexus.tasks.process_input.delay")
     def test_thought_edit_reclassify_triggers_task(self, mock_task_delay):
-        edit_url = reverse("core:thought_edit", kwargs={"pk": self.thought.pk})
+        edit_url = reverse("plexus:thought_edit", kwargs={"pk": self.thought.pk})
         data = {
             "content": "New content for AI",
             "type": "task",

@@ -4,8 +4,8 @@ from plexus.models import Input, Thought, Action
 from plexus.tasks import process_input
 
 class InputTaskTest(TestCase):
-    @patch("core.signals.process_input.delay")
-    @patch("core.tasks.classify_input")
+    @patch("plexus.signals.process_input.delay")
+    @patch("plexus.tasks.classify_input")
     def test_process_input_success(self, mock_classify, mock_signal_delay):
         # Setup mock
         mock_classify.return_value = {
@@ -38,8 +38,8 @@ class InputTaskTest(TestCase):
         action = Action.objects.get(thought=thought)
         self.assertEqual(action.description, "Buy milk at Tesco")
 
-    @patch("core.signals.process_input.delay")
-    @patch("core.tasks.classify_input")
+    @patch("plexus.signals.process_input.delay")
+    @patch("plexus.tasks.classify_input")
     def test_process_input_low_confidence(self, mock_classify, mock_signal_delay):
         from plexus.models import ReviewQueue
         # Setup mock with low confidence
@@ -61,8 +61,8 @@ class InputTaskTest(TestCase):
         self.assertEqual(review_item.status, "pending")
         self.assertIn("0.45", review_item.reason)
 
-    @patch("core.signals.process_input.delay")
-    @patch("core.tasks.classify_input")
+    @patch("plexus.signals.process_input.delay")
+    @patch("plexus.tasks.classify_input")
     def test_process_input_idempotency(self, mock_classify, mock_signal_delay):
         """
         Test that running process_input multiple times updates the existing Thought
@@ -106,8 +106,8 @@ class InputTaskTest(TestCase):
         self.assertEqual(Action.objects.count(), 1)
         self.assertEqual(Action.objects.first().description, "New Action")
 
-    @patch("core.signals.process_input.delay")
-    @patch("core.tasks.classify_input")
+    @patch("plexus.signals.process_input.delay")
+    @patch("plexus.tasks.classify_input")
     def test_process_input_deduplication(self, mock_classify, mock_signal_delay):
         """
         Test that if a Thought with identical refined content already exists,
@@ -142,8 +142,8 @@ class InputTaskTest(TestCase):
         new_input.refresh_from_db()
         self.assertTrue(new_input.processed)
 
-    @patch("core.signals.process_input.delay")
-    @patch("core.tasks.classify_input")
+    @patch("plexus.signals.process_input.delay")
+    @patch("plexus.tasks.classify_input")
     def test_process_input_deduplication_raw_input(self, mock_classify, mock_signal_delay):
         """
         Test that if an Input with identical content has already been processed into a Thought,

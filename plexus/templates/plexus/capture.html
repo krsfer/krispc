@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="{% url 'core:index' %}" class="btn btn-link text-muted">Cancel</a>
+                    <a href="{% url 'plexus:index' %}" class="btn btn-link text-muted">Cancel</a>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
         voiceRecorder.init({
             recordButtonId: 'record-button',
             statusId: 'voice-status',
-            uploadUrl: '{% url "core:voice_capture" %}',
+            uploadUrl: '{% url "plexus:voice_capture" %}',
             csrfToken: '{{ csrf_token }}'
         });
 

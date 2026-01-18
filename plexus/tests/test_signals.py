@@ -3,7 +3,7 @@ from unittest.mock import patch
 from plexus.models import Input
 
 class InputSignalTest(TestCase):
-    @patch("core.tasks.process_input.delay")
+    @patch("plexus.tasks.process_input.delay")
     def test_input_post_save_triggers_task(self, mock_task_delay):
         # Create Input
         input_obj = Input.objects.create(content="signal test", source="web")
@@ -11,7 +11,7 @@ class InputSignalTest(TestCase):
         # Verify task was called with delay (asynchronously)
         mock_task_delay.assert_called_once_with(input_obj.id)
 
-    @patch("core.tasks.process_input.delay")
+    @patch("plexus.tasks.process_input.delay")
     def test_input_update_does_not_retrigger_task(self, mock_task_delay):
         # Create Input
         input_obj = Input.objects.create(content="initial", source="web")

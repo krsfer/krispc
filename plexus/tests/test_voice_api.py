@@ -8,11 +8,11 @@ from plexus.models import Input
 
 class VoiceCaptureApiTest(APITestCase):
     def setUp(self):
-        self.url = reverse("core:voice_capture")
+        self.url = reverse("plexus:voice_capture")
         self.user = User.objects.create_user(username="testuser", password="password")
         self.client.force_authenticate(user=self.user)
 
-    @patch("core.views.transcribe_audio")
+    @patch("plexus.views.transcribe_audio")
     def test_voice_capture_success(self, mock_transcribe):
         mock_transcribe.return_value = "Transcribed voice note"
         

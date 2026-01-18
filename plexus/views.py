@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from .forms import InputForm, ThoughtForm
 from .serializers import InputSerializer
@@ -197,6 +197,8 @@ class IngestAPIView(APIView):
     """
     API endpoint for frictionless ingestion of raw data.
     """
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         serializer = InputSerializer(data=request.data)
         if serializer.is_valid():

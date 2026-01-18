@@ -6,7 +6,7 @@ from plexus.models import Input, Thought
 
 class IngestAPIViewTest(APITestCase):
     def setUp(self):
-        self.url = reverse("core:ingest")
+        self.url = reverse("plexus:ingest")
         self.user = User.objects.create_user(username="testuser", password="password")
         self.client.force_authenticate(user=self.user)
 
@@ -45,14 +45,15 @@ class IngestAPIViewTest(APITestCase):
 
 class CaptureViewTest(APITestCase):
     def setUp(self):
-        self.url = reverse("core:capture")
+        self.url = reverse("plexus:capture")
         self.user = User.objects.create_user(username="testuser", password="password")
         self.client.force_login(self.user)
 
     def test_capture_get(self):
+        self.client.force_login(self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "capture.html")
+        self.assertTemplateUsed(response, "plexus/capture.html")
 
     def test_capture_post_success(self):
         data = {
@@ -79,7 +80,7 @@ class DashboardViewTest(APITestCase):
     def test_dashboard_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "dashboard.html")
+        self.assertTemplateUsed(response, "plexus/dashboard.html")
         self.assertContains(response, "Structured thought")
         self.assertContains(response, "Ideation")
 

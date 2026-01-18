@@ -44,7 +44,7 @@ class ActionCenterTest(TestCase):
         self.assertNotContains(response, "Pending action")
 
     def test_action_toggle_status(self):
-        toggle_url = reverse("core:action_toggle", kwargs={"pk": self.action_pending.pk})
+        toggle_url = reverse("plexus:action_toggle", kwargs={"pk": self.action_pending.pk})
         
         # Toggle from pending to done
         response = self.client.post(toggle_url)
