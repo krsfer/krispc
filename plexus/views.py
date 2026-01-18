@@ -170,6 +170,7 @@ class ThoughtRetryView(LoginRequiredMixin, View):
 
 class VoiceCaptureView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+    serializer_class = InputSerializer
 
     def post(self, request, *args, **kwargs):
         if "audio" not in request.FILES:
@@ -198,6 +199,7 @@ class IngestAPIView(APIView):
     API endpoint for frictionless ingestion of raw data.
     """
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = InputSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = InputSerializer(data=request.data)
