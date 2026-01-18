@@ -37,16 +37,12 @@ if DEBUG:
 if DEBUG:
     LG.setLevel(logging.DEBUG)
 
-if DEBUG:
-    LG.debug("This is a debug message")
-if DEBUG:
-    LG.info("This is an info message")
-if DEBUG:
-    LG.warning("This is a warning message")
-if DEBUG:
-    LG.error("This is an error message")
-if DEBUG:
-    LG.critical("This is a critical message")
+# if DEBUG:
+#     LG.debug("This is a debug message")
+#     LG.info("This is an info message")
+#     LG.warning("This is a warning message")
+#     LG.error("This is an error message")
+#     LG.critical("This is a critical message")
 
 custom_errors = {
     'required': 'Ce champ est obligatoire'

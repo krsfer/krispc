@@ -30,9 +30,11 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'), override=True)
 redis_url = os.environ.get('REDIS_URL', 'Not Set')
 if redis_url.startswith('rediss://'):
     masked_url = redis_url.replace(redis_url.split('@')[0], 'rediss://***')
-    print(f"Loading settings with REDIS_URL: {masked_url}")
+    if os.environ.get("RUN_MAIN"):
+        print(f"Loading settings with REDIS_URL: {masked_url}")
 else:
-    print(f"Loading settings with REDIS_URL: {redis_url}")
+    if os.environ.get("RUN_MAIN"):
+        print(f"Loading settings with REDIS_URL: {redis_url}")
 
 # Before using your app in production, make sure to review Django's deployment checklist:
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
