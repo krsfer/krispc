@@ -43,6 +43,16 @@ class IndexView(TemplateView):
                 ),
                 'url': f'{lang_prefix}/importpdf/',
                 'button_text': 'Accéder' if is_french else 'Visit',
+            },
+            {
+                'name': 'Plexus',
+                'icon': '🧠',
+                'description': (
+                    'Système de déchargement cognitif' if is_french
+                    else 'Cognitive offloading system'
+                ),
+                'url': f'{lang_prefix}/plexus/',
+                'button_text': 'Accéder' if is_french else 'Visit',
             }
         ]
 

@@ -41,7 +41,7 @@ sqlparse==0.4.4
 starkbank-ecdsa==2.2.0
 Twisted==23.10.0
 txaio==23.1.1
-typing_extensions==4.9.0
+typing_extensions==4.12.0
 urllib3==2.2.0
 whitenoise==6.6.0
 zope.interface==7.1.1
@@ -53,4 +53,17 @@ pdfminer.six==20251107
 pdfplumber>=0.10.3
 pandas>=2.2.0
 celery==5.3.4
-celery-progress==0.5pytesseract
+celery-progress==0.5
+pytesseract
+google-generativeai==0.3.2
+openai>=1.0.0
+anthropic>=0.18.0
+drf-spectacular==0.27.1
+mcp
+django-vite
+django-htmx==1.17.2
+django-filter
+django-cors-headers
+channels
+channels-redis
+daphne

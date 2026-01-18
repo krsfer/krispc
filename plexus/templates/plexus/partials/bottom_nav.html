@@ -1,0 +1,33 @@
+<nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary d-md-none py-0 shadow-lg">
+    <div class="container-fluid px-0">
+        <div class="d-flex w-100 justify-content-around align-items-center">
+            <a href="{% url 'core:dashboard' %}" class="nav-link text-center py-2 {% if request.resolver_match.url_name == 'dashboard' %}text-primary{% else %}text-muted{% endif %}">
+                <div class="fs-4">🏠</div>
+                <div style="font-size: 0.7rem;">Home</div>
+            </a>
+            <a href="{% url 'core:action_center' %}" class="nav-link text-center py-2 {% if request.resolver_match.url_name == 'action_center' %}text-primary{% else %}text-muted{% endif %}">
+                <div class="fs-4">✅</div>
+                <div style="font-size: 0.7rem;">Actions</div>
+            </a>
+            
+            <!-- FAB (Floating Action Button) for Capture -->
+            <a href="{% url 'core:capture' %}" class="btn btn-primary rounded-circle shadow d-flex align-items-center justify-content-center" 
+               style="width: 60px; height: 60px; margin-top: -35px; border: 5px solid #121212; z-index: 1031;">
+                <span class="fs-3">➕</span>
+            </a>
+
+            <a href="{% url 'core:capture' %}?mode=voice" class="nav-link text-center py-2 {% if request.GET.mode == 'voice' %}text-danger{% else %}text-muted{% endif %}">
+                <div class="fs-4">🎙️</div>
+                <div style="font-size: 0.7rem;">Voice</div>
+            </a>
+            
+            <a href="{% url 'core:admin_dashboard' %}" class="nav-link text-center py-2 {% if request.resolver_match.url_name == 'admin_dashboard' %}text-warning{% else %}text-muted{% endif %}">
+                <div class="fs-4">⚙️</div>
+                <div style="font-size: 0.7rem;">Admin</div>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Spacer to prevent content from being hidden behind the bottom nav -->
+<div class="d-md-none" style="height: 70px;"></div>

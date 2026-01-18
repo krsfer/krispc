@@ -55,6 +55,7 @@ urlpatterns += i18n_patterns(
     path("db/", hello.views.db, name="db"),
     path("addthem/", include('addthem.urls')),
     path('chat/', include('chat.urls')),
+    path('plexus/', include('plexus.urls')),
     path("logout/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
     
     # PDF2Cal app

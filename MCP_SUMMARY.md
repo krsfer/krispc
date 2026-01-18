@@ -379,7 +379,7 @@ Arguments: {
 
 2. **Deploy as web service:**
    - HTTP/SSE transport
-   - Hosted on Heroku/Fly.io
+   - Hosted on Fly.io
    - Public access to pricing info
 
 3. **Create documentation site:**
@@ -425,7 +425,7 @@ docker run -p 8765:8765 yourusername/krispc-mcp
 **Best for:** Public access, no installation
 
 ```
-https://krispc-mcp.herokuapp.com/sse
+https://krispc.fr/api/mcp/sse
 ```
 
 ---

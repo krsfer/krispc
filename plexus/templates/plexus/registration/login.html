@@ -1,0 +1,42 @@
+{% extends "plexus/plexus_base.html" %}
+
+{% block title %}Login - Second Brain{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark border-bottom border-secondary">
+                <h3 class="card-title mb-0 text-white">Login</h3>
+            </div>
+            <div class="card-body bg-dark">
+                <form method="post">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            Your username and password didn't match. Please try again.
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label text-white">Username</label>
+                        {{ form.username.errors }}
+                        <input type="text" name="username" class="form-control" id="{{ form.username.id_for_label }}" required autofocus>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label text-white">Password</label>
+                        {{ form.password.errors }}
+                        <input type="password" name="password" class="form-control" id="{{ form.password.id_for_label }}" required>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

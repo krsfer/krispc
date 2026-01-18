@@ -1,0 +1,54 @@
+{% extends "plexus/plexus_base.html" %}
+
+{% block title %}Action Center - Second Brain{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Action Center</h1>
+    <div class="btn-group">
+        <a href="?status=pending" class="btn {% if current_status == 'pending' %}btn-primary{% else %}btn-outline-primary{% endif %}">Pending</a>
+        <a href="?status=done" class="btn {% if current_status == 'done' %}btn-primary{% else %}btn-outline-primary{% endif %}">Done</a>
+    </div>
+</div>
+
+{% if actions %}
+    <div class="list-group shadow-sm">
+        {% for action in actions %}
+            <div class="list-group-item bg-dark-subtle border-secondary py-3">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <form action="{% url 'core:action_toggle' action.pk %}" method="post" class="me-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0 text-decoration-none">
+                                {% if action.status == 'done' %}
+                                    <span class="fs-3">✅</span>
+                                {% else %}
+                                    <span class="fs-3">⬜</span>
+                                {% endif %}
+                            </button>
+                        </form>
+                        <div>
+                            <h5 class="mb-1 {% if action.status == 'done' %}text-decoration-line-through text-muted{% endif %}">
+                                {{ action.description }}
+                            </h5>
+                            <small class="text-muted">From: {{ action.thought.content|truncatechars:50 }}</small>
+                        </div>
+                    </div>
+                    <small class="text-muted">{{ action.thought.input.timestamp|date:"M d, Y" }}</small>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5 card bg-dark-subtle border-secondary border-dashed">
+        <div class="card-body">
+            <p class="lead text-muted">No {{ current_status }} actions found.</p>
+            {% if current_status == 'done' %}
+                <a href="?status=pending" class="btn btn-outline-primary">View Pending Actions</a>
+            {% else %}
+                <p>Enjoy your free time!</p>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

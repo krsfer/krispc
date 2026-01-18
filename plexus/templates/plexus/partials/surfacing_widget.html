@@ -1,0 +1,64 @@
+{% if on_this_day or random_thought %}
+<div class="row g-4 mb-5 surfacing-insights">
+    <div class="col-12">
+        <h4 class="mb-3 d-flex align-items-center">
+            <span class="me-2">✨</span> Insights from the Past
+        </h4>
+    </div>
+
+    <!-- On This Day -->
+    {% if on_this_day %}
+    <div class="col-md-6">
+        <div class="card h-100 border-primary shadow-sm bg-dark-subtle">
+            <div class="card-header bg-primary text-white py-2 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">📅 On This Day</h6>
+                <small class="badge bg-white text-primary">History</small>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for thought in on_this_day %}
+                <div class="list-group-item bg-transparent border-secondary py-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <span class="badge {% if thought.type == 'task' %}bg-danger{% elif thought.type == 'ideation' %}bg-info{% else %}bg-secondary{% endif %} small">
+                            {{ thought.type|title }}
+                        </span>
+                        <small class="text-muted">{{ thought.input.timestamp|date:"M d, Y" }}</small>
+                    </div>
+                    <h6 class="mb-1">{{ thought.content }}</h6>
+                    <a href="{% url 'core:thought_edit' thought.pk %}" class="btn btn-sm btn-link p-0 text-decoration-none">View Thought →</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Random Memory -->
+    {% if random_thought %}
+    <div class="col-md-{% if on_this_day %}6{% else %}12{% endif %}">
+        <div class="card h-100 border-info shadow-sm bg-dark-subtle">
+            <div class="card-header bg-info text-dark py-2 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">🎲 Random Memory</h6>
+                <small class="badge bg-dark text-info">Resurfaced</small>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge {% if random_thought.type == 'task' %}bg-danger{% elif random_thought.type == 'ideation' %}bg-info{% else %}bg-secondary{% endif %}">
+                        {{ random_thought.type|title }}
+                    </span>
+                    <small class="text-muted">{{ random_thought.input.timestamp|date:"M d, Y" }}</small>
+                </div>
+                <h5 class="card-title">{{ random_thought.content }}</h5>
+                <p class="card-text text-muted small italic">"{{ random_thought.input.content|truncatechars:150 }}"</p>
+                
+                <div class="mt-3 d-flex gap-2">
+                    <a href="{% url 'core:thought_edit' random_thought.pk %}" class="btn btn-sm btn-outline-info">Elaborate</a>
+                    <form method="get" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-link text-muted text-decoration-none">Refresh 🔄</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}

@@ -34,17 +34,16 @@ if redis_url.startswith('rediss://'):
 else:
     print(f"Loading settings with REDIS_URL: {redis_url}")
 
-# Before using your Heroku app in production, make sure to review Django's deployment checklist:
+# Before using your app in production, make sure to review Django's deployment checklist:
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # Django requires a unique secret key for each Django app, that is used by several of its
 # security features. To simplify initial setup (without hardcoding the secret in the source
 # code) we set this to a random value every time the app starts. However, this will mean many
 # Django features break whenever an app restarts (for example, sessions will be logged out).
-# In your production Heroku apps you should set the `DJANGO_SECRET_KEY` config var explicitly.
+# In your production apps you should set the `DJANGO_SECRET_KEY` config var explicitly.
 # Make sure to use a long unique value, like you would for a password. See:
 # https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-SECRET_KEY
-# https://devcenter.heroku.com/articles/config-vars
 # SECURITY WARNING: keep the secret key used in production secret!
 
 env = environ.Env(
@@ -54,14 +53,8 @@ env = environ.Env(
 
 SECRET_KEY = env('SECRET_KEY')
 
-# The `DYNO` env var is set on Heroku CI, but it's not a real Heroku app, so we have to
-# also explicitly exclude CI:
-# https://devcenter.heroku.com/articles/heroku-ci#immutable-environment-variables
-# IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
-
-IS_HEROKU_APP = env.str("DYNO", default="") and not env.str("CI", default="")
 IS_FLY_APP = env.str("FLY_APP", default="")
-IS_PRODUCTION = IS_HEROKU_APP or IS_FLY_APP
+IS_PRODUCTION = bool(IS_FLY_APP)
 
 CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "https://krispc.fr",
@@ -84,7 +77,7 @@ if not IS_PRODUCTION:
 else:
     SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
 
-# On Heroku and fly.io, it's safe to use a wildcard for `ALLOWED_HOSTS`, since the proxy performs
+# On fly.io, it's safe to use a wildcard for `ALLOWED_HOSTS`, since the proxy performs
 # validation of the Host header in the incoming HTTP request. On other platforms you may need
 # to list the expected hostnames explicitly to prevent HTTP Host header attacks. See:
 # https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-ALLOWED_HOSTS
@@ -154,6 +147,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_filters",
     "corsheaders",
+    "plexus.apps.PlexusConfig",
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'
@@ -472,11 +466,14 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'KrisPC API',
-    'DESCRIPTION': 'API for KrisPC IT services and products.',
+    'TITLE': 'KrisPC & Plexus API',
+    'DESCRIPTION': 'API for KrisPC IT services and Plexus SecondBrain.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+# AI Configuration (Plexus)
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-pro-latest")
 
 LOGGING = {
     "version": 1,
@@ -492,9 +489,19 @@ SITE_URL = env("SITE_URL", default="http://localhost:8000")
 
 
 if __name__ == "__main__":
+
+
     print(f"DEBUG: {DEBUG}")
+
+
     print(f"BASE_DIR: {BASE_DIR}")
+
+
     print(f"STATIC_URL: {STATIC_URL}")
+
+
     print(f"STATIC_ROOT: {STATIC_ROOT}")
-    print(f"IS_HEROKU_APP: {IS_HEROKU_APP}")
+
+
     print(f"SENDGRID_API_KEY: {SENDGRID_API_KEY}")
+

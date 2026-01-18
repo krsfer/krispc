@@ -1,21 +1,98 @@
-# Python: Getting Started
+# KrisPC Base & Plexus SecondBrain
 
-A barebones Django app, which can easily be deployed to Heroku.
+A modernized Django web application featuring KrisPC IT services and the Plexus SecondBrain cognitive offloading system.
 
-## Deploying to Heroku
+## 🚀 Overview
 
-Using resources for this example app counts towards your usage. [Delete your app](https://devcenter.heroku.com/articles/heroku-cli-commands#heroku-apps-destroy) and [database](https://devcenter.heroku.com/articles/heroku-postgresql#removing-the-add-on) as soon as you are done experimenting to control costs.
+This project is a complete modernization of the KrisPC website, transitioning from legacy Bootstrap to a modern tech stack.
 
-By default, apps use Eco dynos if you are subscribed to Eco. Otherwise, it defaults to Basic dynos. The Eco dynos plan is shared across all Eco dynos in your account and is recommended if you plan on deploying many small apps to Heroku. Learn more about our low-cost plans [here](https://blog.heroku.com/new-low-cost-plans).
+- **KrisPC IT Services:** Modern UI built with Vue 3, Vite, and Tailwind CSS.
+- **Plexus SecondBrain:** A cognitive offloading system designed to autonomously transmute chaotic thoughts into structured, actionable data.
 
-Eligible students can apply for platform credits through our new [Heroku for GitHub Students program](https://blog.heroku.com/github-student-developer-program).
+## 🛠 Tech Stack
 
-This application supports the [Getting Started with Python on Heroku](https://devcenter.heroku.com/articles/getting-started-with-python) article - check it out for instructions on how to deploy this app to Heroku and also run it locally.
+### Frontend
+- **Vue 3.5 (Composition API):** Modern component architecture.
+- **Tailwind CSS 3.4:** Utility-first styling with custom design system.
+- **Vite 6.0:** Fast build tool with HMR (Hot Module Replacement).
+- **Heroicons:** Optimized SVG icons.
+- **HTMX:** For seamless server-side interactions.
 
-Alternatively, you can deploy it using this Heroku Button:
+### Backend
+- **Django 6.0:** Robust Python web framework.
+- **Django Vite:** Seamless integration between Django and Vite.
+- **Channels:** Real-time capabilities.
+- **Celery & Redis:** For background task processing (used in Plexus and P2C).
+- **REST Framework:** API support for external integrations.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/heroku/python-getting-started)
+## 🧠 Plexus SecondBrain
 
-For more information about using Python on Heroku, see these Dev Center articles:
+Plexus is integrated into this base, providing:
+- **Frictionless Capture:** Single stream ingestion via web or voice.
+- **AI Processing:** Intelligent classification and action extraction (Gemini/OpenAI).
+- **Structured Data:** Automated organization of thoughts and tasks.
 
-- [Python on Heroku](https://devcenter.heroku.com/categories/python)
+## 📦 Getting Started
+
+### Prerequisites
+- Python 3.10+
+- Node.js & npm
+- Redis (for Celery and Channels)
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd krispcBase
+   ```
+
+2. **Set up Python environment:**
+   ```bash
+   pip install -r requirements.txt
+   # or
+   pipenv install
+   ```
+
+3. **Set up Frontend:**
+   ```bash
+   npm install
+   npm run build
+   ```
+
+4. **Environment Variables:**
+   Create a `.env` file based on `.env.example` (if available) or ensure the following are set:
+   - `SECRET_KEY`
+   - `DATABASE_URL`
+   - `REDIS_URL`
+   - `GEMINI_API_KEY` (for Plexus)
+   - `FLY_APP` (if deploying to Fly.io)
+
+5. **Run Migrations:**
+   ```bash
+   python manage.py migrate
+   ```
+
+6. **Start Development Server:**
+   ```bash
+   # Run Django
+   python manage.py runserver
+   
+   # Run Vite (in another terminal for HMR)
+   npm run dev
+   ```
+
+## 🚢 Deployment
+
+This project is optimized for deployment on **Fly.io**. See `DEPLOYMENT.md` for detailed instructions.
+
+## 🧪 Testing
+
+Run tests using pytest:
+```bash
+pytest
+```
+See `TESTING.md` for the comprehensive testing checklist.
+
+---
+© 2026 KrisPC. All rights reserved.

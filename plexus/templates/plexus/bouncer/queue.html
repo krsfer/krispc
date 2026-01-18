@@ -1,0 +1,47 @@
+{% extends "plexus/plexus_base.html" %}
+
+{% block title %}Review Queue - Second Brain{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Review Queue</h1>
+</div>
+
+{% if reviews %}
+    <div class="row row-cols-1 g-4">
+        {% for review in reviews %}
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="badge bg-warning text-dark">Pending Review</span>
+                        <small class="text-muted">{{ review.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ review.thought.content }}</h5>
+                        <p class="card-text">
+                            <strong>Reason:</strong> {{ review.reason }}
+                        </p>
+                        <p class="card-text text-muted small">
+                            <strong>Raw Input:</strong> {{ review.thought.input.content }}
+                        </p>
+                        <p class="card-text">
+                            <strong>AI Suggestion:</strong> 
+                            <span class="badge {% if review.thought.type == 'task' %}bg-danger{% elif review.thought.type == 'ideation' %}bg-info{% else %}bg-secondary{% endif %}">
+                                {{ review.thought.type|title }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-end gap-2">
+                        <a href="{% url 'core:review_resolve' review.pk %}" class="btn btn-sm btn-primary">Resolve Now</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <p class="lead text-muted">Your review queue is empty. All caught up!</p>
+        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-primary">Back to Dashboard</a>
+    </div>
+{% endif %}
+{% endblock %}

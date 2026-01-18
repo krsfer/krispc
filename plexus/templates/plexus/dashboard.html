@@ -1,0 +1,111 @@
+{% extends "plexus/plexus_base.html" %}
+
+{% block title %}Dashboard - Second Brain{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Dashboard</h1>
+    <a href="{% url 'core:capture' %}" class="btn btn-primary">New Thought</a>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="card mb-4 bg-dark-subtle border-secondary shadow-sm">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary">🔍</span>
+                    <input type="text" name="q" class="form-control border-secondary" placeholder="Search thoughts..." value="{{ request.GET.q }}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="type" class="form-select border-secondary">
+                    <option value="">All Types</option>
+                    <option value="ideation" {% if request.GET.type == 'ideation' %}selected{% endif %}>Ideation</option>
+                    <option value="task" {% if request.GET.type == 'task' %}selected{% endif %}>Task</option>
+                    <option value="reference" {% if request.GET.type == 'reference' %}selected{% endif %}>Reference</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% include "partials/surfacing_widget.html" %}
+
+{% if thoughts %}
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for thought in thoughts %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="badge {% if thought.type == 'task' %}bg-danger{% elif thought.type == 'ideation' %}bg-info{% else %}bg-secondary{% endif %}">
+                            {{ thought.type|title }}
+                        </span>
+                        <div>
+                            <small class="text-muted me-2">{{ thought.input.timestamp|date:"M d, Y H:i" }}</small>
+                            <a href="{% url 'core:thought_edit' thought.pk %}" class="text-decoration-none text-muted" title="Edit Thought">✏️</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ thought.content }}</h5>
+                        <p class="card-text text-muted small">Raw: {{ thought.input.content|truncatechars:100 }}</p>
+                        
+                        {% if thought.actions.all %}
+                            <hr>
+                            <h6 class="card-subtitle mb-2 text-muted">Extracted Actions:</h6>
+                            <ul class="list-group list-group-flush">
+                                {% for action in thought.actions.all %}
+                                    <li class="list-group-item bg-transparent text-white py-1 d-flex align-items-center">
+                                        <form action="{% url 'core:action_toggle' action.pk %}" method="post" class="me-2">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-link p-0 text-decoration-none" title="Toggle status">
+                                                {% if action.status == 'done' %}
+                                                    ✅
+                                                {% else %}
+                                                    ⬜
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                        <span class="{% if action.status == 'done' %}text-decoration-line-through text-muted{% endif %} small">
+                                            {{ action.description }}
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Confidence: {{ thought.confidence_score|floatformat:2 }}</small>
+                        {% if thought.ai_model %}
+                            <div class="d-flex align-items-center">
+                                <small class="text-muted italic me-2" style="font-size: 0.75rem;">via {{ thought.ai_model }}</small>
+                                {% if "error" in thought.ai_model %}
+                                    <form action="{% url 'core:thought_retry' thought.pk %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-warning py-0 px-1" title="Retry AI Processing">🔄</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5 card bg-dark-subtle border-secondary border-dashed">
+        <div class="card-body">
+            {% if request.GET.q or request.GET.type %}
+                <p class="lead text-muted">No thoughts match your search/filter criteria.</p>
+                <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">Clear All Filters</a>
+            {% else %}
+                <p class="lead text-muted">No thoughts captured yet. Start by capturing your first thought!</p>
+                <a href="{% url 'core:capture' %}" class="btn btn-outline-primary">Capture Now</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

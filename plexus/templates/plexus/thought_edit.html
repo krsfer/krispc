@@ -1,0 +1,54 @@
+{% extends "plexus/plexus_base.html" %}
+
+{% block title %}Edit Thought - Second Brain{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Edit Thought</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6>Original Input:</h6>
+                    <p class="p-3 bg-dark-subtle rounded border border-secondary">{{ object.input.content }}</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+                        {{ form.content }}
+                        {% if form.content.errors %}
+                            <div class="text-danger small">{{ form.content.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.type.id_for_label }}" class="form-label">Type</label>
+                        {{ form.type }}
+                        {% if form.type.errors %}
+                            <div class="text-danger small">{{ form.type.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4 form-check bg-light-subtle p-3 rounded border border-secondary">
+                        {{ form.reclassify }}
+                        <label class="form-check-label" for="{{ form.reclassify.id_for_label }}">
+                            {{ form.reclassify.label }}
+                        </label>
+                        <div class="form-text small">{{ form.reclassify.help_text }}</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "plexus/plexus_base.html" %}
+
+{% block title %}Resolve Review - Second Brain{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Resolve Review</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info small">
+                    <strong>Reason for Review:</strong> {{ object.reviews.first.reason }}
+                </div>
+
+                <div class="mb-4">
+                    <h6>Original Input:</h6>
+                    <p class="p-3 bg-dark-subtle rounded border border-secondary">{{ object.input.content }}</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label">Refined Content</label>
+                        {{ form.content }}
+                        {% if form.content.errors %}
+                            <div class="text-danger small">{{ form.content.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.type.id_for_label }}" class="form-label">Classification</label>
+                        {{ form.type }}
+                        {% if form.type.errors %}
+                            <div class="text-danger small">{{ form.type.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'core:review_queue' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Confirm & Resolve</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

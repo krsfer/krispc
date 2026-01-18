@@ -1,0 +1,39 @@
+{% extends "plexus/plexus_base.html" %}
+
+{% block title %}Home - Second Brain{% endblock %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-dark border border-secondary rounded-3">
+    <div class="container-fluid py-5 text-center">
+        <h1 class="display-5 fw-bold text-white">Welcome to your Second Brain</h1>
+        <p class="col-md-8 mx-auto fs-4 text-muted">
+            A cognitive offloading system designed to autonomously transmute your chaotic thoughts into structured, actionable data.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="{% url 'core:capture' %}" class="btn btn-primary btn-lg px-4 gap-3">Capture Thought</a>
+            <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary btn-lg px-4">View Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<div class="row align-items-md-stretch text-center">
+    <div class="col-md-4">
+        <div class="h-100 p-5 bg-dark border border-secondary rounded-3">
+            <h2>Frictionless</h2>
+            <p>Single stream ingestion. No tagging, no folders, just capture.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="h-100 p-5 bg-dark border border-secondary rounded-3">
+            <h2>Intelligent</h2>
+            <p>AI-powered classification and automated action extraction.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="h-100 p-5 bg-dark border border-secondary rounded-3">
+            <h2>Structured</h2>
+            <p>Relational persistence with contextual filtering.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
