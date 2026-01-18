@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-18 23:01+0000\n"
+"POT-Creation-Date: 2026-01-18 23:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -165,7 +165,7 @@ msgstr "Statut"
 msgid "Action"
 msgstr "Action"
 
-#: plexus/models.py:89
+#: plexus/models.py:89 plexus/templates/plexus/partials/bottom_nav.html:11
 msgid "Actions"
 msgstr "Actions"
 
@@ -303,6 +303,7 @@ msgid "Capture Now"
 msgstr "Capturer maintenant"
 
 #: plexus/templates/plexus/index.html:4
+#: plexus/templates/plexus/partials/bottom_nav.html:7
 msgid "Home"
 msgstr "Accueil"
 
@@ -351,6 +352,15 @@ msgstr "Structuré"
 msgid "Relational persistence with contextual filtering."
 msgstr "Persistance relationnelle avec filtrage contextuel."
 
+#: plexus/templates/plexus/partials/bottom_nav.html:22
+#: plexus/templates/plexus/plexus_base.html:29
+msgid "Voice"
+msgstr "Voix"
+
+#: plexus/templates/plexus/partials/bottom_nav.html:27
+msgid "Admin"
+msgstr "Admin"
+
 #: plexus/templates/plexus/partials/surfacing_widget.html:6
 msgid "Insights from the Past"
 msgstr "Aperçus du passé"
@@ -382,10 +392,6 @@ msgstr "Élaborer"
 #: plexus/templates/plexus/partials/surfacing_widget.html:57
 msgid "Refresh"
 msgstr "Actualiser"
-
-#: plexus/templates/plexus/plexus_base.html:29
-msgid "Voice"
-msgstr "Voix"
 
 #: plexus/templates/plexus/plexus_base.html:35
 msgid "Action Center"

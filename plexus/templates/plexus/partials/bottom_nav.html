@@ -1,13 +1,14 @@
+{% load i18n %}
 <nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary d-md-none py-0 shadow-lg">
     <div class="container-fluid px-0">
         <div class="d-flex w-100 justify-content-around align-items-center">
             <a href="{% url 'plexus:dashboard' %}" class="nav-link text-center py-2 {% if request.resolver_match.url_name == 'dashboard' %}text-primary{% else %}text-muted{% endif %}">
                 <div class="fs-4">🏠</div>
-                <div style="font-size: 0.7rem;">Home</div>
+                <div style="font-size: 0.7rem;">{% trans "Home" %}</div>
             </a>
             <a href="{% url 'plexus:action_center' %}" class="nav-link text-center py-2 {% if request.resolver_match.url_name == 'action_center' %}text-primary{% else %}text-muted{% endif %}">
                 <div class="fs-4">✅</div>
-                <div style="font-size: 0.7rem;">Actions</div>
+                <div style="font-size: 0.7rem;">{% trans "Actions" %}</div>
             </a>
             
             <!-- FAB (Floating Action Button) for Capture -->
@@ -18,12 +19,12 @@
 
             <a href="{% url 'plexus:capture' %}?mode=voice" class="nav-link text-center py-2 {% if request.GET.mode == 'voice' %}text-danger{% else %}text-muted{% endif %}">
                 <div class="fs-4">🎙️</div>
-                <div style="font-size: 0.7rem;">Voice</div>
+                <div style="font-size: 0.7rem;">{% trans "Voice" %}</div>
             </a>
             
             <a href="{% url 'plexus:admin_dashboard' %}" class="nav-link text-center py-2 {% if request.resolver_match.url_name == 'admin_dashboard' %}text-warning{% else %}text-muted{% endif %}">
                 <div class="fs-4">⚙️</div>
-                <div style="font-size: 0.7rem;">Admin</div>
+                <div style="font-size: 0.7rem;">{% trans "Admin" %}</div>
             </a>
         </div>
     </div>
