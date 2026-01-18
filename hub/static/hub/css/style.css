@@ -22,6 +22,19 @@ body {
     width: 100%;
 }
 
+/* Utility classes */
+.font-brand {
+    font-family: 'Lobster', cursive;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.text-primary {
+    color: #ffc451;
+}
+
 /* Header */
 .header {
     background: white;

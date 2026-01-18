@@ -17,7 +17,7 @@ class IndexView(TemplateView):
 
         # Explicitly pass language to template
         context['current_language'] = current_lang[:2]
-        context['page_title'] = 'Christopher'
+        context['page_title'] = 'KrisPC'
         context['tagline'] = (
             'Services et Outils Professionnels' if is_french
             else 'Professional Services & Tools'

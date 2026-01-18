@@ -15,11 +15,12 @@ class IndexViewTests(TestCase):
         view.request = request
         context = view.get_context_data()
 
-        self.assertEqual(context['page_title'], 'Christopher')
+        self.assertEqual(context['page_title'], 'KrisPC')
         self.assertEqual(context['tagline'], 'Services et Outils Professionnels')
-        self.assertEqual(len(context['apps']), 2)
+        self.assertEqual(len(context['apps']), 3)
         self.assertEqual(context['apps'][0]['name'], 'KrisPC')
         self.assertEqual(context['apps'][1]['name'], 'Pdf2Cal')
+        self.assertEqual(context['apps'][2]['name'], 'Plexus')
 
     def test_index_view_context_english(self):
         activate('en')
