@@ -7,7 +7,7 @@ from .views import (
     ActionListView, ActionToggleView, ThoughtUpdateView,
     AdminDashboardView, VoiceCaptureView, ThoughtRetryView
 )
-from .api_views import InputViewSet, ThoughtViewSet, ActionViewSet
+from .api_views import InputViewSet, ThoughtViewSet, ActionViewSet, SyncView
 
 app_name = "plexus"
 
@@ -33,6 +33,7 @@ urlpatterns = [
     # Specific API Endpoints (Legacy/Specific)
     path("api/v1/ingest/", IngestAPIView.as_view(), name="ingest"),
     path("api/v1/capture/voice/", VoiceCaptureView.as_view(), name="voice_capture"),
+    path("api/v1/sync/", SyncView.as_view(), name="sync"),
 
     # REST API via Router
     path("api/v1/", include(router.urls)),
