@@ -1,6 +1,6 @@
 import os
 import json
-import google.generativeai as genai
+from google import genai
 from openai import OpenAI
 import anthropic
 from django.conf import settings
@@ -27,12 +27,11 @@ def _classify_gemini(text):
         return _fallback_result(text, "gemini-fallback (no key)")
 
     try:
-        genai.configure(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         model_name = getattr(settings, "GEMINI_MODEL", "gemini-pro-latest")
-        model = genai.GenerativeModel(model_name)
 
         prompt = _get_system_prompt(text)
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model=model_name, contents=prompt)
         raw_text = response.text.replace("```json", "").replace("```", "").strip()
         data = json.loads(raw_text)
         
