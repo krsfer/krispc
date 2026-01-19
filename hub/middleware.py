@@ -35,15 +35,16 @@ class EnsureDefaultLanguageMiddleware:
             language = 'fr'
 
         # Log what we're setting
-        logger.info(f"EnsureDefaultLanguageMiddleware: path={path}, setting language={language}, session_before={request.session.get('_language', 'NOT_SET')}")
+        current_session_lang = request.session.get('_language')
+        logger.info(f"EnsureDefaultLanguageMiddleware: path={path}, setting language={language}, session_before={current_session_lang}")
 
-        # Set language in session
-        # LocaleMiddleware will pick this up and activate it
-        request.session['_language'] = language
-        # Mark session as modified to ensure it's saved
-        request.session.modified = True
-
-        logger.info(f"EnsureDefaultLanguageMiddleware: session_after={request.session.get('_language')}")
+        # Set language in session only if changed
+        if current_session_lang != language:
+            request.session['_language'] = language
+            request.session.modified = True
+            logger.info(f"EnsureDefaultLanguageMiddleware: session updated to {language}")
+        else:
+            logger.info("EnsureDefaultLanguageMiddleware: session already set, skipping update")
 
         response = self.get_response(request)
         return response
