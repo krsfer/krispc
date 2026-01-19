@@ -114,14 +114,9 @@ def _classify_gemini(text, image_file=None):
         print(f"Gemini Error: {e}")
         return _fallback_result(text, f"gemini-error: {str(e)[:50]}")
 
-def _classify_openai(text, image_file=None):
-    # For now, if there is an image, we fallback to text-only processing for OpenAI
-    # unless we implement GPT-4 Vision specific logic.
-    # To keep it simple for this step, we just warn or ignore the image for OpenAI/Anthropic
-    # or rely on Gemini as the primary vision provider.
-    return _classify_openai_text_only(text)
+import base64
 
-def _classify_openai_text_only(text):
+def _classify_openai(text, image_file=None):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         return _fallback_result(text, "openai-fallback (no key)")
@@ -130,15 +125,53 @@ def _classify_openai_text_only(text):
         client = OpenAI(api_key=api_key)
         model_name = "gpt-4o-mini"
         
+        system_prompt = _get_system_prompt(text, has_image=bool(image_file))
+        messages = [{"role": "system", "content": system_prompt}]
+        
+        user_content = []
+        if text:
+            user_content.append({"type": "text", "text": text})
+            
+        if image_file:
+            # Encode image to base64
+            image_file.seek(0)
+            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+            
+            # OpenAI requires mime type, we can guess or default to jpeg/png
+            # For simplicity, let's assume standard image formats or detect from PIL
+            try:
+                img = Image.open(image_file)
+                mime_type = f"image/{img.format.lower() if img.format else 'jpeg'}"
+            except:
+                mime_type = "image/jpeg"
+                
+            user_content.append({
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:{mime_type};base64,{base64_image}"
+                }
+            })
+
+        if not user_content:
+             # Handle case where both text and image might be empty/failed
+             return _fallback_result(text, "openai-error: No content provided")
+
+        messages.append({"role": "user", "content": user_content})
+        
         response = client.chat.completions.create(
             model=model_name,
-            messages=[{"role": "user", "content": _get_system_prompt(text)}],
+            messages=messages,
             response_format={"type": "json_object"}
         )
         data = json.loads(response.choices[0].message.content)
         return _format_result(data, text, model_name)
     except Exception as e:
+        print(f"OpenAI Error: {e}")
         return _fallback_result(text, f"openai-error: {str(e)[:50]}")
+
+def _classify_openai_text_only(text):
+    # Deprecated internal helper, merged into _classify_openai
+    return _classify_openai(text)
 
 def _classify_anthropic(text, image_file=None):
     # Similar fallback for Anthropic
