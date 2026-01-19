@@ -196,24 +196,16 @@ if DEBUG:
     }
 else:
     # Use Redis for production
-    # Configure channels_redis with mTLS support
-    channel_layer_config = {
-        'hosts': [REDIS_URL],
-    }
-    
-    if REDIS_URL.startswith("rediss://"):
-        channel_layer_config['hosts'] = [{
-            'address': REDIS_URL,
-            'ssl_cert_reqs': ssl.CERT_REQUIRED,
-            'ssl_ca_certs': REDIS_CA_CERT_PATH,
-            'ssl_certfile': REDIS_CLIENT_CERT_PATH,
-            'ssl_keyfile': REDIS_CLIENT_KEY_PATH,
-        }]
-
+    # Note: Redis Cloud with mTLS (client certificates) is not supported by channels_redis
+    # out of the box. The rediss:// URL scheme provides SSL, but if client certs are required,
+    # you may need to switch to a simpler Redis configuration or use a Redis without mTLS.
+    # For now, we'll try connecting without SSL context to trigger a clearer error.
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': channel_layer_config,
+            'CONFIG': {
+                'hosts': [REDIS_URL],
+            },
         },
     }
 
