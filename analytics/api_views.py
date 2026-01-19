@@ -72,6 +72,11 @@ class UpdateVisitView(APIView):
             visit.time_on_page = data['time_on_page']
             
         visit.save()
+        
+        # Prevent session save to avoid SessionInterrupted error on concurrent logout
+        if hasattr(request, 'session'):
+            request.session.modified = False
+            
         return Response({'status': 'updated'})
 
 
@@ -92,6 +97,10 @@ class TrackInteractionView(APIView):
             element_selector=data.get('selector'),
             metadata=data.get('metadata', {})
         )
+        
+        # Prevent session save
+        if hasattr(request, 'session'):
+            request.session.modified = False
         
         return Response({'status': 'recorded'})
 
@@ -116,4 +125,9 @@ class TrackErrorView(APIView):
             error_message=data.get('message'),
             stack_trace=data.get('stack')
         )
+        
+        # Prevent session save
+        if hasattr(request, 'session'):
+            request.session.modified = False
+            
         return Response({'status': 'error recorded'})
