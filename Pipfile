@@ -64,7 +64,7 @@ drf-spectacular = "*"
 mcp = "*"
 django-filter = "*"
 django-cors-headers = "*"
-openai = "*"
+openai = ">=2.0.0"
 anthropic = "*"
 google-genai = "*"
 
