@@ -31,20 +31,17 @@ def _get_db_stats():
     
     return stats
 
+import ssl
+
 def _get_redis_stats():
     """
-    Check both Local and Cloud Redis connections.
+    Check configured Redis connection.
     """
-    local_url = "redis://127.0.0.1:6379/0"
-    cloud_url = os.environ.get("REDIS_CLOUD_URL") or os.environ.get("REDIS_URL")
+    # Use the configured REDIS_URL from settings
+    redis_url = getattr(settings, "REDIS_URL", None)
     
-    # Avoid duplicate checking if urls are same (e.g. in prod)
-    if cloud_url == local_url:
-        cloud_url = None
-
     return {
-        "local": _check_redis_connection(local_url, "Local"),
-        "cloud": _check_redis_connection(cloud_url, "Cloud") if cloud_url else None
+        "local": _check_redis_connection(redis_url, "Primary Redis")
     }
 
 def _check_redis_connection(url, label):
@@ -55,7 +52,23 @@ def _check_redis_connection(url, label):
         return stats
 
     try:
-        client = redis.from_url(url, socket_connect_timeout=3)
+        # Prepare kwargs for SSL if needed
+        kwargs = {"socket_connect_timeout": 3}
+        if url.startswith("rediss://"):
+            # For local dev with self-signed certs, we might need to relax verification
+            # Check if we are in local dev mode or have specific certs configured in settings
+            if settings.DEBUG:
+                kwargs["ssl_cert_reqs"] = ssl.CERT_NONE
+            else:
+                # In production (Fly.io), we rely on the paths configured in settings
+                if hasattr(settings, 'REDIS_CA_CERT_PATH') and os.path.exists(settings.REDIS_CA_CERT_PATH):
+                     kwargs["ssl_ca_certs"] = settings.REDIS_CA_CERT_PATH
+                     kwargs["ssl_cert_reqs"] = ssl.CERT_REQUIRED
+                     # redis-py usually handles certfile/keyfile if passed
+                     kwargs["ssl_certfile"] = getattr(settings, 'REDIS_CLIENT_CERT_PATH', None)
+                     kwargs["ssl_keyfile"] = getattr(settings, 'REDIS_CLIENT_KEY_PATH', None)
+
+        client = redis.from_url(url, **kwargs)
         info = client.info()
         stats["status"] = "Online"
         stats["memory_human"] = info.get("used_memory_human", "0B")
