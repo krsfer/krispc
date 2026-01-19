@@ -57,6 +57,8 @@ class IndexView(TemplateView):
         ]
 
         user = getattr(self.request, 'user', None)
+        context['is_authenticated'] = user.is_authenticated if user else False
+        
         if user and user.is_staff:
             context['admin_apps'] = [
                 {

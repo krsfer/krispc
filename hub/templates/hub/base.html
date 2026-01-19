@@ -17,7 +17,16 @@
     <header class="header">
         <div class="container">
             <h1 class="brand font-brand text-2xl text-primary">KrisPC</h1>
-            <nav class="language-toggle">
+            <nav class="header-nav">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer; color: #666; font-size: 0.9rem;">{% trans "Logout" %}</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link" style="color: #666; text-decoration: none; font-size: 0.9rem;">{% trans "Login" %}</a>
+                {% endif %}
+                
                 <div class="language-dropdown">
                     <button id="langDropdownBtn" class="lang-btn-dropdown" aria-expanded="false">
                         {% if current_language == 'fr' %}

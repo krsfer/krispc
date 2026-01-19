@@ -21,6 +21,13 @@
         {% endfor %}
     </section>
 
+    {% if not is_authenticated %}
+    <div style="text-align: center; margin-top: 2rem;">
+        <p style="color: #666; margin-bottom: 1rem;">{% trans "Already have an account?" %}</p>
+        <a href="{% url 'login' %}" class="app-button" style="display: inline-block; padding: 0.75rem 2rem;">{% trans "Login" %}</a>
+    </div>
+    {% endif %}
+
     {% if admin_apps %}
     <section class="admin-section" style="margin-top: 4rem; border-top: 1px solid #eee; padding-top: 2rem;">
         <h3 style="text-align: center; color: #666; margin-bottom: 2rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">Admin Dashboard</h3>

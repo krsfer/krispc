@@ -54,6 +54,21 @@ body {
     color: #4F46E5;
 }
 
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color 200ms ease;
+}
+
+.nav-link:hover {
+    color: #4F46E5 !important;
+}
+
 /* Language Dropdown */
 .language-dropdown {
     position: relative;
