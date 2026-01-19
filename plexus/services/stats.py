@@ -35,13 +35,22 @@ import ssl
 
 def _get_redis_stats():
     """
-    Check configured Redis connection.
+    Check both Local and Cloud Redis connections.
     """
-    # Use the configured REDIS_URL from settings
-    redis_url = getattr(settings, "REDIS_URL", None)
+    # 1. Local Redis (assuming TLS on 6379)
+    local_url = "rediss://127.0.0.1:6379"
     
+    # 2. Cloud Redis (from environment or settings)
+    # Prefer REDIS_CLOUD_URL if set, else fallback to settings.REDIS_URL
+    cloud_url = os.environ.get("REDIS_CLOUD_URL") or getattr(settings, "REDIS_URL", None)
+    
+    # If settings.REDIS_URL is local, don't show cloud twice
+    if cloud_url and ("127.0.0.1" in cloud_url or "localhost" in cloud_url):
+        cloud_url = None
+
     return {
-        "local": _check_redis_connection(redis_url, "Primary Redis")
+        "local": _check_redis_connection(local_url, "Local"),
+        "cloud": _check_redis_connection(cloud_url, "Cloud") if cloud_url else None
     }
 
 def _check_redis_connection(url, label):
@@ -52,21 +61,24 @@ def _check_redis_connection(url, label):
         return stats
 
     try:
-        # Prepare kwargs for SSL if needed
-        kwargs = {"socket_connect_timeout": 3}
+        kwargs = {"socket_connect_timeout": 2}
+        
         if url.startswith("rediss://"):
-            # For local dev with self-signed certs, we might need to relax verification
-            # Check if we are in local dev mode or have specific certs configured in settings
-            if settings.DEBUG:
+            # SSL Configuration
+            if "127.0.0.1" in url or "localhost" in url:
+                # Local TLS: Often uses different certs or needs verification disabled
+                # The user's certs are in ~/.redis/certs/, but for the app we'll use a relaxed check locally
                 kwargs["ssl_cert_reqs"] = ssl.CERT_NONE
             else:
-                # In production (Fly.io), we rely on the paths configured in settings
+                # Cloud TLS: Use the certificates configured in settings
                 if hasattr(settings, 'REDIS_CA_CERT_PATH') and os.path.exists(settings.REDIS_CA_CERT_PATH):
                      kwargs["ssl_ca_certs"] = settings.REDIS_CA_CERT_PATH
                      kwargs["ssl_cert_reqs"] = ssl.CERT_REQUIRED
-                     # redis-py usually handles certfile/keyfile if passed
                      kwargs["ssl_certfile"] = getattr(settings, 'REDIS_CLIENT_CERT_PATH', None)
                      kwargs["ssl_keyfile"] = getattr(settings, 'REDIS_CLIENT_KEY_PATH', None)
+                else:
+                     # Fallback if certs missing in container but url is rediss
+                     kwargs["ssl_cert_reqs"] = ssl.CERT_NONE
 
         client = redis.from_url(url, **kwargs)
         info = client.info()
