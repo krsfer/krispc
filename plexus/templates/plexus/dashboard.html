@@ -3,6 +3,43 @@
 
 {% block title %}{% trans "Dashboard" %} - {% trans "Second Brain" %}{% endblock %}
 
+{% block extra_css %}
+<style>
+    .thumbnail-img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        cursor: zoom-in;
+        transition: transform 0.2s;
+    }
+    .thumbnail-img:hover {
+        transform: scale(1.1);
+    }
+    .image-hover-container {
+        position: relative;
+    }
+    .hover-zoom {
+        display: none;
+        position: absolute;
+        top: -100px;
+        left: 50px;
+        z-index: 1000;
+        width: 300px;
+        background: #fff;
+        padding: 4px;
+        border-radius: 8px;
+    }
+    .image-hover-container:hover .hover-zoom {
+        display: block;
+    }
+    .hover-zoom img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>{% trans "Dashboard" %}</h1>
@@ -54,7 +91,20 @@
                     </div>
                     <div class="card-body">
                         <h5 class="card-title">{{ thought.content }}</h5>
-                        <p class="card-text text-muted small">{% trans "Raw" %}: {{ thought.input.content|truncatechars:100 }}</p>
+                        
+                        <div class="d-flex align-items-start mb-2">
+                            {% if thought.input.image %}
+                                <div class="me-2 position-relative image-hover-container">
+                                    <img src="{{ thought.input.image.url }}" class="rounded thumbnail-img border border-secondary" alt="Input">
+                                    <div class="hover-zoom shadow-lg bg-dark border border-secondary">
+                                        <img src="{{ thought.input.image.url }}" alt="Input Full">
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <p class="card-text text-muted small mb-0 flex-grow-1">
+                                {% trans "Raw" %}: {{ thought.input.content|default:"(Image Input)"|truncatechars:100 }}
+                            </p>
+                        </div>
                         
                         {% if thought.outgoing_links.all %}
                             <hr>
