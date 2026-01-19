@@ -196,16 +196,41 @@ if DEBUG:
     }
 else:
     # Use Redis for production
-    # Note: Redis Cloud with mTLS (client certificates) is not supported by channels_redis
-    # out of the box. The rediss:// URL scheme provides SSL, but if client certs are required,
-    # you may need to switch to a simpler Redis configuration or use a Redis without mTLS.
-    # For now, we'll try connecting without SSL context to trigger a clearer error.
+    # Configure channels_redis with mTLS support
+    channel_layer_config = {
+        'hosts': [REDIS_URL],
+    }
+    
+    if REDIS_URL.startswith("rediss://"):
+        try:
+            print(f"Configuring Redis SSL with certs at: {REDIS_CA_CERT_PATH}")
+            if os.path.exists(REDIS_CA_CERT_PATH):
+                print(f"CA Cert found.")
+            else:
+                print(f"ERROR: CA Cert NOT found at {REDIS_CA_CERT_PATH}")
+
+            # Create SSL Context manually to ensure it's valid
+            ssl_context = ssl.create_default_context(cafile=REDIS_CA_CERT_PATH)
+            ssl_context.load_cert_chain(certfile=REDIS_CLIENT_CERT_PATH, keyfile=REDIS_CLIENT_KEY_PATH)
+            ssl_context.check_hostname = False # Relax check for Redis Cloud if needed
+            ssl_context.verify_mode = ssl.CERT_REQUIRED
+            
+            # Pass the context. Note: redis-py uses 'ssl' or 'ssl_context' depending on version/path
+            # For channels_redis (redis-py), passing ssl_context via kwargs to from_url works
+            channel_layer_config['hosts'] = [{
+                'address': REDIS_URL,
+                'ssl_context': ssl_context
+            }]
+            print("Redis SSL Context created successfully.")
+        except Exception as e:
+            print(f"Error creating Redis SSL Context: {e}")
+            # Fallback to default (might fail connection but won't crash startup immediately)
+            pass
+
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': {
-                'hosts': [REDIS_URL],
-            },
+            'CONFIG': channel_layer_config,
         },
     }
 
