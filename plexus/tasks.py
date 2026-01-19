@@ -16,16 +16,18 @@ def process_input(input_id):
         return
 
     # Call LLM service
-    result = classify_input(input_obj.content)
+    result = classify_input(input_obj.content, input_obj.image)
     refined_content = result["refined_content"]
 
     # Deduplication Check: 
     # 1. Check if a Thought with identical refined content exists
-    # 2. OR check if a Thought exists linked to an Input with identical raw content
-    duplicate = Thought.objects.filter(
-        Q(content=refined_content) | 
-        Q(input__content=input_obj.content)
-    ).exclude(input=input_obj).first()
+    # 2. OR check if a Thought exists linked to an Input with identical raw content (if content exists)
+    
+    duplicate_query = Q(content=refined_content)
+    if input_obj.content:
+        duplicate_query |= Q(input__content=input_obj.content)
+        
+    duplicate = Thought.objects.filter(duplicate_query).exclude(input=input_obj).first()
 
     if duplicate:
         # Mark input as processed but don't create new thought

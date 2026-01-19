@@ -5,17 +5,26 @@ from .models import Input, Thought
 class InputForm(forms.ModelForm):
     class Meta:
         model = Input
-        fields = ["content", "source"]
+        fields = ["content", "image", "source"]
         widgets = {
             "content": forms.Textarea(attrs={
                 "class": "form-control",
                 "rows": 5,
-                "placeholder": _("What's on your mind?")
+                "placeholder": _("What's on your mind? Text or Image...")
+            }),
+            "image": forms.FileInput(attrs={
+                "class": "form-control",
+                "accept": "image/*"
             }),
             "source": forms.Select(attrs={
                 "class": "form-control"
             }),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['content'].required = False
+
 
 class ThoughtForm(forms.ModelForm):
     reclassify = forms.BooleanField(

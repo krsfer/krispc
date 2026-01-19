@@ -1,12 +1,15 @@
 import os
 import json
 from google import genai
+from google.genai import types
 from openai import OpenAI
 import anthropic
 from django.conf import settings
 from plexus.models import SystemConfiguration
+from PIL import Image
+import io
 
-def classify_input(text):
+def classify_input(text, image_file=None):
     """
     Entry point for input classification. 
     Routes to the active provider based on SystemConfiguration.
@@ -15,11 +18,11 @@ def classify_input(text):
     provider = config.active_ai_provider
 
     if provider == "openai":
-        return _classify_openai(text)
+        return _classify_openai(text, image_file)
     elif provider == "anthropic":
-        return _classify_anthropic(text)
+        return _classify_anthropic(text, image_file)
     else:
-        return _classify_gemini(text)
+        return _classify_gemini(text, image_file)
 
 def query_llm(prompt):
     """
@@ -62,25 +65,63 @@ def query_llm(prompt):
         print(f"LLM Query Error: {e}")
         return None
 
-def _classify_gemini(text):
+def _classify_gemini(text, image_file=None):
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return _fallback_result(text, "gemini-fallback (no key)")
 
     try:
         client = genai.Client(api_key=api_key)
-        model_name = getattr(settings, "GEMINI_MODEL", "gemini-pro-latest")
+        # Use gemini-1.5-flash for speed/vision capability if not specified
+        model_name = getattr(settings, "GEMINI_MODEL", "gemini-1.5-flash")
 
-        prompt = _get_system_prompt(text)
-        response = client.models.generate_content(model=model_name, contents=prompt)
+        contents = []
+        
+        # Add system instruction as part of content since some libs vary on 'system_instruction' param
+        system_prompt = _get_system_prompt(text, has_image=bool(image_file))
+        contents.append(types.Content(role="user", parts=[types.Part.from_text(text=system_prompt)]))
+        
+        user_parts = []
+        if text:
+            user_parts.append(types.Part.from_text(text=text))
+            
+        if image_file:
+            # Load image into memory
+            img = Image.open(image_file)
+            # Convert to bytes
+            img_byte_arr = io.BytesIO()
+            img.save(img_byte_arr, format=img.format or 'JPEG')
+            img_bytes = img_byte_arr.getvalue()
+            
+            user_parts.append(types.Part.from_bytes(data=img_bytes, mime_type=f"image/{img.format.lower() if img.format else 'jpeg'}"))
+
+        if user_parts:
+            contents.append(types.Content(role="user", parts=user_parts))
+
+        response = client.models.generate_content(
+            model=model_name, 
+            contents=contents,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
         raw_text = response.text.replace("```json", "").replace("```", "").strip()
         data = json.loads(raw_text)
         
         return _format_result(data, text, model_name)
     except Exception as e:
+        print(f"Gemini Error: {e}")
         return _fallback_result(text, f"gemini-error: {str(e)[:50]}")
 
-def _classify_openai(text):
+def _classify_openai(text, image_file=None):
+    # For now, if there is an image, we fallback to text-only processing for OpenAI
+    # unless we implement GPT-4 Vision specific logic.
+    # To keep it simple for this step, we just warn or ignore the image for OpenAI/Anthropic
+    # or rely on Gemini as the primary vision provider.
+    return _classify_openai_text_only(text)
+
+def _classify_openai_text_only(text):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         return _fallback_result(text, "openai-fallback (no key)")
@@ -99,40 +140,29 @@ def _classify_openai(text):
     except Exception as e:
         return _fallback_result(text, f"openai-error: {str(e)[:50]}")
 
-def _classify_anthropic(text):
+def _classify_anthropic(text, image_file=None):
+    # Similar fallback for Anthropic
+    return _classify_anthropic_text_only(text)
+
+def _classify_anthropic_text_only(text):
     api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        return _fallback_result(text, "anthropic-fallback (no key)")
 
-    try:
-        client = anthropic.Anthropic(api_key=api_key)
-        model_name = "claude-3-haiku-20240307"
+def _get_system_prompt(text, has_image=False):
+    instruction = "process unstructured input"
+    if has_image:
+        instruction = "analyze the provided image and text"
         
-        response = client.messages.create(
-            model=model_name,
-            max_tokens=1024,
-            messages=[{"role": "user", "content": _get_system_prompt(text)}]
-        )
-        # Claude might not guarantee JSON unless prompted well, 
-        # but for this refactor we assume similar structure
-        raw_text = response.content[0].text
-        data = json.loads(raw_text)
-        return _format_result(data, text, model_name)
-    except Exception as e:
-        return _fallback_result(text, f"anthropic-error: {str(e)[:50]}")
-
-def _get_system_prompt(text):
     return f"""
     You are the Intelligence Layer of a 'Second Brain' system. 
-    Your goal is to process unstructured input and return a structured JSON response.
+    Your goal is to {instruction} and return a structured JSON response.
     
     The JSON must have these keys:
     - 'classification': one of ["ideation", "reference", "task"]
     - 'confidence_score': a float between 0.0 and 1.0
-    - 'refined_content': a polished, summary version of the input
+    - 'refined_content': a polished, summary version of the input (describe the image if present)
     - 'actions': a list of specific next-step actions (strings), if any.
     
-    Input: {text}
+    Input Context: {text}
     """
 
 def _format_result(data, original_text, model_name):

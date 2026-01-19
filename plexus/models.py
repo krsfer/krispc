@@ -17,7 +17,8 @@ class Input(SyncableModel):
         ("api", _("API")),
     ]
 
-    content = models.TextField(verbose_name=_("Content"))
+    content = models.TextField(verbose_name=_("Content"), blank=True)
+    image = models.ImageField(upload_to="plexus/inputs/", null=True, blank=True, verbose_name=_("Image"))
     source = models.CharField(max_length=50, choices=SOURCE_CHOICES, default="web", verbose_name=_("Source"))
     timestamp = models.DateTimeField(default=timezone.now, verbose_name=_("Timestamp"))
     processed = models.BooleanField(default=False, verbose_name=_("Processed"))
