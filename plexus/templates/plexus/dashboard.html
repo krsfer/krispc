@@ -5,17 +5,29 @@
 
 {% block extra_css %}
 <style>
-    .thumbnail-img {
-        max-width: 200px;
-        max-height: 200px;
-        width: auto;
-        height: auto;
-        object-fit: contain;
+    .thumbnail-wrapper {
+        width: 200px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 0.375rem; /* rounded */
+        border: 1px solid #dee2e6; /* border-secondary */
         cursor: pointer;
+    }
+    .thumbnail-img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain;
         transition: transform 0.2s;
     }
-    .thumbnail-img:hover {
+    .thumbnail-wrapper:hover .thumbnail-img {
         transform: scale(1.05);
+    }
+    .thumbnail-wrapper:hover {
         border-color: var(--bs-primary) !important;
     }
 </style>
@@ -90,11 +102,12 @@
                         
                         <div class="d-flex align-items-start mb-2">
                             {% if thought.input.image %}
-                                <div class="me-2">
-                                    <img src="{{ thought.input.image.url }}" 
-                                         class="rounded thumbnail-img border border-secondary" 
-                                         alt="Input"
-                                         onclick="showImageModal('{{ thought.input.image.url }}')">
+                                <div class="me-3">
+                                    <div class="thumbnail-wrapper" onclick="showImageModal('{{ thought.input.image.url }}')">
+                                        <img src="{{ thought.input.image.url }}" 
+                                             class="thumbnail-img" 
+                                             alt="Input">
+                                    </div>
                                 </div>
                             {% endif %}
                             <p class="card-text text-muted small mb-0 flex-grow-1">
