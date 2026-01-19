@@ -4,9 +4,11 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Action Center</h1>
-    <div class="btn-group">
-        <a href="?status=pending" class="btn {% if current_status == 'pending' %}btn-primary{% else %}btn-outline-primary{% endif %}">Pending</a>
+    <h1>{% trans "Action Center" %}</h1>
+    <div>
+        <a href="{% url 'plexus:action_kanban' %}" class="btn btn-outline-primary me-2">{% trans "Kanban Board" %}</a>
+        <div class="btn-group" role="group">
+            <a href="?status=pending" class="btn {% if current_status == 'pending' %}btn-primary{% else %}btn-outline-primary{% endif %}">Pending</a>
         <a href="?status=done" class="btn {% if current_status == 'done' %}btn-primary{% else %}btn-outline-primary{% endif %}">Done</a>
     </div>
 </div>

@@ -97,6 +97,21 @@ class ActionListView(LoginRequiredMixin, ListView):
         context["current_status"] = self.request.GET.get("status", "pending")
         return context
 
+class KanbanView(LoginRequiredMixin, TemplateView):
+    template_name = "plexus/kanban.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        actions = Action.objects.select_related("thought").all().order_by("-updated_at")
+        
+        # Group by status
+        context["columns"] = {
+            "pending": actions.filter(status="pending"),
+            "done": actions.filter(status="done"),
+            "dismissed": actions.filter(status="dismissed"),
+        }
+        return context
+
 class ActionToggleView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         action = get_object_or_404(Action, pk=self.kwargs["pk"])

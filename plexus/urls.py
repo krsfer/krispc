@@ -4,7 +4,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from .views import (
     IngestAPIView, IndexView, CaptureView, DashboardView, 
     ReviewQueueListView, ReviewResolveView,
-    ActionListView, ActionToggleView, ThoughtUpdateView,
+    ActionListView, KanbanView, ActionToggleView, ThoughtUpdateView,
     AdminDashboardView, VoiceCaptureView, ThoughtRetryView
 )
 from .api_views import InputViewSet, ThoughtViewSet, ActionViewSet, SyncView
@@ -28,6 +28,7 @@ urlpatterns = [
     path("review-queue/", ReviewQueueListView.as_view(), name="review_queue"),
     path("review-queue/<int:pk>/resolve/", ReviewResolveView.as_view(), name="review_resolve"),
     path("action-center/", ActionListView.as_view(), name="action_center"),
+    path("action-kanban/", KanbanView.as_view(), name="action_kanban"),
     path("action/<int:pk>/toggle/", ActionToggleView.as_view(), name="action_toggle"),
     
     # Specific API Endpoints (Legacy/Specific)
