@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from .models import PageVisit, UserInteraction, ErrorEvent
+from .tasks import resolve_geoip
 from django.utils import timezone
 
 class TrackVisitView(APIView):
@@ -34,6 +35,9 @@ class TrackVisitView(APIView):
             device_type=data.get('device_type'),
             network_type=data.get('network_type')
         )
+        
+        # Trigger async GeoIP resolution
+        resolve_geoip.delay(visit.id)
         
         return Response({'visit_id': visit.id})
 

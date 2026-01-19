@@ -119,7 +119,7 @@
         </div>
 
         <!-- Secondary Charts Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             
             <!-- Devices -->
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
@@ -134,6 +134,32 @@
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Top Browsers</h2>
                 <div class="relative h-64">
                     <canvas id="browserChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Locations -->
+             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Top Locations</h2>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/2 relative h-64">
+                         <canvas id="countryChart"></canvas>
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <ul class="space-y-3">
+                            {% for country in country_stats %}
+                            <li class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                <span class="flex items-center text-gray-700 font-medium">
+                                    <i class="fas fa-globe-americas text-indigo-400 mr-2"></i> {{ country.country }}
+                                </span>
+                                <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded">{{ country.count }}</span>
+                            </li>
+                            {% empty %}
+                            <li class="text-gray-400 italic text-sm text-center py-4">No location data yet</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -223,6 +249,8 @@
         const deviceData = {{ charts.device_data|safe }};
         const browserLabels = {{ charts.browser_labels|safe }};
         const browserData = {{ charts.browser_data|safe }};
+        const countryLabels = {{ charts.country_labels|safe }};
+        const countryData = {{ charts.country_data|safe }};
 
         // Common Chart Options
         Chart.defaults.font.family = "'Inter', sans-serif";
@@ -317,6 +345,33 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // 4. Country Chart
+        const ctxCountry = document.getElementById('countryChart').getContext('2d');
+        new Chart(ctxCountry, {
+            type: 'doughnut',
+            data: {
+                labels: countryLabels,
+                datasets: [{
+                    data: countryData,
+                    backgroundColor: [
+                        '#10b981', // Emerald
+                        '#3b82f6', // Blue
+                        '#f59e0b', // Amber
+                        '#ef4444', // Red
+                        '#6366f1'  // Indigo
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
                 }
             }
         });

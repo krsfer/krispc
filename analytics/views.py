@@ -71,7 +71,16 @@ def analytics_dashboard(request):
         page['avg_time'] = round(page['avg_time'], 1) if page['avg_time'] else 0
         top_pages.append(page)
 
-    # 6. Core Web Vitals (Averages)
+    # 6. Top Countries
+    country_stats = visits.values('country') \
+        .exclude(country__isnull=True) \
+        .annotate(count=Count('id')) \
+        .order_by('-count')[:5]
+        
+    country_labels = [stat['country'] for stat in country_stats]
+    country_data = [stat['count'] for stat in country_stats]
+
+    # 7. Core Web Vitals (Averages)
     cwv_stats = visits.aggregate(
         avg_ttfb=Avg('ttfb'),
         avg_lcp=Avg('lcp'),
@@ -94,8 +103,11 @@ def analytics_dashboard(request):
             'device_data': json.dumps(device_data),
             'browser_labels': json.dumps(browser_labels),
             'browser_data': json.dumps(browser_data),
+            'country_labels': json.dumps(country_labels),
+            'country_data': json.dumps(country_data),
         },
         'top_pages': top_pages,
+        'country_stats': country_stats,
         'cwv': {k: round(v, 2) if v else 0 for k, v in cwv_stats.items()},
         'title': 'Analytics Dashboard'
     }

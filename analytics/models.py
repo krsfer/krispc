@@ -18,6 +18,13 @@ class PageVisit(models.Model):
     user_agent = models.TextField(null=True, blank=True)
     referrer = models.URLField(max_length=500, null=True, blank=True)
     
+    # Geolocation
+    country = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    region = models.CharField(max_length=100, null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
     # Technical Metrics (Core Web Vitals & Performance)
     ttfb = models.FloatField(help_text="Time to First Byte (ms)", null=True, blank=True)
     lcp = models.FloatField(help_text="Largest Contentful Paint (ms)", null=True, blank=True)
