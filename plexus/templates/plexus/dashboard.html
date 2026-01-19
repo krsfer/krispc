@@ -3,36 +3,6 @@
 
 {% block title %}{% trans "Dashboard" %} - {% trans "Second Brain" %}{% endblock %}
 
-{% block extra_css %}
-<style>
-    .thumbnail-wrapper {
-        width: 200px;
-        height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        border-radius: 0.375rem; /* rounded */
-        border: 1px solid #dee2e6; /* border-secondary */
-        cursor: pointer;
-    }
-    .thumbnail-img {
-        max-width: 100%;
-        max-height: 100%;
-        width: auto !important;
-        height: auto !important;
-        object-fit: contain;
-        transition: transform 0.2s;
-    }
-    .thumbnail-wrapper:hover .thumbnail-img {
-        transform: scale(1.05);
-    }
-    .thumbnail-wrapper:hover {
-        border-color: var(--bs-primary) !important;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <!-- Image Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
@@ -43,7 +13,7 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center p-0 bg-black">
-        <img src="" id="modalImage" class="img-fluid" alt="Full size">
+        <img src="" id="modalImage" class="img-fluid" alt="Full size" style="max-height: 80vh; object-fit: contain;">
       </div>
     </div>
   </div>
@@ -103,9 +73,12 @@
                         <div class="d-flex align-items-start mb-2">
                             {% if thought.input.image %}
                                 <div class="me-3">
-                                    <div class="thumbnail-wrapper" onclick="showImageModal('{{ thought.input.image.url }}')">
+                                    <div class="border border-secondary rounded d-flex align-items-center justify-content-center bg-black" 
+                                         style="width: 200px; height: 200px; cursor: pointer; overflow: hidden;"
+                                         onclick="showImageModal('{{ thought.input.image.url }}')">
                                         <img src="{{ thought.input.image.url }}" 
-                                             class="thumbnail-img" 
+                                             class="img-fluid" 
+                                             style="max-width: 100%; max-height: 100%; object-fit: contain;"
                                              alt="Input">
                                     </div>
                                 </div>
