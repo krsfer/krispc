@@ -47,6 +47,9 @@
     <script src="https://unpkg.com/htmx.org" defer></script>
     {% django_htmx_script %}
 
+    <!-- Analytics -->
+    <script src="{% static 'analytics/tracker.js' %}" defer></script>
+
     {% block extra_js %}{% endblock %}
   </body>
 </html>

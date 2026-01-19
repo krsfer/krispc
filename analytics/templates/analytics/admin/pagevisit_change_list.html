@@ -1,0 +1,13 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools %}
+    <ul class="object-tools">
+        <li>
+            <a href="{% url 'analytics_dashboard' %}" class="btn btn-high" style="background: #6366f1; color: white;">
+                {% trans "View Dashboard" %}
+            </a>
+        </li>
+        {{ block.super }}
+    </ul>
+{% endblock %}

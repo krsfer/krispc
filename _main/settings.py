@@ -162,6 +162,7 @@ INSTALLED_APPS = [
     "django_filters",
     "corsheaders",
     "plexus.apps.PlexusConfig",
+    "analytics",
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'
