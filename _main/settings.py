@@ -529,7 +529,7 @@ LOGGING = {
     "handlers": {"console": {"class": "logging.StreamHandler"}},
     "loggers": {
         "django": {"handlers": ["console"], "level": "INFO"},
-        "p2c": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
+        "p2c": {"handlers": ["console"], "level": "INFO", "propagate": True},
     },
 }
 
