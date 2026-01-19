@@ -96,7 +96,7 @@ if IS_PRODUCTION:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     
     # Redirect non-www to www
-    PREPEND_WWW = True
+    PREPEND_WWW = False
 else:
     ALLOWED_HOSTS = []
 
