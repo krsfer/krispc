@@ -20,5 +20,21 @@
         </div>
         {% endfor %}
     </section>
+
+    {% if admin_apps %}
+    <section class="admin-section" style="margin-top: 4rem; border-top: 1px solid #eee; padding-top: 2rem;">
+        <h3 style="text-align: center; color: #666; margin-bottom: 2rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">Admin Dashboard</h3>
+        <div class="apps-grid">
+            {% for app in admin_apps %}
+            <div class="app-card admin-card" style="border-color: #e5e7eb;">
+                <div class="app-icon">{{ app.icon }}</div>
+                <h3 class="app-name">{{ app.name }}</h3>
+                <p class="app-description">{{ app.description }}</p>
+                <a href="{{ app.url }}" class="app-button" style="background: #6366f1;">{{ app.button_text }}</a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
 </div>
 {% endblock %}

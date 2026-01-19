@@ -56,6 +56,25 @@ class IndexView(TemplateView):
             }
         ]
 
+        user = getattr(self.request, 'user', None)
+        if user and user.is_staff:
+            context['admin_apps'] = [
+                {
+                    'name': 'Admin Panel',
+                    'icon': '⚙️',
+                    'description': 'Django Administration',
+                    'url': '/admin/',
+                    'button_text': 'Manage',
+                },
+                {
+                    'name': 'Analytics',
+                    'icon': '📊',
+                    'description': 'Traffic & Performance',
+                    'url': '/analytics/dashboard/',
+                    'button_text': 'View',
+                }
+            ]
+
         return context
 
 
