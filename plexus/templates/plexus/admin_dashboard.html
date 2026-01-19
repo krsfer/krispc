@@ -92,13 +92,13 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush">
-                            <!-- Local Redis -->
+                            <!-- Primary Redis -->
                             <div class="list-group-item bg-transparent border-secondary py-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex align-items-center">
                                         <div class="status-indicator me-3 {% if stats.redis.local.status == 'Online' %}text-success{% else %}text-danger{% endif %}" style="font-size: 1.5rem;">●</div>
                                         <div>
-                                            <h6 class="mb-0">Local Redis</h6>
+                                            <h6 class="mb-0">Primary Redis</h6>
                                             <small class="text-muted">
                                                 {% if stats.redis.local.status == 'Online' %}
                                                     {{ stats.redis.local.keys }} keys | {{ stats.redis.local.memory_human }} mem
@@ -108,54 +108,9 @@
                                             </small>
                                         </div>
                                     </div>
-                                    <form method="post" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="active_redis_env" value="local">
-                                        {% if config.active_redis_env == 'local' %}
-                                            <button type="button" class="btn btn-sm btn-success disabled">Active</button>
-                                        {% else %}
-                                            <button type="submit" class="btn btn-sm btn-outline-primary">Use Local</button>
-                                        {% endif %}
-                                    </form>
-                                </div>
-                                {% if stats.redis.local.status != 'Online' %}
-                                    <div class="mt-2 small text-muted border-top border-secondary pt-2" style="font-size: 0.75rem;">
-                                        💡 Run <code>docker-compose up -d redis</code> to activate local instance.
+                                    <div class="small text-muted">
+                                        {{ stats.redis.local.url|truncatechars:30 }}
                                     </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Cloud Redis -->
-                            <div class="list-group-item bg-transparent border-secondary py-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <div class="status-indicator me-3 {% if stats.redis.cloud.status == 'Online' %}text-success{% elif stats.redis.cloud.status == 'Not Configured' %}text-muted{% else %}text-danger{% endif %}" style="font-size: 1.5rem;">●</div>
-                                        <div>
-                                            <h6 class="mb-0">Cloud Redis (redis-cloud.com)</h6>
-                                            <small class="text-muted">
-                                                {% if stats.redis.cloud %}
-                                                    {% if stats.redis.cloud.status == 'Online' %}
-                                                        {{ stats.redis.cloud.keys }} keys | {{ stats.redis.cloud.memory_human }} mem
-                                                    {% elif stats.redis.cloud.status == 'Not Configured' %}
-                                                        Not configured via env vars
-                                                    {% else %}
-                                                        <span title="{{ stats.redis.cloud.error }}">Offline - Check credentials</span>
-                                                    {% endif %}
-                                                {% else %}
-                                                    Same as local or not configured
-                                                {% endif %}
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <form method="post" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="active_redis_env" value="cloud">
-                                        {% if config.active_redis_env == 'cloud' %}
-                                            <button type="button" class="btn btn-sm btn-success disabled">Active</button>
-                                        {% else %}
-                                            <button type="submit" class="btn btn-sm btn-outline-primary" {% if stats.redis.cloud.status == 'Not Configured' %}disabled{% endif %}>Use Cloud</button>
-                                        {% endif %}
-                                    </form>
                                 </div>
                             </div>
                         </div>
