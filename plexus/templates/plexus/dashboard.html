@@ -9,38 +9,32 @@
         width: 40px;
         height: 40px;
         object-fit: cover;
-        cursor: zoom-in;
+        cursor: pointer;
         transition: transform 0.2s;
     }
     .thumbnail-img:hover {
         transform: scale(1.1);
-    }
-    .image-hover-container {
-        position: relative;
-    }
-    .hover-zoom {
-        display: none;
-        position: absolute;
-        top: -100px;
-        left: 50px;
-        z-index: 1000;
-        width: 300px;
-        background: #fff;
-        padding: 4px;
-        border-radius: 8px;
-    }
-    .image-hover-container:hover .hover-zoom {
-        display: block;
-    }
-    .hover-zoom img {
-        width: 100%;
-        height: auto;
-        border-radius: 4px;
+        border-color: var(--bs-primary) !important;
     }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white">{% trans "Input Image" %}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-0 bg-black">
+        <img src="" id="modalImage" class="img-fluid" alt="Full size">
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>{% trans "Dashboard" %}</h1>
     <a href="{% url 'plexus:capture' %}" class="btn btn-primary">{% trans "New Thought" %}</a>
@@ -94,11 +88,11 @@
                         
                         <div class="d-flex align-items-start mb-2">
                             {% if thought.input.image %}
-                                <div class="me-2 position-relative image-hover-container">
-                                    <img src="{{ thought.input.image.url }}" class="rounded thumbnail-img border border-secondary" alt="Input">
-                                    <div class="hover-zoom shadow-lg bg-dark border border-secondary">
-                                        <img src="{{ thought.input.image.url }}" alt="Input Full">
-                                    </div>
+                                <div class="me-2">
+                                    <img src="{{ thought.input.image.url }}" 
+                                         class="rounded thumbnail-img border border-secondary" 
+                                         alt="Input"
+                                         onclick="showImageModal('{{ thought.input.image.url }}')">
                                 </div>
                             {% endif %}
                             <p class="card-text text-muted small mb-0 flex-grow-1">
@@ -173,5 +167,15 @@
             {% endif %}
         </div>
     </div>
-{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showImageModal(url) {
+        const modalImg = document.getElementById('modalImage');
+        modalImg.src = url;
+        const myModal = new bootstrap.Modal(document.getElementById('imageModal'));
+        myModal.show();
+    }
+</script>
 {% endblock %}
