@@ -180,6 +180,10 @@ DJANGO_VITE = {
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 
+REDIS_CA_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem')
+REDIS_CLIENT_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt')
+REDIS_CLIENT_KEY_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key')
+
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'  # this is exactly the value 'apikey'
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
@@ -429,10 +433,6 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
 if DEBUG:
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True
-
-REDIS_CA_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem')
-REDIS_CLIENT_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt')
-REDIS_CLIENT_KEY_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key')
 
 if REDIS_URL and REDIS_URL.startswith("rediss://"):
     CELERY_BROKER_USE_SSL = {
