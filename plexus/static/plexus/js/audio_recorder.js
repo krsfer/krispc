@@ -9,7 +9,7 @@ class AudioRecorder {
         this.audioChunks = [];
         this.stream = null;
         this.isRecording = false;
-        
+
         // DOM Elements (assigned during init)
         this.recordButton = null;
         this.statusIndicator = null;
@@ -54,7 +54,9 @@ class AudioRecorder {
             this.updateUI('recording');
         } catch (err) {
             console.error('Error accessing microphone:', err);
-            alert('Could not access microphone. Please check permissions.');
+            if (window.Toast) {
+                Toast.error('Could not access microphone. Please check permissions.');
+            }
         }
     }
 

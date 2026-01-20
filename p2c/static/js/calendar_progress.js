@@ -208,7 +208,9 @@ window.handleCalendarOperation = function (operationType, event) {
 
     const calendarSelect = document.getElementById('calendar-select');
     if (!calendarSelect.value) {
-        alert('Please select a calendar first');
+        if (window.Toast) {
+            Toast.warning('Please select a calendar first');
+        }
         return;
     }
 
@@ -220,7 +222,9 @@ window.handleCalendarOperation = function (operationType, event) {
 
     // Don't proceed if the form action is '#' (no document_id available)
     if (form.action === '#' || form.action.endsWith('#')) {
-        alert('Please upload a PDF first');
+        if (window.Toast) {
+            Toast.warning('Please upload a PDF first');
+        }
         return;
     }
 
@@ -255,12 +259,16 @@ window.handleCalendarOperation = function (operationType, event) {
                 new window.CalendarProgress(data.task_id, operationType);
             } else {
                 console.error('No task_id in response:', data);
-                alert('No task ID received from server. Operation may have failed.');
+                if (window.Toast) {
+                    Toast.error('No task ID received from server. Operation may have failed.');
+                }
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert(`An error occurred while processing your request: ${error.message}`);
+            if (window.Toast) {
+                Toast.error(`An error occurred while processing your request: ${error.message}`);
+            }
         });
 };
 
@@ -360,65 +368,84 @@ document.addEventListener('DOMContentLoaded', function () {
             const calendarId = event.target.value;
 
             if (calendarId === 'ADD_NEW') {
-                const newName = prompt('Enter the name for the new calendar:');
-                if (!newName) {
-                    // Reset to empty selection if user cancelled
-                    calendarSelect.value = '';
-                    return;
-                }
+                // Use accessible modal prompt instead of browser prompt
+                (async () => {
+                    const newName = window.Modal
+                        ? await Modal.prompt({
+                            title: 'Create New Calendar',
+                            message: 'Enter the name for the new calendar:',
+                            placeholder: 'Calendar name',
+                            confirmText: 'Create',
+                            cancelText: 'Cancel'
+                        })
+                        : prompt('Enter the name for the new calendar:');
 
-                // Temporary loading state
-                calendarSelect.disabled = true;
-
-                // We'll use the sync_pdf_to_calendar logic's creation part or similar
-                // Actually, let's just use a dedicated creation if it existed, but we can reuse create_events with a dummy document or add a new endpoint.
-                // For now, I'll assume we want a simple calendar creation.
-                // The sync logic in json_views.py creates a calendar if it doesn't exist.
-
-                // Let's create it via a small fetch if we have an endpoint, or just suggest the name.
-                // The user's request was "Allow to create a calendas".
-
-                // I will add a new endpoint or use an existing one to just create a calendar.
-                // For simplicity here, I'll alert the user we're creating it and use a new name.
-
-                // Actually, better approach: add a hidden input for custom name if ADD_NEW is selected.
-                // But prompt is faster for a quick fix.
-
-                // Let's implement a quick 'create-calendar' endpoint in views.py
-                const createUrl = calendarSelect.dataset.createUrl || '/create-calendar/';
-                fetch(createUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    },
-                    body: JSON.stringify({ name: newName })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.id) {
-                            // Refresh the list and select the new one
-                            window.fetchCalendars.isLoading = false; // reset flag
-                            fetchCalendars();
-                            // We'll need to wait for refresh to select it, or just add it manually now
-                            const newOption = document.createElement('option');
-                            newOption.value = data.id;
-                            newOption.textContent = newName;
-                            newOption.selected = true;
-                            calendarSelect.appendChild(newOption);
-                            updateCalendarIds(data.id);
-                        } else {
-                            alert('Error creating calendar: ' + (data.error || 'Unknown error'));
-                            calendarSelect.value = '';
-                        }
-                    })
-                    .catch(error => {
-                        alert('Error creating calendar: ' + error.message);
+                    if (!newName) {
+                        // Reset to empty selection if user cancelled
                         calendarSelect.value = '';
+                        return;
+                    }
+
+                    // Temporary loading state
+                    calendarSelect.disabled = true;
+
+                    // We'll use the sync_pdf_to_calendar logic's creation part or similar
+                    // Actually, let's just use a dedicated creation if it existed, but we can reuse create_events with a dummy document or add a new endpoint.
+                    // For now, I'll assume we want a simple calendar creation.
+                    // The sync logic in json_views.py creates a calendar if it doesn't exist.
+
+                    // Let's create it via a small fetch if we have an endpoint, or just suggest the name.
+                    // The user's request was "Allow to create a calendas".
+
+                    // I will add a new endpoint or use an existing one to just create a calendar.
+                    // For simplicity here, I'll alert the user we're creating it and use a new name.
+
+                    // Actually, better approach: add a hidden input for custom name if ADD_NEW is selected.
+                    // But prompt is faster for a quick fix.
+
+                    // Let's implement a quick 'create-calendar' endpoint in views.py
+                    const createUrl = calendarSelect.dataset.createUrl || '/create-calendar/';
+                    fetch(createUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        },
+                        body: JSON.stringify({ name: newName })
                     })
-                    .finally(() => {
-                        calendarSelect.disabled = false;
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.id) {
+                                // Refresh the list and select the new one
+                                window.fetchCalendars.isLoading = false; // reset flag
+                                fetchCalendars();
+                                // We'll need to wait for refresh to select it, or just add it manually now
+                                const newOption = document.createElement('option');
+                                newOption.value = data.id;
+                                newOption.textContent = newName;
+                                newOption.selected = true;
+                                calendarSelect.appendChild(newOption);
+                                updateCalendarIds(data.id);
+                                if (window.Toast) {
+                                    Toast.success(`Calendar "${newName}" created successfully`);
+                                }
+                            } else {
+                                if (window.Toast) {
+                                    Toast.error('Error creating calendar: ' + (data.error || 'Unknown error'));
+                                }
+                                calendarSelect.value = '';
+                            }
+                        })
+                        .catch(error => {
+                            if (window.Toast) {
+                                Toast.error('Error creating calendar: ' + error.message);
+                            }
+                            calendarSelect.value = '';
+                        })
+                        .finally(() => {
+                            calendarSelect.disabled = false;
+                        });
+                })(); // End async IIFE
                 return;
             }
 
