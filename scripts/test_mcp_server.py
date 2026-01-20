@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Test script for KrisPC MCP Server
+Test script for Plexus MCP Server
 
 This script tests all MCP server functionality:
 - Resources (data sources)
@@ -111,24 +111,19 @@ async def test_tool_calls():
     
     tests = [
         {
-            "name": "get_service_locations",
-            "args": {},
-            "description": "Get service locations"
+            "name": "create_note",
+            "args": {"content": "Test note from MCP test script"},
+            "description": "Create a new note"
         },
         {
-            "name": "list_repair_services",
-            "args": {"category": "phone"},
-            "description": "List phone repair services"
+            "name": "search_thoughts",
+            "args": {"query": "test"},
+            "description": "Search thoughts"
         },
         {
-            "name": "list_repair_services",
-            "args": {},
-            "description": "List all repair services"
-        },
-        {
-            "name": "get_repair_pricing",
-            "args": {"service_type": "phone_repair", "repair_detail": "screen"},
-            "description": "Get phone screen repair pricing"
+            "name": "list_actions",
+            "args": {"status": "pending"},
+            "description": "List pending actions"
         },
     ]
     
@@ -137,7 +132,7 @@ async def test_tool_calls():
         print(f"Test: {test['description']}")
         print(f"Tool: {test['name']}")
         print(f"Args: {test['args']}")
-        print(f"{'─'*60}")
+        print(f"{'{'}─{'}'*60}")
         
         try:
             result = await call_tool(test['name'], test['args'])
@@ -157,7 +152,7 @@ async def test_tool_calls():
 async def main():
     """Run all tests"""
     print("\n" + "🚀"*30)
-    print("  KrisPC MCP Server Test Suite")
+    print("  Plexus MCP Server Test Suite")
     print("🚀"*30)
     
     results = []
@@ -183,13 +178,6 @@ async def main():
     
     if failed == 0:
         print("\n  🎉 All tests passed! MCP server is ready to use.")
-        print("\n  Next steps:")
-        print("  1. Configure Claude Desktop (see MCP_SERVER_GUIDE.md)")
-        print("  2. Restart Claude Desktop")
-        print("  3. Test with queries like:")
-        print("     - 'List all KrisPC repair services'")
-        print("     - 'Where does KrisPC provide services?'")
-        print("     - 'How much for a phone screen repair?'")
     else:
         print("\n  ⚠️  Some tests failed. Check errors above.")
         sys.exit(1)
