@@ -1,10 +1,12 @@
 """
-Model Context Protocol (MCP) Server for Plexus services.
+Model Context Protocol (MCP) Server for KrisPC & Plexus services.
 
 This server exposes services to AI assistants that support MCP.
 AI tools like Claude, ChatGPT, etc. can discover and use these services.
 
 Exposed Services:
+- KrisPC: Repair pricing, services list, locations
+- PDF2Cal: Caregiver PDF processing
 - Plexus (SecondBrain): Capture inputs, search thoughts, manage actions
 """
 
@@ -33,6 +35,9 @@ from mcp.types import (
 )
 from mcp.server.stdio import stdio_server
 
+# Import KrisPC data
+from krispc import lst_products, marques, lst_villes
+
 # Import Plexus models
 from plexus.models import Input, Thought, Action
 from django.db.models import Q
@@ -40,7 +45,7 @@ from django.db.models import Q
 logger = logging.getLogger(__name__)
 
 # Create MCP server
-mcp_server = Server("plexus-services")
+mcp_server = Server("krispc-plexus-services")
 
 
 #
@@ -51,6 +56,25 @@ mcp_server = Server("plexus-services")
 async def list_resources() -> List[Resource]:
     """List all available resources."""
     return [
+        # KrisPC Resources
+        Resource(
+            uri="krispc://services/list",
+            name="Repair Services",
+            mimeType="application/json",
+            description="Complete list of repair services",
+        ),
+        Resource(
+            uri="krispc://brands/list",
+            name="Supported Brands",
+            mimeType="application/json",
+            description="List of supported brands",
+        ),
+        Resource(
+            uri="krispc://locations/list",
+            name="Service Locations",
+            mimeType="application/json",
+            description="Cities where service is available",
+        ),
         # Plexus Resources
         Resource(
             uri="plexus://thoughts/recent",
@@ -69,8 +93,16 @@ async def list_resources() -> List[Resource]:
 @mcp_server.read_resource()
 async def read_resource(uri: str) -> str:
     """Read a specific resource."""
+    # KrisPC Resources
+    if uri == "krispc://services/list":
+        return json.dumps(lst_products.data(), ensure_ascii=False, indent=2)
+    elif uri == "krispc://brands/list":
+        return json.dumps(marques.data(), ensure_ascii=False, indent=2)
+    elif uri == "krispc://locations/list":
+        return json.dumps(lst_villes.data(), ensure_ascii=False, indent=2)
+    
     # Plexus Resources
-    if uri == "plexus://thoughts/recent":
+    elif uri == "plexus://thoughts/recent":
         thoughts = Thought.objects.select_related("input").order_by("-input__timestamp")[:10]
         data = [
             {
@@ -109,6 +141,52 @@ async def read_resource(uri: str) -> str:
 async def list_tools() -> List[Tool]:
     """List all available tools."""
     return [
+        # --- KrisPC Tools ---
+        Tool(
+            name="get_repair_pricing",
+            description="Get pricing information for phone or computer repairs.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "service_type": {"type": "string", "description": "Type of repair service"},
+                    "repair_detail": {"type": "string", "description": "Specific repair detail (e.g., 'screen')"},
+                    "brand": {"type": "string", "description": "Device brand"},
+                    "model": {"type": "string", "description": "Device model"},
+                },
+                "required": ["service_type"],
+            },
+        ),
+        Tool(
+            name="list_repair_services",
+            description="List all available repair services.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "category": {"type": "string", "description": "Filter by category"},
+                },
+            },
+        ),
+        Tool(
+            name="get_service_locations",
+            description="Get the list of cities where services are available.",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+            },
+        ),
+        Tool(
+            name="process_caregiver_pdf",
+            description="Process a PDF file containing caregiver schedules.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "pdf_path": {"type": "string", "description": "Local file path to PDF"},
+                    "extract_calendar_name": {"type": "boolean", "default": True},
+                },
+                "required": ["pdf_path"],
+            },
+        ),
+        
         # --- Plexus Tools ---
         Tool(
             name="create_note",
@@ -163,8 +241,18 @@ async def list_tools() -> List[Tool]:
 async def call_tool(name: str, arguments: Any) -> List[TextContent]:
     """Handle tool execution."""
     
+    # KrisPC
+    if name == "get_repair_pricing":
+        return await get_repair_pricing_tool(arguments)
+    elif name == "list_repair_services":
+        return await list_repair_services_tool(arguments)
+    elif name == "get_service_locations":
+        return await get_service_locations_tool(arguments)
+    elif name == "process_caregiver_pdf":
+        return await process_caregiver_pdf_tool(arguments)
+    
     # Plexus
-    if name == "create_note":
+    elif name == "create_note":
         return await create_note_tool(arguments)
     elif name == "search_thoughts":
         return await search_thoughts_tool(arguments)
@@ -176,6 +264,58 @@ async def call_tool(name: str, arguments: Any) -> List[TextContent]:
     else:
         raise ValueError(f"Unknown tool: {name}")
 
+
+#
+# TOOL IMPLEMENTATIONS (KRISPC)
+#
+
+async def get_repair_pricing_tool(arguments: Dict[str, Any]) -> List[TextContent]:
+    service_type = arguments.get("service_type")
+    repair_detail = arguments.get("repair_detail")
+    brand = arguments.get("brand")
+    model = arguments.get("model")
+    
+    services = lst_products.data()
+    matching_service = None
+    for service in services:
+        if service_type.lower() in service.get("Prd_Name", "").lower() or \
+           service_type.lower() in service.get("Prd_Desc", "").lower():
+            matching_service = service
+            break
+    
+    if not matching_service:
+        return [TextContent(type="text", text=json.dumps({"message": "Service not found"}, indent=2))]
+
+    result = {
+        "service": matching_service.get("Prd_Name"),
+        "description": matching_service.get("Prd_Desc"),
+        "pricing": matching_service.get("Prd_More"),
+        "brand": brand,
+        "model": model
+    }
+    return [TextContent(type="text", text=json.dumps(result, ensure_ascii=False, indent=2))]
+
+async def list_repair_services_tool(arguments: Dict[str, Any]) -> List[TextContent]:
+    category = arguments.get("category")
+    services = lst_products.data()
+    if category:
+        services = [s for s in services if category.lower() in str(s).lower()]
+    return [TextContent(type="text", text=json.dumps([s.get("Prd_Name") for s in services], ensure_ascii=False, indent=2))]
+
+async def get_service_locations_tool(arguments: Dict[str, Any]) -> List[TextContent]:
+    return [TextContent(type="text", text=json.dumps(lst_villes.data(), ensure_ascii=False, indent=2))]
+
+async def process_caregiver_pdf_tool(arguments: Dict[str, Any]) -> List[TextContent]:
+    from p2c.pdf_processing.parser_factory import PDFParserFactory
+    pdf_path = arguments.get("pdf_path")
+    if not os.path.exists(pdf_path):
+        return [TextContent(type="text", text=json.dumps({"error": "File not found"}, indent=2))]
+    try:
+        parser = PDFParserFactory.create_parser(pdf_path)
+        appointments = parser.extract_schedule_entries(pdf_path)
+        return [TextContent(type="text", text=json.dumps({"appointments": appointments}, indent=2))]
+    except Exception as e:
+        return [TextContent(type="text", text=json.dumps({"error": str(e)}, indent=2))]
 
 #
 # TOOL IMPLEMENTATIONS (PLEXUS)
@@ -232,7 +372,7 @@ async def toggle_action_tool(arguments: Dict[str, Any]) -> List[TextContent]:
 #
 
 async def main():
-    logger.info("Starting Plexus MCP server...")
+    logger.info("Starting KrisPC & Plexus MCP server...")
     async with stdio_server() as (read_stream, write_stream):
         await mcp_server.run(
             read_stream,

@@ -1,0 +1,39 @@
+"""
+Serializers for the KrisPC application.
+
+Provides REST API serialization for Contact model with honeypot spam protection.
+"""
+from rest_framework import serializers
+from .models import Contact
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Contact model.
+    
+    Handles contact form submissions with built-in honeypot spam protection.
+    The 'website' field is a write-only honeypot that should remain empty.
+    """
+    # Honeypot field: should be left empty by humans
+    website = serializers.CharField(required=False, write_only=True, allow_blank=True)
+
+    class Meta:
+        model = Contact
+        fields = ['id', 'firstname', 'surname', 'from_email', 'message', 'website', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def validate(self, data):
+        """Validate submission and check honeypot field for spam detection."""
+        # If the honeypot field 'website' is filled, it's likely a bot.
+        if data.get('website'):
+            raise serializers.ValidationError("Invalid submission.")
+        
+        # Remove the honeypot field from the data so it doesn't cause issues with the model
+        data.pop('website', None)
+        return data
+
+    def validate_message(self, value):
+        """Ensure message meets minimum length requirement."""
+        if len(value) < 10:
+             raise serializers.ValidationError("Message is too short (min 10 characters).")
+        return value

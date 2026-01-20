@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "additionalProperties": {
+        "type": "object",
+        "properties": {
+            "colorId": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string"
+            },
+            "location": {
+                "type": "string"
+            }
+        },
+        "required": ["colorId", "description", "location"],
+        "additionalProperties": false
+    },
+    "required": ["DEFAULT"],
+    "properties": {
+        "DEFAULT": {
+            "type": "object",
+            "properties": {
+                "colorId": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                }
+            },
+            "required": ["colorId", "description", "location"],
+            "additionalProperties": false
+        }
+    }
+}

@@ -1,0 +1,74 @@
+/* Critical above-the-fold styles */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f3f4f6;
+}
+
+nav {
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  height: 64px;
+}
+
+.container {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+#main-container {
+  padding-top: calc(64px + 0.5rem + 2px); /* navbar height (64px) + rounded-lg (0.5rem) + 2px */
+}
+
+/* Basic layout classes */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.fixed {
+  position: fixed;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.h-20 {
+  height: 5rem;
+}
+
+.pt-20 {
+  padding-top: 5rem;
+}
+
+.h-16 {
+  height: 4rem;
+}
+
+.pt-16 {
+  padding-top: 4rem;
+}

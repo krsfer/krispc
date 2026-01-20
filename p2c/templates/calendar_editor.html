@@ -1,0 +1,1004 @@
+{% extends 'p2c_base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Calendar Editor" %}{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Header Section: Calendar and Month Selection -->
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">{% trans "Google Calendar Editor" %}</h2>
+        <p class="text-gray-600 mb-4">{% trans "Edit existing events in your Google Calendar. Select a calendar and month to load events." %}</p>
+
+        <form id="load-events-form" class="space-y-4">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="calendar_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Calendar" %}</label>
+                    <select id="calendar_select" name="calendar_id"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">{% trans "Loading calendars..." %}</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="month_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Month" %}</label>
+                    <select id="month_select" name="month"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="1">{% trans "January" %}</option>
+                        <option value="2">{% trans "February" %}</option>
+                        <option value="3">{% trans "March" %}</option>
+                        <option value="4">{% trans "April" %}</option>
+                        <option value="5">{% trans "May" %}</option>
+                        <option value="6">{% trans "June" %}</option>
+                        <option value="7">{% trans "July" %}</option>
+                        <option value="8">{% trans "August" %}</option>
+                        <option value="9">{% trans "September" %}</option>
+                        <option value="10">{% trans "October" %}</option>
+                        <option value="11">{% trans "November" %}</option>
+                        <option value="12">{% trans "December" %}</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="year_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Year" %}</label>
+                    <select id="year_select" name="year"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </select>
+                </div>
+            </div>
+            <button type="submit" id="load-events-btn"
+                    class="w-full md:w-auto px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                {% trans "Load Events" %}
+            </button>
+        </form>
+    </div>
+
+    <!-- Bulk Actions Panel (hidden until events loaded) -->
+    <div id="bulk-actions-panel" class="bg-white shadow-lg rounded-lg p-6 mb-6 hidden">
+        <h3 class="text-lg font-semibold mb-4">{% trans "Bulk Actions" %}</h3>
+
+        <!-- Re-apply Caregiver Settings Button -->
+        <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h4 class="font-medium text-indigo-900">{% trans "Re-apply Caregiver Settings" %}</h4>
+                    <p class="text-sm text-indigo-700">{% trans "Update all events with colors, location, Tél, and description from saved caregiver settings" %}</p>
+                </div>
+                <button type="button" id="reapply-settings-btn"
+                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md transition-colors">
+                    {% trans "Re-apply Settings" %}
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Batch Rename -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-medium text-gray-900 mb-3">{% trans "Batch Rename Caregiver" %}</h4>
+                <div class="space-y-3">
+                    <div>
+                        <label for="rename_from" class="block text-sm font-medium text-gray-700 mb-1">{% trans "From" %}</label>
+                        <select id="rename_from" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">{% trans "Select caregiver..." %}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="rename_to" class="block text-sm font-medium text-gray-700 mb-1">{% trans "To" %}</label>
+                        <input type="text" id="rename_to" placeholder="{% trans 'New name' %}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button type="button" id="apply-rename-btn"
+                            class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors">
+                        {% trans "Apply Rename" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bulk Description Update -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-medium text-gray-900 mb-3">{% trans "Bulk Description Update" %}</h4>
+                <div class="space-y-3">
+                    <div>
+                        <label for="desc_target" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Apply to" %}</label>
+                        <select id="desc_target" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="all">{% trans "All events" %}</option>
+                            <option value="selected">{% trans "Selected events only" %}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="desc_text" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Description to add" %}</label>
+                        <textarea id="desc_text" rows="2" placeholder="{% trans 'Enter description text...' %}"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="desc_mode" value="append" checked class="mr-2">
+                            <span class="text-sm">{% trans "Append" %}</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="desc_mode" value="replace" class="mr-2">
+                            <span class="text-sm">{% trans "Replace" %}</span>
+                        </label>
+                    </div>
+                    <button type="button" id="apply-desc-btn"
+                            class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors">
+                        {% trans "Apply Description" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Section -->
+    <div id="events-section" class="bg-white shadow-lg rounded-lg p-6 hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-900" id="events-title">{% trans "Calendar Events" %}</h2>
+            <div class="flex gap-2">
+                <button id="show-all-events" class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors hidden">{% trans "Show All" %}</button>
+                <button id="select-all-btn" class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">{% trans "Select All" %}</button>
+                <button id="deselect-all-btn" class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">{% trans "Deselect All" %}</button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="mb-4 flex flex-col items-center">
+            <div id="event-filters" class="flex flex-wrap gap-2 mb-2 justify-center"></div>
+        </div>
+
+        <!-- Events Grid -->
+        <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Events will be injected here by JavaScript -->
+        </div>
+
+        <!-- Submit Section -->
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                <div id="changes-summary" class="text-sm text-gray-600">
+                    <span id="changes-count">0</span> {% trans "events modified" %}
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" id="preview-btn"
+                            class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-md shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                        {% trans "Preview Changes" %}
+                    </button>
+                    <button type="button" id="submit-btn"
+                            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                        {% trans "Submit Changes" %}
+                    </button>
+                </div>
+            </div>
+            <!-- Progress indicator -->
+            <div id="submit-status" class="mt-4 hidden">
+                <div class="flex items-center gap-2">
+                    <div id="submit-spinner" class="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full"></div>
+                    <span id="submit-status-text" class="text-sm text-gray-600">{% trans "Processing..." %}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                    <div id="submit-progress" class="bg-green-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div id="preview-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">{% trans "Preview Changes" %}</h3>
+            <button id="close-preview" class="text-gray-400 hover:text-gray-500">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="preview-content" class="space-y-4">
+            <!-- Preview content will be injected here -->
+        </div>
+        <div class="mt-6 flex justify-end gap-3">
+            <button type="button" id="cancel-preview"
+                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-md transition-colors">
+                {% trans "Cancel" %}
+            </button>
+            <button type="button" id="confirm-submit"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition-colors">
+                {% trans "Confirm & Submit" %}
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // State
+    let originalEvents = [];  // Original events from Google Calendar
+    let modifiedEvents = [];  // Events with modifications
+    let selectedEventIds = new Set();
+    let calendars = [];
+
+    // Color mapping
+    const colorIdToHex = {
+        "1": "#ac725e", "2": "#33b679", "3": "#8e24aa", "4": "#e67c73", "5": "#f6c026",
+        "6": "#f5511d", "7": "#039be5", "8": "#616161", "9": "#3f51b5", "10": "#0b8043", "11": "#d60000"
+    };
+
+    // Initialize
+    initializeYearSelect();
+    initializeMonthSelect();
+    loadCalendars();
+
+    function initializeYearSelect() {
+        const yearSelect = document.getElementById('year_select');
+        const currentYear = new Date().getFullYear();
+        for (let year = currentYear - 1; year <= currentYear + 2; year++) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            if (year === currentYear) option.selected = true;
+            yearSelect.appendChild(option);
+        }
+    }
+
+    function initializeMonthSelect() {
+        const monthSelect = document.getElementById('month_select');
+        const currentMonth = new Date().getMonth() + 1;
+        monthSelect.value = currentMonth;
+    }
+
+    async function loadCalendars() {
+        try {
+            const response = await fetch("{% url 'p2c:get_calendars' %}");
+            const data = await response.json();
+
+            if (data.error) {
+                console.error('Error loading calendars:', data.error);
+                return;
+            }
+
+            calendars = data.calendars || [];
+
+            // Sort calendars alphabetically by name (summary)
+            calendars.sort((a, b) => {
+                const nameA = (a.summary || '').toLowerCase();
+                const nameB = (b.summary || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+
+            const calendarSelect = document.getElementById('calendar_select');
+            calendarSelect.innerHTML = '<option value="">{% trans "Select a calendar..." %}</option>';
+
+            calendars.forEach(calendar => {
+                const option = document.createElement('option');
+                option.value = calendar.id;
+                option.textContent = calendar.summary + (calendar.primary ? ' ({% trans "Primary" %})' : '');
+                calendarSelect.appendChild(option);
+            });
+
+            // Pre-select calendar: first check localStorage, then backend's last_calendar_id
+            const savedCalendarId = localStorage.getItem('calendarEditor_selectedCalendar');
+            if (savedCalendarId && calendars.some(c => c.id === savedCalendarId)) {
+                calendarSelect.value = savedCalendarId;
+            } else if (data.last_calendar_id) {
+                calendarSelect.value = data.last_calendar_id;
+            }
+
+            // Save selection to localStorage when changed
+            calendarSelect.addEventListener('change', () => {
+                if (calendarSelect.value) {
+                    localStorage.setItem('calendarEditor_selectedCalendar', calendarSelect.value);
+                }
+            });
+        } catch (error) {
+            console.error('Error loading calendars:', error);
+        }
+    }
+
+    // Load events form handler
+    document.getElementById('load-events-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const calendarId = document.getElementById('calendar_select').value;
+        const month = document.getElementById('month_select').value;
+        const year = document.getElementById('year_select').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        if (!calendarId) {
+            alert('{% trans "Please select a calendar" %}');
+            return;
+        }
+
+        const loadBtn = document.getElementById('load-events-btn');
+        loadBtn.disabled = true;
+        loadBtn.textContent = '{% trans "Loading..." %}';
+
+        try {
+            const response = await fetch("{% url 'p2c:calendar_editor_fetch_events' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    calendar_id: calendarId,
+                    month: parseInt(month),
+                    year: parseInt(year)
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert('{% trans "Error: " %}' + data.error);
+                return;
+            }
+
+            originalEvents = data.events || [];
+            modifiedEvents = JSON.parse(JSON.stringify(originalEvents)); // Deep copy
+            selectedEventIds.clear();
+
+            displayEvents();
+            updateBulkActionsPanel();
+
+        } catch (error) {
+            console.error('Error loading events:', error);
+            alert('{% trans "Failed to load events" %}');
+        } finally {
+            loadBtn.disabled = false;
+            loadBtn.textContent = '{% trans "Load Events" %}';
+        }
+    });
+
+    function displayEvents() {
+        const eventsSection = document.getElementById('events-section');
+        const eventsGrid = document.getElementById('events-grid');
+        eventsGrid.innerHTML = '';
+
+        if (modifiedEvents.length === 0) {
+            eventsSection.classList.add('hidden');
+            document.getElementById('bulk-actions-panel').classList.add('hidden');
+            return;
+        }
+
+        // Sort by start time
+        modifiedEvents.sort((a, b) => {
+            const aStart = a.start?.dateTime || a.start?.date || '';
+            const bStart = b.start?.dateTime || b.start?.date || '';
+            return aStart.localeCompare(bStart);
+        });
+
+        modifiedEvents.forEach((event, index) => {
+            const card = createEventCard(event, index);
+            eventsGrid.appendChild(card);
+        });
+
+        eventsSection.classList.remove('hidden');
+        document.getElementById('bulk-actions-panel').classList.remove('hidden');
+
+        initializeEventFilters();
+        updateChangesCount();
+    }
+
+    function createEventCard(event, index) {
+        const originalEvent = originalEvents.find(e => e.id === event.id);
+        const isModified = JSON.stringify(event) !== JSON.stringify(originalEvent);
+        const isSelected = selectedEventIds.has(event.id);
+        const isRecurring = event.isRecurring || event.recurringEventId;
+
+        // Parse date/time
+        const startStr = event.start?.dateTime || event.start?.date || '';
+        const endStr = event.end?.dateTime || event.end?.date || '';
+        const startDate = new Date(startStr);
+        const endDate = new Date(endStr);
+
+        const dayOfWeek = startDate.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const day = startDate.getDate();
+        const startTime = startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        const endTime = endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+        const colorId = event.colorId || '1';
+        const borderColor = colorIdToHex[colorId] || colorIdToHex['1'];
+        const bgClass = isWeekend ? 'bg-gray-100' : 'bg-white';
+        const modifiedClass = isModified ? 'ring-2 ring-yellow-400' : '';
+        const selectedClass = isSelected ? 'ring-2 ring-blue-500' : '';
+
+        const card = document.createElement('div');
+        card.className = `border-l-4 pl-4 ${bgClass} rounded-lg shadow-sm p-3 cursor-pointer hover:shadow-md transition-shadow ${modifiedClass} ${selectedClass}`;
+        card.style.borderLeftColor = borderColor;
+        card.dataset.eventId = event.id;
+        card.dataset.index = index;
+
+        card.innerHTML = `
+            <div class="event-view">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <p class="text-lg font-medium">
+                            <span class="name-color-square inline-block w-3 h-3 rounded mr-2" style="background-color: ${borderColor}"></span>
+                            <span class="summary-text">${event.summary || '{% trans "Untitled" %}'}</span>
+                            ${isRecurring ? '<span class="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">{% trans "Recurring" %}</span>' : ''}
+                            ${isModified ? '<span class="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">{% trans "Modified" %}</span>' : ''}
+                        </p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            {% trans "Day" %} ${day} {% trans "from" %} ${startTime} {% trans "to" %} ${endTime}
+                        </p>
+                        ${event.location ? `<p class="text-xs text-gray-500 mt-1"><span class="font-medium">📍</span> ${event.location}</p>` : ''}
+                        ${event.tel ? `<p class="text-xs text-gray-500 mt-1"><span class="font-medium">📞</span> ${event.tel}</p>` : ''}
+                        ${event.description ? `<p class="text-xs text-gray-500 mt-1 truncate">${event.description.substring(0, 50)}${event.description.length > 50 ? '...' : ''}</p>` : ''}
+                    </div>
+                    <input type="checkbox" class="event-checkbox h-5 w-5 text-blue-600 rounded" ${isSelected ? 'checked' : ''}>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">{% trans "Click to edit" %}${isRecurring ? ' | {% trans "Part of recurring series" %}' : ''}</p>
+            </div>
+            <div class="event-edit hidden">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600">{% trans "Summary/Name" %}</label>
+                        <input type="text" class="edit-summary w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500" value="${event.summary || ''}">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600">{% trans "Location" %}</label>
+                            <input type="text" class="edit-location w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500" value="${event.location || ''}" placeholder="{% trans "Address or location" %}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600">{% trans "Tél" %}</label>
+                            <input type="text" class="edit-tel w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500" value="${event.tel || ''}" placeholder="{% trans "Phone number" %}">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600">{% trans "Description" %}</label>
+                        <textarea class="edit-description w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500" rows="2">${event.description || ''}</textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600">{% trans "Start Time" %}</label>
+                            <input type="datetime-local" class="edit-start w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500" value="${formatForInput(startStr)}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600">{% trans "End Time" %}</label>
+                            <input type="datetime-local" class="edit-end w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500" value="${formatForInput(endStr)}">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600">{% trans "Color" %}</label>
+                        <select class="edit-color w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                            ${Object.entries(colorIdToHex).map(([id, hex]) =>
+                                `<option value="${id}" ${id === colorId ? 'selected' : ''} style="background-color: ${hex}; color: white;">${id}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    ${isRecurring ? `
+                    <div class="bg-purple-50 p-2 rounded text-xs">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="edit-series mr-2">
+                            <span>{% trans "Apply to all events in this series" %}</span>
+                        </label>
+                    </div>
+                    ` : ''}
+                    <div class="flex gap-2 mt-2">
+                        <button type="button" class="save-btn flex-1 px-2 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded transition-colors">{% trans "Save" %}</button>
+                        <button type="button" class="cancel-btn flex-1 px-2 py-1 text-xs bg-gray-400 hover:bg-gray-500 text-white rounded transition-colors">{% trans "Cancel" %}</button>
+                        <button type="button" class="revert-btn px-2 py-1 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors" ${isModified ? '' : 'disabled'}>{% trans "Revert" %}</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Event handlers
+        const viewDiv = card.querySelector('.event-view');
+        const editDiv = card.querySelector('.event-edit');
+        const checkbox = card.querySelector('.event-checkbox');
+
+        // Checkbox handler
+        checkbox.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (checkbox.checked) {
+                selectedEventIds.add(event.id);
+            } else {
+                selectedEventIds.delete(event.id);
+            }
+            card.classList.toggle('ring-blue-500', checkbox.checked);
+        });
+
+        // Click to edit
+        viewDiv.addEventListener('click', (e) => {
+            if (e.target === checkbox) return;
+
+            // Close other open edits
+            document.querySelectorAll('.event-edit:not(.hidden)').forEach(openEdit => {
+                openEdit.classList.add('hidden');
+                openEdit.previousElementSibling.classList.remove('hidden');
+            });
+
+            viewDiv.classList.add('hidden');
+            editDiv.classList.remove('hidden');
+        });
+
+        // Save button
+        editDiv.querySelector('.save-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(card.dataset.index);
+
+            modifiedEvents[idx].summary = editDiv.querySelector('.edit-summary').value;
+            modifiedEvents[idx].location = editDiv.querySelector('.edit-location').value;
+            modifiedEvents[idx].tel = editDiv.querySelector('.edit-tel').value;
+            modifiedEvents[idx].description = editDiv.querySelector('.edit-description').value;
+            modifiedEvents[idx].colorId = editDiv.querySelector('.edit-color').value;
+
+            const newStart = editDiv.querySelector('.edit-start').value;
+            const newEnd = editDiv.querySelector('.edit-end').value;
+            if (newStart) {
+                modifiedEvents[idx].start = { dateTime: new Date(newStart).toISOString() };
+            }
+            if (newEnd) {
+                modifiedEvents[idx].end = { dateTime: new Date(newEnd).toISOString() };
+            }
+
+            // Check if editing series
+            const seriesCheckbox = editDiv.querySelector('.edit-series');
+            if (seriesCheckbox && seriesCheckbox.checked) {
+                modifiedEvents[idx].editSeries = true;
+            }
+
+            displayEvents();
+        });
+
+        // Cancel button
+        editDiv.querySelector('.cancel-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            viewDiv.classList.remove('hidden');
+            editDiv.classList.add('hidden');
+        });
+
+        // Revert button
+        editDiv.querySelector('.revert-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(card.dataset.index);
+            const original = originalEvents.find(ev => ev.id === event.id);
+            if (original) {
+                modifiedEvents[idx] = JSON.parse(JSON.stringify(original));
+                displayEvents();
+            }
+        });
+
+        return card;
+    }
+
+    function formatForInput(isoString) {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        return date.toISOString().slice(0, 16);
+    }
+
+    function updateBulkActionsPanel() {
+        // Populate rename dropdown with unique summaries
+        const renameFrom = document.getElementById('rename_from');
+        const uniqueNames = [...new Set(modifiedEvents.map(e => e.summary).filter(Boolean))];
+
+        renameFrom.innerHTML = '<option value="">{% trans "Select caregiver..." %}</option>';
+        uniqueNames.sort().forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            renameFrom.appendChild(option);
+        });
+    }
+
+    function initializeEventFilters() {
+        const filterContainer = document.getElementById('event-filters');
+        filterContainer.innerHTML = '';
+
+        const nameStats = new Map();
+        modifiedEvents.forEach(event => {
+            const name = event.summary || '{% trans "Untitled" %}';
+            if (!nameStats.has(name)) {
+                nameStats.set(name, { count: 0, colorId: event.colorId || '1' });
+            }
+            nameStats.get(name).count++;
+        });
+
+        nameStats.forEach((stats, name) => {
+            const button = document.createElement('button');
+            button.className = 'flex items-center gap-2 text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors';
+
+            const colorSquare = document.createElement('span');
+            colorSquare.className = 'inline-block w-3 h-3 rounded';
+            colorSquare.style.backgroundColor = colorIdToHex[stats.colorId] || colorIdToHex['1'];
+
+            const text = document.createElement('span');
+            text.textContent = `${name} (${stats.count})`;
+
+            button.appendChild(colorSquare);
+            button.appendChild(text);
+            button.addEventListener('click', () => filterEvents(name));
+            filterContainer.appendChild(button);
+        });
+    }
+
+    function filterEvents(filterName) {
+        const cards = document.querySelectorAll('#events-grid > div');
+        const showAllButton = document.getElementById('show-all-events');
+
+        cards.forEach(card => {
+            const summary = card.querySelector('.summary-text')?.textContent || '';
+            if (!filterName || summary === filterName) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (filterName) {
+            showAllButton.classList.remove('hidden');
+        } else {
+            showAllButton.classList.add('hidden');
+        }
+    }
+
+    function updateChangesCount() {
+        let count = 0;
+        modifiedEvents.forEach(event => {
+            const original = originalEvents.find(e => e.id === event.id);
+            if (JSON.stringify(event) !== JSON.stringify(original)) {
+                count++;
+            }
+        });
+
+        document.getElementById('changes-count').textContent = count;
+        document.getElementById('preview-btn').disabled = count === 0;
+        document.getElementById('submit-btn').disabled = count === 0;
+    }
+
+    // Show all button
+    document.getElementById('show-all-events').addEventListener('click', () => filterEvents(null));
+
+    // Select/Deselect all
+    document.getElementById('select-all-btn').addEventListener('click', () => {
+        modifiedEvents.forEach(e => selectedEventIds.add(e.id));
+        document.querySelectorAll('.event-checkbox').forEach(cb => cb.checked = true);
+        document.querySelectorAll('#events-grid > div').forEach(card => card.classList.add('ring-blue-500'));
+    });
+
+    document.getElementById('deselect-all-btn').addEventListener('click', () => {
+        selectedEventIds.clear();
+        document.querySelectorAll('.event-checkbox').forEach(cb => cb.checked = false);
+        document.querySelectorAll('#events-grid > div').forEach(card => card.classList.remove('ring-blue-500'));
+    });
+
+    // Re-apply caregiver settings (colors, location, Tél, description)
+    document.getElementById('reapply-settings-btn').addEventListener('click', async () => {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const btn = document.getElementById('reapply-settings-btn');
+
+        // Get unique caregiver names from events
+        const caregiverNames = [...new Set(modifiedEvents.map(e => e.summary).filter(Boolean))];
+
+        if (caregiverNames.length === 0) {
+            alert('{% trans "No events with caregiver names found" %}');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = '{% trans "Loading settings..." %}';
+
+        try {
+            // Fetch caregiver settings from backend
+            const response = await fetch("{% url 'p2c:get_caregiver_settings' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ caregiver_names: caregiverNames })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert('{% trans "Error fetching settings: " %}' + data.error);
+                return;
+            }
+
+            const settings = data.settings || {};
+            let updatedCount = 0;
+
+            // Apply all settings to events
+            modifiedEvents.forEach(event => {
+                const name = event.summary;
+                if (name && settings[name]) {
+                    const caregiverSettings = settings[name];
+                    let eventUpdated = false;
+
+                    // Apply colorId
+                    if (caregiverSettings.colorId && event.colorId !== caregiverSettings.colorId) {
+                        event.colorId = caregiverSettings.colorId;
+                        eventUpdated = true;
+                    }
+
+                    // Apply Location (always apply, even if empty - to clear the field)
+                    const newLocation = caregiverSettings.Location || '';
+                    if (event.location !== newLocation) {
+                        event.location = newLocation;
+                        eventUpdated = true;
+                    }
+
+                    // Apply Tél (always apply, even if empty - to clear the field)
+                    const newTel = caregiverSettings.Tél || '';
+                    if (event.tel !== newTel) {
+                        event.tel = newTel;
+                        eventUpdated = true;
+                    }
+
+                    // Apply Description (append to existing if not already present)
+                    if (caregiverSettings.Description && caregiverSettings.Description.trim()) {
+                        const settingsDesc = caregiverSettings.Description.trim();
+                        if (!event.description || !event.description.includes(settingsDesc)) {
+                            // Preserve datetime (first line) if present, then add settings description
+                            const lines = (event.description || '').split('\n');
+                            const datetimePattern = /^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$/;
+                            if (lines.length > 0 && datetimePattern.test(lines[0].trim())) {
+                                // Keep datetime, add settings description after
+                                event.description = lines[0] + '\n' + settingsDesc;
+                            } else {
+                                event.description = settingsDesc;
+                            }
+                            eventUpdated = true;
+                        }
+                    }
+
+                    if (eventUpdated) {
+                        updatedCount++;
+                    }
+                }
+            });
+
+            displayEvents();
+            alert(`Applied settings to ${updatedCount} event(s)`);
+
+        } catch (error) {
+            console.error('Error re-applying settings:', error);
+            alert('{% trans "Failed to fetch caregiver settings" %}');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '{% trans "Re-apply Settings" %}';
+        }
+    });
+
+    // Apply rename
+    document.getElementById('apply-rename-btn').addEventListener('click', () => {
+        const fromName = document.getElementById('rename_from').value;
+        const toName = document.getElementById('rename_to').value.trim();
+
+        if (!fromName || !toName) {
+            alert('{% trans "Please select a name and enter the new name" %}');
+            return;
+        }
+
+        modifiedEvents.forEach(event => {
+            if (event.summary === fromName) {
+                event.summary = toName;
+            }
+        });
+
+        displayEvents();
+        updateBulkActionsPanel();
+    });
+
+    // Apply description
+    document.getElementById('apply-desc-btn').addEventListener('click', () => {
+        const target = document.getElementById('desc_target').value;
+        const text = document.getElementById('desc_text').value;
+        const mode = document.querySelector('input[name="desc_mode"]:checked').value;
+
+        // Allow empty description in replace mode (to clear descriptions)
+        if (!text.trim() && mode === 'append') {
+            alert('{% trans "Please enter description text to append" %}');
+            return;
+        }
+
+        modifiedEvents.forEach(event => {
+            if (target === 'all' || (target === 'selected' && selectedEventIds.has(event.id))) {
+                if (mode === 'append') {
+                    event.description = (event.description || '') + '\n' + text;
+                } else {
+                    event.description = text;  // Can be empty to clear description
+                }
+            }
+        });
+
+        displayEvents();
+    });
+
+    // Preview button
+    document.getElementById('preview-btn').addEventListener('click', () => {
+        const previewContent = document.getElementById('preview-content');
+        previewContent.innerHTML = '';
+
+        let changedEvents = [];
+        modifiedEvents.forEach(event => {
+            const original = originalEvents.find(e => e.id === event.id);
+            if (JSON.stringify(event) !== JSON.stringify(original)) {
+                changedEvents.push({ original, modified: event });
+            }
+        });
+
+        if (changedEvents.length === 0) {
+            previewContent.innerHTML = '<p class="text-gray-500">{% trans "No changes to preview." %}</p>';
+        } else {
+            previewContent.innerHTML = `
+                <p class="font-medium mb-4">${changedEvents.length} event(s) will be updated:</p>
+                ${changedEvents.map(({ original, modified }) => `
+                    <div class="border border-gray-200 rounded p-3 mb-2">
+                        <p class="font-medium">${modified.summary}</p>
+                        ${original.summary !== modified.summary ? `<p class="text-sm text-gray-600">{% trans "Name" %}: ${original.summary} → ${modified.summary}</p>` : ''}
+                        ${(original.location || '') !== (modified.location || '') ? `<p class="text-sm text-gray-600">{% trans "Location" %}: ${original.location || '(none)'} → ${modified.location || '(none)'}</p>` : ''}
+                        ${(original.tel || '') !== (modified.tel || '') ? `<p class="text-sm text-gray-600">{% trans "Tél" %}: ${original.tel || '(none)'} → ${modified.tel || '(none)'}</p>` : ''}
+                        ${original.description !== modified.description ? `<p class="text-sm text-gray-600">{% trans "Description changed" %}</p>` : ''}
+                        ${original.colorId !== modified.colorId ? `<p class="text-sm text-gray-600">{% trans "Color" %}: ${original.colorId} → ${modified.colorId}</p>` : ''}
+                        ${modified.editSeries ? `<p class="text-sm text-purple-600">{% trans "Will update entire recurring series" %}</p>` : ''}
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        document.getElementById('preview-modal').classList.remove('hidden');
+    });
+
+    // Close preview modal
+    document.getElementById('close-preview').addEventListener('click', () => {
+        document.getElementById('preview-modal').classList.add('hidden');
+    });
+    document.getElementById('cancel-preview').addEventListener('click', () => {
+        document.getElementById('preview-modal').classList.add('hidden');
+    });
+
+    // Confirm submit
+    document.getElementById('confirm-submit').addEventListener('click', async () => {
+        document.getElementById('preview-modal').classList.add('hidden');
+        await submitChanges();
+    });
+
+    // Direct submit
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+        await submitChanges();
+    });
+
+    async function submitChanges() {
+        const calendarId = document.getElementById('calendar_select').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Collect changes
+        let changes = [];
+        modifiedEvents.forEach(event => {
+            const original = originalEvents.find(e => e.id === event.id);
+            if (JSON.stringify(event) !== JSON.stringify(original)) {
+                // Build description with Tél if provided
+                // Datetime should always be first line, then Tél, then rest
+                let finalDescription = event.description || '';
+                if (event.tel && !finalDescription.includes('Tél:')) {
+                    const lines = finalDescription.split('\n');
+                    // Check if first line is a datetime (format: YYYY-MM-DD HH:MM:SS)
+                    const datetimePattern = /^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$/;
+                    if (lines.length > 0 && datetimePattern.test(lines[0].trim())) {
+                        // Insert Tél after datetime line
+                        lines.splice(1, 0, `Tél: ${event.tel}`);
+                        finalDescription = lines.join('\n');
+                    } else {
+                        // No datetime, just prepend Tél
+                        finalDescription = finalDescription ? `Tél: ${event.tel}\n${finalDescription}` : `Tél: ${event.tel}`;
+                    }
+                }
+
+                changes.push({
+                    event_id: event.id,
+                    updates: {
+                        summary: event.summary,
+                        description: finalDescription,
+                        location: event.location,
+                        colorId: event.colorId,
+                        start: event.start,
+                        end: event.end
+                    },
+                    edit_series: event.editSeries || false,
+                    recurring_event_id: event.recurringEventId
+                });
+            }
+        });
+
+        if (changes.length === 0) {
+            alert('{% trans "No changes to submit" %}');
+            return;
+        }
+
+        const submitStatus = document.getElementById('submit-status');
+        const submitStatusText = document.getElementById('submit-status-text');
+        const submitProgress = document.getElementById('submit-progress');
+
+        submitStatus.classList.remove('hidden');
+        submitStatusText.textContent = '{% trans "Submitting changes..." %}';
+        submitProgress.style.width = '0%';
+
+        try {
+            const response = await fetch("{% url 'p2c:calendar_editor_submit_changes' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    calendar_id: calendarId,
+                    changes: changes
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                submitStatusText.textContent = '{% trans "Error: " %}' + data.error;
+                submitStatus.querySelector('#submit-spinner').classList.add('hidden');
+            } else if (data.task_id) {
+                // Poll for task progress
+                pollTaskProgress(data.task_id);
+            } else {
+                submitStatusText.textContent = `{% trans "Success!" %} ${data.updated_count || 0} {% trans "event(s) updated." %}`;
+                submitStatus.querySelector('#submit-spinner').classList.add('hidden');
+                submitProgress.style.width = '100%';
+
+                // Reload events after short delay
+                setTimeout(() => {
+                    document.getElementById('load-events-form').dispatchEvent(new Event('submit'));
+                    submitStatus.classList.add('hidden');
+                }, 2000);
+            }
+        } catch (error) {
+            console.error('Error submitting changes:', error);
+            submitStatusText.textContent = '{% trans "Error: Failed to submit changes" %}';
+            submitStatus.querySelector('#submit-spinner').classList.add('hidden');
+        }
+    }
+
+    async function pollTaskProgress(taskId) {
+        const submitStatusText = document.getElementById('submit-status-text');
+        const submitProgress = document.getElementById('submit-progress');
+        const submitSpinner = document.getElementById('submit-spinner');
+
+        try {
+            const response = await fetch(`{% url 'task_status' task_id='TASK_ID' %}`.replace('TASK_ID', taskId));
+            const data = await response.json();
+
+            if (data.complete) {
+                submitSpinner.classList.add('hidden');
+                if (data.success) {
+                    submitStatusText.textContent = `{% trans "Success!" %} ${data.result?.updated_count || 0} {% trans "event(s) updated." %}`;
+                    submitProgress.style.width = '100%';
+
+                    // Reload events after short delay
+                    setTimeout(() => {
+                        document.getElementById('load-events-form').dispatchEvent(new Event('submit'));
+                        document.getElementById('submit-status').classList.add('hidden');
+                    }, 2000);
+                } else {
+                    submitStatusText.textContent = '{% trans "Error: " %}' + (data.error || '{% trans "Task failed" %}');
+                }
+            } else {
+                // Update progress
+                const progress = data.progress?.percent || 0;
+                submitProgress.style.width = progress + '%';
+                submitStatusText.textContent = data.progress?.description || '{% trans "Processing..." %}';
+
+                // Poll again
+                setTimeout(() => pollTaskProgress(taskId), 1000);
+            }
+        } catch (error) {
+            console.error('Error polling task:', error);
+            submitStatusText.textContent = '{% trans "Error checking task status" %}';
+            submitSpinner.classList.add('hidden');
+        }
+    }
+});
+</script>
+{% endblock extra_js %}

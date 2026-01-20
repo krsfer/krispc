@@ -1,0 +1,35 @@
+{% extends 'p2c_base.html' %}
+
+{% block page_title %}Privacy Policy{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-white shadow rounded-lg mt-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Privacy Policy</h1>
+    <div class="prose prose-indigo text-gray-500">
+        <p>Last updated: {% now "F j, Y" %}</p>
+        
+        <h2>1. Introduction</h2>
+        <p>Welcome to PDF2Cal. We respect your privacy and are committed to protecting your personal data.</p>
+
+        <h2>2. Data Collection</h2>
+        <p>We collect information necessary to provide our services, including:</p>
+        <ul>
+            <li>Google account information for authentication and calendar integration.</li>
+            <li>PDF documents you upload for processing.</li>
+        </ul>
+
+        <h2>3. How We Use Your Data</h2>
+        <p>We use your data to:</p>
+        <ul>
+            <li>Process your PDF schedules and convert them to calendar events.</li>
+            <li>Sync events to your Google Calendar.</li>
+        </ul>
+
+        <h2>4. Data Security</h2>
+        <p>We implement security measures to protect your information.</p>
+
+        <h2>5. Contact Us</h2>
+        <p>If you have any questions about this Privacy Policy, please contact us.</p>
+    </div>
+</div>
+{% endblock content %}

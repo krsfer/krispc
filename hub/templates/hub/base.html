@@ -1,0 +1,137 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}KrisPC{% endblock %}</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'hub/css/style.css' %}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="brand font-brand text-2xl text-primary">KrisPC</h1>
+            <nav class="header-nav">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer; color: #666; font-size: 0.9rem;">{% trans "Logout" %}</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link" style="color: #666; text-decoration: none; font-size: 0.9rem;">{% trans "Login" %}</a>
+                {% endif %}
+                
+                <div class="language-dropdown">
+                    <button id="langDropdownBtn" class="lang-btn-dropdown" aria-expanded="false">
+                        {% if current_language == 'fr' %}
+                        <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
+                        {% else %}
+                        <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
+                        {% endif %}
+                        <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="langDropdownMenu" class="lang-dropdown-menu">
+                        <form action="{% url 'set_language' %}" method="post">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="/">
+                            <button type="submit" name="language" value="fr" class="lang-option {% if current_language == 'fr' %}active{% endif %}">
+                                <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
+                                <span>Français</span>
+                                {% if current_language == 'fr' %}
+                                <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                {% endif %}
+                            </button>
+                        </form>
+                        <form action="{% url 'set_language' %}" method="post">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="/en/">
+                            <button type="submit" name="language" value="en" class="lang-option {% if current_language == 'en' %}active{% endif %}">
+                                <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
+                                <span>English</span>
+                                {% if current_language == 'en' %}
+                                <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <nav class="footer-nav">
+                <a href="{% url 'hub:privacy' %}">{% trans "Privacy" %}</a>
+                <span class="separator">|</span>
+                <a href="{% url 'hub:terms' %}">{% trans "Terms" %}</a>
+                <span class="separator">|</span>
+                <span>&copy; 2026</span>
+            </nav>
+            <div class="language-footer">
+                <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="/">
+                    <button type="submit" name="language" value="fr" class="lang-btn {% if current_language == 'fr' %}active{% endif %}">Français</button>
+                </form>
+                <span class="separator">|</span>
+                <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="/en/">
+                    <button type="submit" name="language" value="en" class="lang-btn {% if current_language == 'en' %}active{% endif %}">English</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language dropdown toggle
+        const dropdownBtn = document.getElementById('langDropdownBtn');
+        const dropdownMenu = document.getElementById('langDropdownMenu');
+
+        if (dropdownBtn && dropdownMenu) {
+            dropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = dropdownMenu.classList.toggle('show');
+                dropdownBtn.setAttribute('aria-expanded', isOpen);
+                dropdownBtn.querySelector('.chevron').style.transform = isOpen ? 'rotate(180deg)' : '';
+            });
+
+            // Close on click outside
+            document.addEventListener('click', () => {
+                dropdownMenu.classList.remove('show');
+                dropdownBtn.setAttribute('aria-expanded', 'false');
+                dropdownBtn.querySelector('.chevron').style.transform = '';
+            });
+
+            // Close on ESC key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && dropdownMenu.classList.contains('show')) {
+                    dropdownMenu.classList.remove('show');
+                    dropdownBtn.setAttribute('aria-expanded', 'false');
+                    dropdownBtn.querySelector('.chevron').style.transform = '';
+                }
+            });
+        }
+    </script>
+    
+    <!-- Analytics -->
+    <script src="{% static 'analytics/tracker.js' %}" defer></script>
+</body>
+</html>

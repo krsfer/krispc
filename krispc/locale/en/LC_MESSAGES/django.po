@@ -1,0 +1,710 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-29 22:25+0000\n"
+"PO-Revision-Date: 2022-11-06 22:12+0000\n"
+"Last-Translator:   <>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.9.8\n"
+
+#: _main/settings.py:246
+msgid "French"
+msgstr "English &middot; French"
+
+#: _main/settings.py:247
+msgid "English"
+msgstr "English &middot; French"
+
+#: krispc/colophon.py:9
+msgid "py_lnk"
+msgstr "https://www.python.org/"
+
+#: krispc/colophon.py:10
+msgid "dj_lnk"
+msgstr "https://www.djangoproject.com/"
+
+#: krispc/colophon.py:11
+msgid "bs_lnk"
+msgstr "https://getbootstrap.com/"
+
+#: krispc/colophon.py:12
+msgid "js_lnk"
+msgstr "https://en.wikipedia.org/wiki/JavaScript"
+
+#: krispc/colophon.py:13
+msgid "pg_lnk"
+msgstr "https://www.postgresql.org/"
+
+#: krispc/colophon.py:14
+msgid "gm_lnk"
+msgstr "https://www.gimp.org/"
+
+#: krispc/colophon.py:16
+msgid "pc_lnk"
+msgstr "https://www.jetbrains.com/pycharm/"
+
+#: krispc/forms.py:82
+msgid "PTR_0810"
+msgstr "First name"
+
+#: krispc/forms.py:83
+msgid "PTR_0820"
+msgstr "Last name"
+
+#: krispc/forms.py:84
+msgid "PTR_0830"
+msgstr "Email address"
+
+#: krispc/forms.py:85
+msgid "PTR_0840"
+msgstr "Message"
+
+#: krispc/forms.py:132
+msgid "Submit"
+msgstr "Submit"
+
+#: krispc/lst_products.py:38
+msgid "PTR_0370"
+msgstr ""
+"Smartphones&hellip; Screen or battery replacement. Setup. Configuration. "
+"Troubleshoot"
+
+#: krispc/lst_products.py:39
+msgid "PTR_0380"
+msgstr ""
+"I can replace your telephone's broken screen or weak battery. Or even help "
+"you configure and install any apps or programs as well as adjust various "
+"settings or even activate any special features of your mobile handsets, "
+"whether you use Android, iOS or even Blackberry."
+
+#: krispc/lst_products.py:40
+msgid "PTR_3330"
+msgstr ""
+"Older smartphones are generally cheaper to mend than newer models, and "
+"general problems such as screen and battery issues can be solved. Phones "
+"harmed by water are a little more delicate to repair and will require, "
+"before obtaining a quote, a more in-depth diagnosis to determine the extent "
+"of the damage. {0} per hour. Any hour begun is du in full."
+
+#: krispc/lst_products.py:44
+msgid "PTR_0230"
+msgstr "Desktop PC repair and hardware update"
+
+#: krispc/lst_products.py:45
+msgid "PTR_0240"
+msgstr ""
+"Why spend hundreds  -&nbsp;if not thousands&nbsp;- of dollars on a new "
+"computer when all you really need is a simple upgrade or two? Improve the "
+"performance of your desktop computer and extend its lifespan for years to "
+"come."
+
+#: krispc/lst_products.py:46
+msgid "PTR_3000"
+msgstr ""
+"PC update&nbsp;/&nbsp;tune-up {0}. Operating system installation "
+"(Windows&nbsp;/&nbsp;Linux) {1} Virus / spyware removal {2} per device."
+
+#: krispc/lst_products.py:50
+msgid "PTR_0310"
+msgstr "Laptop repairs and computer maintenance"
+
+#: krispc/lst_products.py:51
+msgid "PTR_0320"
+msgstr ""
+"Has your laptop become extremely slow? What if you update it instead of "
+"replacing it? Possible improvements include : battery, RAM, hard drive, SSD, "
+"WiFi connection, CPU, optical drive, graphics card&hellip;"
+
+#: krispc/lst_products.py:52
+msgid "PTR_0200"
+msgstr "Hourly : {0}. Any hour begun is due in full."
+
+#: krispc/lst_products.py:56
+msgid "PTR_0400"
+msgstr "Printer configuration and troubleshoot"
+
+#: krispc/lst_products.py:57
+msgid "PTR_0410"
+msgstr ""
+"Have you noticed that every online store and supplier sells printers, but no "
+"one repairs them? This hasn't changed in years. Most suppliers find it "
+"easier to sell and forget than to provide real customer service. Don't throw "
+"away your broken equipment—have it repaired at a lower cost."
+
+#: krispc/lst_products.py:58
+msgid "PTR_0420"
+msgstr ""
+"Inkjet, thermal, dot-matrix and other types of printer: their common "
+"problems include repeated paper jams, printing blank pages, network "
+"connection problems, belt problems and other malfunctions. Several factors "
+"affect the cost of printer repair. {0} per hour. Any hour begun is du in "
+"full."
+
+#: krispc/lst_products.py:62
+msgid "PTR_0480"
+msgstr "Advice, personalized training"
+
+#: krispc/lst_products.py:63
+msgid "PTR_0490"
+msgstr ""
+"Modern life can be a challenge for adults who may not be completely computer "
+"literate. Technology is involved in almost every aspect of our lives: we "
+"need it for work, school, social and family contacts_list, day-to-day "
+"management, online learning and even shopping."
+
+#: krispc/lst_products.py:64
+msgid "PTR_0500"
+msgstr ""
+"I would help you acquire mastery of the technology you need so that you will "
+"be more comfortable with your computer, tablet, smartphone, internet etc. "
+"{0} per hour. Any hour begun is du in full."
+
+#: krispc/lst_products.py:68
+msgid "PTR_0510"
+msgstr "Malware identification and removal"
+
+#: krispc/lst_products.py:69
+msgid "PTR_0520"
+msgstr ""
+"Their nefarious purpose is to access a user's device without their "
+"knowledge. These types of software include spyware, adware, viruses, "
+"Trojans, worms, rootkits, ransomware, or browser hijackers."
+
+#: krispc/lst_products.py:70
+msgid "PTR_0540"
+msgstr ""
+"I can remove on your behalf any viruses, adware, spyware etc. This malware "
+"removal service costs {0} per device."
+
+#: krispc/lst_products.py:74
+msgid "PTR_0560"
+msgstr "Internet Connections and Security"
+
+#: krispc/lst_products.py:75
+msgid "PTR_0570"
+msgstr ""
+"Protect yourself and your family. Is your computer secure? Have you "
+"downloaded the latest patches and updates for Windows? Security threats have "
+"increased with the increasing use internet based services."
+
+#: krispc/lst_products.py:76
+msgid "PTR_0580"
+msgstr ""
+"Parental control configuration costs {0}. Technical support at {1} per hour. "
+"Any hour begun is due in full."
+
+#: krispc/lst_products.py:80
+msgid "PTR_0600"
+msgstr "Internet home router or modem configuration"
+
+#: krispc/lst_products.py:81
+msgid "PTR_0610"
+msgstr ""
+"Have you just accepted or changed your Internet provider and would like to "
+"configure the WiFi network of your new router or modem? No need to panic! We "
+"will accomplish step by step the procedure for configuring all the functions "
+"of your modem/router (wifi password, optimal channel, security key, MAC "
+"filtering&hellip;)."
+
+#: krispc/lst_products.py:82
+msgid "PTR_1980"
+msgstr ""
+"I can help you change the network name (SSID) and password, set the security "
+"mode (WPA&nbsp;/&nbsp;WEP), perform MAC filtering or choose the best channel "
+"for your wireless network. {0}."
+
+#: krispc/lst_products.py:86
+msgid "PTR_0670"
+msgstr "Remote control of your devices"
+
+#: krispc/lst_products.py:87
+msgid "PTR_0680"
+msgstr ""
+"Remote control allows a general view of your computer in order to offer you "
+"an efficient software maintenance service. It is a really very important "
+"tool that empowers effective repair of PCs or correction of computer bugs."
+
+#: krispc/lst_products.py:88
+msgid "PTR_0690"
+msgstr ""
+"Here are some examples of possible remote IT actions: removing viruses, "
+"installing hardware (printer, keyboard, webcam, etc.), updates or installing "
+"software and drivers. {0} per hour. Any hour begun is du in full."
+
+#: krispc/lst_products.py:89
+msgid "PTR_0692"
+msgstr "aaaaa"
+
+#: krispc/lst_products.py:90
+msgid "PTR_0694"
+msgstr "bbbb"
+
+#: krispc/templates/____contact_form_checker.html:18
+msgid "PTR_0010"
+msgstr "Thank you "
+
+#: krispc/templates/____contact_form_checker.html:22
+msgid "PTR_0130"
+msgstr ""
+"Your project will be examined, and we we'll get back to you as soon as "
+"possible."
+
+#: krispc/templates/___contact_form.html:8
+msgid "Awaiting interaction"
+msgstr "Awaiting interaction"
+
+#: krispc/templates/__about.html:15
+msgid "PTR_0180"
+msgstr "Who we are"
+
+#: krispc/templates/__about.html:19 krispc/templates/__header.html:19
+msgid "PTR_0190"
+msgstr "About us"
+
+#: krispc/templates/__about.html:23
+msgid "PTR_1990"
+msgstr ""
+"I am passionate about IT in all its aspects (programming, systems). With "
+"more than 20 years of experience, I'm dedicated to  a vision of precision "
+"and excellence."
+
+#: krispc/templates/__about.html:31
+msgid "PTR_1995"
+msgstr ""
+"Please do not hesitate to consult with me, even if it seems trivial: I am "
+"here to help, and together we will define any issues. I will find the "
+"solution. I will listen&hellip; my personality, calm and patience will be "
+"precious assets in helping you."
+
+#: krispc/templates/__cta.html:9
+msgid "PTR_7000"
+msgstr "Contact us now"
+
+#: krispc/templates/__cta.html:10
+msgid "PTR_7010"
+msgstr "Let's discuss your project and identify how KrisPC can support you."
+
+#: krispc/templates/__footer.html:22
+msgid "PTR_5040"
+msgstr "Phone"
+
+#: krispc/templates/__footer.html:22
+msgid "PTR_5030"
+msgstr "+33 (0)6 19 67 03 56"
+
+#: krispc/templates/__footer.html:35 krispc/templates/__services.html:10
+msgid "PTR_0170"
+msgstr "Our services"
+
+#: krispc/templates/__footer.html:81
+msgid "PTR_2050"
+msgstr "All rights reserved"
+
+#: krispc/templates/__footer.html:85
+msgid "PTR_2052"
+msgstr "Made with"
+
+#: krispc/templates/__footer.html:89
+msgid "PTR_2060"
+msgstr "by"
+
+#: krispc/templates/__header.html:18
+msgid "PTR_0160"
+msgstr "Home"
+
+#: krispc/templates/__header.html:20 krispc/templates/__hero.html:8
+msgid "PTR_0120"
+msgstr "Computer Services"
+
+#: krispc/templates/__header.html:21 krispc/templates/__team.html:8
+msgid "PTR_0800"
+msgstr "Meet our small team"
+
+#: krispc/templates/__hero.html:9
+msgid "French English"
+msgstr "English &middot; French"
+
+#: krispc/templates/__hero.html:10
+msgid "PTR_0040"
+msgstr "Conveniently &middot; At your home"
+
+#: krispc/templates/__hero.html:11
+msgid "PTR_0220"
+msgstr "Linux&nbsp;&middot;&nbsp;Windows&nbsp;&middot;&nbsp;macOS&middot;&nbsp;Troubleshoot&nbsp;&middot;&nbsp;Building&middot;&nbsp;Hardware&nbsp;&middot;&nbspSoftware&middot;&nbsp;Training&nbsp;&middot;&nbsp;Advice"
+
+#: krispc/templates/__hero.html:14
+msgid "PTR_2055"
+msgstr "Repairs only — No hardware sold."
+
+#: krispc/templates/__hero.html:15
+msgid "PTR_2057"
+msgstr "But, free advice for selecting."
+
+#: krispc/templates/__services.html:4
+msgid "PTR_6010"
+msgstr "Hello, I would like some more information about your offer "
+
+#: krispc/templates/__services.html:31
+msgid "PTR_0050"
+msgstr "Order this"
+
+#: krispc/templates/__services.html:55
+msgid "Call"
+msgstr "Phone:"
+
+#: krispc/templates/__services.html:77
+msgid "PTR_0150"
+msgstr "Learn more&nbsp;&euro;"
+
+#: krispc/templates/__team.html:9
+msgid "PTR_0210"
+msgstr "Our talent&nbsp;: dedication to your solution"
+
+#: krispc/templates/__team.html:21
+msgid "PTR_0710"
+msgstr "Technician"
+
+#: krispc/templates/__team.html:23
+msgid "PTR_0720"
+msgstr "Proficient"
+
+#: krispc/templates/__team.html:23
+msgid "PTR_0730"
+msgstr "Competent"
+
+#: krispc/templates/__team.html:35
+msgid "PTR_0740"
+msgstr "Public relations"
+
+#: krispc/templates/__team.html:37
+msgid "PTR_0750"
+msgstr "Considerate"
+
+#: krispc/templates/__team.html:37
+msgid "PTR_0760"
+msgstr "Professional"
+
+msgid "Email"
+msgstr "Email"
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+msgid "Terms of Service"
+msgstr "Terms of Service"
+
+msgid "Last updated"
+msgstr "Last updated"
+
+msgid "1. Introduction"
+msgstr "1. Introduction"
+
+msgid ""
+"Welcome to KrisPC. We respect your privacy and are committed to protecting "
+"your personal data. This privacy policy will inform you about how we look "
+"after your personal data when you visit our website and tell you about your "
+"privacy rights and how the law protects you."
+msgstr ""
+"Welcome to KrisPC. We respect your privacy and are committed to protecting "
+"your personal data. This privacy policy will inform you about how we look "
+"after your personal data when you visit our website and tell you about your "
+"privacy rights and how the law protects you."
+
+msgid "2. Data Collection"
+msgstr "2. Data Collection"
+
+msgid "We collect information necessary to provide our services, including:"
+msgstr "We collect information necessary to provide our services, including:"
+
+msgid ""
+"Contact information (name, email address, phone number) provided via our "
+"contact form."
+msgstr ""
+"Contact information (name, email address, phone number) provided via our "
+"contact form."
+
+msgid ""
+"Information about your computer or devices that you provide for repair or "
+"maintenance services."
+msgstr ""
+"Information about your computer or devices that you provide for repair or "
+"maintenance services."
+
+msgid ""
+"Technical data such as IP address, browser type, and version when you access "
+"our website."
+msgstr ""
+"Technical data such as IP address, browser type, and version when you access "
+"our website."
+
+msgid "3. How We Use Your Data"
+msgstr "3. How We Use Your Data"
+
+msgid "We use your data to:"
+msgstr "We use your data to:"
+
+msgid "Provide and manage our IT support and repair services."
+msgstr "Provide and manage our IT support and repair services."
+
+msgid "Communicate with you regarding your service requests."
+msgstr "Communicate with you regarding your service requests."
+
+msgid "Improve our website and service offerings."
+msgstr "Improve our website and service offerings."
+
+msgid "Comply with legal obligations."
+msgstr "Comply with legal obligations."
+
+msgid "4. Data Security"
+msgstr "4. Data Security"
+
+msgid ""
+"We implement appropriate security measures to prevent your personal data "
+"from being accidentally lost, used, or accessed in an unauthorized way. We "
+"limit access to your personal data to those who have a business need to know."
+msgstr ""
+"We implement appropriate security measures to prevent your personal data "
+"from being accidentally lost, used, or accessed in an unauthorized way. We "
+"limit access to your personal data to those who have a business need to know."
+
+msgid "5. Contact Us"
+msgstr "5. Contact Us"
+
+msgid ""
+"If you have any questions about this Privacy Policy or our privacy "
+"practices, please contact us at:"
+msgstr ""
+"If you have any questions about this Privacy Policy or our privacy "
+"practices, please contact us at:"
+
+msgid "Address"
+msgstr "Address"
+
+msgid "1. Acceptance of Terms"
+msgstr "1. Acceptance of Terms"
+
+msgid ""
+"By accessing and using the KrisPC website and services, you accept and agree "
+"to be bound by the terms and provision of this agreement."
+msgstr ""
+"By accessing and using the KrisPC website and services, you accept and agree "
+"to be bound by the terms and provision of this agreement."
+
+msgid "2. Service Description"
+msgstr "2. Service Description"
+
+msgid ""
+"KrisPC provides professional IT services, including but not limited to "
+"computer repair, maintenance, software support, and IT consulting."
+msgstr ""
+"KrisPC provides professional IT services, including but not limited to "
+"computer repair, maintenance, software support, and IT consulting."
+
+msgid "3. User Responsibilities"
+msgstr "3. User Responsibilities"
+
+msgid ""
+"When using our services or website, you agree to provide accurate "
+"information and to maintain the security of any account details. You are "
+"responsible for backing up your data before submitting any device for repair."
+msgstr ""
+"When using our services or website, you agree to provide accurate "
+"information and to maintain the security of any account details. You are "
+"responsible for backing up your data before submitting any device for repair."
+
+msgid "4. Limitation of Liability"
+msgstr "4. Limitation of Liability"
+
+msgid ""
+"While we strive for excellence, KrisPC shall not be liable for any indirect, "
+"incidental, special, consequential or punitive damages, or any loss of "
+"profits or revenues, whether incurred directly or indirectly, or any loss of "
+"data, use, goodwill, or other intangible losses."
+msgstr ""
+"While we strive for excellence, KrisPC shall not be liable for any indirect, "
+"incidental, special, consequential or punitive damages, or any loss of "
+"profits or revenues, whether incurred directly or indirectly, or any loss of "
+"data, use, goodwill, or other intangible losses."
+
+msgid "5. Termination"
+msgstr "5. Termination"
+
+msgid ""
+"We reserve the right to terminate or suspend access to our service "
+"immediately, without prior notice or liability, for any reason whatsoever, "
+"including without limitation if you breach the Terms."
+msgstr ""
+"We reserve the right to terminate or suspend access to our service "
+"immediately, without prior notice or liability, for any reason whatsoever, "
+"including without limitation if you breach the Terms."
+
+msgid "6. Governing Law"
+msgstr "6. Governing Law"
+
+msgid ""
+"These terms shall be governed and construed in accordance with the laws of "
+"France, without regard to its conflict of law provisions."
+msgstr ""
+"These terms shall be governed and construed in accordance with the laws of "
+"France, without regard to its conflict of law provisions."
+
+#~ msgid "Where Are They"
+#~ msgstr "en where are they"
+
+#~ msgid "PTR_0020"
+#~ msgstr "French"
+
+#~ msgid "PTR_0030"
+#~ msgstr "English"
+
+#~ msgid "PTR_0041"
+#~ msgstr "Your message has been sent. Thank you!"
+
+#~ msgid "PTR_0060"
+#~ msgstr "Call us"
+
+#~ msgid "PTR_0070"
+#~ msgstr "Send an SMS"
+
+#~ msgid "PTR_0080"
+#~ msgstr "Send a message"
+
+#~ msgid "PTR_0090"
+#~ msgstr "Call now"
+
+#~ msgid "PTR_0100"
+#~ msgstr "Request a quotation"
+
+#~ msgid "PTR_0110"
+#~ msgstr "Computer Repairs"
+
+#~ msgid "PTR_0300"
+#~ msgstr "Diagnosis and repair {0}."
+
+#~ msgid "PTR_0640"
+#~ msgstr "IT technical support"
+
+#~ msgid "PTR_0650"
+#~ msgstr ""
+#~ "Technical and IT assistance service. The guarantee that you can continue "
+#~ "to benefit from the availability of all of its components for the "
+#~ "accomplishment of your tasks."
+
+#~ msgid "PTR_0660"
+#~ msgstr "Between {0} and {1} per hour"
+
+#~ msgid "PTR_0765"
+#~ msgstr "Follow us:"
+
+#~ msgid "PTR_0768"
+#~ msgstr "Social network"
+
+#~ msgid "PTR_0770"
+#~ msgstr "Tell us everything"
+
+#~ msgid "PTR_0775"
+#~ msgstr "Get in touch…"
+
+#~ msgid "PTR_0780"
+#~ msgstr "Follow me"
+
+#~ msgid "PTR_0790"
+#~ msgstr ""
+#~ "We have the dedication and enthusiasm which naturally lead to the "
+#~ "resolution of technical and non-technical issues, rapidly and efficiently."
+
+#~ msgid "PTR_0850"
+#~ msgstr "Send"
+
+#~ msgid "PTR_0860"
+#~ msgstr "KrisPC is situated at "
+
+#~ msgid "PTR_0870"
+#~ msgstr "View on the map"
+
+#~ msgid "PTR_0880"
+#~ msgstr ""
+#~ "Our zone of activity for any repairs or guidance includes the following "
+#~ "locations:"
+
+#~ msgid "PTR_0890"
+#~ msgstr "Our telephone number: +33 6 19 67 03 56"
+
+#~ msgid "PTR_0900"
+#~ msgstr ""
+#~ "All hygienic measures and protocols of defense against the novel "
+#~ "coronavirus are consistently respected and implemented in order to "
+#~ "guarantee flawless sanitary security throughout the duration of each "
+#~ "intervention: wearing a mask, visor, gloves and overshoes, use of hand "
+#~ "sanitiser as well as using appropriate disinfectants for any necessary "
+#~ "apparatus and devices."
+
+#~ msgid "PTR_0910"
+#~ msgstr "Cookies used on the website!"
+
+#~ msgid "PTR_0920"
+#~ msgstr "Got it!"
+
+#~ msgid "PTR_0930"
+#~ msgstr "Allow cookies"
+
+#~ msgid "PTR_0940"
+#~ msgstr "Decline"
+
+#~ msgid "PTR_0950"
+#~ msgstr "Learn more"
+
+#~ msgid "PTR_1960"
+#~ msgstr "https://www.cookiesandyou.com"
+
+#~ msgid "PTR_2010"
+#~ msgstr ""
+#~ "Repairs on both hardware and software | Elimination of spyware and "
+#~ "viruses | Installation of replacement parts | Performing hardware upgrades"
+
+#~ msgid "PTR_2030"
+#~ msgstr ""
+#~ "This website uses cookies to ensure you get the best experience on our "
+#~ "website."
+
+#~ msgid "PTR_4010"
+#~ msgstr ""
+#~ "My goal: resolve any hardware and software issues, find and eliminate "
+#~ "spyware and viruses, install replacement parts or perform hardware "
+#~ "upgrades"
+
+#~ msgid "accept_pol_conf"
+#~ msgstr "https://www.onevision.com/fr/contact"
+
+#~ msgid "PTR_5000"
+#~ msgstr ""
+#~ "You agree to our privacy policy and the processing of your information to "
+#~ "allow us to contact you.*"
+
+#~ msgid "PTR_5010"
+#~ msgstr "Contact us directly if you have any questions"
+
+#~ msgid "PTR_5020"
+#~ msgstr ""
+#~ "Please write your name, email address and a message. One of us will be "
+#~ "happy to get back to you and answer your questions as soon as possible."
+
+#~ msgid "jq_lnk"
+#~ msgstr "https://jquery.com/"
+
+#~ msgid "vs_lnk"
+#~ msgstr "https://code.visualstudio.com/"
+
+#~ msgid "PTR_5050"
+#~ msgstr "Cliquez pour affichage en langue française"
+
+#~ msgid "PTR_6000"
+#~ msgstr "Quote request for repair project. KrisPC Computer Services"
+
+#~ msgid "Location"
+#~ msgstr "Address:"

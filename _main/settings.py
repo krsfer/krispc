@@ -148,21 +148,18 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "channels",
-    "hello",
-    "chat",
-    "addthem",
+    
+    # Core Apps
     "krispc",
-    "wat",
-    # pdf2cal apps
-    "celery_progress",
     "p2c",
+    "celery_progress",
     "hub",
+    "plexus.apps.PlexusConfig",
+
     "rest_framework",
     "drf_spectacular",
     "django_filters",
     "corsheaders",
-    "plexus.apps.PlexusConfig",
-    "analytics",
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'
@@ -247,7 +244,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",  # CORS - must be before CommonMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "hub.middleware.EnsureDefaultLanguageMiddleware",  # Set default language before LocaleMiddleware
+    "hub.middleware.EnsureDefaultLanguageMiddleware",  # Restored
     "django.middleware.locale.LocaleMiddleware",  # Required for i18n URL patterns
     "krispc.middleware.APILanguageMiddleware",  # API-specific language detection
     "django.middleware.common.CommonMiddleware",
@@ -257,7 +254,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "krispc.middleware.APIRequestLoggingMiddleware",  # API request logging
-    # "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
 ROOT_URLCONF = "_main.urls"
@@ -270,7 +266,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            os.path.join(BASE_DIR, "addthem/templates", "chat/templates", "_krispc/templates"),
+            BASE_DIR / "templates",
             BASE_DIR / "p2c" / "templates",
         ],
         "APP_DIRS": True,
@@ -534,6 +530,7 @@ LOGGING = {
     "loggers": {
         "django": {"handlers": ["console"], "level": "INFO"},
         "p2c": {"handlers": ["console"], "level": "INFO", "propagate": True},
+        "plexus": {"handlers": ["console"], "level": "INFO", "propagate": True},
     },
 }
 
@@ -556,4 +553,3 @@ if __name__ == "__main__":
 
 
     print(f"SENDGRID_API_KEY: {SENDGRID_API_KEY}")
-
