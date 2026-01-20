@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.db.models import Q
 from rest_framework.views import APIView
@@ -22,6 +22,11 @@ class CaptureView(LoginRequiredMixin, CreateView):
     model = Input
     form_class = InputForm
     template_name = "plexus/capture.html"
+    success_url = reverse_lazy("plexus:dashboard")
+
+class ThoughtDeleteView(LoginRequiredMixin, DeleteView):
+    model = Thought
+    template_name = "plexus/thought_confirm_delete.html"
     success_url = reverse_lazy("plexus:dashboard")
 
 class DashboardView(LoginRequiredMixin, ListView):

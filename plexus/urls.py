@@ -4,7 +4,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from .views import (
     IngestAPIView, IndexView, CaptureView, DashboardView, 
     ReviewQueueListView, ReviewResolveView,
-    ActionListView, KanbanView, ActionToggleView, ThoughtUpdateView,
+    ActionListView, KanbanView, ActionToggleView, ThoughtUpdateView, ThoughtDeleteView,
     AdminDashboardView, VoiceCaptureView, ThoughtRetryView
 )
 from .api_views import InputViewSet, ThoughtViewSet, ActionViewSet, SyncView
@@ -24,6 +24,7 @@ urlpatterns = [
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path("dashboard/admin/", AdminDashboardView.as_view(), name="admin_dashboard"),
     path("thought/<int:pk>/edit/", ThoughtUpdateView.as_view(), name="thought_edit"),
+    path("thought/<int:pk>/delete/", ThoughtDeleteView.as_view(), name="thought_delete"),
     path("thought/<int:pk>/retry/", ThoughtRetryView.as_view(), name="thought_retry"),
     path("review-queue/", ReviewQueueListView.as_view(), name="review_queue"),
     path("review-queue/<int:pk>/resolve/", ReviewResolveView.as_view(), name="review_resolve"),

@@ -64,7 +64,8 @@
                         </span>
                         <div>
                             <small class="text-muted me-2">{{ thought.input.timestamp|date:"M d, Y H:i" }}</small>
-                            <a href="{% url 'plexus:thought_edit' thought.pk %}" class="text-decoration-none text-muted" title="{% trans 'Edit Thought' %}">✏️</a>
+                            <a href="{% url 'plexus:thought_edit' thought.pk %}" class="text-decoration-none text-muted me-2" title="{% trans 'Edit Thought' %}">✏️</a>
+                            <a href="{% url 'plexus:thought_delete' thought.pk %}" class="text-decoration-none text-danger" title="{% trans 'Delete Thought' %}">🗑️</a>
                         </div>
                     </div>
                     <div class="card-body">
