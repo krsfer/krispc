@@ -5,6 +5,10 @@ from plexus.services.surfacing import get_on_this_day, get_random_resurface
 
 class SurfacingServiceTest(TestCase):
     def setUp(self):
+        # Ensure clean slate for surfacing tests
+        Thought.objects.all().delete()
+        Input.objects.all().delete()
+        
         self.now = timezone.now()
         
         # 1. Thought from exactly 1 year ago (Should appear in On This Day)
@@ -53,5 +57,13 @@ class SurfacingServiceTest(TestCase):
         # Should return either thought_last_year or thought_old
         result = get_random_resurface()
         self.assertIsNotNone(result)
-        self.assertIn(result, [self.thought_last_year, thought_old])
-        self.assertNotEqual(result, self.thought_recent)
+        
+        if result.id not in [self.thought_last_year.id, thought_old.id]:
+            print(f"DEBUG result.id: {result.id}, content: {result.content}")
+            print(f"DEBUG thought_last_year.id: {self.thought_last_year.id}, content: {self.thought_last_year.content}")
+            print(f"DEBUG thought_old.id: {thought_old.id}, content: {thought_old.content}")
+            print(f"DEBUG thought_recent.id: {self.thought_recent.id}, content: {self.thought_recent.content}")
+
+        # Compare by ID to avoid potential object identity issues in tests
+        self.assertIn(result.id, [self.thought_last_year.id, thought_old.id])
+        self.assertNotEqual(result.id, self.thought_recent.id)

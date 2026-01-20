@@ -27,5 +27,5 @@ class InputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Input
-        fields = ["id", "content", "source", "timestamp", "processed", "thoughts", "created_at", "updated_at", "deleted_at"]
+        fields = ["id", "content", "image", "source", "timestamp", "processed", "thoughts", "created_at", "updated_at", "deleted_at"]
         read_only_fields = ["id", "timestamp", "processed", "created_at", "updated_at"]

@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils import translation
 from rest_framework.test import APITestCase
 from rest_framework import status
 from unittest.mock import patch
@@ -19,7 +20,8 @@ class VoiceCaptureApiTest(APITestCase):
         audio_file = SimpleUploadedFile("note.webm", b"audio data", content_type="audio/webm")
         data = {"audio": audio_file}
         
-        response = self.client.post(self.url, data, format="multipart")
+        with translation.override("en"):
+            response = self.client.post(self.url, data, format="multipart")
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Input.objects.count(), 1)
@@ -29,5 +31,6 @@ class VoiceCaptureApiTest(APITestCase):
         self.assertEqual(input_obj.source, "voice")
 
     def test_voice_capture_no_file(self):
-        response = self.client.post(self.url, {}, format="multipart")
+        with translation.override("en"):
+            response = self.client.post(self.url, {}, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

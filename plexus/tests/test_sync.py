@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.utils import timezone
+from django.utils import timezone, translation
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.urls import reverse
@@ -31,7 +31,8 @@ class SyncApiTest(TestCase):
 
     def test_sync_pull_initial(self):
         """Test initial sync (no timestamp provided) returns all data."""
-        response = self.client.post(self.url, {})
+        with translation.override("en"):
+            response = self.client.post(self.url, {})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         data = response.json()
@@ -51,7 +52,8 @@ class SyncApiTest(TestCase):
         self.action1.description = "Updated action"
         self.action1.save()
         
-        response = self.client.post(self.url, {"last_sync_timestamp": checkpoint.isoformat()})
+        with translation.override("en"):
+            response = self.client.post(self.url, {"last_sync_timestamp": checkpoint.isoformat()})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         data = response.json()
@@ -71,7 +73,8 @@ class SyncApiTest(TestCase):
             ]
         }
         
-        response = self.client.post(self.url, {"changes": changes}, format='json')
+        with translation.override("en"):
+            response = self.client.post(self.url, {"changes": changes}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verify it exists in DB
@@ -88,7 +91,8 @@ class SyncApiTest(TestCase):
             ]
         }
         
-        response = self.client.post(self.url, {"changes": changes}, format='json')
+        with translation.override("en"):
+            response = self.client.post(self.url, {"changes": changes}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         self.thought1.refresh_from_db()
