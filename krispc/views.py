@@ -71,8 +71,8 @@ class IndexPageView(TemplateView):
 
         from django.utils import translation
         with translation.override(locale):
-            privacy_url = reverse('privacy')
-            terms_url = reverse('terms')
+            privacy_url = reverse('krispc:privacy')
+            terms_url = reverse('krispc:terms')
 
         ui_translations = {
             'nav': {

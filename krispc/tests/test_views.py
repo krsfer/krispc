@@ -26,20 +26,20 @@ class IndexPageViewTest(TestCase):
     
     def test_index_view_renders(self):
         """Test that index view renders successfully."""
-        response = self.client.get(reverse('index'))
+        response = self.client.get(reverse('krispc:index'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, '_index.html')
     
     def test_index_view_context_data(self):
         """Test that index view provides context data."""
-        response = self.client.get(reverse('index'))
+        response = self.client.get(reverse('krispc:index'))
         
         # Check that various context items are present
         self.assertIn('request', response.context)
     
     def test_index_view_content_type(self):
         """Test that index view returns HTML content."""
-        response = self.client.get(reverse('index'))
+        response = self.client.get(reverse('krispc:index'))
         self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
 
@@ -48,13 +48,13 @@ class PrivacyViewTest(TestCase):
     
     def test_privacy_view_renders(self):
         """Test that privacy view renders successfully."""
-        response = self.client.get(reverse('privacy'))
+        response = self.client.get(reverse('krispc:privacy'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'privacy.html')
     
     def test_privacy_view_contains_privacy_info(self):
         """Test that privacy page contains privacy-related content."""
-        response = self.client.get(reverse('privacy'))
+        response = self.client.get(reverse('krispc:privacy'))
         # Privacy page should contain relevant keywords
         # This depends on your actual privacy page content
 
@@ -64,7 +64,7 @@ class TermsViewTest(TestCase):
     
     def test_terms_view_renders(self):
         """Test that terms view renders successfully."""
-        response = self.client.get(reverse('terms'))
+        response = self.client.get(reverse('krispc:terms'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'terms.html')
 
@@ -86,7 +86,7 @@ class CreateContactViewTest(TestCase):
     def test_create_contact_valid_submission(self, mock_send_email):
         """Test creating contact with valid data."""
         response = self.client.post(
-            reverse('create'),
+            reverse('krispc:create'),
             data=self.valid_post_data,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'  # Simulate HTMX request
         )
@@ -105,7 +105,7 @@ class CreateContactViewTest(TestCase):
         }
         
         response = self.client.post(
-            reverse('create'),
+            reverse('krispc:create'),
             data=incomplete_data,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -117,7 +117,7 @@ class CreateContactViewTest(TestCase):
     def test_create_contact_sends_email(self, mock_send_email):
         """Test that creating contact triggers email send."""
         response = self.client.post(
-            reverse('create'),
+            reverse('krispc:create'),
             data=self.valid_post_data,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -131,7 +131,7 @@ class CreateContactViewTest(TestCase):
         self.client = self.client_class(enforce_csrf_checks=True)
         
         response = self.client.post(
-            reverse('create'),
+            reverse('krispc:create'),
             data=self.valid_post_data,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -143,7 +143,7 @@ class CreateContactViewTest(TestCase):
     def test_create_contact_htmx_request(self, mock_send_email):
         """Test that HTMX requests are handled properly."""
         response = self.client.post(
-            reverse('create'),
+            reverse('krispc:create'),
             data=self.valid_post_data,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest',
             HTTP_HX_REQUEST='true'
@@ -170,9 +170,9 @@ class ViewsIntegrationTest(TestCase):
     def test_all_main_pages_accessible(self):
         """Test that all main pages are accessible."""
         urls = [
-            reverse('index'),
-            reverse('privacy'),
-            reverse('terms'),
+            reverse('krispc:index'),
+            reverse('krispc:privacy'),
+            reverse('krispc:terms'),
         ]
         
         for url in urls:
@@ -186,9 +186,9 @@ class ViewsIntegrationTest(TestCase):
     def test_views_return_html(self):
         """Test that views return HTML content."""
         urls = [
-            reverse('index'),
-            reverse('privacy'),
-            reverse('terms'),
+            reverse('krispc:index'),
+            reverse('krispc:privacy'),
+            reverse('krispc:terms'),
         ]
         
         for url in urls:

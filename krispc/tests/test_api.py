@@ -19,7 +19,7 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from unittest.mock import patch
 from time import sleep
-from .models import Contact
+from krispc.models import Contact
 
 
 class KrisPCAPIBasicTests(APITestCase):

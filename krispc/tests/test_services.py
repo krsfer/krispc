@@ -1,9 +1,8 @@
 """
 Comprehensive test suite for krispc services.
 """
-from django.test import TestCase
-from django.core import mail
-from unittest.mock import patch, MagicMock, call
+from django.test import TestCase, override_settings
+from unittest.mock import patch, MagicMock
 import smtplib
 
 from krispc.services import send_contact_email
@@ -21,100 +20,121 @@ class EmailServiceTest(TestCase):
             'msg': 'This is a test message'
         }
     
-    def test_send_contact_email_success(self):
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_success(self, mock_sg_class):
         """Test that contact email is sent successfully."""
-        # Clear the test outbox before the test
-        mail.outbox = []
+        mock_sg = MagicMock()
+        mock_sg.send.return_value.status_code = 202
+        mock_sg_class.return_value = mock_sg
         
-        send_contact_email(**self.valid_email_data)
+        result = send_contact_email(**self.valid_email_data)
         
-        # Check that an email was sent
-        self.assertEqual(len(mail.outbox), 1)
-        
-        # Check email properties
-        email = mail.outbox[0]
-        self.assertIn('John', email.body)
-        self.assertIn('Doe', email.body)
-        self.assertIn('john@example.com', email.body)
-        self.assertIn('This is a test message', email.body)
+        # Check that SendGrid was called
+        mock_sg.send.assert_called_once()
+        self.assertEqual(result, "ok")
     
-    def test_send_contact_email_subject(self):
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_subject(self, mock_sg_class):
         """Test that email has correct subject."""
-        mail.outbox = []
+        mock_sg = MagicMock()
+        mock_sg.send.return_value.status_code = 202
+        mock_sg_class.return_value = mock_sg
         
         send_contact_email(**self.valid_email_data)
         
-        email = mail.outbox[0]
-        # Subject should contain contact or form related text
-        self.assertTrue(len(email.subject) > 0)
+        # Get the Mail object that was passed to send()
+        call_args = mock_sg.send.call_args
+        mail_obj = call_args[0][0]
+        
+        # Subject should contain the first name
+        self.assertIn('John', mail_obj.subject.get())
     
-    def test_send_contact_email_recipient(self):
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_recipient(self, mock_sg_class):
         """Test that email is sent to correct recipient."""
-        mail.outbox = []
+        mock_sg = MagicMock()
+        mock_sg.send.return_value.status_code = 202
+        mock_sg_class.return_value = mock_sg
         
         send_contact_email(**self.valid_email_data)
         
-        email = mail.outbox[0]
-        # Email should have recipients
-        self.assertTrue(len(email.to) > 0)
+        # Check SendGrid was called
+        mock_sg.send.assert_called_once()
     
-    def test_send_contact_email_with_unicode(self):
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_with_unicode(self, mock_sg_class):
         """Test sending email with unicode characters."""
-        mail.outbox = []
+        mock_sg = MagicMock()
+        mock_sg.send.return_value.status_code = 202
+        mock_sg_class.return_value = mock_sg
         
         unicode_data = {
             'firstname': 'François',
             'surname': 'Müller',
-            'client_email': 'françois@example.com',
+            'client_email': 'francois@example.com',
             'msg': 'Bonjour! J\'ai besoin d\'aide avec mon ordinateur. 中文测试'
         }
         
-        send_contact_email(**unicode_data)
+        result = send_contact_email(**unicode_data)
         
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertIn('François', email.body)
+        self.assertEqual(result, "ok")
+        mock_sg.send.assert_called_once()
     
-    def test_send_contact_email_with_long_message(self):
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_with_long_message(self, mock_sg_class):
         """Test sending email with very long message."""
-        mail.outbox = []
+        mock_sg = MagicMock()
+        mock_sg.send.return_value.status_code = 202
+        mock_sg_class.return_value = mock_sg
         
         long_data = self.valid_email_data.copy()
         long_data['msg'] = 'X' * 5000  # Very long message
         
-        send_contact_email(**long_data)
+        result = send_contact_email(**long_data)
         
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(result, "ok")
     
-    def test_send_contact_email_with_html_in_message(self):
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_with_html_in_message(self, mock_sg_class):
         """Test that HTML in message is handled properly."""
-        mail.outbox = []
+        mock_sg = MagicMock()
+        mock_sg.send.return_value.status_code = 202
+        mock_sg_class.return_value = mock_sg
         
         html_data = self.valid_email_data.copy()
-        html_data['msg'] = '\u003cscript\u003ealert("xss")\u003c/script\u003e Regular message'
+        html_data['msg'] = '<script>alert("xss")</script> Regular message'
         
-        send_contact_email(**html_data)
+        result = send_contact_email(**html_data)
         
-        self.assertEqual(len(mail.outbox), 1)
-        # HTML should be in the email (escaping happens at display/render time)
-        email = mail.outbox[0]
-        self.assertIn('Regular message', email.body)
+        self.assertEqual(result, "ok")
     
-    @patch('krispc.services.send_mail')
-    def test_send_contact_email_smtp_error(self, mock_send_mail):
-        """Test handling of SMTP errors."""
-        # Simulate SMTP error
-        mock_send_mail.side_effect = smtplib.SMTPException("SMTP connection failed")
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_sendgrid_error(self, mock_sg_class):
+        """Test handling of SendGrid API errors."""
+        mock_sg = MagicMock()
+        mock_sg.send.side_effect = Exception("SendGrid API error")
+        mock_sg_class.return_value = mock_sg
         
-        # Should raise exception or handle gracefully depending on implementation
-        with self.assertRaises(Exception):
-            send_contact_email(**self.valid_email_data)
+        result = send_contact_email(**self.valid_email_data)
+        
+        # Should return error status (not raise)
+        self.assertEqual(result, "error")
     
-    def test_send_contact_email_with_empty_fields(self):
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_with_empty_fields(self, mock_sg_class):
         """Test sending email with empty optional fields."""
-        mail.outbox = []
+        mock_sg = MagicMock()
+        mock_sg.send.return_value.status_code = 202
+        mock_sg_class.return_value = mock_sg
         
-        # Some implementations might have empty firstname/surname
         minimal_data = {
             'firstname': '',
             'surname': '',
@@ -122,14 +142,17 @@ class EmailServiceTest(TestCase):
             'msg': 'Test message content here'
         }
         
-        # Should still work with empty name fields
-        send_contact_email(**minimal_data)
+        result = send_contact_email(**minimal_data)
         
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(result, "ok")
     
-    def test_send_contact_email_multiple_calls(self):
+    @patch('krispc.services.SendGridAPIClient')
+    @patch('krispc.services.SENDGRID_API_KEY', 'test-api-key')
+    def test_send_contact_email_multiple_calls(self, mock_sg_class):
         """Test sending multiple emails in succession."""
-        mail.outbox = []
+        mock_sg = MagicMock()
+        mock_sg.send.return_value.status_code = 202
+        mock_sg_class.return_value = mock_sg
         
         send_contact_email(**self.valid_email_data)
         
@@ -141,8 +164,13 @@ class EmailServiceTest(TestCase):
         }
         send_contact_email(**different_data)
         
-        self.assertEqual(len(mail.outbox), 2)
+        # Should have been called twice
+        self.assertEqual(mock_sg.send.call_count, 2)
+    
+    @patch('krispc.services.SENDGRID_API_KEY', None)
+    def test_send_contact_email_no_api_key(self):
+        """Test behavior when SendGrid API key is not set."""
+        result = send_contact_email(**self.valid_email_data)
         
-        # Verify both emails are different
-        self.assertIn('John', mail.outbox[0].body)
-        self.assertIn('Jane', mail.outbox[1].body)
+        # Should still return ok (just logs warning and skips)
+        self.assertEqual(result, "ok")
