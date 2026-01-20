@@ -19,8 +19,9 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import JsonResponse
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.contrib.auth import views as auth_views
+from django.views.static import serve
 
 import hello.views
 import krispc.views
@@ -45,6 +46,11 @@ urlpatterns = [
     
     # Documentation
     path("docs/mcp/", krispc.views.MCPDocsView.as_view(), name="mcp-docs"),
+
+    # Serve media files in production (since we use local file storage on Fly.io)
+    re_path(r'^media/(?P<path>.*)$', serve, {
+        'document_root': settings.MEDIA_ROOT,
+    }),
 ]
 
 urlpatterns += i18n_patterns(
