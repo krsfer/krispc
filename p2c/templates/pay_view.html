@@ -1,0 +1,273 @@
+{% extends 'p2c_base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Pay View" %}{% endblock page_title %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        {% csrf_token %}
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            {% if appointments %}
+                <div class="bg-white shadow-lg rounded-lg p-6">
+                    <h1 class="text-2xl font-bold text-gray-900 mb-6">{% trans "Pay Calculator" %}</h1>
+                    
+                    <!-- Rate Configuration -->
+                    <div class="mb-8">
+                        <h2 class="text-lg font-semibold text-gray-700 mb-4">{% trans "Rate Configuration" %}</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="weekday-rate" class="block text-sm font-medium text-gray-700">{% trans "Weekday Rate (€/hour)" %}</label>
+                                <input type="number" id="weekday-rate" step="0.01" min="0" 
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                       value="{{ weekday_rate|default:'25.00' }}">
+                            </div>
+                            <div>
+                                <label for="sunday-rate" class="block text-sm font-medium text-gray-700">{% trans "Sunday Rate (€/hour)" %}</label>
+                                <input type="number" id="sunday-rate" step="0.01" min="0"
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                       value="{{ sunday_rate|default:'35.00' }}">
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <button id="save-rates" type="button" class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                {% trans "Save Rates" %}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Time Summary -->
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-gray-700">{% trans "Time Summary" %}</h2>
+                            <span class="text-sm text-gray-500">{{ current_month_name }} {{ current_year }}</span>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm text-gray-500">{% trans "Weekday Hours" %}</p>
+                                    <p class="text-xl font-bold text-gray-900" id="weekday-hours">0:00</p>
+                                </div>
+                                <div class="h-8 w-px bg-gray-300"></div>
+                                <div>
+                                    <p class="text-sm text-gray-500">{% trans "Sunday Hours" %}</p>
+                                    <p class="text-xl font-bold text-gray-900" id="sunday-hours">0:00</p>
+                                </div>
+                                <div class="h-8 w-px bg-gray-300"></div>
+                                <div>
+                                    <p class="text-sm text-gray-500">{% trans "Total Hours" %}</p>
+                                    <p class="text-xl font-bold text-indigo-600" id="total-hours">0:00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pay Calculation -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 mb-4">{% trans "Pay Calculation" %}</h2>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 class="text-md font-medium text-gray-700 mb-3">{% trans "Differential Rate Method" %}</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="text-gray-600 w-32">{% trans "Weekday Pay" %}:</span>
+                                            <span id="weekday-pay" class="font-medium">€0.00</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <span class="text-gray-600 w-32">{% trans "Sunday Pay" %}:</span>
+                                            <span id="sunday-pay" class="font-medium">€0.00</span>
+                                        </div>
+                                        <div class="flex items-center pt-3 border-t">
+                                            <span class="text-gray-800 font-medium w-32">{% trans "Total Pay" %}:</span>
+                                            <span id="total-differential-pay" class="font-bold text-lg text-indigo-600">€0.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-md font-medium text-gray-700 mb-3">{% trans "Flat Rate Method" %}</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="text-gray-600 w-48">{% trans "Total Hours × Weekday Rate" %}:</span>
+                                            <span id="flat-rate-pay" class="font-medium">€0.00</span>
+                                        </div>
+                                        <div class="flex items-center pt-3 border-t">
+                                            <span class="text-gray-800 font-medium w-48">{% trans "Difference" %}:</span>
+                                            <span id="pay-difference" class="font-bold text-lg text-indigo-600">€0.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden appointments data -->
+                <div id="appointments-data" class="hidden">
+                    {% for appointment in appointments %}
+                        <div class="appointment-item" 
+                             data-day="{{ appointment.day }}"
+                             data-month="{{ appointment.month }}"
+                             data-year="{{ appointment.year }}"
+                             data-day-of-week="{{ appointment.day_of_week }}"
+                             data-is-sunday="{{ appointment.is_sunday|yesno:'true,false' }}"
+                             data-start="{{ appointment.start_time }}"
+                             data-end="{{ appointment.end_time }}">
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <script>
+                    // Initialize page
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Initial calculation with server-provided rates
+                        calculateSalary();
+                        
+                        // Add save button functionality
+                        const saveButton = document.getElementById('save-rates');
+                        if (saveButton) {
+                            saveButton.addEventListener('click', saveRates);
+                        }
+                    });
+
+                    // Update calculations when rates are typed
+                    document.getElementById('weekday-rate').addEventListener('input', calculateSalary);
+                    document.getElementById('sunday-rate').addEventListener('input', calculateSalary);
+                    
+                    // Save rates to server
+                    async function saveRates() {
+                        const weekdayRate = document.getElementById('weekday-rate').value;
+                        const sundayRate = document.getElementById('sunday-rate').value;
+                        
+                        try {
+                            const response = await fetch('/update-rates/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCSRFToken()
+                                },
+                                body: JSON.stringify({
+                                    weekday_rate: parseFloat(weekdayRate),
+                                    sunday_rate: parseFloat(sundayRate)
+                                })
+                            });
+                            
+                            if (response.ok) {
+                                showNotification('{% trans "Rates saved successfully!" %}', 'success');
+                            } else {
+                                const errorData = await response.json();
+                                console.error('Server error:', errorData);
+                                showNotification('{% trans "Failed to save rates: " %}' + (errorData.error || '{% trans "Unknown error" %}'), 'error');
+                            }
+                        } catch (error) {
+                            console.error('Error saving rates:', error);
+                            showNotification('{% trans "Failed to save rates" %}', 'error');
+                        }
+                    }
+                    
+                    // Get CSRF token
+                    function getCookie(name) {
+                        let cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    
+                    // Alternative: Get CSRF token from the page
+                    function getCSRFToken() {
+                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                        return csrfToken ? csrfToken.value : getCookie('csrftoken');
+                    }
+                    
+                    // Show notification
+                    function showNotification(message, type) {
+                        // You can implement a toast notification here
+                        alert(message);
+                    }
+
+                    function calculateSalary() {
+                        const appointments = document.querySelectorAll('#appointments-data .appointment-item');
+                        const weekdayRate = parseFloat(document.getElementById('weekday-rate').value) || 0;
+                        const sundayRate = parseFloat(document.getElementById('sunday-rate').value) || 0;
+                        
+                        let weekdayMinutes = 0;
+                        let sundayMinutes = 0;
+
+                        appointments.forEach(appointment => {
+                            const startTime = appointment.dataset.start.split(':');
+                            const endTime = appointment.dataset.end.split(':');
+                            
+                            const startHour = parseInt(startTime[0]);
+                            const startMin = parseInt(startTime[1]);
+                            const endHour = parseInt(endTime[0]);
+                            const endMin = parseInt(endTime[1]);
+                            
+                            // Calculate duration in minutes
+                            let startMinutes = startHour * 60 + startMin;
+                            let endMinutes = endHour * 60 + endMin;
+                            if (endMinutes < startMinutes) {
+                                endMinutes += 24 * 60;
+                            }
+                            const duration = endMinutes - startMinutes;
+                            
+                            // Check if it's a Sunday using the is-sunday data attribute
+                            const isSunday = appointment.dataset.isSunday === 'true';
+                            if (isSunday) {
+                                sundayMinutes += duration;
+                            } else {
+                                weekdayMinutes += duration;
+                            }
+                        });
+
+                        // Update time displays
+                        document.getElementById('weekday-hours').textContent = formatHours(weekdayMinutes);
+                        document.getElementById('sunday-hours').textContent = formatHours(sundayMinutes);
+                        document.getElementById('total-hours').textContent = formatHours(weekdayMinutes + sundayMinutes);
+
+                        // Calculate pays
+                        const weekdayPay = (weekdayMinutes / 60) * weekdayRate;
+                        const sundayPay = (sundayMinutes / 60) * sundayRate;
+                        const totalDifferentialPay = weekdayPay + sundayPay;
+                        const flatRatePay = ((weekdayMinutes + sundayMinutes) / 60) * weekdayRate;
+                        const difference = Math.abs(totalDifferentialPay - flatRatePay);
+
+                        // Update pay displays
+                        document.getElementById('weekday-pay').textContent = formatMoney(weekdayPay);
+                        document.getElementById('sunday-pay').textContent = formatMoney(sundayPay);
+                        document.getElementById('total-differential-pay').textContent = formatMoney(totalDifferentialPay);
+                        document.getElementById('flat-rate-pay').textContent = formatMoney(flatRatePay);
+                        document.getElementById('pay-difference').textContent = formatMoney(difference);
+                    }
+
+                    function formatHours(minutes) {
+                        const hours = Math.floor(minutes / 60);
+                        const mins = minutes % 60;
+                        return `${hours}:${mins.toString().padStart(2, '0')}`;
+                    }
+
+                    function formatMoney(amount) {
+                        return `€${amount.toFixed(2)}`;
+                    }
+                </script>
+            {% else %}
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+                    <p>{% trans "Please upload a PDF schedule first to view pay calculations." %}</p>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">{% trans "Access Denied" %}</h1>
+            <p class="text-xl text-gray-600">{% trans "Please sign in to view pay calculations." %}</p>
+        </div>
+    {% endif %}
+{% endblock content %} 

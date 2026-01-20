@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="jumbotron text-center">
+  <div class="container">
+    <h1>Welcome to KrisPC</h1>
+    <p>This is the base application for KrisPC IT services and the Plexus SecondBrain.</p>
+    <a type="button" class="btn btn-lg btn-primary" href="{% url 'plexus:index' %}">Go to Plexus SecondBrain</a>
+  </div>
+</div>
+{% endblock %}

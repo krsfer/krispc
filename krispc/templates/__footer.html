@@ -1,0 +1,116 @@
+{% load static %}
+{% load i18n %}
+
+<footer id="footer">
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6" id="place">
+                    <div class="footer-info">
+                        <br>
+
+                        <hr style="background-color: #eeb442; height: 3px; border: 0;">
+
+                        <h3>KrisPC<span>.</span></h3>
+                        <p>
+                            <a class="" target="_blank"
+                               href="https://www.google.com/maps/search/?api=1&query=63+Chem.+du+Claus+06110+Le+Cannet"
+                               rel="noopener noreferrer">63 Chem. du Claus<br>
+                                06110 Le Cannet</a>
+                            <br>
+                            <br>
+                            <strong>{% trans "PTR_5040" %}:</strong> {% trans "PTR_5030" %}<br> {# Phone and rum #}
+                            <strong>Email:</strong> hello@krispc.fr
+
+                        <hr style="background-color: #eeb442; height: 3px; border: 0;">
+                        <div class="map-responsive">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11549.26650069205!2d6.9922454827925975!3d43.64158041920975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12cc2b830288222b%3A0xf25428ee82c98a0f!2sKrisPC%20Informatique!5e0!3m2!1sen!2sfr!4v1698209266695!5m2!1sen!2sfr"
+                                    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 footer-links">
+                <h4>{% trans 'PTR_0170' %}</h4>
+                <ul>
+                    {% for prod in prods %}
+                        <li><i class="bx bx-chevron-right"></i>
+                            <a href="/#prod_{{ forloop.counter0 }}">{{ prod.Prd_Name|safe }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 footer-links">
+                <h4>{% trans "For Developers" %}</h4>
+                <ul>
+                    <li><i class="bx bx-chevron-right"></i>
+                        <a href="/api/krispc/swagger/" target="_blank">API Documentation (Swagger)</a>
+                    </li>
+                    <li><i class="bx bx-chevron-right"></i>
+                        <a href="/api/krispc/redoc/" target="_blank">API Documentation (ReDoc)</a>
+                    </li>
+                    <li><i class="bx bx-chevron-right"></i>
+                        <a href="/api/krispc/schema/" target="_blank">OpenAPI Schema (JSON)</a>
+                    </li>
+                    <li><i class="bx bx-chevron-right"></i>
+                        <a href="/docs/mcp/" target="_blank">MCP Server for AI</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% include "logos.html" %}
+
+    <div class="colophon">
+        <div class="d-flex flex-wrap justify-content-center justify-content-between">
+            {% for cph in colophon %}
+                <a href="{{ cph.Colophon_Link }}" title='{{ cph.Colophon_Title }}' target='_blank'>
+                    <img class="colophon_logo m-2"
+                         src="
+                            {% with 'images/logos/'|add:cph.Colophon_Icon as image_static %}
+                                {% static image_static %}
+                            {% endwith %}"
+                         alt="image for {{ cph.Colophon_Title }}">
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 copyright fst-italic" style="padding:0; margin: 0; height: 20px">
+            Version {{ VER }} &copy; Copyright
+            <div class="d-inline-block" id="date-container"></div>
+            <script>
+                // Create a new element to display the year
+                let yearElement = document.createElement('p');
+
+                // Set the text of the element to the current year
+                yearElement.textContent = String(new Date().getFullYear());
+
+                // Get a reference to the parent element where you want to add the new element
+                let parentElement = document.getElementById('date-container');
+
+                // Add the new element to the page
+                parentElement.appendChild(yearElement);
+            </script>
+            {% trans 'PTR_2050' %}
+            - <a href="{% url 'privacy' %}" class="text-decoration-underline">{% trans "Privacy Policy" %}</a>
+            - <a href="{% url 'terms' %}" class="text-decoration-underline">{% trans "Terms of Service" %}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 copyright fst-italic" style="padding:0; margin: 0; height: 20px">
+            {% trans 'PTR_2052' %}
+
+            <i class='bx bxs-heart' style="color:#ff0000"></i>
+
+            {% trans 'PTR_2060' %}
+            <a style="text-decoration:underline; cursor:pointer" onclick="genEmailMe();">
+                Christopher Archer.
+            </a>
+        </div>
+    </div>
+</footer>

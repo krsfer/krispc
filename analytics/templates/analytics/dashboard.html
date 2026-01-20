@@ -1,0 +1,380 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard | KrisPC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .card-gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-gradient-2 { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
+        .card-gradient-3 { background: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%); }
+        .card-gradient-4 { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Nav -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-chart-line text-indigo-600 text-2xl mr-3"></i>
+                    <h1 class="text-xl font-bold text-gray-800">Analytics Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-500">Last 30 Days</span>
+                    <a href="/admin/" class="text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-arrow-left mr-1"></i> Back to Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Visits -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 relative overflow-hidden group hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-start z-10 relative">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Total Visits</p>
+                        <h3 class="text-3xl font-bold text-gray-800">{{ summary.total_visits }}</h3>
+                    </div>
+                    <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                        <i class="fas fa-users text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-500 font-medium flex items-center">
+                        <i class="fas fa-user-check mr-1"></i> {{ summary.unique_visitors }}
+                    </span>
+                    <span class="text-gray-400 ml-2">unique visitors</span>
+                </div>
+            </div>
+
+            <!-- Avg Time -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Avg Time on Page</p>
+                        <h3 class="text-3xl font-bold text-gray-800">{{ summary.avg_time }}s</h3>
+                    </div>
+                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                        <i class="fas fa-clock text-xl"></i>
+                    </div>
+                </div>
+                 <div class="mt-4 flex items-center text-sm">
+                    <span class="text-gray-400">Engagement Metric</span>
+                </div>
+            </div>
+
+            <!-- Rage Clicks -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Rage Clicks</p>
+                        <h3 class="text-3xl font-bold text-gray-800">{{ summary.rage_clicks }}</h3>
+                    </div>
+                    <div class="p-2 bg-orange-50 rounded-lg text-orange-600">
+                        <i class="fas fa-mouse-pointer text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    {% if summary.rage_clicks > 0 %}
+                    <span class="text-red-500 font-medium">Attention needed</span>
+                    {% else %}
+                    <span class="text-green-500 font-medium">All good</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Errors -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Errors</p>
+                        <h3 class="text-3xl font-bold text-gray-800">{{ summary.total_errors }}</h3>
+                    </div>
+                    <div class="p-2 bg-red-50 rounded-lg text-red-600">
+                        <i class="fas fa-exclamation-triangle text-xl"></i>
+                    </div>
+                </div>
+                 <div class="mt-4 flex items-center text-sm">
+                    <span class="text-gray-400">Client-side errors</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chart: Traffic -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Traffic Overview</h2>
+            <div class="relative h-80">
+                <canvas id="trafficChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Secondary Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            
+            <!-- Devices -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Device Breakdown</h2>
+                <div class="relative h-64">
+                    <canvas id="deviceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Browsers -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Top Browsers</h2>
+                <div class="relative h-64">
+                    <canvas id="browserChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Locations -->
+             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Top Locations</h2>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/2 relative h-64">
+                         <canvas id="countryChart"></canvas>
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <ul class="space-y-3">
+                            {% for country in country_stats %}
+                            <li class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                <span class="flex items-center text-gray-700 font-medium">
+                                    <i class="fas fa-globe-americas text-indigo-400 mr-2"></i> {{ country.country }}
+                                </span>
+                                <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded">{{ country.count }}</span>
+                            </li>
+                            {% empty %}
+                            <li class="text-gray-400 italic text-sm text-center py-4">No location data yet</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Web Vitals -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Core Web Vitals (Avg)</h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">LCP (Loading)</span>
+                            <span class="font-bold {% if cwv.avg_lcp < 2500 %}text-green-500{% elif cwv.avg_lcp < 4000 %}text-yellow-500{% else %}text-red-500{% endif %}">{{ cwv.avg_lcp }} ms</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-indigo-600 h-2 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">CLS (Stability)</span>
+                            <span class="font-bold {% if cwv.avg_cls < 0.1 %}text-green-500{% elif cwv.avg_cls < 0.25 %}text-yellow-500{% else %}text-red-500{% endif %}">{{ cwv.avg_cls }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-indigo-600 h-2 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">TTFB (Server Speed)</span>
+                            <span class="font-bold text-gray-800">{{ cwv.avg_ttfb }} ms</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-indigo-600 h-2 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </div>
+                     <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">INP (Responsiveness)</span>
+                            <span class="font-bold text-gray-800">{{ cwv.avg_inp }} ms</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-indigo-600 h-2 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 mt-4 text-center">Thresholds based on Google Web Vitals recommendations</p>
+            </div>
+        </div>
+
+        <!-- Top Pages Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-bold text-gray-800">Top Visited Pages</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Path</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visits</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for page in top_pages %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ page.path }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ page.count }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ page.avg_time|default:"0" }}s</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">No data available yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Data from Django
+        const dates = {{ charts.dates|safe }};
+        const dailyCounts = {{ charts.daily_counts|safe }};
+        const deviceLabels = {{ charts.device_labels|safe }};
+        const deviceData = {{ charts.device_data|safe }};
+        const browserLabels = {{ charts.browser_labels|safe }};
+        const browserData = {{ charts.browser_data|safe }};
+        const countryLabels = {{ charts.country_labels|safe }};
+        const countryData = {{ charts.country_data|safe }};
+
+        // Common Chart Options
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#6b7280';
+        
+        // 1. Traffic Chart
+        const ctxTraffic = document.getElementById('trafficChart').getContext('2d');
+        const gradient = ctxTraffic.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)'); // Indigo
+        gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+        new Chart(ctxTraffic, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Visits',
+                    data: dailyCounts,
+                    borderColor: '#6366f1',
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [2, 4], color: '#f3f4f6' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // 2. Device Chart
+        const ctxDevice = document.getElementById('deviceChart').getContext('2d');
+        new Chart(ctxDevice, {
+            type: 'doughnut',
+            data: {
+                labels: deviceLabels,
+                datasets: [{
+                    data: deviceData,
+                    backgroundColor: [
+                        '#6366f1', // Indigo
+                        '#ec4899', // Pink
+                        '#10b981', // Emerald
+                        '#f59e0b'  // Amber
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // 3. Browser Chart
+        const ctxBrowser = document.getElementById('browserChart').getContext('2d');
+        new Chart(ctxBrowser, {
+            type: 'pie',
+            data: {
+                labels: browserLabels,
+                datasets: [{
+                    data: browserData,
+                    backgroundColor: [
+                        '#3b82f6', // Blue
+                        '#f97316', // Orange
+                        '#8b5cf6', // Violet
+                        '#ef4444', // Red
+                        '#64748b'  // Slate
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // 4. Country Chart
+        const ctxCountry = document.getElementById('countryChart').getContext('2d');
+        new Chart(ctxCountry, {
+            type: 'doughnut',
+            data: {
+                labels: countryLabels,
+                datasets: [{
+                    data: countryData,
+                    backgroundColor: [
+                        '#10b981', // Emerald
+                        '#3b82f6', // Blue
+                        '#f59e0b', // Amber
+                        '#ef4444', // Red
+                        '#6366f1'  // Indigo
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

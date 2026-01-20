@@ -1,0 +1,624 @@
+{% load static custom_filters i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% csrf_token %}
+    <title>PDF2Cal - {% block page_title %}{% endblock page_title %}</title>
+
+    <!-- Critical CSS (inline) -->
+    <style>
+        /* Critical above-the-fold styles */
+        body { margin: 0; padding: 0; background-color: #f3f4f6; }
+        nav { background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: fixed; top: 0; left: 0; width: 100%; z-index: 50; min-height: 64px; }
+        .container { max-width: 72rem; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
+        #main-container { padding-top: calc(64px + 0.5rem + 2px); /* navbar height (64px) + rounded-lg (0.5rem) + 2px */ }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        /* Mobile responsive text */
+        @media (max-width: 639px) {
+            body { font-size: 16px; }
+            button, .btn { min-height: 44px; }
+        }
+
+        /* Language switcher styles (from hub) */
+        .language-dropdown {
+            position: relative;
+        }
+
+        .lang-btn-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: transparent;
+            cursor: pointer;
+            transition: background-color 200ms ease;
+        }
+
+        .lang-btn-dropdown:hover {
+            background: #F3F4F6;
+        }
+
+        .flag-icon {
+            width: 32px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .chevron {
+            width: 1rem;
+            height: 1rem;
+            color: #6B7280;
+            transition: transform 200ms ease;
+        }
+
+        .lang-dropdown-menu {
+            position: absolute;
+            right: 0;
+            margin-top: 0.5rem;
+            min-width: 12rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E5E7EB;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 200ms ease;
+            z-index: 50;
+        }
+
+        .lang-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .lang-dropdown-menu {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lang-dropdown-menu form {
+            margin: 0;
+        }
+
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: white;
+            cursor: pointer;
+            transition: background-color 200ms ease;
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            width: 100%;
+        }
+
+        .lang-option:hover {
+            background: #F9FAFB;
+        }
+
+        .lang-option.active {
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .lang-option span {
+            flex: 1;
+        }
+
+        .checkmark {
+            width: 1rem;
+            height: 1rem;
+            color: #4F46E5;
+            margin-left: auto;
+        }
+    </style>
+
+    <!-- Non-critical CSS (deferred) -->
+    <link rel="preload" href="{% static 'css/styles.css' %}?v={% now 'U' %}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{% static 'css/styles.css' %}?v={% now 'U' %}"></noscript>
+
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"></noscript>
+
+    <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
+        <div class="w-full px-3 sm:px-4 sm:max-w-6xl sm:mx-auto">
+            <div class="flex justify-between items-center py-3 sm:py-4">
+                <!-- Logo - Always visible -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <a data-v-6646fce4="" href="{% url 'hub:index' %}" class="font-brand text-2xl text-primary">KrisPC</a>
+                    <a href="{% url 'home' %}" class="flex items-center ml-2 sm:ml-4">
+                        <img src="{% static 'images/pdf2calendar_grey.svg' %}" alt="App Logo" class="h-6 sm:h-8 w-auto">
+                    </a>
+
+                    <!-- Language switcher & Info - visible on desktop, hidden on mobile -->
+                    <div class="hidden sm:flex items-center space-x-3">
+                        <div class="language-dropdown">
+                            <button id="langDropdownBtn" class="lang-btn-dropdown" aria-expanded="false">
+                                {% if current_language == 'fr' %}
+                                <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
+                                {% else %}
+                                <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
+                                {% endif %}
+                                <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div id="langDropdownMenu" class="lang-dropdown-menu">
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                                    <button type="submit" name="language" value="fr" class="lang-option {% if current_language == 'fr' %}active{% endif %}">
+                                        <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
+                                        <span>Français</span>
+                                        {% if current_language == 'fr' %}
+                                        <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                                    <button type="submit" name="language" value="en" class="lang-option {% if current_language == 'en' %}active{% endif %}">
+                                        <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
+                                        <span>English</span>
+                                        {% if current_language == 'en' %}
+                                        <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <button id="info-button" class="text-gray-500 hover:text-gray-900 transition duration-300 p-2 min-h-[36px]">
+                            <span class="text-xl">ⓘ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Desktop navigation - Hidden on mobile -->
+                {% if user.is_authenticated %}
+                <div class="hidden lg:flex items-center space-x-2">
+                    <a href="{% url 'event_settings' %}"
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span class="hidden xl:inline">{% trans "Event Settings" %}</span>
+                        <span class="xl:hidden">{% trans "Settings" %}</span>
+                    </a>
+                    <a href="{% url 'pay_view' %}"
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="hidden xl:inline">{% trans "Pay View" %}</span>
+                        <span class="xl:hidden">{% trans "Pay" %}</span>
+                    </a>
+                    <a href="{% url 'updates' %}"
+                       class="relative inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        {% trans "Updates" %}
+                        {% if has_unread_updates %}
+                        <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'json_ingest' %}"
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        {% trans "JSON" %}
+                    </a>
+                    <a href="{% url 'calendar_editor' %}"
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 min-h-[44px]">
+                        <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        <span class="hidden xl:inline">{% trans "Calendar Editor" %}</span>
+                        <span class="xl:hidden">{% trans "Editor" %}</span>
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Right side - Profile & Mobile menu toggle -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- Mobile: Language & Info -->
+                    <div class="flex sm:hidden items-center space-x-2">
+                        <div class="language-dropdown">
+                            <button id="langDropdownBtnMobile" class="lang-btn-dropdown" aria-expanded="false">
+                                {% if current_language == 'fr' %}
+                                <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
+                                {% else %}
+                                <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
+                                {% endif %}
+                                <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div id="langDropdownMenuMobile" class="lang-dropdown-menu">
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                                    <button type="submit" name="language" value="fr" class="lang-option {% if current_language == 'fr' %}active{% endif %}">
+                                        <img src="{% static 'images/lv_franceCroppedFlattened1.png' %}" alt="Français" class="flag-icon">
+                                        <span>Français</span>
+                                        {% if current_language == 'fr' %}
+                                        <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                                    <button type="submit" name="language" value="en" class="lang-option {% if current_language == 'en' %}active{% endif %}">
+                                        <img src="{% static 'images/lv_united_kingdomCroppedFlattened1.png' %}" alt="English" class="flag-icon">
+                                        <span>English</span>
+                                        {% if current_language == 'en' %}
+                                        <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <!-- Profile -->
+                    <div class="hidden sm:flex items-center space-x-2">
+                        <div class="relative flex items-center space-x-2" id="profile-container">
+                            <img src="https://www.gravatar.com/avatar/{{ user.email|md5_hash }}?d=identicon"
+                                 alt="Profile"
+                                 class="w-8 h-8 rounded-full cursor-pointer flex-shrink-0"
+                                 id="profile-image">
+                            <span class="text-gray-700 opacity-0 max-w-0 overflow-hidden transition-all duration-300 ease-in-out whitespace-nowrap" id="user-email">{{ user.email }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Logout button - hidden on mobile -->
+                    <form action="{% url 'logout' %}" method="post" class="m-0 hidden sm:block">
+                        {% csrf_token %}
+                        <button type="submit"
+                           class="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 min-h-[44px]">
+                            <svg class="h-4 w-4 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            <span class="hidden sm:inline">{% trans "Logout" %}</span>
+                        </button>
+                    </form>
+
+                    <!-- Mobile menu toggle -->
+                    <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 focus:outline-none min-h-[44px] min-w-[44px] flex items-center justify-center">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white border-t">
+            <div class="px-3 pt-3 pb-4 space-y-2">
+                <a data-v-6646fce4="" href="{% url 'hub:index' %}" class="flex items-center px-3 py-3 rounded-md font-brand text-2xl text-primary hover:bg-gray-50 min-h-[44px]">
+                    KrisPC
+                </a>
+                {% if user.is_authenticated %}
+                <!-- Info button for mobile -->
+                <button id="info-button-mobile" class="w-full flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    <span class="text-xl mr-2">ⓘ</span>
+                    {% trans "About PDF2Cal" %}
+                </button>
+
+                <a href="{% url 'event_settings' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    {% trans "Event Settings" %}
+                </a>
+                <a href="{% url 'pay_view' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% trans "Pay View" %}
+                </a>
+                <a href="{% url 'updates' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    {% trans "Updates" %}
+                    {% if has_unread_updates %}
+                    <span class="ml-2 inline-block h-2 w-2 rounded-full bg-red-500"></span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'json_ingest' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    {% trans "JSON Ingest" %}
+                </a>
+                <a href="{% url 'calendar_editor' %}"
+                   class="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 min-h-[44px]">
+                    <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    {% trans "Calendar Editor" %}
+                </a>
+
+                <!-- User info & Logout for mobile -->
+                <div class="pt-3 border-t border-gray-200">
+                    <div class="flex items-center px-3 py-2 text-sm text-gray-600">
+                        <img src="https://www.gravatar.com/avatar/{{ user.email|md5_hash }}?d=identicon"
+                             alt="Profile"
+                             class="w-8 h-8 rounded-full mr-3">
+                        <span class="truncate">{{ user.email }}</span>
+                    </div>
+                    <form action="{% url 'logout' %}" method="post" class="mt-2">
+                        {% csrf_token %}
+                        <button type="submit"
+                               class="w-full flex items-center justify-center px-3 py-3 rounded-md text-base font-medium text-white bg-red-600 hover:bg-red-700 min-h-[44px]">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            {% trans "Logout" %}
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="w-full px-3 sm:px-4 sm:max-w-7xl sm:mx-auto py-4 sm:py-6 lg:py-8" id="main-container">
+        {% if messages %}
+        <div class="mb-8">
+            {% for message in messages %}
+                <div class="rounded-md p-4 mb-4 {% if message.tags == 'error' %}bg-red-50 border-l-4 border-red-400 text-red-700{% elif message.tags == 'success' %}bg-green-50 border-l-4 border-green-400 text-green-700{% else %}bg-blue-50 border-l-4 border-blue-400 text-blue-700{% endif %}" role="alert">
+                    <p class="text-sm">{{ message }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="bg-white shadow-lg mt-8" id="main-footer">
+        <div class="w-full px-3 sm:px-4 sm:max-w-7xl sm:mx-auto py-4">
+            <p class="text-center text-sm sm:text-base text-gray-500">
+                2024 PDF2Cal · {% trans "All rights reserved" %} ·
+                {% if current_language == 'fr' %}
+                <a href="https://www.krispc.fr/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a> ·
+                <a href="https://www.krispc.fr/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a> ·
+                {% else %}
+                <a href="https://www.krispc.fr/en/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a> ·
+                <a href="https://www.krispc.fr/en/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a> ·
+                {% endif %}
+                {% trans "Made with ❤️ by" %} <a href="mailto:archer.chris@gmail.com" class="font-['Pacifico'] italic underline decoration-[#880000] decoration-2 hover:text-[#880000] transition-colors duration-300 text-base sm:text-lg">Christopher Archer</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-xl w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">{% trans "About PDF2Cal" %}</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-gray-500">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <p class="text-gray-600">{% trans "PDF2Cal is a powerful tool that helps you convert PDF documents containing event information into calendar events. Here's what you can do:" %}</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li>{% trans "Import PDF documents containing event details" %}</li>
+                    <li>{% trans "Automatically extract event information including dates, times, and descriptions" %}</li>
+                    <li>{% trans "Review and edit extracted events before saving" %}</li>
+                    <li>{% trans "Export events to your calendar" %}</li>
+                    <li>{% trans "Customize event extraction settings" %}</li>
+                    <li>{% trans "Manage your event preferences" %}</li>
+                </ul>
+                <div class="pt-4 border-t border-gray-200">
+                    <p class="text-sm text-gray-500">
+                        {% if current_language == 'fr' %}
+                        <a href="https://www.krispc.fr/privacy/" class="text-indigo-600 hover:text-indigo-900 underline">{% trans "Privacy Policy" %}</a>
+                        <span class="mx-2">·</span>
+                        <a href="https://www.krispc.fr/terms/" class="text-indigo-600 hover:text-indigo-900 underline">{% trans "Terms of Service" %}</a>
+                        {% else %}
+                        <a href="https://www.krispc.fr/en/privacy/" class="text-indigo-600 hover:text-indigo-900 underline">{% trans "Privacy Policy" %}</a>
+                        <span class="mx-2">·</span>
+                        <a href="https://www.krispc.fr/en/terms/" class="text-indigo-600 hover:text-indigo-900 underline">{% trans "Terms of Service" %}</a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Profile email animation
+        const profileContainer = document.getElementById('profile-container');
+        const userEmail = document.getElementById('user-email');
+        let isEmailVisible = false;
+
+        function toggleEmail() {
+            if (!isEmailVisible) {
+                userEmail.classList.remove('opacity-0', 'max-w-0');
+                userEmail.classList.add('opacity-100', 'max-w-xs');
+            } else {
+                userEmail.classList.remove('opacity-100', 'max-w-xs');
+                userEmail.classList.add('opacity-0', 'max-w-0');
+            }
+            isEmailVisible = !isEmailVisible;
+        }
+
+        if (profileContainer) {
+            // Handle hover events for desktop
+            profileContainer.addEventListener('mouseenter', () => {
+                if (!isEmailVisible) {
+                    toggleEmail();
+                }
+            });
+
+            profileContainer.addEventListener('mouseleave', () => {
+                if (isEmailVisible) {
+                    toggleEmail();
+                }
+            });
+
+            // Handle click events for mobile
+            profileContainer.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleEmail();
+            });
+        }
+
+        // Language dropdown toggle (hub-style) - Desktop
+        const dropdownBtn = document.getElementById('langDropdownBtn');
+        const dropdownMenu = document.getElementById('langDropdownMenu');
+
+        if (dropdownBtn && dropdownMenu) {
+            dropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = dropdownMenu.classList.toggle('show');
+                dropdownBtn.setAttribute('aria-expanded', isOpen);
+                dropdownBtn.querySelector('.chevron').style.transform = isOpen ? 'rotate(180deg)' : '';
+            });
+
+            // Close on click outside
+            document.addEventListener('click', () => {
+                dropdownMenu.classList.remove('show');
+                dropdownBtn.setAttribute('aria-expanded', 'false');
+                dropdownBtn.querySelector('.chevron').style.transform = '';
+            });
+
+            // Close on ESC key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && dropdownMenu.classList.contains('show')) {
+                    dropdownMenu.classList.remove('show');
+                    dropdownBtn.setAttribute('aria-expanded', 'false');
+                    dropdownBtn.querySelector('.chevron').style.transform = '';
+                }
+            });
+        }
+
+        // Language dropdown toggle (hub-style) - Mobile
+        const dropdownBtnMobile = document.getElementById('langDropdownBtnMobile');
+        const dropdownMenuMobile = document.getElementById('langDropdownMenuMobile');
+
+        if (dropdownBtnMobile && dropdownMenuMobile) {
+            dropdownBtnMobile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = dropdownMenuMobile.classList.toggle('show');
+                dropdownBtnMobile.setAttribute('aria-expanded', isOpen);
+                dropdownBtnMobile.querySelector('.chevron').style.transform = isOpen ? 'rotate(180deg)' : '';
+            });
+
+            // Close on click outside
+            document.addEventListener('click', () => {
+                dropdownMenuMobile.classList.remove('show');
+                dropdownBtnMobile.setAttribute('aria-expanded', 'false');
+                dropdownBtnMobile.querySelector('.chevron').style.transform = '';
+            });
+
+            // Close on ESC key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && dropdownMenuMobile.classList.contains('show')) {
+                    dropdownMenuMobile.classList.remove('show');
+                    dropdownBtnMobile.setAttribute('aria-expanded', 'false');
+                    dropdownBtnMobile.querySelector('.chevron').style.transform = '';
+                }
+            });
+        }
+
+        // Info modal functionality
+        const infoModal = document.getElementById('info-modal');
+        const infoButton = document.getElementById('info-button');
+        const infoButtonMobile = document.getElementById('info-button-mobile');
+        const closeModal = document.getElementById('close-modal');
+
+        function openInfoModal() {
+            infoModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            // Close mobile menu if open
+            if (mobileMenu) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        function closeInfoModal() {
+            infoModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (infoButton) {
+            infoButton.addEventListener('click', openInfoModal);
+        }
+
+        if (infoButtonMobile) {
+            infoButtonMobile.addEventListener('click', openInfoModal);
+        }
+
+        if (closeModal) {
+            closeModal.addEventListener('click', closeInfoModal);
+        }
+
+        // Close modal when clicking outside
+        if (infoModal) {
+            infoModal.addEventListener('click', (e) => {
+                if (e.target === infoModal) {
+                    closeInfoModal();
+                }
+            });
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && infoModal && !infoModal.classList.contains('hidden')) {
+                closeInfoModal();
+            }
+        });
+    </script>
+    <!-- Analytics -->
+    <script src="{% static 'analytics/tracker.js' %}" defer></script>
+    
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

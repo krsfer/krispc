@@ -1,0 +1,27 @@
+{% extends 'p2c_base.html' %}
+
+{% block page_title %}Terms of Service{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-white shadow rounded-lg mt-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Terms of Service</h1>
+    <div class="prose prose-indigo text-gray-500">
+        <p>Last updated: {% now "F j, Y" %}</p>
+        
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing and using PDF2Cal, you accept and agree to be bound by the terms and provision of this agreement.</p>
+
+        <h2>2. Service Description</h2>
+        <p>PDF2Cal provides a service to convert PDF schedules into calendar events.</p>
+
+        <h2>3. User Responsibilities</h2>
+        <p>You are responsible for the content you upload and for maintaining the security of your account.</p>
+
+        <h2>4. Disclaimer</h2>
+        <p>The service is provided "as is" without warranties of any kind.</p>
+
+        <h2>5. Termination</h2>
+        <p>We reserve the right to terminate or suspend access to our service immediately, without prior notice or liability, for any reason whatsoever.</p>
+    </div>
+</div>
+{% endblock content %}

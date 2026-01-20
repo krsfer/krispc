@@ -1,0 +1,530 @@
+{% extends 'p2c_base.html' %}
+{% load static %}
+
+{% block page_title %}{% trans "Calendar Backup History" %}{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-6">
+    <div class="bg-white shadow-lg rounded-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">{% trans "Calendar Backup History" %}</h2>
+            <div class="text-sm text-gray-600">
+                {% trans "Total backups:" %} <span class="font-semibold">{{ total_backups }}</span>
+            </div>
+        </div>
+
+        {% if backups.count == 0 %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">{% trans "No backups yet" %}</h3>
+            <p class="mt-1 text-sm text-gray-500">{% trans "Backups are automatically created before syncing calendars." %}</p>
+            <div class="mt-6">
+                <a href="{% url 'json_ingest' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    {% trans "Go to JSON Ingest" %}
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <!-- Backups Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {% trans "Calendar" %}
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {% trans "Period" %}
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {% trans "Backup Date" %}
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {% trans "Events" %}
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {% trans "Actions" %}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for backup in backups %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ backup.calendar_name }}</div>
+                            <div class="text-xs text-gray-500">{{ backup.calendar_id|truncatechars:30 }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ backup.month|stringformat:"02d" }}/{{ backup.year }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ backup.backup_date|date:"Y-m-d H:i" }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ backup.event_count }} {% blocktrans count count=backup.event_count %}event{% plural %}events{% endblocktrans %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button onclick="previewBackup({{ backup.id }})"
+                                    class="text-indigo-600 hover:text-indigo-900"
+                                    title="{% trans "Preview events and select which ones to restore" %}">
+                                {% trans "Preview & Restore" %}
+                            </button>
+                            <button onclick="downloadBackup({{ backup.id }})"
+                                    class="text-green-600 hover:text-green-900">
+                                {% trans "Download" %}
+                            </button>
+                            <button onclick="deleteBackup({{ backup.id }})"
+                                    class="text-red-600 hover:text-red-900">
+                                {% trans "Delete" %}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div id="preview-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">{% trans "Backup Preview" %}</h3>
+            <button onclick="closePreviewModal()" class="text-gray-400 hover:text-gray-600">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div id="preview-content" class="mt-4 max-h-96 overflow-y-auto">
+            <!-- Preview content will be loaded here -->
+        </div>
+        <div class="mt-4 flex justify-between space-x-2">
+            <div class="flex space-x-2">
+                <button id="select-all-btn" onclick="selectAllEvents()" class="px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-md">
+                    {% trans "Select All" %}
+                </button>
+                <button id="deselect-all-btn" onclick="deselectAllEvents()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-md">
+                    {% trans "Deselect All" %}
+                </button>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="closePreviewModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md">
+                    {% trans "Close" %}
+                </button>
+                <button id="restore-selected-btn" onclick="restoreSelectedEvents()" disabled class="px-4 py-2 bg-gray-300 text-gray-500 rounded-md cursor-not-allowed">
+                    {% trans "Restore Selected" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Restore Confirmation Modal -->
+<div id="restore-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">{% trans "Confirm Restore" %}</h3>
+            <button onclick="closeRestoreModal()" class="text-gray-400 hover:text-gray-600">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div id="restore-content" class="mt-4">
+            <!-- Restore confirmation content will be loaded here -->
+        </div>
+
+        <!-- Progress bar section (hidden initially) -->
+        <div id="restore-progress-section" class="mt-6 hidden">
+            <div class="mb-2 flex justify-between items-center">
+                <span id="progress-description" class="text-sm text-gray-600">{% trans "Starting restore..." %}</span>
+                <span id="progress-percent" class="text-sm font-semibold text-gray-900">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                <div id="progress-bar" class="bg-blue-600 h-4 transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div id="restore-result" class="mt-4 hidden"></div>
+        </div>
+
+        <div id="restore-buttons" class="mt-6 flex justify-end space-x-2">
+            <button onclick="closeRestoreModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md">
+                {% trans "Cancel" %}
+            </button>
+            <button id="confirm-restore-btn" onclick="confirmRestore()" class="px-4 py-2 rounded-md" style="background-color: #ea580c; color: #ffffff;">
+                {% trans "Restore Backup" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentBackupId = null;
+let currentBackupData = null;
+let selectedEventIndices = new Set();
+
+function previewBackup(backupId) {
+    fetch(`/backup/preview/${backupId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            currentBackupId = backupId;
+            currentBackupData = data;
+            selectedEventIndices = new Set();
+
+            const labels = {
+                calendar: '{% trans "Calendar:" %}',
+                period: '{% trans "Period:" %}',
+                backupDate: '{% trans "Backup Date:" %}',
+                events: '{% trans "Events:" %}',
+                selectToRestore: '{% trans "Select events to restore:" %}',
+                selected: '{% trans "selected" %}',
+                noTitle: '{% trans "No title" %}',
+                noStartTime: '{% trans "No start time" %}'
+            };
+
+            const content = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div><span class="font-semibold">${labels.calendar}</span> ${data.calendar_name}</div>
+                        <div><span class="font-semibold">${labels.period}</span> ${data.month}/${data.year}</div>
+                        <div><span class="font-semibold">${labels.backupDate}</span> ${data.backup_date}</div>
+                        <div><span class="font-semibold">${labels.events}</span> ${data.event_count}</div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-semibold">${labels.selectToRestore}</h4>
+                            <span id="selected-count" class="text-sm text-gray-600">0 ${labels.selected}</span>
+                        </div>
+                        <div class="space-y-1 text-sm">
+                            ${data.events.map((event, index) => `
+                                <label class="flex items-start gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                    <input type="checkbox"
+                                           class="event-checkbox mt-1 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                           data-index="${index}"
+                                           onchange="updateSelectedCount()">
+                                    <div class="flex-1">
+                                        <div class="font-medium">${event.summary || labels.noTitle}</div>
+                                        <div class="text-xs text-gray-600">
+                                            ${event.start ? (event.start.dateTime || event.start.date) : labels.noStartTime}
+                                            ${event.description ? ` • ${event.description.substring(0, 50)}${event.description.length > 50 ? '...' : ''}` : ''}
+                                        </div>
+                                    </div>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('preview-content').innerHTML = content;
+            document.getElementById('preview-modal').classList.remove('hidden');
+        })
+        .catch(error => {
+            alert('{% trans "Error loading preview: " %}' + error);
+        });
+}
+
+function updateSelectedCount() {
+    const checkboxes = document.querySelectorAll('.event-checkbox:checked');
+    selectedEventIndices = new Set(Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)));
+
+    const countSpan = document.getElementById('selected-count');
+    const restoreBtn = document.getElementById('restore-selected-btn');
+    const selectedText = '{% trans "selected" %}';
+
+    if (countSpan) {
+        countSpan.textContent = `${selectedEventIndices.size} ${selectedText}`;
+    }
+
+    if (restoreBtn) {
+        restoreBtn.disabled = selectedEventIndices.size === 0;
+        if (selectedEventIndices.size === 0) {
+            // Disabled state: gray background, gray text
+            restoreBtn.style.backgroundColor = '#d1d5db'; // gray-300
+            restoreBtn.style.color = '#6b7280'; // gray-500
+            restoreBtn.style.cursor = 'not-allowed';
+        } else {
+            // Enabled state: orange background, white text
+            restoreBtn.style.backgroundColor = '#ea580c'; // orange-600
+            restoreBtn.style.color = '#ffffff'; // white
+            restoreBtn.style.cursor = 'pointer';
+        }
+    }
+}
+
+function selectAllEvents() {
+    document.querySelectorAll('.event-checkbox').forEach(cb => {
+        cb.checked = true;
+    });
+    updateSelectedCount();
+}
+
+function deselectAllEvents() {
+    document.querySelectorAll('.event-checkbox').forEach(cb => {
+        cb.checked = false;
+    });
+    updateSelectedCount();
+}
+
+function closePreviewModal() {
+    document.getElementById('preview-modal').classList.add('hidden');
+    selectedEventIndices = new Set();
+    currentBackupData = null;
+}
+
+function downloadBackup(backupId) {
+    window.location.href = `/backup/download/${backupId}/`;
+}
+
+function restoreSelectedEvents() {
+    if (!currentBackupId || selectedEventIndices.size === 0) {
+        alert('{% trans "Please select at least one event to restore" %}');
+        return;
+    }
+
+    const selectedEvents = Array.from(selectedEventIndices).map(index => currentBackupData.events[index]);
+    
+    const warningLabel = '{% trans "Warning:" %}';
+    const restoreMessage = '{% trans "This will restore %(count)s selected events to your calendar." %}'.replace('%(count)s', selectedEventIndices.size);
+    const calendarLabel = '{% trans "Calendar:" %}';
+    const periodLabel = '{% trans "Period:" %}';
+    const eventsToRestoreLabel = '{% trans "Events to restore:" %}';
+    const selectedEventsLabel = '{% trans "Selected events:" %}';
+    const noTitleLabel = '{% trans "No title" %}';
+    const noStartTimeLabel = '{% trans "No start time" %}';
+    const ofLabel = '{% trans "of" %}';
+
+    const content = `
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700">
+                        <strong>${warningLabel}</strong> ${restoreMessage}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="space-y-2 text-sm mb-4">
+            <p><span class="font-semibold">${calendarLabel}</span> ${currentBackupData.calendar_name}</p>
+            <p><span class="font-semibold">${periodLabel}</span> ${currentBackupData.month}/${currentBackupData.year}</p>
+            <p><span class="font-semibold">${eventsToRestoreLabel}</span> ${selectedEventIndices.size} ${ofLabel} ${currentBackupData.event_count}</p>
+        </div>
+        <div class="border-t pt-3">
+            <h5 class="font-semibold mb-2 text-sm">${selectedEventsLabel}</h5>
+            <div class="max-h-40 overflow-y-auto space-y-1 text-sm">
+                ${selectedEvents.map(event => `
+                    <div class="p-2 bg-gray-50 rounded">
+                        <div class="font-medium">${event.summary || noTitleLabel}</div>
+                        <div class="text-xs text-gray-600">
+                            ${event.start ? (event.start.dateTime || event.start.date) : noStartTimeLabel}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    document.getElementById('restore-content').innerHTML = content;
+    // Hide preview modal WITHOUT clearing selection
+    document.getElementById('preview-modal').classList.add('hidden');
+    document.getElementById('restore-modal').classList.remove('hidden');
+}
+
+// Removed restoreBackup() - users now go through Preview & Restore flow for all restores
+
+function closeRestoreModal() {
+    // Clean up polling interval if active
+    if (progressPollInterval) {
+        clearInterval(progressPollInterval);
+        progressPollInterval = null;
+    }
+
+    // Reset UI state
+    document.getElementById('restore-buttons').classList.remove('hidden');
+    document.getElementById('restore-progress-section').classList.add('hidden');
+    document.getElementById('restore-result').classList.add('hidden');
+    document.getElementById('progress-bar').style.width = '0%';
+    document.getElementById('progress-percent').textContent = '0%';
+
+    // Hide modal
+    document.getElementById('restore-modal').classList.add('hidden');
+    currentBackupId = null;
+    restoreTaskId = null;
+}
+
+let restoreTaskId = null;
+let progressPollInterval = null;
+
+function confirmRestore() {
+    if (!currentBackupId) return;
+
+    // Hide buttons, show progress bar
+    document.getElementById('restore-buttons').classList.add('hidden');
+    document.getElementById('restore-progress-section').classList.remove('hidden');
+
+    // Prepare request body - include selected event indices if any
+    const requestBody = {};
+    if (selectedEventIndices && selectedEventIndices.size > 0) {
+        requestBody.event_indices = Array.from(selectedEventIndices);
+        console.log(`Restoring ${selectedEventIndices.size} selected events:`, requestBody.event_indices);
+    } else {
+        console.log('Restoring all events (no selection)');
+    }
+
+    // Launch async restore task
+    fetch(`/backup/restore/${currentBackupId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(requestBody)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showRestoreError(data.error);
+            } else if (data.task_id) {
+                // Task launched successfully, start polling for progress
+                restoreTaskId = data.task_id;
+                pollRestoreProgress();
+            } else {
+                showRestoreError('{% trans "Unknown error: no task_id returned" %}');
+            }
+        })
+        .catch(error => {
+            showRestoreError('{% trans "Error launching restore: " %}' + error);
+        });
+}
+
+function pollRestoreProgress() {
+    if (!restoreTaskId) return;
+
+    // Poll every 500ms
+    progressPollInterval = setInterval(() => {
+        fetch(`/celery-progress/task_status/${restoreTaskId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.complete) {
+                    // Task finished
+                    clearInterval(progressPollInterval);
+
+                    if (data.success) {
+                        showRestoreSuccess(data.progress);
+                    } else {
+                        showRestoreError(data.error || '{% trans "Restore failed" %}');
+                    }
+                } else if (data.progress) {
+                    // Update progress bar
+                    const percent = data.progress.percent || 0;
+                    const description = data.progress.description || '{% trans "Restoring..." %}';
+
+                    document.getElementById('progress-bar').style.width = `${percent}%`;
+                    document.getElementById('progress-percent').textContent = `${Math.round(percent)}%`;
+                    document.getElementById('progress-description').textContent = description;
+                }
+            })
+            .catch(error => {
+                clearInterval(progressPollInterval);
+                showRestoreError('{% trans "Error checking progress: " %}' + error);
+            });
+    }, 500);
+}
+
+function showRestoreSuccess(result) {
+    const resultDiv = document.getElementById('restore-result');
+    const message = result.message || '{% trans "Restored %(count)s events" %}'.replace('%(count)s', result.restored_count || 0);
+    const restoreCompleteTitle = '{% trans "Restore Complete!" %}';
+    const skippedMessage = '{% trans "%(count)s duplicate events were skipped" %}'.replace('%(count)s', result.skipped_count || 0);
+    const failedMessage = '{% trans "%(count)s events failed to restore" %}'.replace('%(count)s', result.failed_count || 0);
+    const closeRefreshBtnText = '{% trans "Close & Refresh" %}';
+
+    resultDiv.className = 'mt-4 p-4 bg-green-50 border border-green-200 rounded-md';
+    resultDiv.innerHTML = `
+        <div class="flex items-start">
+            <svg class="h-5 w-5 text-green-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+                <h4 class="font-semibold text-green-900">${restoreCompleteTitle}</h4>
+                <p class="text-sm text-green-800 mt-1">${message}</p>
+                ${result.skipped_count > 0 ? `<p class="text-xs text-green-700 mt-1">${skippedMessage}</p>` : ''}
+                ${result.failed_count > 0 ? `<p class="text-xs text-red-700 mt-1">${failedMessage}</p>` : ''}
+            </div>
+        </div>
+        <button onclick="closeRestoreModal(); location.reload();" class="mt-3 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+            ${closeRefreshBtnText}
+        </button>
+    `;
+    resultDiv.classList.remove('hidden');
+
+    // Hide progress bar
+    document.getElementById('progress-bar').style.width = '100%';
+    document.getElementById('progress-percent').textContent = '100%';
+}
+
+function showRestoreError(errorMessage) {
+    const resultDiv = document.getElementById('restore-result');
+    const restoreFailedTitle = '{% trans "Restore Failed" %}';
+    const closeBtnText = '{% trans "Close" %}';
+
+    resultDiv.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-md';
+    resultDiv.innerHTML = `
+        <div class="flex items-start">
+            <svg class="h-5 w-5 text-red-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+                <h4 class="font-semibold text-red-900">${restoreFailedTitle}</h4>
+                <p class="text-sm text-red-800 mt-1">${errorMessage}</p>
+            </div>
+        </div>
+        <button onclick="closeRestoreModal(); location.reload();" class="mt-3 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            ${closeBtnText}
+        </button>
+    `;
+    resultDiv.classList.remove('hidden');
+}
+
+function deleteBackup(backupId) {
+    if (!confirm('{% trans "Are you sure you want to delete this backup? This action cannot be undone." %}')) {
+        return;
+    }
+
+    fetch(`/backup/delete/${backupId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('{% trans "Error: " %}' + data.error);
+            } else {
+                alert('{% trans "Backup deleted successfully" %}');
+                location.reload();
+            }
+        })
+        .catch(error => {
+            alert('{% trans "Error deleting backup: " %}' + error);
+        });
+}
+</script>
+{% endblock content %}

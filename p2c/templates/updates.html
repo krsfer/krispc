@@ -1,0 +1,51 @@
+{% extends "p2c_base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold my-4">{% trans "Updates" %}</h1>
+
+    {% if not_enough_snapshots %}
+        <p>{% trans "Not enough snapshots to compare. At least two are required." %}</p>
+    {% else %}
+        <h2 class="text-xl font-semibold mb-2">{% trans "Changes Summary" %}</h2>
+        <p>{% blocktrans with prev_date=previous_snapshot.created_at curr_date=latest_snapshot.created_at %}Comparing snapshot from {{ prev_date }} with snapshot from {{ curr_date }}{% endblocktrans %}</p>
+
+        <div class="my-4">
+            <h3 class="text-lg font-semibold">{% trans "Added" %} ({{ diff.summary.added }})</h3>
+            {% for item in diff.added %}
+                <div class="p-2 my-1 bg-green-100 border border-green-200 rounded">
+                    {{ item.normalized_name }} {% trans "on" %} {{ item.day }}/{{ item.month }}/{{ item.year }} {% trans "at" %} {{ item.start_time }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="my-4">
+            <h3 class="text-lg font-semibold">{% trans "Modified" %} ({{ diff.summary.modified }})</h3>
+            {% for item in diff.modified %}
+                <div class="p-2 my-1 bg-yellow-100 border border-yellow-200 rounded">
+                    <p>{{ item.key }}</p>
+                    {% for field, changes in item.changes.items %}
+                        <p class="ml-4">
+                            {% if field == 'start_time' %}{% trans "Start Time" %}
+                            {% elif field == 'end_time' %}{% trans "End Time" %}
+                            {% elif field == 'location' %}{% trans "Location" %}
+                            {% elif field == 'event_description' %}{% trans "Description" %}
+                            {% else %}{{ field }}{% endif %}: {{ changes.old }} -> {{ changes.new }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="my-4">
+            <h3 class="text-lg font-semibold">{% trans "Deleted" %} ({{ diff.summary.deleted }})</h3>
+            {% for item in diff.deleted %}
+                <div class="p-2 my-1 bg-red-100 border border-red-200 rounded">
+                    {{ item.normalized_name }} {% trans "on" %} {{ item.day }}/{{ item.month }}/{{ item.year }} {% trans "at" %} {{ item.start_time }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

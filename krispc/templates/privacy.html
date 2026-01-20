@@ -1,0 +1,46 @@
+{% extends "the_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}KrisPC - {% trans "Privacy Policy" %}{% endblock %}
+
+{% block content %}
+<main id="main" class="py-12">
+    <div class="container mx-auto px-4 max-w-4xl bg-white shadow-lg rounded-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">{% trans "Privacy Policy" %}</h1>
+        <div class="prose prose-blue text-gray-700">
+            <p class="text-sm text-gray-500 mb-8">{% trans "Last updated" %}: {% now "F j, Y" %}</p>
+            
+            <h2 class="text-xl font-semibold mt-6 mb-2">{% trans "1. Introduction" %}</h2>
+            <p class="mb-4">{% trans "Welcome to KrisPC. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you." %}</p>
+
+            <h2 class="text-xl font-semibold mt-6 mb-2">{% trans "2. Data Collection" %}</h2>
+            <p class="mb-4">{% trans "We collect information necessary to provide our services, including:" %}</p>
+            <ul class="list-disc pl-6 mb-4">
+                <li>{% trans "Contact information (name, email address, phone number) provided via our contact form." %}</li>
+                <li>{% trans "Information about your computer or devices that you provide for repair or maintenance services." %}</li>
+                <li>{% trans "Technical data such as IP address, browser type, and version when you access our website." %}</li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-6 mb-2">{% trans "3. How We Use Your Data" %}</h2>
+            <p class="mb-4">{% trans "We use your data to:" %}</p>
+            <ul class="list-disc pl-6 mb-4">
+                <li>{% trans "Provide and manage our IT support and repair services." %}</li>
+                <li>{% trans "Communicate with you regarding your service requests." %}</li>
+                <li>{% trans "Improve our website and service offerings." %}</li>
+                <li>{% trans "Comply with legal obligations." %}</li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-6 mb-2">{% trans "4. Data Security" %}</h2>
+            <p class="mb-4">{% trans "We implement appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way. We limit access to your personal data to those who have a business need to know." %}</p>
+
+            <h2 class="text-xl font-semibold mt-6 mb-2">{% trans "5. Contact Us" %}</h2>
+            <p class="mb-4">{% trans "If you have any questions about this Privacy Policy or our privacy practices, please contact us at:" %}</p>
+            <p class="mb-4">
+                <strong>{% trans "Email" %}:</strong> hello@krispc.fr<br>
+                <strong>{% trans "Address" %}:</strong> 63 Chem. du Claus, 06110 Le Cannet
+            </p>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'p2c_base.html' %}
+{% load static %}
+
+{% block page_title %}Month View{% endblock %}
+
+{% block content %}
+<div class="w-full px-2 sm:px-4 sm:max-w-6xl sm:mx-auto py-4 sm:py-6 bg-gray-50 min-h-screen">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-4 sm:p-6" style="background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%); color: #fff;">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <h1 class="text-lg sm:text-2xl font-bold">{{ month_name }} {{ year }}</h1>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 justify-end">
+          <a href="{% url 'updates' %}?base={{ base }}" class="min-h-[36px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded border border-white/30 bg-white/10 text-white hover:bg-white/20 transition">Timeline Diff</a>
+          {% if has_pairs and has_valid_pairs %}
+            {% if prev_base is not None %}
+              <a href="{% url 'updates_month' %}?base={{ prev_base }}" class="min-h-[36px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded border border-white/30 bg-white/10 text-white hover:bg-white/20 transition">Previous</a>
+            {% else %}
+              <span class="min-h-[36px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded border border-white/20 text-white/60 cursor-not-allowed">Previous</span>
+            {% endif %}
+            {% if next_base is not None %}
+              <a href="{% url 'updates_month' %}?base={{ next_base }}" class="min-h-[36px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded border border-white/30 bg-white/10 text-white hover:bg-white/20 transition">Next</a>
+            {% else %}
+              <span class="min-h-[36px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded border border-white/20 text-white/60 cursor-not-allowed">Next</span>
+            {% endif %}
+          {% else %}
+            <span class="min-h-[36px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded border border-white/20 text-white/60 cursor-not-allowed">Previous</span>
+            <span class="min-h-[36px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded border border-white/20 text-white/60 cursor-not-allowed">Next</span>
+          {% endif %}
+        </div>
+      </div>
+      {% if after_source_name %}
+        <div class="mt-2 text-xs text-white/80">Source PDF: {{ after_source_name }}</div>
+      {% endif %}
+    </div>
+
+    {% if message %}
+      <div class="p-6 text-center text-gray-600">{{ message }}</div>
+    {% else %}
+      <div class="p-3 sm:p-6">
+        <!-- FullCalendar CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+        <!-- Scoped size tweaks to reduce truncation -->
+        <style>
+          /* Mobile: smaller fonts */
+          .fc { font-size: 10px; }
+          .fc .fc-col-header-cell-cushion { font-size: 9px; padding: 2px 0; }
+          .fc .fc-daygrid-day-number { font-size: 9px; }
+          .fc .fc-daygrid-event { font-size: 10px; line-height: 1.15; padding: 1px; margin: 1px 0; }
+          .fc .fc-daygrid-event .fc-event-time { font-size: 9px; }
+          .fc .fc-daygrid-event .fc-event-title { font-size: 10px; }
+          .fc .fc-toolbar-title { font-size: 1rem !important; }
+
+          /* Tablet+: normal fonts */
+          @media (min-width: 640px) {
+            .fc { font-size: 12px; }
+            .fc .fc-col-header-cell-cushion { font-size: 11px; padding: 4px 0; }
+            .fc .fc-daygrid-day-number { font-size: 11px; }
+            .fc .fc-daygrid-event { font-size: 11px; padding: 0 2px; margin: 0; }
+            .fc .fc-daygrid-event .fc-event-time { font-size: 10px; }
+            .fc .fc-daygrid-event .fc-event-title { font-size: 11px; }
+          }
+
+          /* Desktop: larger */
+          @media (min-width: 1024px) {
+            .fc { font-size: 13px; }
+          }
+        </style>
+        <div id="fc-container" class="bg-white rounded border border-gray-200">
+          <div id="calendar"></div>
+        </div>
+        <!-- Embed events JSON safely -->
+        <script id="fc-events" type="application/json">{{ events_json|safe }}</script>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            // Load FullCalendar script dynamically if not present
+            function initCalendar() {
+              const calendarEl = document.getElementById('calendar');
+              if (!calendarEl || !window.FullCalendar) return;
+
+              let events = [];
+              try {
+                const jsonEl = document.getElementById('fc-events');
+                if (jsonEl) events = JSON.parse(jsonEl.textContent || '[]');
+              } catch (e) { events = []; }
+
+              const initialDate = '{{ initial_date|default:"" }}';
+
+              const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                firstDay: 1, // Monday
+                height: 'auto',
+                contentHeight: 'auto',
+                expandRows: true,
+                stickyHeaderDates: true,
+                dayMaxEventRows: 4,
+                displayEventEnd: true,
+                initialDate: initialDate || undefined,
+                events: events,
+                eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+                    // Add native tooltips with full title (and time/location) on hover
+                eventDidMount: function(info) {
+                  try {
+                    const parts = [];
+                    if (info.timeText) parts.push(info.timeText);
+                    if (info.event && info.event.title) parts.push(info.event.title);
+                    const loc = info.event && info.event.extendedProps ? info.event.extendedProps.location : '';
+                    if (loc) parts.push('@ ' + loc);
+                    const tooltip = parts.join(' ');
+                    if (tooltip && info.el) {
+                      info.el.setAttribute('title', tooltip);
+                    }
+                  } catch (err) {
+                    // no-op
+                  }
+                },
+              });
+              calendar.render();
+            }
+
+            if (!window.FullCalendar) {
+              const s = document.createElement('script');
+              s.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js';
+              s.onload = initCalendar;
+              document.body.appendChild(s);
+            } else {
+              initCalendar();
+            }
+          });
+        </script>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

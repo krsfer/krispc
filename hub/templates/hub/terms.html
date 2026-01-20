@@ -1,0 +1,52 @@
+{% extends "hub/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Terms of Service" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="legal-content">
+        <h1>{% trans "Terms of Service" %}</h1>
+
+        {% if LANGUAGE_CODE == 'fr' %}
+        <p>Ces conditions d'utilisation s'appliquent à tous les services fournis par KrisPC.</p>
+
+        <h2>Services Couverts</h2>
+        <p>Ces conditions couvrent:</p>
+        <ul>
+            <li>KrisPC - Service de réparation informatique</li>
+            <li>Pdf2Cal - Outil de conversion PDF vers calendrier</li>
+        </ul>
+
+        <h2>Acceptation des Conditions</h2>
+        <p>En utilisant nos services, vous acceptez ces conditions d'utilisation.</p>
+
+        <h2>Conditions Spécifiques</h2>
+        <p>Pour les conditions spécifiques à chaque application, veuillez consulter:</p>
+        <ul>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/krispc/terms/">Conditions d'utilisation KrisPC</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/importpdf/terms/">Conditions d'utilisation Pdf2Cal</a></li>
+        </ul>
+        {% else %}
+        <p>These terms of service apply to all services provided by KrisPC.</p>
+
+        <h2>Covered Services</h2>
+        <p>These terms cover:</p>
+        <ul>
+            <li>KrisPC - Computer repair service</li>
+            <li>Pdf2Cal - PDF to calendar conversion tool</li>
+        </ul>
+
+        <h2>Acceptance of Terms</h2>
+        <p>By using our services, you agree to these terms of service.</p>
+
+        <h2>Application-Specific Terms</h2>
+        <p>For application-specific terms, please see:</p>
+        <ul>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/krispc/terms/">KrisPC Terms of Service</a></li>
+            <li><a href="{% if LANGUAGE_CODE != 'fr' %}/{{ LANGUAGE_CODE }}{% endif %}/importpdf/terms/">Pdf2Cal Terms of Service</a></li>
+        </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

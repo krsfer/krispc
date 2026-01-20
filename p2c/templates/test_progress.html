@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Celery Progress</title>
+    <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+</head>
+<body>
+    <h1>Test Celery Progress</h1>
+    
+    <div id="progress-container" style="display: none;">
+        <div class="progress">
+            <div id="progress-bar" 
+                 class="progress-bar" 
+                 role="progressbar" 
+                 style="width: 0%">
+            </div>
+        </div>
+        <div id="progress-message"></div>
+    </div>
+
+    <button onclick="startTest()">Start Test</button>
+
+    <script>
+        function startTest() {
+            fetch('/test-celery/', {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Task started:', data);
+                if (data.task_id) {
+                    document.getElementById('progress-container').style.display = 'block';
+                    CeleryProgressBar.initProgressBar(
+                        `/celery-progress/task_status/${data.task_id}/`,
+                        {
+                            onProgress: function(progressData) {
+                                document.getElementById('progress-bar').style.width = progressData.percent + '%';
+                                document.getElementById('progress-message').textContent = progressData.description;
+                            },
+                            onSuccess: function(progressData) {
+                                document.getElementById('progress-message').textContent = 'Task completed!';
+                            },
+                            onError: function(error) {
+                                console.error('Task error:', error);
+                                document.getElementById('progress-message').textContent = 'Error: ' + error;
+                            }
+                        }
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error starting task');
+            });
+        }
+    </script>
+</body>
+</html> 
