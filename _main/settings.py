@@ -148,21 +148,12 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "channels",
-    "hello",
-    "chat",
-    "addthem",
-    "krispc",
-    "wat",
-    # pdf2cal apps
-    "celery_progress",
-    "p2c",
-    "hub",
+    
     "rest_framework",
     "drf_spectacular",
     "django_filters",
     "corsheaders",
     "plexus.apps.PlexusConfig",
-    "analytics",
 ]
 
 ASGI_APPLICATION = '_main.asgi.application'
@@ -247,16 +238,16 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",  # CORS - must be before CommonMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "hub.middleware.EnsureDefaultLanguageMiddleware",  # Set default language before LocaleMiddleware
+    # "hub.middleware.EnsureDefaultLanguageMiddleware",  # Removed
     "django.middleware.locale.LocaleMiddleware",  # Required for i18n URL patterns
-    "krispc.middleware.APILanguageMiddleware",  # API-specific language detection
+    # "krispc.middleware.APILanguageMiddleware",  # Removed
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "krispc.middleware.APIRequestLoggingMiddleware",  # API request logging
+    # "krispc.middleware.APIRequestLoggingMiddleware",  # Removed
     # "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
@@ -270,8 +261,8 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            os.path.join(BASE_DIR, "addthem/templates", "chat/templates", "_krispc/templates"),
-            BASE_DIR / "p2c" / "templates",
+            # os.path.join(BASE_DIR, "addthem/templates", "chat/templates", "_krispc/templates"),
+            # BASE_DIR / "p2c" / "templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -280,7 +271,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "p2c.context_processors.unread_updates_context",
+                # "p2c.context_processors.unread_updates_context",
             ],
         },
     },
@@ -361,13 +352,13 @@ MEDIA_URL = "media/"
 
 # Additional locations for static files
 STATICFILES_DIRS = [
-    BASE_DIR / "krispc" / "static" / "dist",  # Vite build output
-    BASE_DIR / "krispc" / "static",           # Images and other static assets
-    BASE_DIR / "p2c" / "static",              # P2C static files
+    # BASE_DIR / "krispc" / "static" / "dist",  # Vite build output
+    # BASE_DIR / "krispc" / "static",           # Images and other static assets
+    # BASE_DIR / "p2c" / "static",              # P2C static files
 ]
 
 LOCALE_PATHS = [
-    os.path.join(BASE_DIR, "krispc/locale"),
+    # os.path.join(BASE_DIR, "krispc/locale"),
     os.path.join(BASE_DIR, "locale"),
 ]
 
@@ -511,15 +502,15 @@ REST_FRAMEWORK = {
     "VERSION_PARAM": "version",
     
     # Exception handling
-    "EXCEPTION_HANDLER": "krispc.exceptions.custom_exception_handler",
+    # "EXCEPTION_HANDLER": "krispc.exceptions.custom_exception_handler", # Removed
     
     # Datetime format
     "DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S",
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'KrisPC & Plexus API',
-    'DESCRIPTION': 'API for KrisPC IT services and Plexus SecondBrain.',
+    'TITLE': 'Plexus API',
+    'DESCRIPTION': 'API for Plexus SecondBrain.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
@@ -533,7 +524,7 @@ LOGGING = {
     "handlers": {"console": {"class": "logging.StreamHandler"}},
     "loggers": {
         "django": {"handlers": ["console"], "level": "INFO"},
-        "p2c": {"handlers": ["console"], "level": "INFO", "propagate": True},
+        "plexus": {"handlers": ["console"], "level": "INFO", "propagate": True},
     },
 }
 
@@ -556,4 +547,3 @@ if __name__ == "__main__":
 
 
     print(f"SENDGRID_API_KEY: {SENDGRID_API_KEY}")
-
