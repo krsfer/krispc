@@ -13,9 +13,9 @@ class SurfacingServiceTest(TestCase):
         
         # 1. Thought from exactly 1 year ago (Should appear in On This Day)
         last_year = self.now - timezone.timedelta(days=365)
-        input_last_year = Input.objects.create(content="Last year input")
-        # Manually set timestamp (auto_now_add=True won't allow it via create usually, 
-        # but we can update it or use a mock)
+        # Mark as processed to prevent signal from triggering task
+        input_last_year = Input.objects.create(content="Last year input", processed=True)
+        # Manually set timestamp
         Input.objects.filter(pk=input_last_year.pk).update(timestamp=last_year)
         input_last_year.refresh_from_db()
         
@@ -27,7 +27,7 @@ class SurfacingServiceTest(TestCase):
         )
 
         # 2. Recent thought (Should NOT appear in On This Day or Random)
-        input_recent = Input.objects.create(content="Recent input")
+        input_recent = Input.objects.create(content="Recent input", processed=True)
         self.thought_recent = Thought.objects.create(
             input=input_recent,
             content="New thought",
@@ -37,13 +37,14 @@ class SurfacingServiceTest(TestCase):
 
     def test_get_on_this_day(self):
         results = get_on_this_day()
-        self.assertIn(self.thought_last_year, results)
-        self.assertNotIn(self.thought_recent, results)
+        # Use ID comparison
+        self.assertIn(self.thought_last_year.id, [t.id for t in results])
+        self.assertNotIn(self.thought_recent.id, [t.id for t in results])
 
     def test_get_random_resurface(self):
         # Setup another old thought (> 30 days)
         old_date = self.now - timezone.timedelta(days=45)
-        input_old = Input.objects.create(content="Old input")
+        input_old = Input.objects.create(content="Old input", processed=True)
         Input.objects.filter(pk=input_old.pk).update(timestamp=old_date)
         input_old.refresh_from_db()
         
@@ -58,12 +59,6 @@ class SurfacingServiceTest(TestCase):
         result = get_random_resurface()
         self.assertIsNotNone(result)
         
-        if result.id not in [self.thought_last_year.id, thought_old.id]:
-            print(f"DEBUG result.id: {result.id}, content: {result.content}")
-            print(f"DEBUG thought_last_year.id: {self.thought_last_year.id}, content: {self.thought_last_year.content}")
-            print(f"DEBUG thought_old.id: {thought_old.id}, content: {thought_old.content}")
-            print(f"DEBUG thought_recent.id: {self.thought_recent.id}, content: {self.thought_recent.content}")
-
         # Compare by ID to avoid potential object identity issues in tests
         self.assertIn(result.id, [self.thought_last_year.id, thought_old.id])
         self.assertNotEqual(result.id, self.thought_recent.id)
