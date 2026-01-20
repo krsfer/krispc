@@ -352,7 +352,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
 
 # Media files (uploaded by users)
-MEDIA_ROOT = BASE_DIR / "media"
+if IS_FLY_APP:
+    MEDIA_ROOT = Path("/data/media")
+else:
+    MEDIA_ROOT = BASE_DIR / "media"
+    
 MEDIA_URL = "media/"
 
 # Additional locations for static files
