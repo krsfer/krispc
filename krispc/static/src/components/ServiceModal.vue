@@ -9,10 +9,10 @@
         tabindex="0"
       >
         <div
-          class="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden"
+          class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl"
           role="dialog"
           aria-modal="true"
-          :aria-labelledby="`service-modal-title-${service?.name}`"
+          :aria-labelledby="modalTitleId"
         >
           <!-- Close Button -->
           <button
@@ -32,7 +32,7 @@
 
             <!-- Title -->
             <h2
-              :id="`service-modal-title-${service?.name}`"
+              :id="modalTitleId"
               class="text-3xl font-bold text-gray-900 dark:text-white mb-4"
             >
               {{ service?.name }}
@@ -44,7 +44,9 @@
                 {{ service?.description }}
               </p>
 
-              <!-- Additional Details with Pricing (HTML from Django) -->
+              <!-- Additional Details with Pricing (HTML from Django)
+                   Note: service.details is server-rendered HTML from Django templates,
+                   which is sanitized on the backend. Do not use with user-generated content. -->
               <div
                 v-if="service?.details"
                 class="text-gray-700 dark:text-gray-300"
@@ -70,7 +72,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
@@ -85,6 +87,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+// Generate stable ID for aria-labelledby
+const modalTitleId = computed(() => `service-modal-title-${props.service?.id || 'default'}`)
 
 const close = () => {
   emit('update:modelValue', false)

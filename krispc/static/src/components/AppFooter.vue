@@ -29,14 +29,14 @@
 
         <!-- For Developers -->
         <div>
-          <h4 class="font-semibold text-white mb-4">For Developers</h4>
+          <h4 class="font-semibold text-white mb-4">{{ developersTitle }}</h4>
           <ul class="space-y-2 text-sm">
-            <li><a href="/api/krispc/swagger/" target="_blank" class="hover:text-primary transition-colors">API Docs (Swagger)</a></li>
-            <li><a href="/api/krispc/redoc/" target="_blank" class="hover:text-primary transition-colors">API Docs (ReDoc)</a></li>
-            <li><a href="/api/krispc/pricelist/" target="_blank" class="hover:text-primary transition-colors">Pricelist (JSON)</a></li>
-            <li><a href="/api/krispc/pricelist/?output=text" target="_blank" class="hover:text-primary transition-colors">Pricelist (Text)</a></li>
-            <li><a href="/api/krispc/products/?output=text" target="_blank" class="hover:text-primary transition-colors">Services (Text)</a></li>
-            <li><a href="/docs/mcp/" target="_blank" class="hover:text-primary transition-colors">MCP Server for AI</a></li>
+            <li><a href="/api/krispc/swagger/" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors" aria-label="Open API Swagger documentation in new tab">API Docs (Swagger)</a></li>
+            <li><a href="/api/krispc/redoc/" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors" aria-label="Open API ReDoc documentation in new tab">API Docs (ReDoc)</a></li>
+            <li><a href="/api/krispc/pricelist/" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors" aria-label="Open pricelist JSON data in new tab">Pricelist (JSON)</a></li>
+            <li><a href="/api/krispc/pricelist/?output=text" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors" aria-label="Open pricelist text format in new tab">Pricelist (Text)</a></li>
+            <li><a href="/api/krispc/services/?output=text" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors" aria-label="Open services text format in new tab">Services (Text)</a></li>
+            <li><a href="/docs/mcp/" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors" aria-label="Open MCP Server documentation for AI in new tab">MCP Server for AI</a></li>
           </ul>
         </div>
       </div>
@@ -68,4 +68,5 @@ const privacyLabel = computed(() => t.value.privacy || 'Privacy Policy')
 const termsLabel = computed(() => t.value.terms || 'Terms of Service')
 const privacyUrl = computed(() => t.value.privacy_url || '/privacy/')
 const termsUrl = computed(() => t.value.terms_url || '/terms/')
+const developersTitle = computed(() => t.value.developers_title || 'For Developers')
 </script>

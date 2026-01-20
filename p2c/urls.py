@@ -1,11 +1,18 @@
-"""URL configuration for the P2C application."""
+"""URL configuration for the P2C (PDF to Calendar) application."""
 from asgiref.sync import async_to_sync, sync_to_async
 from django.urls import include, path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from rest_framework.routers import DefaultRouter
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 from . import celery_views, json_views, views
+
+app_name = "p2c"
 
 router = DefaultRouter()
 router.register(r"documents", views.DocumentViewSet)
@@ -139,4 +146,9 @@ urlpatterns = [
     path("backup/download/<int:backup_id>/", views.backup_download, name="backup_download"),
     path("backup/restore/<int:backup_id>/", views.backup_restore, name="backup_restore"),
     path("backup/delete/<int:backup_id>/", views.backup_delete, name="backup_delete"),
+    
+    # API Documentation (OpenAPI/Swagger/ReDoc)
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="p2c:schema"), name="swagger-ui"),
+    path("api/docs/redoc/", SpectacularRedocView.as_view(url_name="p2c:schema"), name="redoc"),
 ]

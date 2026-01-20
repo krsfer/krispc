@@ -121,11 +121,11 @@ class ContactSerializerTest(TestCase):
         self.assertNotIn('website', data)
     
     def test_serializer_unicode_content(self):
-        """Test serializer handles unicode/international characters."""
+        """Test serializer handles unicode/international characters in names and messages."""
         data = {
             'firstname': 'François',
             'surname': 'Müller',
-            'from_email': 'françois@example.com',
+            'from_email': 'francois@example.com',  # Email must be ASCII per RFC 5321
             'message': 'Bonjour! J\'ai besoin d\'aide. 中文测试',
             'website': ''
         }

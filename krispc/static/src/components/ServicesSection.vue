@@ -30,9 +30,9 @@
   </section>
 </template>
 
-<script setup>
-import { ref, markRaw, defineAsyncComponent, computed } from 'vue'
-import ServiceCard from './ServiceCard.vue'
+<script>
+// Module-level iconMap - prevents recreation on each component instance
+import { markRaw } from 'vue'
 import {
   DevicePhoneMobileIcon,
   ComputerDesktopIcon,
@@ -44,6 +44,23 @@ import {
   WifiIcon,
   ChatBubbleLeftRightIcon
 } from '@heroicons/vue/24/outline'
+
+const iconMap = {
+  'ri-phone-line': markRaw(DevicePhoneMobileIcon),
+  'ri-computer-line': markRaw(ComputerDesktopIcon),
+  'ri-file-copy-line': markRaw(DocumentDuplicateIcon),
+  'ri-printer-line': markRaw(PrinterIcon),
+  'ri-lightbulb-line': markRaw(LightBulbIcon),
+  'ri-bug-2-line': markRaw(BugAntIcon),
+  'ri-lock-2-line': markRaw(LockClosedIcon),
+  'ri-home-wifi-line': markRaw(WifiIcon),
+  'ri-headphone-line': markRaw(ChatBubbleLeftRightIcon)
+}
+</script>
+
+<script setup>
+import { ref, defineAsyncComponent, computed } from 'vue'
+import ServiceCard from './ServiceCard.vue'
 
 // Lazy load modal component for code splitting
 const ServiceModal = defineAsyncComponent(() =>
@@ -57,19 +74,6 @@ const selectedService = ref(null)
 const sectionTitle = computed(() => {
   return window.DJANGO_DATA?.translations?.sections?.services_title || 'Our Services'
 })
-
-// Map RemixIcon classes to Heroicons
-const iconMap = {
-  'ri-phone-line': markRaw(DevicePhoneMobileIcon),
-  'ri-computer-line': markRaw(ComputerDesktopIcon),
-  'ri-file-copy-line': markRaw(DocumentDuplicateIcon),
-  'ri-printer-line': markRaw(PrinterIcon),
-  'ri-lightbulb-line': markRaw(LightBulbIcon),
-  'ri-bug-2-line': markRaw(BugAntIcon),
-  'ri-lock-2-line': markRaw(LockClosedIcon),
-  'ri-home-wifi-line': markRaw(WifiIcon),
-  'ri-headphone-line': markRaw(ChatBubbleLeftRightIcon)
-}
 
 // Load Django data (with pricing and translations)
 const services = computed(() => {

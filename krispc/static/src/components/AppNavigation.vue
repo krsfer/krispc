@@ -1,5 +1,5 @@
 <template>
-  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 dark:bg-gray-900/90">
+  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 dark:bg-gray-900/90" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Logo -->
@@ -65,10 +65,11 @@ const mobileMenuOpen = ref(false)
 const translations = computed(() => window.DJANGO_DATA?.translations?.nav || {})
 
 // Get hub URL (language-aware)
+// Supports common language prefixes (en, de, fr, es, nl, etc.)
 const hubUrl = computed(() => {
   const currentPath = window.location.pathname
-  // If on English version (/en/...), link to /en/, otherwise to /
-  return currentPath.startsWith('/en/') ? '/en/' : '/'
+  const langMatch = currentPath.match(/^\/([a-z]{2})\//)
+  return langMatch ? `/${langMatch[1]}/` : '/'
 })
 
 const navLinks = computed(() => [

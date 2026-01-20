@@ -1,6 +1,9 @@
+"""URL configuration for the KrisPC application."""
 from django.urls import path
 
 from krispc.views import create_contact, favicon, IndexPageView, PrivacyView, TermsView
+
+app_name = "krispc"
 
 urlpatterns = [
     # path('change_language/', change_language, name='change_language'),

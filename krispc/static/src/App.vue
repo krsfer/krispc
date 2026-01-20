@@ -16,7 +16,7 @@ import AppFooter from './components/AppFooter.vue'
 import HomePage from './components/HomePage.vue'
 
 onMounted(() => {
-  console.log('Vue app mounted successfully!')
+  // Vue app mounted - ready for user interaction
 })
 </script>
 

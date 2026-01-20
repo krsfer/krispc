@@ -10,11 +10,11 @@ from drf_spectacular.views import (
     SpectacularRedocView, 
     SpectacularSwaggerView
 )
-from . import api
+from . import api_views
 
 # Create router for viewsets
 router = DefaultRouter()
-router.register(r'contacts', api.ContactViewSet, basename='contact')
+router.register(r'contacts', api_views.ContactViewSet, basename='contact')
 
 # API v1 endpoints
 v1_patterns = [
@@ -22,11 +22,11 @@ v1_patterns = [
     path('', include(router.urls)),
     
     # Simple API views
-    path('services/', api.ServicesView.as_view(), name='api-services'),
-    path('pricelist/', api.PricelistView.as_view(), name='api-pricelist'),
-    path('colophon/', api.ColophonView.as_view(), name='api-colophon'),
-    path('marques/', api.MarquesView.as_view(), name='api-marques'),
-    path('villes/', api.VillesView.as_view(), name='api-villes'),
+    path('services/', api_views.ServicesView.as_view(), name='api-services'),
+    path('pricelist/', api_views.PricelistView.as_view(), name='api-pricelist'),
+    path('colophon/', api_views.ColophonView.as_view(), name='api-colophon'),
+    path('marques/', api_views.MarquesView.as_view(), name='api-marques'),
+    path('villes/', api_views.VillesView.as_view(), name='api-villes'),
 ]
 
 # Main URL patterns
