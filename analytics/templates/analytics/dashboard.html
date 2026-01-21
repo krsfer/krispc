@@ -169,7 +169,16 @@
                 <div class="space-y-4">
                     <div>
                         <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-600">LCP (Loading)</span>
+                            <div class="group relative inline-block cursor-help">
+                                <span class="text-gray-600 border-b border-dotted border-gray-400">LCP (Loading)</span>
+                                <div class="invisible group-hover:visible absolute z-10 w-64 p-3 -mt-2 text-xs text-white bg-gray-800 rounded shadow-lg bottom-full mb-1 left-0">
+                                    <p class="font-bold mb-1">Largest Contentful Paint</p>
+                                    <p>Time to render the largest text or image.</p>
+                                    <div class="mt-2 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-green-400"></span> Good: &lt; 2.5s
+                                    </div>
+                                </div>
+                            </div>
                             <span class="font-bold {% if cwv.avg_lcp < 2500 %}text-green-500{% elif cwv.avg_lcp < 4000 %}text-yellow-500{% else %}text-red-500{% endif %}">{{ cwv.avg_lcp }} ms</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
@@ -178,7 +187,16 @@
                     </div>
                     <div>
                         <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-600">CLS (Stability)</span>
+                            <div class="group relative inline-block cursor-help">
+                                <span class="text-gray-600 border-b border-dotted border-gray-400">CLS (Stability)</span>
+                                <div class="invisible group-hover:visible absolute z-10 w-64 p-3 -mt-2 text-xs text-white bg-gray-800 rounded shadow-lg bottom-full mb-1 left-0">
+                                    <p class="font-bold mb-1">Cumulative Layout Shift</p>
+                                    <p>Measures visual stability (unexpected movement).</p>
+                                    <div class="mt-2 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-green-400"></span> Good: &lt; 0.1
+                                    </div>
+                                </div>
+                            </div>
                             <span class="font-bold {% if cwv.avg_cls < 0.1 %}text-green-500{% elif cwv.avg_cls < 0.25 %}text-yellow-500{% else %}text-red-500{% endif %}">{{ cwv.avg_cls }}</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
@@ -187,7 +205,16 @@
                     </div>
                     <div>
                         <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-600">TTFB (Server Speed)</span>
+                            <div class="group relative inline-block cursor-help">
+                                <span class="text-gray-600 border-b border-dotted border-gray-400">TTFB (Server Speed)</span>
+                                <div class="invisible group-hover:visible absolute z-10 w-64 p-3 -mt-2 text-xs text-white bg-gray-800 rounded shadow-lg bottom-full mb-1 left-0">
+                                    <p class="font-bold mb-1">Time to First Byte</p>
+                                    <p>Server response time (network + backend processing).</p>
+                                    <div class="mt-2 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-green-400"></span> Good: &lt; 0.8s
+                                    </div>
+                                </div>
+                            </div>
                             <span class="font-bold text-gray-800">{{ cwv.avg_ttfb }} ms</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
@@ -196,7 +223,16 @@
                     </div>
                      <div>
                         <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-600">INP (Responsiveness)</span>
+                            <div class="group relative inline-block cursor-help">
+                                <span class="text-gray-600 border-b border-dotted border-gray-400">INP (Responsiveness)</span>
+                                <div class="invisible group-hover:visible absolute z-10 w-64 p-3 -mt-2 text-xs text-white bg-gray-800 rounded shadow-lg bottom-full mb-1 left-0">
+                                    <p class="font-bold mb-1">Interaction to Next Paint</p>
+                                    <p>Latency of user interactions (clicks, taps, keys).</p>
+                                    <div class="mt-2 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-green-400"></span> Good: &lt; 200ms
+                                    </div>
+                                </div>
+                            </div>
                             <span class="font-bold text-gray-800">{{ cwv.avg_inp }} ms</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
