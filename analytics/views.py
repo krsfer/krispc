@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Count, Avg, F
 from django.db.models.functions import TruncDate
 from django.utils import timezone
+from django.conf import settings
 from datetime import timedelta
 from django.db.models import Q
 import json
@@ -89,6 +90,8 @@ def analytics_dashboard(request):
     ).order_by('-last_visit')[:20]
     
     unique_ip_locations = []
+    map_data = []
+
     for ip_entry in unique_ips_qs:
         # Fetch the full visit object for the latest timestamp
         visit = visits.filter(
@@ -100,6 +103,14 @@ def analytics_dashboard(request):
              # Attach the count calculated in the aggregation
              visit.visit_count = ip_entry['visit_count']
              unique_ip_locations.append(visit)
+             
+             if visit.latitude and visit.longitude:
+                 map_data.append({
+                     'lat': visit.latitude,
+                     'lng': visit.longitude,
+                     'city': visit.city or 'Unknown',
+                     'count': ip_entry['visit_count']
+                 })
 
     # 8. Core Web Vitals (Averages)
     cwv_stats = visits.aggregate(
@@ -130,6 +141,8 @@ def analytics_dashboard(request):
         'top_pages': top_pages,
         'country_stats': country_stats,
         'unique_ip_locations': unique_ip_locations,
+        'map_data': json.dumps(map_data),
+        'mapbox_token': settings.MAPBOX_TOKEN,
         'cwv': {k: round(v, 2) if v else 0 for k, v in cwv_stats.items()},
         'title': 'Analytics Dashboard'
     }

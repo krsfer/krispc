@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
     <style>
         .card-gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .card-gradient-2 { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
@@ -139,6 +141,13 @@
         </div>
         
         <div class="grid grid-cols-1 gap-8 mb-8">
+            <!-- Locations Map -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 col-span-1 lg:col-span-2">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Live Traffic Map</h2>
+                <div id="map" class="w-full h-96 rounded-lg"></div>
+            </div>
+
+            <!-- Locations Table -->
              <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 col-span-1 lg:col-span-2">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Recent Unique Locations</h2>
                 <div class="overflow-x-auto">
@@ -448,6 +457,81 @@
                 }
             }
         });
+
+        // 5. Mapbox Map
+        const mapToken = "{{ mapbox_token }}";
+        const mapData = {{ map_data|safe }};
+
+        if (mapToken && mapData.length > 0) {
+            mapboxgl.accessToken = mapToken;
+            
+            // Determine center based on first point or default
+            const initialCenter = mapData.length > 0 ? [mapData[0].lng, mapData[0].lat] : [0, 20];
+            const initialZoom = mapData.length > 0 ? 3 : 1;
+
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/light-v11',
+                center: initialCenter,
+                zoom: initialZoom
+            });
+
+            // Add navigation controls
+            map.addControl(new mapboxgl.NavigationControl());
+
+            // Add markers
+            mapData.forEach(point => {
+                // Create custom marker element
+                const el = document.createElement('div');
+                el.className = 'marker';
+                el.style.backgroundColor = '#6366f1';
+                el.style.width = '24px';
+                el.style.height = '24px';
+                el.style.borderRadius = '50%';
+                el.style.border = '2px solid white';
+                el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+                el.style.cursor = 'pointer';
+                
+                // Add popup
+                const popup = new mapboxgl.Popup({ offset: 25 })
+                    .setHTML(`
+                        <div class="text-sm font-sans p-2">
+                            <strong class="text-gray-900 block mb-1">${point.city}</strong>
+                            <span class="text-gray-600">${point.count} visit(s)</span>
+                        </div>
+                    `);
+
+                new mapboxgl.Marker(el)
+                    .setLngLat([point.lng, point.lat])
+                    .setPopup(popup)
+                    .addTo(map);
+            });
+            
+            // Adjust bounds to fit all markers if multiple
+            if (mapData.length > 1) {
+                const bounds = new mapboxgl.LngLatBounds();
+                mapData.forEach(p => bounds.extend([p.lng, p.lat]));
+                map.fitBounds(bounds, { padding: 50 });
+            }
+        } else if (!mapToken) {
+            document.getElementById('map').innerHTML = `
+                <div class="h-full w-full flex items-center justify-center bg-gray-100 rounded-lg text-gray-400">
+                    <div class="text-center">
+                        <i class="fas fa-map-marked-alt text-4xl mb-2"></i>
+                        <p>Mapbox Token not configured</p>
+                    </div>
+                </div>
+            `;
+        } else {
+             document.getElementById('map').innerHTML = `
+                <div class="h-full w-full flex items-center justify-center bg-gray-100 rounded-lg text-gray-400">
+                    <div class="text-center">
+                        <i class="fas fa-globe-europe text-4xl mb-2"></i>
+                        <p>No location data available yet</p>
+                    </div>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
