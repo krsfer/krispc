@@ -431,33 +431,6 @@
             }
         });
 
-        // 4. Country Chart
-        const ctxCountry = document.getElementById('countryChart').getContext('2d');
-        new Chart(ctxCountry, {
-            type: 'doughnut',
-            data: {
-                labels: countryLabels,
-                datasets: [{
-                    data: countryData,
-                    backgroundColor: [
-                        '#10b981', // Emerald
-                        '#3b82f6', // Blue
-                        '#f59e0b', // Amber
-                        '#ef4444', // Red
-                        '#6366f1'  // Indigo
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-
         // 5. Mapbox Map
         const mapToken = "{{ mapbox_token }}";
         const mapData = {{ map_data|safe }};
