@@ -82,35 +82,73 @@ def analytics_dashboard(request):
     country_labels = [stat['country'] for stat in country_stats]
     country_data = [stat['count'] for stat in country_stats]
     
-    # 7. Recent Unique Locations (IP-based)
-    # Get distinct IPs and their latest visit info, plus total visit count
-    unique_ips_qs = visits.exclude(ip_address__isnull=True).values('ip_address').annotate(
-        last_visit=models.Max('timestamp'),
-        visit_count=Count('id')
-    ).order_by('-last_visit')[:20]
+    # 7. Recent Unique Locations (Coordinate-based grouping)
+    # Fetch stats for IPs with valid location data
+    # We fetch more than 20 to allow for grouping reduction
+    ip_stats = visits.exclude(latitude__isnull=True).values(
+        'ip_address', 'latitude', 'longitude', 'city', 'country', 'region', 
+        'postal_code', 'isp', 'organization', 'network_type', 'timezone'
+    ).annotate(
+        latest_timestamp=models.Max('timestamp'),
+        count=Count('id')
+    ).order_by('-latest_timestamp')[:100]
+
+    grouped_locations = {}
+    
+    for entry in ip_stats:
+        # Create a key based on coordinates (rounded slightly if needed, but exact per request)
+        # Using exact float values from DB
+        key = (entry['latitude'], entry['longitude'])
+        
+        if key not in grouped_locations:
+            grouped_locations[key] = {
+                'ips': set(),
+                'data': entry, # Use the most recent entry for location details
+                'total_visits': 0,
+                'last_visit': entry['latest_timestamp']
+            }
+        
+        group = grouped_locations[key]
+        group['ips'].add(entry['ip_address'])
+        group['total_visits'] += entry['count']
+        
+        # Ensure we have the latest timestamp across the group
+        if entry['latest_timestamp'] > group['last_visit']:
+             group['last_visit'] = entry['latest_timestamp']
+             group['data'] = entry # Update metadata to latest
+    
+    # Convert to list
+    sorted_locations = sorted(grouped_locations.values(), key=lambda x: x['last_visit'], reverse=True)[:20]
     
     unique_ip_locations = []
     map_data = []
-
-    for ip_entry in unique_ips_qs:
-        # Fetch the full visit object for the latest timestamp
-        visit = visits.filter(
-            ip_address=ip_entry['ip_address'], 
-            timestamp=ip_entry['last_visit']
-        ).first()
+    
+    for loc in sorted_locations:
+        data = loc['data']
+        # Construct object-like dict for template
+        location_obj = {
+            'ip_address': " ".join(sorted(list(loc['ips']))), # Space-separated IPs
+            'visit_count': loc['total_visits'],
+            'city': data.get('city'),
+            'region': data.get('region'),
+            'country': data.get('country'),
+            'postal_code': data.get('postal_code'),
+            'latitude': data.get('latitude'),
+            'longitude': data.get('longitude'),
+            'isp': data.get('isp'),
+            'organization': data.get('organization'),
+            'network_type': data.get('network_type'),
+            'timezone': data.get('timezone'),
+        }
+        unique_ip_locations.append(location_obj)
         
-        if visit and (visit.country or visit.city):
-             # Attach the count calculated in the aggregation
-             visit.visit_count = ip_entry['visit_count']
-             unique_ip_locations.append(visit)
-             
-             if visit.latitude and visit.longitude:
-                 map_data.append({
-                     'lat': visit.latitude,
-                     'lng': visit.longitude,
-                     'city': visit.city or 'Unknown',
-                     'count': ip_entry['visit_count']
-                 })
+        if data.get('latitude') and data.get('longitude'):
+             map_data.append({
+                 'lat': data['latitude'],
+                 'lng': data['longitude'],
+                 'city': data.get('city') or 'Unknown',
+                 'count': loc['total_visits']
+             })
 
     # 8. Core Web Vitals (Averages)
     cwv_stats = visits.aggregate(
