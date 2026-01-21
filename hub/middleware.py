@@ -27,49 +27,37 @@ class EnsureDefaultLanguageMiddleware:
 
         # Determine language from URL path
         path = request.path
-        # print(f"DEBUG: Middleware start. path={path}")
         
         # Check if an explicit language is requested via URL
         if path.startswith('/en/'):
-            # print("DEBUG: path starts with /en/")
             language = 'en'
             # Force update session if explicit in URL
             request.session['_language'] = language
             request.session.modified = True
         elif path.startswith('/fr/'):
-             # print("DEBUG: path starts with /fr/")
              language = 'fr'
              # Force update session if explicit in URL
              request.session['_language'] = language
              request.session.modified = True
         else:
-            # print("DEBUG: no language prefix")
             # No prefix. Check if session has a preference.
             session_language = request.session.get('_language')
             
             # Check cookie if session is empty
             cookie_language = request.COOKIES.get(settings.LANGUAGE_COOKIE_NAME)
             
-            # print(f"DEBUG: session_language={session_language}, cookie_language={cookie_language}")
-            
             if session_language:
-                # print(f"DEBUG: using session language {session_language}")
                 language = session_language
             elif cookie_language:
-                # print(f"DEBUG: using cookie language {cookie_language}")
                 language = cookie_language
                 # Sync session with cookie
                 request.session['_language'] = language
                 request.session.modified = True
             else:
-                # print("DEBUG: setting default fr")
                 # No preference? Default to French.
                 request.session['_language'] = 'fr'
                 request.session.modified = True
                 language = 'fr'
-        
-        # Log what we're setting (or keeping)
-        # logger.info(f"EnsureDefaultLanguageMiddleware: path={path}, language={language}")
         
         # Explicitly activate the language for this request thread
         activate(language)
