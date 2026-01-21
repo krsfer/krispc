@@ -138,28 +138,59 @@
             </div>
         </div>
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <!-- Locations -->
-             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-800 mb-4">Top Locations</h2>
-                <div class="flex flex-col md:flex-row gap-6">
-                    <div class="w-full md:w-1/2 relative h-64">
-                         <canvas id="countryChart"></canvas>
-                    </div>
-                    <div class="w-full md:w-1/2">
-                        <ul class="space-y-3">
-                            {% for country in country_stats %}
-                            <li class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                                <span class="flex items-center text-gray-700 font-medium">
-                                    <i class="fas fa-globe-americas text-indigo-400 mr-2"></i> {{ country.country }}
-                                </span>
-                                <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded">{{ country.count }}</span>
-                            </li>
+        <div class="grid grid-cols-1 gap-8 mb-8">
+             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 col-span-1 lg:col-span-2">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Recent Unique Locations</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Postal / Coordinates</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISP / Org</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                            {% for visit in unique_ip_locations %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap font-mono text-xs text-indigo-600">
+                                    {{ visit.ip_address }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>
+                                        <div>
+                                            <div class="font-medium text-gray-900">{{ visit.city|default:"Unknown City" }}</div>
+                                            <div class="text-gray-500 text-xs">{{ visit.region|default:"" }}, {{ visit.country|default:"Unknown" }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                    <div>{{ visit.postal_code|default:"-" }}</div>
+                                    <div class="text-xs font-mono text-gray-400">
+                                        {{ visit.latitude|default:"0.0" }}, {{ visit.longitude|default:"0.0" }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-gray-900">{{ visit.isp|default:"-" }}</div>
+                                    <div class="text-xs text-gray-500">{{ visit.organization|default:"" }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                    <div>{{ visit.network_type|default:"-" }}</div>
+                                    <div class="text-xs">{{ visit.timezone|default:"UTC" }}</div>
+                                </td>
+                            </tr>
                             {% empty %}
-                            <li class="text-gray-400 italic text-sm text-center py-4">No location data yet</li>
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-500 italic">
+                                    No location data available yet.
+                                </td>
+                            </tr>
                             {% endfor %}
-                        </ul>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 

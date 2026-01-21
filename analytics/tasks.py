@@ -16,7 +16,7 @@ def resolve_geoip(visit_id):
         # Use ip-api.com (free, rate limited to 45/min)
         # In production, consider a paid service or local DB
         # Note: 'fields' param optimizes response
-        response = requests.get(f'http://ip-api.com/json/{ip}?fields=status,country,regionName,city,lat,lon')
+        response = requests.get(f'http://ip-api.com/json/{ip}?fields=status,country,regionName,city,lat,lon,zip,isp,org,timezone')
         
         if response.status_code == 200:
             data = response.json()
@@ -24,8 +24,12 @@ def resolve_geoip(visit_id):
                 visit.country = data.get('country')
                 visit.region = data.get('regionName')
                 visit.city = data.get('city')
+                visit.postal_code = data.get('zip')
                 visit.latitude = data.get('lat')
                 visit.longitude = data.get('lon')
+                visit.timezone = data.get('timezone')
+                visit.isp = data.get('isp')
+                visit.organization = data.get('org')
                 visit.save()
                 
     except PageVisit.DoesNotExist:

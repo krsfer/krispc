@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import models
 from django.db.models import Count, Avg, F
 from django.db.models.functions import TruncDate
 from django.utils import timezone
@@ -79,8 +80,25 @@ def analytics_dashboard(request):
         
     country_labels = [stat['country'] for stat in country_stats]
     country_data = [stat['count'] for stat in country_stats]
+    
+    # 7. Recent Unique Locations (IP-based)
+    # Get distinct IPs and their latest visit info
+    unique_ips_qs = visits.exclude(ip_address__isnull=True).values('ip_address').annotate(
+        last_visit=models.Max('timestamp')
+    ).order_by('-last_visit')[:20]
+    
+    unique_ip_locations = []
+    for ip_entry in unique_ips_qs:
+        # Fetch the full visit object for the latest timestamp
+        visit = visits.filter(
+            ip_address=ip_entry['ip_address'], 
+            timestamp=ip_entry['last_visit']
+        ).first()
+        
+        if visit and (visit.country or visit.city):
+             unique_ip_locations.append(visit)
 
-    # 7. Core Web Vitals (Averages)
+    # 8. Core Web Vitals (Averages)
     cwv_stats = visits.aggregate(
         avg_ttfb=Avg('ttfb'),
         avg_lcp=Avg('lcp'),
@@ -108,6 +126,7 @@ def analytics_dashboard(request):
         },
         'top_pages': top_pages,
         'country_stats': country_stats,
+        'unique_ip_locations': unique_ip_locations,
         'cwv': {k: round(v, 2) if v else 0 for k, v in cwv_stats.items()},
         'title': 'Analytics Dashboard'
     }

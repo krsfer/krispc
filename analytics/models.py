@@ -22,8 +22,14 @@ class PageVisit(models.Model):
     country = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     region = models.CharField(max_length=100, null=True, blank=True)
+    postal_code = models.CharField(max_length=20, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    timezone = models.CharField(max_length=50, null=True, blank=True)
+    
+    # Network Details
+    isp = models.CharField(max_length=255, null=True, blank=True)
+    organization = models.CharField(max_length=255, null=True, blank=True)
 
     # Technical Metrics (Core Web Vitals & Performance)
     ttfb = models.FloatField(help_text="Time to First Byte (ms)", null=True, blank=True)
