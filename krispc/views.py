@@ -214,6 +214,7 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
     status = 0
     if form.is_valid():
         form.instance.author = request.user
+        form.save()
 
         if DEBUG:
             status = "some status"

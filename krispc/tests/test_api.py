@@ -94,7 +94,7 @@ class ContactAPITests(APITestCase):
             message='Test message from Jane'
         )
 
-    @patch('krispc.api.send_contact_email')
+    @patch('krispc.api_views.send_contact_email')
     def test_create_contact_sends_email(self, mock_send_email):
         """Ensure POST creates a contact and calls send_contact_email."""
         data = {

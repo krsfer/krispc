@@ -1,7 +1,7 @@
 from django.test import TestCase, RequestFactory
 from django.urls import reverse, resolve
 from django.utils.translation import activate
-from .views import IndexView, PrivacyView, TermsView
+from hub.views import IndexView, PrivacyView, TermsView
 
 
 class IndexViewTests(TestCase):

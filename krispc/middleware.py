@@ -41,6 +41,8 @@ class APILanguageMiddleware:
         Returns:
             HttpResponse: The response from the view or next middleware
         """
+        lang_code = None
+        
         # Only apply to API endpoints
         if request.path.startswith('/api/'):
             lang_code = self._get_language_from_request(request)
@@ -51,6 +53,10 @@ class APILanguageMiddleware:
                 logger.debug(f"API request language set to: {lang_code}")
         
         response = self.get_response(request)
+        
+        # Set Content-Language header to match the activated language
+        if request.path.startswith('/api/') and lang_code:
+            response['Content-Language'] = lang_code
         
         # Deactivate translation after request
         if request.path.startswith('/api/'):

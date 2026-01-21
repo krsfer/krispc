@@ -1,3 +1,5 @@
+from django.utils.translation import activate
+from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,31 +21,58 @@ class EnsureDefaultLanguageMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Skip API paths - let LocaleMiddleware handle them via headers
-        if request.path.startswith('/api/'):
+        # Skip API paths and i18n paths - let LocaleMiddleware handle them
+        if request.path.startswith('/api/') or request.path.startswith('/i18n/'):
             return self.get_response(request)
 
         # Determine language from URL path
-        # No /en/ prefix = French (default)
-        # /en/ prefix = English
         path = request.path
-
+        # print(f"DEBUG: Middleware start. path={path}")
+        
+        # Check if an explicit language is requested via URL
         if path.startswith('/en/'):
+            # print("DEBUG: path starts with /en/")
             language = 'en'
+            # Force update session if explicit in URL
+            request.session['_language'] = language
+            request.session.modified = True
+        elif path.startswith('/fr/'):
+             # print("DEBUG: path starts with /fr/")
+             language = 'fr'
+             # Force update session if explicit in URL
+             request.session['_language'] = language
+             request.session.modified = True
         else:
-            # No prefix means French (default language with prefix_default_language=False)
-            language = 'fr'
-
-        # Log what we're setting
-        logger.info(f"EnsureDefaultLanguageMiddleware: path={path}, setting language={language}, session_before={request.session.get('_language', 'NOT_SET')}")
-
-        # Set language in session
-        # LocaleMiddleware will pick this up and activate it
-        request.session['_language'] = language
-        # Mark session as modified to ensure it's saved
-        request.session.modified = True
-
-        logger.info(f"EnsureDefaultLanguageMiddleware: session_after={request.session.get('_language')}")
+            # print("DEBUG: no language prefix")
+            # No prefix. Check if session has a preference.
+            session_language = request.session.get('_language')
+            
+            # Check cookie if session is empty
+            cookie_language = request.COOKIES.get(settings.LANGUAGE_COOKIE_NAME)
+            
+            # print(f"DEBUG: session_language={session_language}, cookie_language={cookie_language}")
+            
+            if session_language:
+                # print(f"DEBUG: using session language {session_language}")
+                language = session_language
+            elif cookie_language:
+                # print(f"DEBUG: using cookie language {cookie_language}")
+                language = cookie_language
+                # Sync session with cookie
+                request.session['_language'] = language
+                request.session.modified = True
+            else:
+                # print("DEBUG: setting default fr")
+                # No preference? Default to French.
+                request.session['_language'] = 'fr'
+                request.session.modified = True
+                language = 'fr'
+        
+        # Log what we're setting (or keeping)
+        # logger.info(f"EnsureDefaultLanguageMiddleware: path={path}, language={language}")
+        
+        # Explicitly activate the language for this request thread
+        activate(language)
 
         response = self.get_response(request)
         return response

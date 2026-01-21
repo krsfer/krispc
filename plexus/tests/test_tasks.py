@@ -5,7 +5,7 @@ from plexus.tasks import process_input
 
 class InputTaskTest(TestCase):
     @patch("plexus.signals.process_input.delay")
-    @patch("plexus.tasks.classify_input")
+    @patch("plexus.services.processor.classify_input")
     def test_process_input_success(self, mock_classify, mock_signal_delay):
         # Setup mock
         mock_classify.return_value = {
@@ -39,7 +39,7 @@ class InputTaskTest(TestCase):
         self.assertEqual(action.description, "Buy milk at Tesco")
 
     @patch("plexus.signals.process_input.delay")
-    @patch("plexus.tasks.classify_input")
+    @patch("plexus.services.processor.classify_input")
     def test_process_input_low_confidence(self, mock_classify, mock_signal_delay):
         from plexus.models import ReviewQueue
         # Setup mock with low confidence
@@ -62,7 +62,7 @@ class InputTaskTest(TestCase):
         self.assertIn("0.45", review_item.reason)
 
     @patch("plexus.signals.process_input.delay")
-    @patch("plexus.tasks.classify_input")
+    @patch("plexus.services.processor.classify_input")
     def test_process_input_idempotency(self, mock_classify, mock_signal_delay):
         """
         Test that running process_input multiple times updates the existing Thought
@@ -107,7 +107,7 @@ class InputTaskTest(TestCase):
         self.assertEqual(Action.objects.first().description, "New Action")
 
     @patch("plexus.signals.process_input.delay")
-    @patch("plexus.tasks.classify_input")
+    @patch("plexus.services.processor.classify_input")
     def test_process_input_deduplication(self, mock_classify, mock_signal_delay):
         """
         Test that if a Thought with identical refined content already exists,
@@ -143,7 +143,7 @@ class InputTaskTest(TestCase):
         self.assertTrue(new_input.processed)
 
     @patch("plexus.signals.process_input.delay")
-    @patch("plexus.tasks.classify_input")
+    @patch("plexus.services.processor.classify_input")
     def test_process_input_deduplication_raw_input(self, mock_classify, mock_signal_delay):
         """
         Test that if an Input with identical content has already been processed into a Thought,
@@ -176,3 +176,4 @@ class InputTaskTest(TestCase):
         # Verify no new thought created
         self.assertEqual(Thought.objects.count(), 1)
         self.assertEqual(Thought.objects.first().content, "Refined Version A")
+

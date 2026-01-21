@@ -8,6 +8,16 @@ CACHES = {
     }
 }
 
+# Use simple static files storage for tests (avoids WhiteNoise manifest errors)
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
 # Ensure throttles are defined for tests
 REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
     "anon": "1000/hour",

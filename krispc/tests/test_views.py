@@ -82,7 +82,7 @@ class CreateContactViewTest(TestCase):
             'message': 'This is a test message with enough characters.',
         }
     
-    @patch('krispc.views.send_contact_email')
+    @patch('krispc.forms.send_contact_email')
     def test_create_contact_valid_submission(self, mock_send_email):
         """Test creating contact with valid data."""
         response = self.client.post(
@@ -113,7 +113,7 @@ class CreateContactViewTest(TestCase):
         # Should not create contact
         self.assertEqual(Contact.objects.count(), 0)
     
-    @patch('krispc.views.send_contact_email')
+    @patch('krispc.forms.send_contact_email')
     def test_create_contact_sends_email(self, mock_send_email):
         """Test that creating contact triggers email send."""
         response = self.client.post(
@@ -139,7 +139,7 @@ class CreateContactViewTest(TestCase):
         # Should be rejected due to missing CSRF token
         self.assertEqual(response.status_code, 403)
     
-    @patch('krispc.views.send_contact_email')
+    @patch('krispc.forms.send_contact_email')
     def test_create_contact_htmx_request(self, mock_send_email):
         """Test that HTMX requests are handled properly."""
         response = self.client.post(

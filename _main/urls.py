@@ -12,6 +12,7 @@ from django.views.static import serve
 
 import krispc.views
 import p2c.views
+import hub.views
 
 def health_check(request):
     """Health check endpoint for fly.io"""
@@ -21,6 +22,9 @@ urlpatterns = [
     path('health', health_check, name='health'),
     # Legacy Google OAuth callback path to match existing console configuration
     path("login/google/", p2c.views.google_login, name="google_login_callback"),
+    
+    # Root URL (Non-i18n) to respect session language
+    path("", hub.views.IndexView.as_view(), name="home"),
     
     # KrisPC API
     path("api/krispc/", include("krispc.api_urls")),
