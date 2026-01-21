@@ -446,7 +446,8 @@
                 container: 'map',
                 style: 'mapbox://styles/mapbox/light-v11',
                 center: initialCenter,
-                zoom: initialZoom
+                zoom: initialZoom,
+                testMode: true // Suppress analytics to avoid ERR_BLOCKED_BY_CLIENT
             });
 
             // Add navigation controls
