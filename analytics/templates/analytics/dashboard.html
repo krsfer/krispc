@@ -146,6 +146,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visits</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Postal / Coordinates</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISP / Org</th>
@@ -157,6 +158,11 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap font-mono text-xs text-indigo-600">
                                     {{ visit.ip_address }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        {{ visit.visit_count }}
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
@@ -184,7 +190,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-gray-500 italic">
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500 italic">
                                     No location data available yet.
                                 </td>
                             </tr>

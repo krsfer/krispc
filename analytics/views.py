@@ -82,9 +82,10 @@ def analytics_dashboard(request):
     country_data = [stat['count'] for stat in country_stats]
     
     # 7. Recent Unique Locations (IP-based)
-    # Get distinct IPs and their latest visit info
+    # Get distinct IPs and their latest visit info, plus total visit count
     unique_ips_qs = visits.exclude(ip_address__isnull=True).values('ip_address').annotate(
-        last_visit=models.Max('timestamp')
+        last_visit=models.Max('timestamp'),
+        visit_count=Count('id')
     ).order_by('-last_visit')[:20]
     
     unique_ip_locations = []
@@ -96,6 +97,8 @@ def analytics_dashboard(request):
         ).first()
         
         if visit and (visit.country or visit.city):
+             # Attach the count calculated in the aggregation
+             visit.visit_count = ip_entry['visit_count']
              unique_ip_locations.append(visit)
 
     # 8. Core Web Vitals (Averages)
