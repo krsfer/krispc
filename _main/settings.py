@@ -154,6 +154,7 @@ INSTALLED_APPS = [
     "p2c",
     "celery_progress",
     "hub",
+    "analytics",
     "plexus.apps.PlexusConfig",
 
     "rest_framework",

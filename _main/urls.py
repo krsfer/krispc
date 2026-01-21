@@ -24,7 +24,7 @@ urlpatterns = [
     path("login/google/", p2c.views.google_login, name="google_login_callback"),
     
     # Root URL (Non-i18n) to respect session language
-    path("", hub.views.IndexView.as_view(), name="home"),
+    path("", hub.views.IndexView.as_view(), name="index"),
     
     # KrisPC API
     path("api/krispc/", include("krispc.api_urls")),
@@ -46,6 +46,7 @@ urlpatterns += i18n_patterns(
     path("start/", krispc.views.IndexPageView.as_view(), name="krispc_index"), # Fallback
     
     path('plexus/', include('plexus.urls')),
+    path('analytics/', include('analytics.urls')),
     path("login/", auth_views.LoginView.as_view(template_name="plexus/registration/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     
