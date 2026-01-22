@@ -1,5 +1,6 @@
 from django.utils.translation import activate
 from django.conf import settings
+from django.http import HttpResponseRedirect
 import logging
 
 logger = logging.getLogger(__name__)
@@ -22,14 +23,25 @@ class EnsureDefaultLanguageMiddleware:
 
     def __call__(self, request):
         # Skip API paths and i18n paths - let LocaleMiddleware handle them
-        if request.path.startswith('/api/') or request.path.startswith('/i18n/'):
+        # We check for '/i18n/' anywhere in path to handle prefixed URLs like /en/i18n/
+        # Also skip our custom switch_language view
+        if request.path.startswith('/api/') or '/i18n/' in request.path or 'switch-lang' in request.path:
             return self.get_response(request)
 
         # Determine language from URL path
         path = request.path
         
         # Check if an explicit language is requested via URL
-        if path.startswith('/en/'):
+        if request.GET.get('lang'):
+             # Explicit override via query param (e.g. ?lang=fr)
+             language = request.GET.get('lang')
+             if language in ['fr', 'en']:
+                request.session['_language'] = language
+                request.session.modified = True
+             else:
+                 # Fallback for invalid lang codes
+                 language = request.session.get('_language', 'fr')
+        elif path.startswith('/en/'):
             language = 'en'
             # Force update session if explicit in URL
             request.session['_language'] = language
@@ -62,5 +74,35 @@ class EnsureDefaultLanguageMiddleware:
         # Explicitly activate the language for this request thread
         activate(language)
 
-        response = self.get_response(request)
+        # Redirect logic: If English (non-default) is active but URL lacks prefix, redirect!
+        should_redirect = False
+        redirect_path = path
+
+        if language == 'en' and not request.path.startswith('/en/'):
+             should_redirect = True
+             redirect_path = f'/en{request.path}'
+        elif language == 'fr' and request.path.startswith('/en/'):
+             should_redirect = True
+             # /en/foo -> /foo
+             redirect_path = request.path[3:]
+             if not redirect_path.startswith('/'):
+                 redirect_path = '/' + redirect_path
+
+        if should_redirect:
+             if request.META.get('QUERY_STRING'):
+                  redirect_path += f"?{request.META['QUERY_STRING']}"
+             response = HttpResponseRedirect(redirect_path)
+        else:
+             response = self.get_response(request)
+
+        # Set language cookie for persistence across browser sessions
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            language,
+            max_age=settings.LANGUAGE_COOKIE_AGE,
+            samesite=getattr(settings, 'LANGUAGE_COOKIE_SAMESITE', 'Lax'),
+            httponly=getattr(settings, 'LANGUAGE_COOKIE_HTTPONLY', False),
+            secure=request.is_secure(),
+        )
+
         return response

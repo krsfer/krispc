@@ -39,7 +39,7 @@
                         </svg>
                     </button>
                     <div id="langDropdownMenu" class="lang-dropdown-menu">
-                        <form action="{% url 'set_language' %}" method="post">
+                        <form action="{% url 'hub:switch_language' %}" method="post">
                             {% csrf_token %}
                             <input name="next" type="hidden" value="/">
                             <button type="submit" name="language" value="fr" class="lang-option {% if current_language == 'fr' %}active{% endif %}">
@@ -52,7 +52,7 @@
                                 {% endif %}
                             </button>
                         </form>
-                        <form action="{% url 'set_language' %}" method="post">
+                        <form action="{% url 'hub:switch_language' %}" method="post">
                             {% csrf_token %}
                             <input name="next" type="hidden" value="/en/">
                             <button type="submit" name="language" value="en" class="lang-option {% if current_language == 'en' %}active{% endif %}">
@@ -85,13 +85,13 @@
                 <span>&copy; 2026</span>
             </nav>
             <div class="language-footer">
-                <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                <form action="{% url 'hub:switch_language' %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="/">
                     <button type="submit" name="language" value="fr" class="lang-btn {% if current_language == 'fr' %}active{% endif %}">Français</button>
                 </form>
                 <span class="separator">|</span>
-                <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                <form action="{% url 'hub:switch_language' %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="/en/">
                     <button type="submit" name="language" value="en" class="lang-btn {% if current_language == 'en' %}active{% endif %}">English</button>

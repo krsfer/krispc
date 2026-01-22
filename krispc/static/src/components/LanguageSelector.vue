@@ -33,7 +33,7 @@
         <a
           v-for="lang in availableLanguages"
           :key="lang.code"
-          :href="lang.code === 'fr' ? currentPath : `/${lang.code}${currentPath}`"
+          :href="getLanguageUrl(lang.code)"
           class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           :class="{ 'bg-primary/10': lang.code === currentLanguage.code }"
           @click="isOpen = false"
@@ -104,6 +104,23 @@ onMounted(() => {
 const currentLanguage = computed(() => {
   return languages[currentLanguageCode.value] || languages.fr
 })
+
+const getLanguageUrl = (langCode) => {
+  // If switching to French, we must use query param to properly override
+  // any existing session language preference (sticky session)
+  // because root path '/' honors the persisted preference.
+  if (langCode === 'fr') {
+    // Only append if we aren't already just on root without params
+    // But since currentPath strips params, we just append ?lang=fr
+    // This is simple and robust.
+    // Ensure we handle currentPath correctly (it might be '/' or '/foo')
+    const separator = currentPath.value.includes('?') ? '&' : '?'
+    return `${currentPath.value}${separator}lang=fr`
+  }
+  
+  // For English, standard prefix works
+  return `/en${currentPath.value}`
+}
 
 // Close dropdown on ESC key
 const handleEscape = (e) => {

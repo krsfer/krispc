@@ -1,5 +1,41 @@
 from django.views.generic import TemplateView
-from django.utils.translation import get_language
+from django.utils.translation import get_language, check_for_language
+from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
+from django.conf import settings
+from django.http import HttpResponseRedirect
+import logging
+
+logger = logging.getLogger(__name__)
+
+@require_POST
+def switch_language(request):
+    """
+    Custom view to switch language and update session explicitly.
+    This replaces the standard set_language to ensure session persistence works with our custom middleware.
+    """
+    language = request.POST.get('language')
+    next_url = request.POST.get('next', '/')
+    
+    if language and check_for_language(language):
+        if hasattr(request, 'session'):
+            request.session['_language'] = language
+            request.session.save() # Explicitly save
+            logger.info(f"Language switched to {language} (Session updated)")
+        
+        # Also set cookie for redundancy
+        response = HttpResponseRedirect(next_url)
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            language,
+            max_age=settings.LANGUAGE_COOKIE_AGE,
+            samesite=getattr(settings, 'LANGUAGE_COOKIE_SAMESITE', 'Lax'),
+            httponly=getattr(settings, 'LANGUAGE_COOKIE_HTTPONLY', False),
+            secure=request.is_secure(),
+        )
+        return response
+            
+    return HttpResponseRedirect(next_url)
 
 
 class IndexView(TemplateView):

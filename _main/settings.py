@@ -374,6 +374,12 @@ LANGUAGES = [
     ("en", _("English")),
 ]
 
+# Language cookie settings for session persistence
+LANGUAGE_COOKIE_NAME = 'krispc_language'
+LANGUAGE_COOKIE_AGE = 60 * 60 * 24 * 365  # 1 year
+LANGUAGE_COOKIE_SAMESITE = 'Lax'
+LANGUAGE_COOKIE_HTTPONLY = False  # Allow JS to read if needed
+
 
 STORAGES = {
     # Default file storage for uploaded files
