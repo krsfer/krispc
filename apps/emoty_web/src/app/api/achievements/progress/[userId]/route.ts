@@ -5,17 +5,19 @@ import { db } from '@/db/connection';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { userId } = await params;
+
     // Users can only access their own achievement progress
-    if (session.user.id !== params.userId) {
+    if (session.user.id !== userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -23,7 +25,7 @@ export async function GET(
     const user = await db
       .selectFrom('users')
       .select('user_level')
-      .where('id', '=', params.userId)
+      .where('id', '=', userId)
       .executeTakeFirst();
 
     if (!user) {
@@ -31,7 +33,7 @@ export async function GET(
     }
 
     const achievementProgress = await AchievementSystem.getAchievementProgress(
-      params.userId,
+      userId,
       user.user_level
     );
     

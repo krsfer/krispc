@@ -262,7 +262,7 @@ export default function SyncControls({
           <div className="alert alert-info py-2 mb-0" role="alert">
             <small>
               <i className="bi bi-wifi-off me-1" aria-hidden="true"></i>
-              You're currently offline. Changes will sync automatically when connection is restored.
+              You&apos;re currently offline. Changes will sync automatically when connection is restored.
             </small>
           </div>
         </div>

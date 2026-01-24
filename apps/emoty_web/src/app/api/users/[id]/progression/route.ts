@@ -4,21 +4,23 @@ import { ProgressionEngine } from '@/lib/progression-engine';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
+
     // Users can only access their own progression data
-    if (session.user.id !== params.id) {
+    if (session.user.id !== id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const progressionData = await ProgressionEngine.calculateProgression(params.id);
+    const progressionData = await ProgressionEngine.calculateProgression(id);
     
     return NextResponse.json(progressionData);
   } catch (error) {

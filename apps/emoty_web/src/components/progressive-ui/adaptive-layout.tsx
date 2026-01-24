@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import Link from 'next/link';
 import { useUser, useAccessibility } from '@/contexts/user-context';
 import { FeatureGate } from '@/components/feature-gate';
 import { LevelIndicator } from '@/components/level-indicator';
@@ -71,18 +72,18 @@ export function ProgressiveNav({ className = '' }: ProgressiveNavProps) {
     return (
       <nav className={`progressive-nav nav-guest ${className}`}>
         <div className="nav-items">
-          <a href="/" className="nav-item">
+          <Link href="/" className="nav-item">
             <i className="bi bi-house-fill me-2"></i>
             Home
-          </a>
-          <a href="/patterns" className="nav-item">
+          </Link>
+          <Link href="/patterns" className="nav-item">
             <i className="bi bi-grid-3x3 me-2"></i>
             Browse Patterns
-          </a>
-          <a href="/auth/signin" className="nav-item nav-cta">
+          </Link>
+          <Link href="/auth/signin" className="nav-item nav-cta">
             <i className="bi bi-person-plus me-2"></i>
             Sign In
-          </a>
+          </Link>
         </div>
       </nav>
     );
@@ -92,52 +93,52 @@ export function ProgressiveNav({ className = '' }: ProgressiveNavProps) {
     <nav className={`progressive-nav nav-${user?.userLevel} ${className}`}>
       <div className="nav-items">
         {/* Always available */}
-        <a href="/" className="nav-item">
+        <Link href="/" className="nav-item">
           <i className="bi bi-house-fill me-2"></i>
           Home
-        </a>
-        
-        <a href="/patterns" className="nav-item">
+        </Link>
+
+        <Link href="/patterns" className="nav-item">
           <i className="bi bi-grid-3x3 me-2"></i>
           My Patterns
-        </a>
+        </Link>
 
         {/* Intermediate+ features */}
         <FeatureGate feature="ai_pattern_generation" showUpgrade={false}>
-          <a href="/ai-generator" className="nav-item">
+          <Link href="/ai-generator" className="nav-item">
             <i className="bi bi-magic me-2"></i>
             AI Generator
-          </a>
+          </Link>
         </FeatureGate>
 
         <FeatureGate feature="favorites_system" showUpgrade={false}>
-          <a href="/favorites" className="nav-item">
+          <Link href="/favorites" className="nav-item">
             <i className="bi bi-heart-fill me-2"></i>
             Favorites
-          </a>
+          </Link>
         </FeatureGate>
 
         {/* Advanced+ features */}
         <FeatureGate feature="emoty_bot_chat" showUpgrade={false}>
-          <a href="/emoty-bot" className="nav-item">
+          <Link href="/emoty-bot" className="nav-item">
             <i className="bi bi-robot me-2"></i>
             EmotyBot
-          </a>
+          </Link>
         </FeatureGate>
 
         <FeatureGate feature="community_features" showUpgrade={false}>
-          <a href="/community" className="nav-item">
+          <Link href="/community" className="nav-item">
             <i className="bi bi-people-fill me-2"></i>
             Community
-          </a>
+          </Link>
         </FeatureGate>
 
         {/* Expert features */}
         <FeatureGate feature="developer_tools" showUpgrade={false}>
-          <a href="/dev-tools" className="nav-item">
+          <Link href="/dev-tools" className="nav-item">
             <i className="bi bi-code-slash me-2"></i>
             Dev Tools
-          </a>
+          </Link>
         </FeatureGate>
       </div>
     </nav>
@@ -226,10 +227,10 @@ export function ProgressiveShowcase({ className = '' }: ProgressiveShowcaseProps
           </div>
 
           <div className="mt-3">
-            <a href="/progression" className="btn btn-primary btn-sm">
+            <Link href="/progression" className="btn btn-primary btn-sm">
               <i className="bi bi-arrow-up-circle me-2"></i>
               View Progress Requirements
-            </a>
+            </Link>
           </div>
         </div>
       )}

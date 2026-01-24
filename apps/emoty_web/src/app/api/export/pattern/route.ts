@@ -3,7 +3,8 @@ import { auth } from '@/lib/auth';
 import { db } from '@/db/connection';
 import { ExportService } from '@/lib/export/export-service';
 import { ProgressionEngine } from '@/lib/progression-engine';
-import type { PatternState, PatternMode } from '@/types/pattern';
+import type { PatternState } from '@/types/pattern';
+import { PatternMode } from '@/types/pattern';
 import type { ExportOptions, ExportFormat } from '@/types/export';
 
 export async function POST(request: NextRequest) {
@@ -138,7 +139,7 @@ async function getPatternById(patternId: string, userId: string): Promise<Patter
     }
 
     // Convert database pattern to PatternState
-    const sequence = JSON.parse(pattern.sequence);
+    const sequence = pattern.sequence.emojis.map(cell => cell.emoji);
     const tags = pattern.tags || [];
 
     return {

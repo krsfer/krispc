@@ -26,7 +26,7 @@ interface UsageStatsResponse {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     // Get session and verify authentication
@@ -38,8 +38,10 @@ export async function GET(
       );
     }
 
+    const { userId } = await params;
+
     // Verify user ID matches session
-    if (params.userId !== session.user.id) {
+    if (userId !== session.user.id) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized access to user data' },
         { status: 403 }
@@ -50,7 +52,7 @@ export async function GET(
     const userLevel: UserLevel = session.user.userLevel || 'beginner';
 
     // Get usage statistics from AI service manager
-    const usageStats = await aiServiceManager.getUserUsageStats(params.userId);
+    const usageStats = await aiServiceManager.getUserUsageStats(userId);
 
     // Get user progression to determine feature access
     const availableFeatures = ProgressionEngine.getAvailableFeatures(userLevel);

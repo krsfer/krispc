@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
 
     // Cache popular patterns
     if (result.data.length > 0) {
-      const popularPatterns = result.data.filter(p => p.view_count > 10);
+      const popularPatterns = result.data.filter(p => Number(p.view_count) > 10);
       if (popularPatterns.length > 0) {
         patternCache.cachePatterns(popularPatterns).catch(console.error);
       }
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
 
     // Cache the new pattern
     const patternWithDetails = await patternService.getPatternById(
-      newPattern.id, 
+      String(newPattern.id),
       session.user.id
     );
     if (patternWithDetails) {
@@ -166,14 +166,14 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('POST /api/patterns error:', error);
-    
-    if (error.message.includes('Permission denied')) {
+
+    if (error instanceof Error && error.message.includes('Permission denied')) {
       return NextResponse.json(
         { error: 'Permission denied' },
         { status: 403 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

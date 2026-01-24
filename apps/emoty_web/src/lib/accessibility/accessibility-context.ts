@@ -234,8 +234,8 @@ export class AccessibilityManager {
    */
   private addFocusStyles(): void {
     const styleId = 'accessibility-focus-styles';
-    let existingStyle = document.getElementById(styleId);
-    
+    const existingStyle = document.getElementById(styleId);
+
     if (!existingStyle) {
       const style = document.createElement('style');
       style.id = styleId;
@@ -271,8 +271,8 @@ export class AccessibilityManager {
    */
   private addSkipLinks(): void {
     const skipLinksId = 'accessibility-skip-links';
-    let existingSkipLinks = document.getElementById(skipLinksId);
-    
+    const existingSkipLinks = document.getElementById(skipLinksId);
+
     if (!existingSkipLinks) {
       const skipContainer = document.createElement('div');
       skipContainer.id = skipLinksId;

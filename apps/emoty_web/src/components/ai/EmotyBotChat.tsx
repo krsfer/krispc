@@ -287,7 +287,7 @@ export default function EmotyBotChat({
         
         {voiceSupported && (
           <p className="text-xs text-gray-500 mt-2 text-center">
-            Try voice commands like "Create a nature pattern" or "Make something happy"
+            Try voice commands like &ldquo;Create a nature pattern&rdquo; or &ldquo;Make something happy&rdquo;
           </p>
         )}
       </div>

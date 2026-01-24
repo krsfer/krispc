@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     // Update cache for updated patterns
     const cachePromises = updatedPatterns.map(async (pattern) => {
       const patternWithDetails = await patternService.getPatternById(
-        pattern.id,
+        String(pattern.id),
         session.user.id
       );
       if (patternWithDetails) {
@@ -85,21 +85,23 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('POST /api/patterns/batch error:', error);
-    
-    if (error.message.includes('Permission denied')) {
-      return NextResponse.json(
-        { error: 'Permission denied' },
-        { status: 403 }
-      );
+
+    if (error instanceof Error) {
+      if (error.message.includes('Permission denied')) {
+        return NextResponse.json(
+          { error: 'Permission denied' },
+          { status: 403 }
+        );
+      }
+
+      if (error.message.includes('not found')) {
+        return NextResponse.json(
+          { error: 'Some patterns not found or permission denied' },
+          { status: 404 }
+        );
+      }
     }
-    
-    if (error.message.includes('not found')) {
-      return NextResponse.json(
-        { error: 'Some patterns not found or permission denied' },
-        { status: 404 }
-      );
-    }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -4,6 +4,7 @@ import { db } from '@/db/connection';
 import { BatchProcessor } from '@/lib/export/batch-processor';
 import { ProgressionEngine } from '@/lib/progression-engine';
 import type { PatternState } from '@/types/pattern';
+import { PatternMode } from '@/types/pattern';
 import type { BatchExportOptions, ExportFormat } from '@/types/export';
 
 export async function POST(request: NextRequest) {
@@ -175,7 +176,7 @@ async function getPatternsByIds(patternIds: string[], userId: string): Promise<P
       .execute();
 
     return patterns.map(pattern => {
-      const sequence = JSON.parse(pattern.sequence);
+      const sequence = pattern.sequence.emojis.map(cell => cell.emoji);
       const tags = pattern.tags || [];
 
       return {
@@ -184,8 +185,8 @@ async function getPatternsByIds(patternIds: string[], userId: string): Promise<P
         sequence,
         insertionIndex: 0,
         patternSize: pattern.size,
-        patternMode: 'concentric', // Default mode
-        activeInsertionMode: 'concentric',
+        patternMode: PatternMode.CONCENTRIC, // Default mode
+        activeInsertionMode: PatternMode.CONCENTRIC,
         createdAt: pattern.created_at,
         updatedAt: pattern.updated_at,
         isFavorite: false, // Would need to check favorites table

@@ -6,9 +6,9 @@ import { auth } from '@/lib/auth';
 import type { PatternUpdate } from '@/db/types';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // GET /api/patterns/[id] - Get single pattern
@@ -17,7 +17,7 @@ export async function GET(
   { params }: RouteParams
 ) {
   try {
-    const patternId = params.id;
+    const { id: patternId } = await params;
     
     // Get current user
     const session = await auth();
@@ -59,15 +59,15 @@ export async function GET(
     return NextResponse.json(pattern);
 
   } catch (error) {
-    console.error(`GET /api/patterns/${params.id} error:`, error);
-    
-    if (error.message.includes('Permission denied')) {
+    console.error(`GET /api/patterns/[id] error:`, error);
+
+    if (error instanceof Error && error.message.includes('Permission denied')) {
       return NextResponse.json(
         { error: 'Permission denied' },
         { status: 403 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -90,7 +90,7 @@ export async function PUT(
       );
     }
 
-    const patternId = params.id;
+    const { id: patternId } = await params;
     const body = await request.json();
 
     // Validate update data
@@ -150,7 +150,7 @@ export async function PUT(
 
     // Update cache
     const patternWithDetails = await patternService.getPatternById(
-      updatedPattern.id,
+      String(updatedPattern.id),
       session.user.id
     );
     if (patternWithDetails) {
@@ -160,29 +160,31 @@ export async function PUT(
     return NextResponse.json(updatedPattern);
 
   } catch (error) {
-    console.error(`PUT /api/patterns/${params.id} error:`, error);
-    
-    if (error.message.includes('Permission denied')) {
-      return NextResponse.json(
-        { error: 'Permission denied' },
-        { status: 403 }
-      );
+    console.error(`PUT /api/patterns/[id] error:`, error);
+
+    if (error instanceof Error) {
+      if (error.message.includes('Permission denied')) {
+        return NextResponse.json(
+          { error: 'Permission denied' },
+          { status: 403 }
+        );
+      }
+
+      if (error.message.includes('Pattern not found')) {
+        return NextResponse.json(
+          { error: 'Pattern not found' },
+          { status: 404 }
+        );
+      }
+
+      if (error.message.includes('modified by another user')) {
+        return NextResponse.json(
+          { error: 'Pattern was modified by another user. Please refresh and try again.' },
+          { status: 409 }
+        );
+      }
     }
-    
-    if (error.message.includes('Pattern not found')) {
-      return NextResponse.json(
-        { error: 'Pattern not found' },
-        { status: 404 }
-      );
-    }
-    
-    if (error.message.includes('modified by another user')) {
-      return NextResponse.json(
-        { error: 'Pattern was modified by another user. Please refresh and try again.' },
-        { status: 409 }
-      );
-    }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -205,7 +207,7 @@ export async function DELETE(
       );
     }
 
-    const patternId = params.id;
+    const { id: patternId } = await params;
 
     // Delete pattern (soft delete)
     await patternService.deletePattern(patternId, session.user.id);
@@ -217,22 +219,24 @@ export async function DELETE(
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error(`DELETE /api/patterns/${params.id} error:`, error);
-    
-    if (error.message.includes('Permission denied')) {
-      return NextResponse.json(
-        { error: 'Permission denied' },
-        { status: 403 }
-      );
+    console.error(`DELETE /api/patterns/[id] error:`, error);
+
+    if (error instanceof Error) {
+      if (error.message.includes('Permission denied')) {
+        return NextResponse.json(
+          { error: 'Permission denied' },
+          { status: 403 }
+        );
+      }
+
+      if (error.message.includes('Pattern not found')) {
+        return NextResponse.json(
+          { error: 'Pattern not found' },
+          { status: 404 }
+        );
+      }
     }
-    
-    if (error.message.includes('Pattern not found')) {
-      return NextResponse.json(
-        { error: 'Pattern not found' },
-        { status: 404 }
-      );
-    }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

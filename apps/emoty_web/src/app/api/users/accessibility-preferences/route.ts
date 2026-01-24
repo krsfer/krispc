@@ -42,10 +42,21 @@ export async function PATCH(request: NextRequest) {
       .where('id', '=', session.user.id)
       .executeTakeFirst();
 
-    const currentPreferences = currentUser?.accessibility_preferences || {};
+    const defaultPreferences: AccessibilityPreferences = {
+      high_contrast: false,
+      large_text: false,
+      reduced_motion: false,
+      screen_reader_mode: false,
+      voice_commands_enabled: false,
+      preferred_input_method: 'touch',
+      color_blind_assistance: false,
+    };
+
+    const currentPreferences = currentUser?.accessibility_preferences || defaultPreferences;
 
     // Merge with new preferences
-    const updatedPreferences = {
+    const updatedPreferences: AccessibilityPreferences = {
+      ...defaultPreferences,
       ...currentPreferences,
       ...preferences,
     };
@@ -54,7 +65,7 @@ export async function PATCH(request: NextRequest) {
     await db
       .updateTable('users')
       .set({
-        accessibility_preferences: JSON.stringify(updatedPreferences),
+        accessibility_preferences: updatedPreferences as AccessibilityPreferences,
       })
       .where('id', '=', session.user.id)
       .execute();

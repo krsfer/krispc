@@ -303,8 +303,8 @@ Format de réponse:
     
     const emojis = pattern.emojis.map(cell => cell.emoji).join('');
     const uniqueEmojis = [...new Set(pattern.emojis.map(cell => cell.emoji))];
-    
-    let prompt = `Generate names for this emoji pattern:
+
+    const prompt = `Generate names for this emoji pattern:
 - Emojis used: ${uniqueEmojis.join(' ')}
 - Pattern size: ${Math.sqrt(pattern.emojis.length)}x${Math.sqrt(pattern.emojis.length)}
 - Style preference: ${style}`;

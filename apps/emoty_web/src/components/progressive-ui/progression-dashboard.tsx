@@ -80,7 +80,7 @@ export function ProgressionDashboard({
               {isMaxLevel ? (
                 <div className="text-center py-3">
                   <i className="bi bi-trophy-fill text-warning display-4"></i>
-                  <p className="text-muted mt-2">You've unlocked all features!</p>
+                  <p className="text-muted mt-2">You&apos;ve unlocked all features!</p>
                 </div>
               ) : (
                 <ProgressToNextLevel showDetails={false} />
@@ -105,7 +105,7 @@ export function ProgressionDashboard({
                 <div className="d-flex align-items-center">
                   <i className="bi bi-star-fill me-3"></i>
                   <div>
-                    <strong>Congratulations!</strong> You're ready to advance to {nextLevel} level.
+                    <strong>Congratulations!</strong> You&apos;re ready to advance to {nextLevel} level.
                     <div className="mt-2">
                       <button className="btn btn-success btn-sm">
                         <i className="bi bi-arrow-up me-2"></i>

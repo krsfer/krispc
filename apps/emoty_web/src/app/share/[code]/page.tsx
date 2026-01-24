@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { PatternCanvas } from '@/components/PatternCanvas';
+import PatternCanvas from '@/components/PatternCanvas';
 import type { PatternState } from '@/types/pattern';
 
 export default function SharedPatternPage() {

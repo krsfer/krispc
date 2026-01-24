@@ -21,9 +21,9 @@ export class ShareCodeService {
     try {
       // Generate unique code
       const code = await this.generateUniqueCode();
-      
+
       // Prepare pattern data
-      let patternData = {
+      const patternData = {
         id: pattern.id,
         name: pattern.name,
         description: pattern.description,

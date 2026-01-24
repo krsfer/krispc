@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { patternGenerator } from '@/lib/ai/pattern-generator';
-import { progressionEngine } from '@/lib/progression-engine';
+import { ProgressionEngine } from '@/lib/progression-engine';
 import type { PatternGenerationRequest } from '@/types/ai';
 
 export async function POST(request: NextRequest) {
@@ -27,8 +27,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Check user's access to AI features
-    const userProgression = await progressionEngine.getUserProgression(session.user.id);
-    const hasAIAccess = userProgression?.availableFeatures.includes('ai_pattern_generation');
+    const userProgression = await ProgressionEngine.calculateProgression(session.user.id);
+    const availableFeatures = ProgressionEngine.getAvailableFeatures(userProgression.currentLevel);
+    const hasAIAccess = availableFeatures.includes('ai_pattern_generation');
     
     if (!hasAIAccess) {
       return NextResponse.json(
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     // Build generation request
     const generationRequest: PatternGenerationRequest = {
       userId: session.user.id,
-      userLevel: userProgression?.currentLevel || 'beginner',
+      userLevel: userProgression.currentLevel || 'beginner',
       language: body.language || 'en',
       theme: body.theme,
       mood: body.mood,

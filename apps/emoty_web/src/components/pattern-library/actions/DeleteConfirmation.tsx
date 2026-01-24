@@ -116,7 +116,7 @@ export function DeleteConfirmation({
                   {isMultiple ? (
                     <>You are about to permanently delete <strong>{patternCount} patterns</strong>.</>
                   ) : (
-                    <>You are about to permanently delete the pattern <strong>"{patternName}"</strong>.</>
+                    <>You are about to permanently delete the pattern <strong>&ldquo;{patternName}&rdquo;</strong>.</>
                   )}
                 </p>
               </div>

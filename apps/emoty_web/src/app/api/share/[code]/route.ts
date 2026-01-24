@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ShareCodeService } from '@/lib/export/share-codes';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     code: string;
-  };
+  }>;
 }
 
 export async function GET(
@@ -12,7 +12,7 @@ export async function GET(
   { params }: RouteParams
 ) {
   try {
-    const { code } = params;
+    const { code } = await params;
 
     // Validate share code format
     if (!ShareCodeService.isValidShareCode(code)) {
