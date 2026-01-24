@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.contrib.auth import views as auth_views
 from django.views.static import serve
+from .proxy import proxy_to_emoty
 
 import krispc.views
 import p2c.views
@@ -31,6 +32,11 @@ urlpatterns = [
     
     # Documentation
     path("docs/mcp/", krispc.views.MCPDocsView.as_view(), name="mcp-docs"),
+
+    # Proxy to Emoty Web (Next.js)
+    re_path(r"^emo(?:/(?P<path>.*))?$", proxy_to_emoty),
+    # Handle Next.js fonts that might request root path
+    re_path(r"^(?P<path>__nextjs_font/.*)$", proxy_to_emoty),
 
     # Serve media files in production
     re_path(r'^media/(?P<path>.*)$', serve, {

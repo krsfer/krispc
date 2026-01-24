@@ -14,9 +14,18 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
+from django.urls import re_path
+from .consumers import WebSocketProxyConsumer
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "_main.settings")
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    # Websockets removed as chat app is deleted
+    "websocket": AllowedHostsOriginValidator(
+        AuthMiddlewareStack(
+            URLRouter([
+                re_path(r"^emo/_next/webpack-hmr$", WebSocketProxyConsumer.as_asgi()),
+            ])
+        )
+    ),
 })

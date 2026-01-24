@@ -1,0 +1,23 @@
+# fly.toml app configuration file generated for emoty-web
+
+app = "emoty-web"
+primary_region = "cdg"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+
+[env]
+  PORT = "8000"
+  NODE_ENV = "production"

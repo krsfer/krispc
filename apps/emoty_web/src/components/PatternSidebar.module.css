@@ -1,0 +1,223 @@
+/* PatternSidebar Component Styles */
+
+/* Offcanvas Sidebar Styles */
+.offcanvas {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  border-left: 1px solid #dee2e6;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 575px) {
+  .offcanvas {
+    max-width: 100%;
+  }
+}
+
+.offcanvasHeader {
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.offcanvasTitle {
+  font-weight: 600;
+  margin: 0;
+}
+
+.offcanvasBody {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.offcanvasFooter {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #dee2e6;
+  background: #f8f9fa;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+/* Search */
+.sidebarSearch {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Loading State */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.loadingState :global(.spinner-border) {
+  margin-bottom: 1rem;
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.emptyStateIcon {
+  font-size: 48px;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.emptyState h6 {
+  color: #212529;
+  margin-bottom: 0.25rem;
+}
+
+/* Pattern List */
+.patternList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.patternItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.patternItem:hover {
+  border-color: #7B61FF;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.patternItemContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.patternItemContent:focus {
+  outline: none;
+}
+
+.patternItemContent:focus-visible {
+  outline: 2px solid #7B61FF;
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+.patternThumbnailItem {
+  flex-shrink: 0;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.patternInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.patternName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.patternSequence {
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.patternDate {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* Actions */
+.patternActions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.patternActions :global(.btn) {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Styles */
+.modal {
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1070;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 1rem;
+}
+
+/* Export Modal */
+.exportIcon {
+  font-size: 24px;
+  margin-right: 1rem;
+}
+
+.exportLabel {
+  display: inline-block;
+  text-align: left;
+}
+
+.exportLabel small {
+  font-size: 0.75rem;
+}
+
+/* Backdrop */
+.offcanvasBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}

@@ -131,6 +131,7 @@ CORS_ALLOW_HEADERS = [
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     # Use WhiteNoise's runserver implementation instead of the Django default, for dev-prod parity.
     "whitenoise.runserver_nostatic",
     # Uncomment this and the entry in `urls.py` if you wish to use the Django admin feature:

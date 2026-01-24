@@ -3,16 +3,25 @@ FROM node:18-slim AS node-builder
 
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files and install dependencies (Root/Vite)
 COPY package*.json ./
 RUN npm install
 
-# Copy frontend source files
+# Copy frontend source files (Root/Vite)
 COPY krispc/static/src ./krispc/static/src
 COPY vite.config.js postcss.config.js tailwind.config.js ./
 
 # Build Vite assets
 RUN npm run build
+
+# --- Build Next.js App (Emoty Web) ---
+WORKDIR /app/apps/emoty_web
+COPY apps/emoty_web/package*.json ./
+RUN npm install
+
+COPY apps/emoty_web ./
+RUN npm run build
+# -------------------------------------
 
 # Stage 2: Install Python dependencies
 FROM python:3.13-slim AS python-builder
@@ -39,10 +48,12 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-# Install runtime dependencies
+# Install runtime dependencies including Node.js for Next.js
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     tesseract-ocr-fra \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Python packages from builder stage
@@ -51,6 +62,9 @@ COPY --from=python-builder /usr/local/bin /usr/local/bin
 
 # Copy Vite build artifacts from node builder
 COPY --from=node-builder /app/krispc/static/dist ./krispc/static/dist
+
+# Copy Next.js build artifacts from node builder
+COPY --from=node-builder /app/apps/emoty_web ./apps/emoty_web
 
 # Copy application code
 COPY . .

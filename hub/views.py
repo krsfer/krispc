@@ -89,6 +89,16 @@ class IndexView(TemplateView):
                 ),
                 'url': f'{lang_prefix}/plexus/',
                 'button_text': 'Accéder' if is_french else 'Visit',
+            },
+            {
+                'name': 'Emoty',
+                'icon': '🎨',
+                'description': (
+                    'Créateur de motifs Emoji' if is_french
+                    else 'Emoji Pattern Creator'
+                ),
+                'url': '/emo/',
+                'button_text': 'Accéder' if is_french else 'Visit',
             }
         ]
 
