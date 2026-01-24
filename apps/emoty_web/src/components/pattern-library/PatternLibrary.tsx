@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import { useUser } from '@/contexts/user-context';
-import { FeatureGate } from '@/components/feature-gate';
+import FeatureGate from '@/components/feature-gate';
 import PatternCard from './PatternCard';
 import PatternDetailModal from './PatternDetailModal';
 import { SearchInput } from './filters/SearchInput';

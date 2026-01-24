@@ -35,7 +35,7 @@ export const AccessiblePatternCanvas: React.FC<PatternCanvasProps> = ({
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
 }) => {
-  const canvasRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement | null>(null);
   const [focusedCell, setFocusedCell] = useState<{ row: number; col: number } | null>(null);
   const [announceQueue, setAnnounceQueue] = useState<string[]>([]);
   
@@ -44,7 +44,7 @@ export const AccessiblePatternCanvas: React.FC<PatternCanvasProps> = ({
   const { manageFocus, trapFocus } = useFocusManagement();
   
   const { isListening, getSupportedGestures } = useMultitouchGestures(
-    canvasRef,
+    canvasRef as React.RefObject<HTMLElement>,
     handleGestureAction
   );
 

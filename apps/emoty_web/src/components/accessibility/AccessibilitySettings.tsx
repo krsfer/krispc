@@ -7,20 +7,22 @@
 import React, { useState } from 'react';
 import { useAccessibility, useScreenReader } from '@/lib/hooks/accessibility/useAccessibility';
 
+interface PreferenceItem {
+  key: keyof typeof import('@/lib/accessibility/accessibility-context').DEFAULT_PREFERENCES;
+  label: string;
+  description: string;
+  type: 'boolean' | 'select' | 'range';
+  options?: Array<{ value: any; label: string }>;
+  min?: number;
+  max?: number;
+  step?: number;
+}
+
 interface SettingsSection {
   id: string;
   title: string;
   description: string;
-  preferences: Array<{
-    key: keyof typeof import('@/lib/accessibility/accessibility-context').DEFAULT_PREFERENCES;
-    label: string;
-    description: string;
-    type: 'boolean' | 'select' | 'range';
-    options?: Array<{ value: any; label: string }>;
-    min?: number;
-    max?: number;
-    step?: number;
-  }>;
+  preferences: PreferenceItem[];
 }
 
 const SETTINGS_SECTIONS: SettingsSection[] = [
@@ -251,8 +253,8 @@ export const AccessibilitySettings: React.FC = () => {
     }
   };
 
-  const renderPreference = (pref: any) => {
-    const currentValue = preferences[pref.key];
+  const renderPreference = (pref: PreferenceItem) => {
+    const currentValue = preferences[pref.key as keyof typeof preferences];
     const prefId = `pref-${pref.key}`;
 
     switch (pref.type) {

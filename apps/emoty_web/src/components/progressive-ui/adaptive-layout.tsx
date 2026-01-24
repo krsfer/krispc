@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import Link from 'next/link';
 import { useUser, useAccessibility } from '@/contexts/user-context';
-import { FeatureGate } from '@/components/feature-gate';
+import FeatureGate from '@/components/feature-gate';
 import { LevelIndicator } from '@/components/level-indicator';
 
 interface AdaptiveLayoutProps {

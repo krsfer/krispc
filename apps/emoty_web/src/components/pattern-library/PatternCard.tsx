@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, memo } from 'react';
 import PatternCanvas from '../PatternCanvas';
-import { FeatureGate } from '../feature-gate';
+import FeatureGate from '../feature-gate';
 import { GridCell } from '@/types/pattern';
 import type { PatternWithDetails } from '@/db/types';
 import type { ViewMode } from './PatternLibrary';

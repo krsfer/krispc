@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FeatureGate } from '../feature-gate';
+import FeatureGate from '../feature-gate';
 
 interface EmptyStateProps {
   hasFilters: boolean;

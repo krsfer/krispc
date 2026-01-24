@@ -67,13 +67,13 @@ export interface AccessibilityActions {
   setFocusManagement: (enabled: boolean) => void;
 }
 
-const DEFAULT_PREFERENCES: AccessibilityPreferences = {
+export const DEFAULT_PREFERENCES: AccessibilityPreferences = {
   // Visual
   highContrast: false,
   largeText: false,
   reducedMotion: false,
   colorBlindnessSupport: 'none',
-  
+
   // Motor
   motorAssistance: false,
   gestureSize: 'normal',

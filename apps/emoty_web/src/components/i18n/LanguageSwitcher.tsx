@@ -131,7 +131,7 @@ export function LanguageSwitcher({
             transition-colors duration-200
             ${isRTL ? 'flex-row-reverse' : ''}
           `}
-          aria-label={t('common', 'currentLanguage', { language: getLanguageDisplayName(currentLanguage) })}
+          aria-label={t('common.currentLanguage', { language: getLanguageDisplayName(currentLanguage) })}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
         >

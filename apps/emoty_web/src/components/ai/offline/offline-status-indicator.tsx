@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import type { SystemHealthReport } from '@/lib/ai/fallback-orchestrator';
-import type { CacheStats } from '@/lib/ai/cache/smart-cache';
+// import type { CacheStats } from '@/lib/ai/cache/smart-cache';
 
 export interface OfflineStatusProps {
   healthReport?: SystemHealthReport;

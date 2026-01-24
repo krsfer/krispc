@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { FeatureGate, useFeatureAccess } from '@/components/feature-gate';
+import FeatureGate, { useFeatureGate } from '@/components/feature-gate';
 import type { PatternSequence } from '@/db/types';
 
 interface AIPatternGeneratorProps {
@@ -71,7 +71,8 @@ export function AIPatternGenerator({
   language = 'en'
 }: AIPatternGeneratorProps) {
   const { data: session } = useSession();
-  const featureAccess = useFeatureAccess('ai_pattern_generation');
+  const { checkFeatureAccess } = useFeatureGate();
+  const featureAccess = checkFeatureAccess('ai_pattern_generation');
   
   const [prompt, setPrompt] = useState('');
   const [difficulty, setDifficulty] = useState<'simple' | 'medium' | 'complex'>('medium');
@@ -242,7 +243,7 @@ export function AIPatternGenerator({
 
           <div className="card-body">
             {/* Usage Statistics */}
-            {featureAccess.hasAccess && (
+            {featureAccess && (
               <div className="row mb-3">
                 <div className="col-md-4">
                   <div className="small text-muted">

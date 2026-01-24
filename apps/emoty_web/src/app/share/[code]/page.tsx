@@ -3,7 +3,32 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import PatternCanvas from '@/components/PatternCanvas';
-import type { PatternState } from '@/types/pattern';
+import type { PatternState, GridCell } from '@/types/pattern';
+
+// Convert PatternState to GridCell[][] for PatternCanvas
+function convertPatternToGrid(pattern: PatternState): GridCell[][] {
+  const size = pattern.patternSize;
+  const grid: GridCell[][] = [];
+
+  for (let row = 0; row < size; row++) {
+    const gridRow: GridCell[] = [];
+    for (let col = 0; col < size; col++) {
+      const index = row * size + col;
+      const emoji = pattern.sequence[index] || '⬜';
+
+      gridRow.push({
+        emoji,
+        row,
+        col,
+        layer: 0,
+        isCenter: row === Math.floor(size / 2) && col === Math.floor(size / 2),
+      });
+    }
+    grid.push(gridRow);
+  }
+
+  return grid;
+}
 
 export default function SharedPatternPage() {
   const params = useParams();
@@ -207,11 +232,8 @@ export default function SharedPatternPage() {
             <div className="col-lg-8">
               <div className="card">
                 <div className="card-body">
-                  <PatternCanvas 
-                    pattern={pattern}
-                    size={400}
-                    showGrid={false}
-                    isInteractive={false}
+                  <PatternCanvas
+                    pattern={convertPatternToGrid(pattern)}
                   />
                 </div>
               </div>

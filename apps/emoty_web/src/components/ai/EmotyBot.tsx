@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { FeatureGate } from '@/components/feature-gate';
+import FeatureGate from '@/components/feature-gate';
 
 interface ChatMessage {
   id: string;
@@ -220,9 +220,9 @@ export function EmotyBot({
           {/* Avatar */}
           <div className={`flex-shrink-0 ${isUser ? 'ms-2' : 'me-2'}`}>
             {isUser ? (
-              <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+              <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
                    style={{ width: '32px', height: '32px', fontSize: '14px' }}>
-                {session?.user?.username?.[0]?.toUpperCase() || 'U'}
+                {session?.user?.name?.[0]?.toUpperCase() || 'U'}
               </div>
             ) : (
               <div className="bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
@@ -253,7 +253,7 @@ export function EmotyBot({
         </div>
       </div>
     );
-  }, [session?.user?.username, formatTimestamp]);
+  }, [session?.user?.name, formatTimestamp]);
 
   return (
     <FeatureGate 

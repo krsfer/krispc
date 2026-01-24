@@ -2,7 +2,7 @@
 
 import { useUser, useProgression } from '@/contexts/user-context';
 import { LevelIndicator, ProgressToNextLevel } from '@/components/level-indicator';
-import { FeatureGate } from '@/components/feature-gate';
+import FeatureGate from '@/components/feature-gate';
 import { ProgressionEngine } from '@/lib/progression-engine';
 
 interface ProgressionDashboardProps {

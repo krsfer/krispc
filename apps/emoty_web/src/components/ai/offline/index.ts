@@ -29,6 +29,6 @@ export type {
   FallbackMetrics
 } from '@/lib/ai/fallback-orchestrator';
 
-export type {
-  CacheStats
-} from '@/lib/ai/cache/smart-cache';
+// export type {
+//   CacheStats
+// } from '@/lib/ai/cache/smart-cache';
