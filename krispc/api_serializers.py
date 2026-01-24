@@ -12,8 +12,8 @@ class StandardAPIResponse(serializers.Serializer):
     
     Provides consistent response format across all endpoints.
     """
-    success = serializers.BooleanField(
-        default=True,
+    status = serializers.CharField(
+        default="success",
         help_text="Indicates if the request was successful"
     )
     data = serializers.JSONField(
@@ -24,24 +24,28 @@ class StandardAPIResponse(serializers.Serializer):
         allow_blank=True,
         help_text="Optional message about the response"
     )
+    meta = serializers.JSONField(
+        required=False,
+        help_text="Metadata about the response (pagination, etc.)"
+    )
 
 
 class ErrorResponse(serializers.Serializer):
     """
     Standard wrapper for error responses.
     """
-    success = serializers.BooleanField(
-        default=False,
-        help_text="Indicates if the request was successful (always False for errors)"
+    status = serializers.CharField(
+        default="error",
+        help_text="Indicates if the request was successful (always 'error' for this serializer)"
     )
-    errors = serializers.JSONField(
-        help_text="Detailed error information"
+    code = serializers.IntegerField(
+        help_text="HTTP status code"
     )
     message = serializers.CharField(
         help_text="Human-readable error message"
     )
-    status_code = serializers.IntegerField(
-        help_text="HTTP status code"
+    details = serializers.JSONField(
+        help_text="Detailed error information"
     )
 
 

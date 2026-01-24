@@ -1,6 +1,6 @@
 // Individual pattern API route - GET, PUT, DELETE
 import { NextRequest, NextResponse } from 'next/server';
-import { patternService } from '@/lib/services/pattern-service';
+import { patternService, PatternService } from '@/lib/services/pattern-service';
 import { patternCache } from '@/lib/cache/pattern-cache';
 import { auth } from '@/lib/auth';
 import type { PatternUpdate } from '@/db/types';
@@ -255,7 +255,7 @@ function validatePatternUpdateData(data: any): { isValid: boolean; errors: strin
   }
 
   if (data.sequence !== undefined) {
-    if (!patternService.validatePatternSequence(data.sequence)) {
+    if (!PatternService.validatePatternSequence(data.sequence)) {
       errors.push('Invalid pattern sequence format');
     }
   }

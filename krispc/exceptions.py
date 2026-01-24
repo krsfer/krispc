@@ -46,10 +46,10 @@ def custom_exception_handler(exc, context):
         
         # Standardize the response format
         error_data = {
-            'success': False,
-            'errors': response.data,
+            'status': 'error',
+            'code': response.status_code,
             'message': get_error_message(exc, response),
-            'status_code': response.status_code
+            'details': response.data
         }
         
         return Response(error_data, status=response.status_code)
@@ -58,10 +58,10 @@ def custom_exception_handler(exc, context):
     logger.error(f"Unhandled API Exception: {exc}", exc_info=True)
     
     return Response({
-        'success': False,
-        'errors': {'detail': 'An unexpected error occurred.'},
+        'status': 'error',
+        'code': status.HTTP_500_INTERNAL_SERVER_ERROR,
         'message': 'Internal server error',
-        'status_code': status.HTTP_500_INTERNAL_SERVER_ERROR
+        'details': {'detail': 'An unexpected error occurred.'}
     }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
