@@ -17,7 +17,7 @@ RUN npm run build
 # --- Build Next.js App (Emoty Web) ---
 WORKDIR /app/apps/emoty_web
 COPY apps/emoty_web/package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY apps/emoty_web ./
 RUN npm run build
