@@ -1,7 +1,14 @@
 # Stage 1: Build frontend assets with Node.js
-FROM node:18-slim AS node-builder
+FROM node:20-slim AS node-builder
 
 WORKDIR /app
+
+# Install Python and build tools for native modules (better-sqlite3, canvas)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy package files and install dependencies (Root/Vite)
 COPY package*.json ./
