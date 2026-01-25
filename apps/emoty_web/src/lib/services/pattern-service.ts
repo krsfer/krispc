@@ -1,7 +1,7 @@
 // Enhanced Pattern Service Layer - Phase 2
 // High-performance pattern persistence with advanced search and caching
 
-import { sql } from 'kysely';
+import { sql, Selectable } from 'kysely';
 import { db } from '@/db/connection';
 import type {
   PatternTable,
@@ -20,7 +20,7 @@ import type {
 
 export class PatternService {
   // Create a new pattern with optimized indexing
-  async createPattern(data: PatternInsert): Promise<PatternTable> {
+  async createPattern(data: PatternInsert): Promise<Selectable<PatternTable>> {
     try {
       const pattern = await db.transaction().execute(async (trx) => {
         // Insert the pattern
@@ -31,8 +31,9 @@ export class PatternService {
             'id', 'user_id', 'name', 'sequence', 'palette_id', 'size',
             'is_public', 'is_ai_generated', 'generation_prompt', 'tags',
             'difficulty_rating', 'view_count', 'like_count', 'complexity_score',
-            'estimated_time_minutes', 'version', 'parent_pattern_id',
-            'created_at', 'updated_at'
+            'difficulty_rating', 'view_count', 'like_count', 'complexity_score',
+            'estimated_time_minutes', 'version', 'parent_pattern_id', 'search_vector',
+            'deleted_at', 'deleted_by', 'created_at', 'updated_at'
           ])
           .execute();
 
@@ -58,7 +59,7 @@ export class PatternService {
 
   // Get pattern by ID with user context
   async getPatternById(
-    patternId: string, 
+    patternId: string,
     currentUserId?: string
   ): Promise<PatternWithDetails | null> {
     try {
@@ -75,7 +76,8 @@ export class PatternService {
           'p.id', 'p.user_id', 'p.name', 'p.sequence', 'p.palette_id', 'p.size',
           'p.is_public', 'p.is_ai_generated', 'p.generation_prompt', 'p.tags',
           'p.difficulty_rating', 'p.view_count', 'p.like_count', 'p.complexity_score',
-          'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id',
+          'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id', 'p.search_vector',
+          'p.deleted_at', 'p.deleted_by',
           'p.created_at', 'p.updated_at',
           'u.username as user_username',
           'u.full_name as user_full_name',
@@ -97,7 +99,7 @@ export class PatternService {
         .where('p.deleted_at', 'is', null);
 
       const result = await query.executeTakeFirst();
-      
+
       if (!result) return null;
 
       // Structure the analytics data
@@ -152,12 +154,12 @@ export class PatternService {
       // Apply filters
       if (filters.query) {
         query = query.where(
-          sql`p.search_vector @@ plainto_tsquery('english', ${filters.query})`
+          sql<boolean>`p.search_vector @@ plainto_tsquery('english', ${filters.query})`
         );
       }
 
       if (filters.tags && filters.tags.length > 0) {
-        query = query.where(sql`p.tags && ${sql.literal(JSON.stringify(filters.tags))}`);
+        query = query.where(sql<boolean>`p.tags && ${sql.literal(JSON.stringify(filters.tags))}`);
       }
 
       if (filters.user_id) {
@@ -218,7 +220,7 @@ export class PatternService {
 
       // Apply sorting
       const sortField = sort.field === 'name' ? 'p.name' : `p.${sort.field}`;
-      query = query.orderBy(sortField, sort.direction);
+      query = query.orderBy(sortField as any, sort.direction);
 
       // Apply pagination
       if (pagination.offset !== undefined) {
@@ -233,6 +235,7 @@ export class PatternService {
           'p.is_public', 'p.is_ai_generated', 'p.generation_prompt', 'p.tags',
           'p.difficulty_rating', 'p.view_count', 'p.like_count', 'p.complexity_score',
           'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id',
+          'p.search_vector', 'p.deleted_at', 'p.deleted_by',
           'p.created_at', 'p.updated_at',
           'u.username as user_username',
           'u.full_name as user_full_name',
@@ -298,7 +301,10 @@ export class PatternService {
 
       // Get tag facets
       const tags = await baseQuery
-        .select(sql`unnest(tags) as tag, COUNT(*) as count`)
+        .select([
+          sql<string>`unnest(tags)`.as('tag'),
+          sql<string>`COUNT(*)`.as('count')
+        ])
         .where('tags', 'is not', null)
         .groupBy(sql`unnest(tags)`)
         .orderBy('count', 'desc')
@@ -307,7 +313,10 @@ export class PatternService {
 
       // Get difficulty facets
       const difficulty_ratings = await baseQuery
-        .select(['difficulty_rating as rating', sql`COUNT(*) as count`])
+        .select([
+          'difficulty_rating as rating',
+          sql<string>`COUNT(*)`.as('count')
+        ])
         .where('difficulty_rating', 'is not', null)
         .groupBy('difficulty_rating')
         .orderBy('difficulty_rating')
@@ -315,7 +324,10 @@ export class PatternService {
 
       // Get palette facets
       const palettes = await baseQuery
-        .select(['palette_id', sql`COUNT(*) as count`])
+        .select([
+          'palette_id',
+          sql<string>`COUNT(*)`.as('count')
+        ])
         .groupBy('palette_id')
         .orderBy('count', 'desc')
         .limit(10)
@@ -324,7 +336,10 @@ export class PatternService {
       // Get user level distribution (based on pattern creators)
       const user_levels = await baseQuery
         .leftJoin('users as u', 'p.user_id', 'u.id')
-        .select(['u.user_level as level', sql`COUNT(*) as count`])
+        .select([
+          'u.user_level as level',
+          sql<string>`COUNT(*)`.as('count')
+        ])
         .where('u.user_level', 'is not', null)
         .groupBy('u.user_level')
         .orderBy('count', 'desc')
@@ -332,17 +347,17 @@ export class PatternService {
 
       return {
         tags: tags.map(t => ({ tag: t.tag, count: parseInt(t.count, 10) })),
-        difficulty_ratings: difficulty_ratings.map(d => ({ 
-          rating: d.rating, 
-          count: parseInt(d.count, 10) 
+        difficulty_ratings: difficulty_ratings.map(d => ({
+          rating: d.rating,
+          count: parseInt(d.count, 10)
         })),
-        palettes: palettes.map(p => ({ 
-          palette_id: p.palette_id, 
-          count: parseInt(p.count, 10) 
+        palettes: palettes.map(p => ({
+          palette_id: p.palette_id,
+          count: parseInt(p.count, 10)
         })),
-        user_levels: user_levels.map(ul => ({ 
-          level: ul.level, 
-          count: parseInt(ul.count, 10) 
+        user_levels: user_levels.map(ul => ({
+          level: ul.level,
+          count: parseInt(ul.count, 10)
         }))
       };
     } catch (error) {
@@ -356,7 +371,7 @@ export class PatternService {
     patternId: string,
     updates: PatternUpdate,
     currentUserId: string
-  ): Promise<PatternTable> {
+  ): Promise<Selectable<PatternTable>> {
     try {
       return await db.transaction().execute(async (trx) => {
         // Check ownership and current version
@@ -389,6 +404,7 @@ export class PatternService {
             'is_public', 'is_ai_generated', 'generation_prompt', 'tags',
             'difficulty_rating', 'view_count', 'like_count', 'complexity_score',
             'estimated_time_minutes', 'version', 'parent_pattern_id',
+            'search_vector', 'deleted_at', 'deleted_by',
             'created_at', 'updated_at'
           ])
           .execute();
@@ -452,7 +468,7 @@ export class PatternService {
   }
 
   // Restore soft-deleted pattern
-  async restorePattern(patternId: string, currentUserId: string): Promise<PatternTable> {
+  async restorePattern(patternId: string, currentUserId: string): Promise<Selectable<PatternTable>> {
     try {
       return await db.transaction().execute(async (trx) => {
         // Check ownership and that it's actually deleted
@@ -484,6 +500,7 @@ export class PatternService {
             'is_public', 'is_ai_generated', 'generation_prompt', 'tags',
             'difficulty_rating', 'view_count', 'like_count', 'complexity_score',
             'estimated_time_minutes', 'version', 'parent_pattern_id',
+            'search_vector', 'deleted_at', 'deleted_by',
             'created_at', 'updated_at'
           ])
           .execute();
@@ -508,7 +525,7 @@ export class PatternService {
     patternIds: string[],
     updates: Partial<PatternUpdate>,
     currentUserId: string
-  ): Promise<PatternTable[]> {
+  ): Promise<Selectable<PatternTable>[]> {
     try {
       return await db.transaction().execute(async (trx) => {
         // Verify ownership of all patterns
@@ -534,6 +551,7 @@ export class PatternService {
             'is_public', 'is_ai_generated', 'generation_prompt', 'tags',
             'difficulty_rating', 'view_count', 'like_count', 'complexity_score',
             'estimated_time_minutes', 'version', 'parent_pattern_id',
+            'search_vector', 'deleted_at', 'deleted_by',
             'created_at', 'updated_at'
           ])
           .execute();
@@ -613,7 +631,8 @@ export class PatternService {
           'p.id', 'p.user_id', 'p.name', 'p.sequence', 'p.palette_id', 'p.size',
           'p.is_public', 'p.is_ai_generated', 'p.generation_prompt', 'p.tags',
           'p.difficulty_rating', 'p.view_count', 'p.like_count', 'p.complexity_score',
-          'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id',
+          'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id', 'p.search_vector',
+          'p.deleted_at', 'p.deleted_by',
           'p.created_at', 'p.updated_at',
           'u.username as user_username',
           'u.full_name as user_full_name',
@@ -676,7 +695,7 @@ export class PatternService {
 
       if (!analytics) {
         // Refresh analytics for this pattern
-        await db.raw('REFRESH MATERIALIZED VIEW CONCURRENTLY pattern_analytics');
+        await sql`REFRESH MATERIALIZED VIEW CONCURRENTLY pattern_analytics`.execute(db);
         return await db
           .selectFrom('pattern_analytics')
           .selectAll()
@@ -697,7 +716,7 @@ export class PatternService {
     if (!Array.isArray(sequence.emojis)) return false;
     if (!sequence.metadata || typeof sequence.metadata !== 'object') return false;
 
-    return sequence.emojis.every((cell: any) => 
+    return sequence.emojis.every((cell: any) =>
       typeof cell.emoji === 'string' &&
       typeof cell.position === 'object' &&
       typeof cell.position.row === 'number' &&

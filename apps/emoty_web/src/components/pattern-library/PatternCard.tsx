@@ -36,7 +36,7 @@ const PatternCard = memo(function PatternCard({
   // Parse pattern sequence to grid for canvas
   const patternGrid = React.useMemo(() => {
     try {
-      const sequence = JSON.parse(pattern.sequence);
+      const sequence = pattern.sequence.emojis.map(cell => cell.emoji);
       const size = pattern.size || 8;
       const grid: GridCell[][] = [];
       
@@ -152,15 +152,15 @@ const PatternCard = memo(function PatternCard({
                 <div className="text-muted small">
                   <span className="me-3">
                     <i className="bi bi-calendar me-1"></i>
-                    {formatDate(pattern.created_at)}
+                    {formatDate(pattern.created_at as unknown as Date)}
                   </span>
                   <span className="me-3">
                     <i className="bi bi-eye me-1"></i>
-                    {pattern.view_count}
+                    {Number(pattern.view_count)}
                   </span>
                   <span className="me-3">
                     <i className="bi bi-hand-thumbs-up me-1"></i>
-                    {pattern.like_count}
+                    {Number(pattern.like_count)}
                   </span>
                   <span>{getComplexityDisplay()}</span>
                 </div>
@@ -303,18 +303,18 @@ const PatternCard = memo(function PatternCard({
           <div className="d-flex justify-content-between">
             <span>
               <i className="bi bi-calendar me-1"></i>
-              {formatDate(pattern.created_at)}
+              {formatDate(pattern.created_at as unknown as Date)}
             </span>
             <span>{getComplexityDisplay()}</span>
           </div>
           <div className="d-flex justify-content-between mt-1">
             <span>
               <i className="bi bi-eye me-1"></i>
-              {pattern.view_count} views
+              {Number(pattern.view_count)} views
             </span>
             <span>
               <i className="bi bi-hand-thumbs-up me-1"></i>
-              {pattern.like_count} likes
+              {Number(pattern.like_count)} likes
             </span>
           </div>
         </div>

@@ -4,22 +4,23 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { 
-  SupportedLanguage, 
-  LanguageDirection, 
+import type {
+  SupportedLanguage,
+  LanguageDirection,
   I18nContext as I18nContextType,
   TranslationFunction,
   LanguageInfo
 } from '@/types/i18n';
-import { 
-  detectUserLanguage, 
-  getLanguageInfo, 
+import type { Language } from '@/types/ai';
+import {
+  detectUserLanguage,
+  getLanguageInfo,
   getAllLanguages,
   formatDateForLanguage,
   formatNumberForLanguage,
   isRTLLanguage
 } from './languages';
-import { loadTranslations } from './translations';
+import { getTranslation } from './translations';
 
 const I18nContext = createContext<I18nContextType | null>(null);
 
@@ -29,17 +30,17 @@ interface I18nProviderProps {
   persistLanguage?: boolean;
 }
 
-export function I18nProvider({ 
-  children, 
+export function I18nProvider({
+  children,
   defaultLanguage,
-  persistLanguage = true 
+  persistLanguage = true
 }: I18nProviderProps) {
   const [language, setLanguageState] = useState<SupportedLanguage>(() => {
     // Server-side rendering safe initialization
     if (typeof window === 'undefined') {
       return defaultLanguage || 'en';
     }
-    
+
     // Try to load from localStorage first
     if (persistLanguage) {
       const stored = localStorage.getItem('emo-web-language') as SupportedLanguage;
@@ -47,7 +48,7 @@ export function I18nProvider({
         return stored;
       }
     }
-    
+
     // Fall back to user detection or default
     return defaultLanguage || detectUserLanguage();
   });
@@ -58,29 +59,30 @@ export function I18nProvider({
   // Load translations when language changes
   useEffect(() => {
     let isMounted = true;
-    
+
     const loadLanguageTranslations = async () => {
       try {
         setIsLoading(true);
-        const translationData = await loadTranslations(language);
-        
+        setIsLoading(true);
+        const translationData = getTranslation(language as unknown as Language);
+
         if (isMounted) {
           setTranslations(translationData);
           setIsLoading(false);
         }
       } catch (error) {
         console.error(`Failed to load translations for ${language}:`, error);
-        
+
         // Fallback to English if current language fails
         if (language !== 'en' && isMounted) {
           try {
-            const fallbackTranslations = await loadTranslations('en');
+            const fallbackTranslations = getTranslation('en' as Language);
             setTranslations(fallbackTranslations);
           } catch (fallbackError) {
             console.error('Failed to load fallback translations:', fallbackError);
           }
         }
-        
+
         if (isMounted) {
           setIsLoading(false);
         }
@@ -88,7 +90,7 @@ export function I18nProvider({
     };
 
     loadLanguageTranslations();
-    
+
     return () => {
       isMounted = false;
     };
@@ -100,10 +102,10 @@ export function I18nProvider({
       const languageInfo = getLanguageInfo(language);
       document.documentElement.lang = language;
       document.documentElement.dir = languageInfo.direction;
-      
+
       // Update CSS custom properties for RTL support
       document.documentElement.style.setProperty(
-        '--text-direction', 
+        '--text-direction',
         languageInfo.direction === 'rtl' ? 'rtl' : 'ltr'
       );
     }
@@ -129,7 +131,7 @@ export function I18nProvider({
 
       try {
         let value: any;
-        
+
         // Handle different calling patterns
         if (typeof subKey === 'string') {
           // Called as t('namespace', 'key', params)
@@ -193,7 +195,7 @@ export function I18nProvider({
       const languageInfo = getLanguageInfo(language);
       const now = new Date();
       const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-      
+
       try {
         const rtf = new Intl.RelativeTimeFormat(`${language}-${languageInfo.region}`, {
           numeric: 'auto'
@@ -235,11 +237,11 @@ export function I18nProvider({
  */
 export function useI18n(): I18nContextType {
   const context = useContext(I18nContext);
-  
+
   if (!context) {
     throw new Error('useI18n must be used within an I18nProvider');
   }
-  
+
   return context;
 }
 
@@ -272,16 +274,16 @@ export function useIsRTL(): boolean {
  */
 export function useLanguageSwitcher() {
   const { language, setLanguage, supportedLanguages } = useI18n();
-  
+
   const switchToLanguage = (newLanguage: SupportedLanguage) => {
     setLanguage(newLanguage);
   };
-  
+
   const getLanguageDisplayName = (lang: SupportedLanguage) => {
     const langInfo = getLanguageInfo(lang);
     return langInfo.nativeName;
   };
-  
+
   return {
     currentLanguage: language,
     supportedLanguages,

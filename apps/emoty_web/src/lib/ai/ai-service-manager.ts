@@ -165,7 +165,7 @@ export class AIServiceManager {
             };
           }
         } catch (error) {
-          console.warn('Claude service failed, attempting fallback:', error.message);
+          console.warn('Claude service failed, attempting fallback:', error instanceof Error ? error.message : String(error));
         }
       }
 
@@ -286,7 +286,7 @@ export class AIServiceManager {
             };
           }
         } catch (error) {
-          console.warn('Claude naming service failed, attempting fallback:', error.message);
+          console.warn('Claude naming service failed, attempting fallback:', error instanceof Error ? error.message : String(error));
         }
       }
 
@@ -556,8 +556,8 @@ export class AIServiceManager {
     rateLimits: { activeUsers: number; globalBudgetUsed: number };
   }> {
     const results = {
-      claude: { available: false, latencyMs: undefined },
-      local: { available: false, latencyMs: undefined },
+      claude: { available: false, latencyMs: undefined as number | undefined },
+      local: { available: false, latencyMs: undefined as number | undefined },
       rateLimits: { 
         activeUsers: this.rateLimitStates.size,
         globalBudgetUsed: this.dailyUsage.cost,

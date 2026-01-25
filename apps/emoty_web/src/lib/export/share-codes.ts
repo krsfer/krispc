@@ -16,7 +16,7 @@ export class ShareCodeService {
   static async generateShareCode(
     pattern: PatternState,
     userId: string,
-    options: ShareCodeOptions = {}
+    options: Partial<ShareCodeOptions> = {}
   ): Promise<ShareCodeData> {
     try {
       // Generate unique code
@@ -38,14 +38,16 @@ export class ShareCodeService {
       let finalData: string;
       if (options.compress) {
         const jsonString = JSON.stringify(patternData);
-        const compressed = gzip(jsonString, { to: 'string' });
-        finalData = btoa(compressed); // Base64 encode
+        const compressed = gzip(jsonString); // Returns Uint8Array
+        // Convert Uint8Array to binary string for btoa
+        const binaryString = Array.from(compressed, c => String.fromCharCode(c)).join('');
+        finalData = btoa(binaryString); // Base64 encode
       } else {
         finalData = JSON.stringify(patternData);
       }
 
       // Calculate expiration
-      const expiresAt = options.expirationDays 
+      const expiresAt = options.expirationDays
         ? new Date(Date.now() + options.expirationDays * 24 * 60 * 60 * 1000)
         : null;
 
@@ -120,7 +122,10 @@ export class ShareCodeService {
         // Try to detect if data is compressed (base64 encoded)
         if (this.isBase64(shareRecord.pattern_data)) {
           const compressed = atob(shareRecord.pattern_data);
-          const decompressed = ungzip(compressed, { to: 'string' });
+          // Convert binary string to Uint8Array
+          const charData = compressed.split('').map(x => x.charCodeAt(0));
+          const binData = new Uint8Array(charData);
+          const decompressed = ungzip(binData, { to: 'string' });
           patternData = JSON.parse(decompressed);
         } else {
           patternData = JSON.parse(shareRecord.pattern_data);
@@ -271,7 +276,7 @@ export class ShareCodeService {
 
     while (attempts < maxAttempts) {
       const code = this.generateRandomCode();
-      
+
       // Check if code already exists
       const existing = await db
         .selectFrom('share_codes')
@@ -321,7 +326,7 @@ export class ShareCodeService {
     }
 
     // Check if all characters are valid
-    return Array.from(code.toUpperCase()).every(char => 
+    return Array.from(code.toUpperCase()).every(char =>
       this.CHARS.includes(char)
     );
   }
@@ -372,7 +377,7 @@ export class ShareCodeService {
    */
   static async hasUserReachedQuota(userId: string, userLevel: string): Promise<boolean> {
     const quota = this.getShareCodeQuota(userLevel);
-    
+
     if (quota === -1) {
       return false; // Unlimited
     }
@@ -403,8 +408,9 @@ export class PatternCompressor {
     };
 
     const json = JSON.stringify(data);
-    const compressed = gzip(json, { to: 'string' });
-    return btoa(compressed);
+    const compressed = gzip(json);
+    const binaryString = Array.from(compressed, c => String.fromCharCode(c)).join('');
+    return btoa(binaryString);
   }
 
   /**
@@ -413,7 +419,9 @@ export class PatternCompressor {
   static decompress(compressedData: string): Partial<PatternState> | null {
     try {
       const compressed = atob(compressedData);
-      const decompressed = ungzip(compressed, { to: 'string' });
+      const charData = compressed.split('').map(x => x.charCodeAt(0));
+      const binData = new Uint8Array(charData);
+      const decompressed = ungzip(binData, { to: 'string' });
       const data = JSON.parse(decompressed);
 
       return {

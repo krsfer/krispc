@@ -292,7 +292,7 @@ export class MultitouchGestureService {
   private playActionSound(action: GestureAction): void {
     // Create audio context for feedback tones
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new ((window as any).AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       

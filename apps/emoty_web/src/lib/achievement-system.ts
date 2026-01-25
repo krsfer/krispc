@@ -86,7 +86,7 @@ export class AchievementSystem {
       user_id: ua.user_id,
       achievement_id: ua.achievement_id,
       unlocked_at: ua.unlocked_at,
-      progress_value: ua.progress_value,
+      progress_value: ua.progress_value ?? undefined,
       achievement: {
         id: ua.achievement_id,
         achievement_key: ua.achievement_key,
@@ -211,12 +211,12 @@ export class AchievementSystem {
       total_patterns_created: user?.total_patterns_created || 0,
       user_level: user?.user_level || 'beginner',
       days_since_signup: user ? Math.floor((Date.now() - user.created_at.getTime()) / (1000 * 60 * 60 * 24)) : 0,
-      total_patterns: parseInt(patternStats?.total_patterns || '0'),
-      public_patterns: parseInt(patternStats?.public_patterns || '0'),
-      ai_patterns: parseInt(patternStats?.ai_patterns || '0'),
-      total_likes: parseInt(patternStats?.total_likes || '0'),
-      achievement_count: parseInt(achievementCount?.count || '0'),
-      favorite_count: parseInt(favoriteCount?.count || '0'),
+      total_patterns: parseInt(String(patternStats?.total_patterns || '0')),
+      public_patterns: parseInt(String(patternStats?.public_patterns || '0')),
+      ai_patterns: parseInt(String(patternStats?.ai_patterns || '0')),
+      total_likes: parseInt(String(patternStats?.total_likes || '0')),
+      achievement_count: parseInt(String(achievementCount?.count || '0')),
+      favorite_count: parseInt(String(favoriteCount?.count || '0')),
     };
   }
 

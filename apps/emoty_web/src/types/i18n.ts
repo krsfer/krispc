@@ -47,13 +47,13 @@ export interface CommonTranslations {
   back: string;
   next: string;
   previous: string;
-  
+
   // Time and dates
   today: string;
   yesterday: string;
   tomorrow: string;
   now: string;
-  
+
   // Actions
   search: string;
   filter: string;
@@ -92,14 +92,14 @@ export interface PatternTranslations {
   patternSize: string;
   patternDifficulty: string;
   patternTags: string;
-  
+
   // Pattern properties
   theme: string;
   mood: string;
   colors: string;
   complexity: string;
   estimatedTime: string;
-  
+
   // Pattern actions
   savePattern: string;
   sharePattern: string;
@@ -107,14 +107,14 @@ export interface PatternTranslations {
   deletePattern: string;
   favoritePattern: string;
   unfavoritePattern: string;
-  
+
   // Pattern status
   public: string;
   private: string;
   shared: string;
   draft: string;
   published: string;
-  
+
   // Themes
   themes: {
     nature: string;
@@ -128,7 +128,7 @@ export interface PatternTranslations {
     tech: string;
     sports: string;
   };
-  
+
   // Moods
   moods: {
     happy: string;
@@ -141,7 +141,7 @@ export interface PatternTranslations {
     bold: string;
     peaceful: string;
   };
-  
+
   // Difficulties
   difficulties: {
     beginner: string;
@@ -158,20 +158,20 @@ export interface AITranslations {
   aiGenerated: string;
   generateWithAI: string;
   customPrompt: string;
-  
+
   // AI features
   smartSuggestions: string;
   patternAnalysis: string;
   improvementTips: string;
   similarPatterns: string;
-  
+
   // AI status
   aiThinking: string;
   aiProcessing: string;
   aiError: string;
   aiUnavailable: string;
   aiFallback: string;
-  
+
   // AI settings
   aiPreferences: string;
   aiLanguage: string;
@@ -185,18 +185,18 @@ export interface VoiceTranslations {
   startListening: string;
   stopListening: string;
   voiceSettings: string;
-  
+
   // Voice feedback
   listeningOn: string;
   listeningOff: string;
   commandRecognized: string;
   commandNotRecognized: string;
-  
+
   // Voice help
   voiceHelp: string;
   availableCommands: string;
   exampleCommands: string;
-  
+
   // Voice commands descriptions
   commands: {
     generatePattern: string;
@@ -217,23 +217,23 @@ export interface AccessibilityTranslations {
   accessibilitySettings: string;
   screenReader: string;
   keyboardNavigation: string;
-  
+
   // Visual accessibility
   highContrast: string;
   largeText: string;
   reducedMotion: string;
   colorBlindness: string;
-  
+
   // Motor accessibility
   touchTargets: string;
   gestureAlternatives: string;
   voiceControl: string;
-  
+
   // Audio accessibility
   audioFeedback: string;
   hapticFeedback: string;
   visualIndicators: string;
-  
+
   // Accessibility announcements
   announcements: {
     patternCreated: string;
@@ -253,7 +253,7 @@ export interface ExportTranslations {
   exportPattern: string;
   exportCollection: string;
   exportFormat: string;
-  
+
   // Export formats
   formats: {
     pdf: string;
@@ -264,14 +264,14 @@ export interface ExportTranslations {
     csv: string;
     txt: string;
   };
-  
+
   // Export settings
   exportSettings: string;
   resolution: string;
   quality: string;
   includeMetadata: string;
   includeTimestamp: string;
-  
+
   // Export status
   preparing: string;
   generating: string;
@@ -286,7 +286,7 @@ export interface SharingTranslations {
   sharePattern: string;
   shareCollection: string;
   shareLink: string;
-  
+
   // Sharing platforms
   platforms: {
     email: string;
@@ -295,14 +295,14 @@ export interface SharingTranslations {
     qrCode: string;
     embed: string;
   };
-  
+
   // Privacy settings
   privacySettings: string;
   publicShare: string;
   privateShare: string;
   linkExpiration: string;
   passwordProtected: string;
-  
+
   // Sharing status
   linkCopied: string;
   sharePreparing: string;
@@ -316,18 +316,18 @@ export interface ErrorTranslations {
   unknownError: string;
   networkError: string;
   serverError: string;
-  
+
   // Specific errors
   patternNotFound: string;
   patternSaveError: string;
   patternLoadError: string;
   invalidPattern: string;
-  
+
   // Permission errors
   permissionDenied: string;
   unauthorized: string;
   accessRestricted: string;
-  
+
   // Validation errors
   required: string;
   invalid: string;
@@ -342,13 +342,13 @@ export interface ValidationTranslations {
   fieldTooShort: (field: string, min: number) => string;
   fieldTooLong: (field: string, max: number) => string;
   fieldInvalid: (field: string) => string;
-  
+
   // Pattern validation
   patternEmpty: string;
   patternTooSmall: string;
   patternTooLarge: string;
   patternInvalid: string;
-  
+
   // User input validation
   emailInvalid: string;
   passwordWeak: string;
@@ -378,10 +378,10 @@ export interface CulturalAdaptation {
   colorPreferences: Record<string, string[]>;
   patternStyles: Record<string, any>;
   dateFormats: Record<string, string>;
-  numberFormats: Record<string, Intl.NumberFormatOptions>;
-  currencyFormats: Record<string, Intl.NumberFormatOptions>;
+  numberFormats: Intl.NumberFormatOptions;
+  currencyFormats: Intl.NumberFormatOptions;
   textDirections: Record<string, LanguageDirection>;
-  fontPreferences: Record<string, string[]>;
+  fontPreferences: string[];
 }
 
 export interface LocalizationPreferences {

@@ -29,11 +29,11 @@ export interface NameGenerationResult {
  * Template-based name generator with creative algorithms
  */
 export class LocalNameGenerator {
-  private templates: Map<string, NamingTemplate[]>;
-  private adjectives: Map<string, string[]>;
-  private nouns: Map<string, string[]>;
-  private connectors: Map<string, string[]>;
-  private patterns: Map<string, PatternNameRule[]>;
+  private templates!: Map<string, NamingTemplate[]>;
+  private adjectives!: Map<string, string[]>;
+  private nouns!: Map<string, string[]>;
+  private connectors!: Map<string, string[]>;
+  private patterns!: Map<string, PatternNameRule[]>;
 
   constructor() {
     this.initializeTemplates();
@@ -47,27 +47,27 @@ export class LocalNameGenerator {
   generateName(request: NameGenerationRequest): NameGenerationResult {
     const language = request.language || 'en';
     const style = request.style || 'descriptive';
-    
+
     try {
       // Analyze the emoji sequence for naming cues
       const analysis = this.analyzeSequence(request.sequence);
-      
+
       // Generate primary name
       const primaryName = this.generatePrimaryName(request, analysis, style, language);
-      
+
       // Generate alternatives
       const alternatives = this.generateAlternatives(request, analysis, 3);
-      
+
       // Calculate confidence
       const confidence = this.calculateNamingConfidence(primaryName, analysis);
-      
+
       return {
         name: primaryName,
         alternatives,
         rationale: this.explainNamingChoice(primaryName, analysis, language),
         confidence
       };
-      
+
     } catch (error) {
       console.error('Name generation failed:', error);
       return this.generateFallbackName(request);
@@ -82,42 +82,42 @@ export class LocalNameGenerator {
     const emotions = new Map<EmotionType, number>();
     const colors = new Map<ColorFamily, number>();
     const themes = new Set<string>();
-    
+
     let totalComplexity = 0;
     let childSafeCount = 0;
-    
+
     for (const emoji of sequence) {
       const concept = EMOJI_CONCEPTS[emoji];
       if (!concept) continue;
-      
+
       // Collect categories
       for (const category of concept.categories) {
         const current = categories.get(category.primary) || 0;
         categories.set(category.primary, current + category.weight);
-        
+
         if (category.secondary) {
           themes.add(category.secondary);
         }
       }
-      
+
       // Collect emotions
       for (const emotion of concept.emotions) {
         const current = emotions.get(emotion.emotion) || 0;
         emotions.set(emotion.emotion, current + emotion.intensity);
       }
-      
+
       // Collect colors
       const colorFamily = concept.visualHarmony.colorFamily;
       const current = colors.get(colorFamily) || 0;
       colors.set(colorFamily, current + 1);
-      
+
       // Analyze complexity and safety
       totalComplexity += concept.visualHarmony.complexity;
       if (concept.culturalContext.appropriatenessLevel === 'child-safe') {
         childSafeCount++;
       }
     }
-    
+
     return {
       dominantCategories: this.getTopEntries(categories, 3),
       dominantEmotions: this.getTopEntries(emotions, 2),
@@ -173,7 +173,7 @@ export class LocalNameGenerator {
     language: string
   ): LocalizedString {
     const templates = this.templates.get(`${style}-${language}`) || this.templates.get(`descriptive-${language}`) || [];
-    
+
     if (templates.length === 0) {
       throw new Error('No templates available');
     }
@@ -195,7 +195,7 @@ export class LocalNameGenerator {
 
     const adjectives = this.adjectives.get(language) || [];
     const nouns = this.nouns.get(language) || [];
-    
+
     const themeAdjective = this.findThemeWord(theme, adjectives);
     const themeNoun = this.findThemeWord(theme, nouns) || (language === 'fr' ? 'motif' : 'pattern');
 
@@ -247,7 +247,7 @@ export class LocalNameGenerator {
   private generateDescriptiveName(analysis: SequenceAnalysis, language: string): LocalizedString {
     const category = analysis.dominantCategories[0];
     const color = analysis.dominantColors[0];
-    
+
     if (!category) throw new Error('No categories detected');
 
     const categoryNames = {
@@ -280,7 +280,7 @@ export class LocalNameGenerator {
     const colorName = color ? colorNames[language as keyof typeof colorNames][color.key as keyof typeof colorNames.en] : null;
 
     const baseName = language === 'fr' ? 'Composition' : 'Composition';
-    
+
     if (colorName) {
       return {
         en: `${colorName} ${categoryName} ${baseName}`,
@@ -335,7 +335,7 @@ export class LocalNameGenerator {
   private generateSimpleName(sequence: string[], language: string): LocalizedString {
     const count = sequence.length;
     const firstEmoji = sequence[0] || '✨';
-    
+
     if (language === 'fr') {
       return {
         en: `Pattern ${firstEmoji}`,
@@ -354,17 +354,17 @@ export class LocalNameGenerator {
    */
   private fillTemplate(template: NamingTemplate, analysis: SequenceAnalysis, language: string): LocalizedString {
     let filled = template.pattern;
-    
+
     // Replace placeholders
     filled = filled.replace('{category}', analysis.dominantCategories[0]?.key || 'mixed');
     filled = filled.replace('{emotion}', analysis.dominantEmotions[0]?.key || 'neutral');
     filled = filled.replace('{color}', analysis.dominantColors[0]?.key || 'colorful');
     filled = filled.replace('{complexity}', analysis.avgComplexity > 0.6 ? 'complex' : 'simple');
     filled = filled.replace('{count}', analysis.sequenceLength.toString());
-    
+
     // Apply language-specific formatting
     const formatted = this.formatForLanguage(filled, language);
-    
+
     return {
       en: language === 'en' ? formatted : this.translateToEnglish(formatted),
       fr: language === 'fr' ? formatted : this.translateToFrench(formatted)
@@ -412,22 +412,22 @@ export class LocalNameGenerator {
    */
   private calculateNamingConfidence(name: LocalizedString, analysis: SequenceAnalysis): number {
     let confidence = 0.7; // Base confidence
-    
+
     // Boost for good category detection
     if (analysis.dominantCategories.length > 0 && analysis.dominantCategories[0].value > 0.5) {
       confidence += 0.1;
     }
-    
+
     // Boost for emotional clarity
     if (analysis.dominantEmotions.length > 0 && analysis.dominantEmotions[0].value > 0.6) {
       confidence += 0.1;
     }
-    
+
     // Boost for sequence diversity
     if (analysis.diversity > 0.8) {
       confidence += 0.05;
     }
-    
+
     // Penalty for very short or very long names
     const nameLength = name.en.length;
     if (nameLength < 5 || nameLength > 40) {
@@ -453,14 +453,14 @@ export class LocalNameGenerator {
       template,
       score: this.scoreTemplate(template, analysis)
     }));
-    
+
     scored.sort((a, b) => b.score - a.score);
     return scored[0]?.template || templates[0];
   }
 
   private scoreTemplate(template: NamingTemplate, analysis: SequenceAnalysis): number {
     let score = template.baseScore || 0.5;
-    
+
     // Prefer templates that match the analysis
     if (template.preferredCategories) {
       const matches = template.preferredCategories.filter(cat =>
@@ -468,7 +468,7 @@ export class LocalNameGenerator {
       );
       score += matches.length * 0.1;
     }
-    
+
     return score;
   }
 
@@ -493,7 +493,7 @@ export class LocalNameGenerator {
       return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     } else {
       // English title case
-      return text.replace(/\w\S*/g, (txt) => 
+      return text.replace(/\w\S*/g, (txt) =>
         txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
       );
     }
@@ -508,12 +508,12 @@ export class LocalNameGenerator {
       'émotionnel': 'emotional',
       'naturel': 'natural'
     };
-    
+
     let translated = text;
     for (const [fr, en] of Object.entries(translations)) {
       translated = translated.replace(new RegExp(fr, 'gi'), en);
     }
-    
+
     return translated || text;
   }
 
@@ -526,23 +526,23 @@ export class LocalNameGenerator {
       'emotional': 'émotionnel',
       'natural': 'naturel'
     };
-    
+
     let translated = text;
     for (const [en, fr] of Object.entries(translations)) {
       translated = translated.replace(new RegExp(en, 'gi'), fr);
     }
-    
+
     return translated || text;
   }
 
   private generateVariation(sequence: string[], language: string, index: number): LocalizedString {
     const firstEmoji = sequence[0] || '✨';
-    const variantSuffixes = language === 'fr' 
+    const variantSuffixes = language === 'fr'
       ? ['Création', 'Design', 'Œuvre', 'Style']
       : ['Creation', 'Design', 'Work', 'Style'];
-    
+
     const suffix = variantSuffixes[index % variantSuffixes.length];
-    
+
     return {
       en: `${firstEmoji} ${language === 'en' ? suffix : 'Creation'} #${index + 1}`,
       fr: `${suffix} ${firstEmoji} #${index + 1}`
@@ -552,7 +552,7 @@ export class LocalNameGenerator {
   private explainNamingChoice(name: LocalizedString, analysis: SequenceAnalysis, language: string): string {
     const category = analysis.dominantCategories[0]?.key || 'mixed';
     const emotion = analysis.dominantEmotions[0]?.key || 'neutral';
-    
+
     if (language === 'fr') {
       return `Nom basé sur la catégorie principale "${category}" et l'émotion "${emotion}" détectées dans la séquence.`;
     } else {
@@ -562,7 +562,7 @@ export class LocalNameGenerator {
 
   private generateFallbackName(request: NameGenerationRequest): NameGenerationResult {
     const simple = this.generateSimpleName(request.sequence, request.language || 'en');
-    
+
     return {
       name: simple,
       alternatives: [simple],
@@ -574,21 +574,21 @@ export class LocalNameGenerator {
   // Initialization methods
   private initializeTemplates(): void {
     this.templates = new Map();
-    
+
     // English templates
     this.templates.set('descriptive-en', [
       { pattern: '{category} {color} Pattern', baseScore: 0.8, preferredCategories: ['nature', 'emotion'] },
       { pattern: '{color} {category} Collection', baseScore: 0.7, preferredCategories: ['animal', 'food'] },
       { pattern: 'The {emotion} {category}', baseScore: 0.6, preferredCategories: ['emotion'] }
     ]);
-    
+
     // French templates
     this.templates.set('descriptive-fr', [
       { pattern: 'Motif {category} {color}', baseScore: 0.8, preferredCategories: ['nature', 'emotion'] },
       { pattern: 'Collection {color} {category}', baseScore: 0.7, preferredCategories: ['animal', 'food'] },
       { pattern: 'Le {category} {emotion}', baseScore: 0.6, preferredCategories: ['emotion'] }
     ]);
-    
+
     // Add more templates for different styles
     this.addPoeticalTemplates();
     this.addFunTemplates();
@@ -601,7 +601,7 @@ export class LocalNameGenerator {
       { pattern: '{color} Dreams', baseScore: 0.6 },
       { pattern: 'Dancing {category}', baseScore: 0.5 }
     ]);
-    
+
     this.templates.set('poetic-fr', [
       { pattern: 'Symphonie de {category}', baseScore: 0.7 },
       { pattern: 'Rêves {color}', baseScore: 0.6 },
@@ -615,7 +615,7 @@ export class LocalNameGenerator {
       { pattern: 'Super {color} Mix', baseScore: 0.5 },
       { pattern: '{emotion} Vibes', baseScore: 0.4 }
     ]);
-    
+
     this.templates.set('fun-fr', [
       { pattern: 'Fête {category}!', baseScore: 0.6 },
       { pattern: 'Super Mix {color}', baseScore: 0.5 },
@@ -629,7 +629,7 @@ export class LocalNameGenerator {
       { pattern: '{color}', baseScore: 0.4 },
       { pattern: '{emotion}', baseScore: 0.3 }
     ]);
-    
+
     this.templates.set('minimalist-fr', [
       { pattern: '{category}', baseScore: 0.5 },
       { pattern: '{color}', baseScore: 0.4 },
@@ -641,24 +641,24 @@ export class LocalNameGenerator {
     this.adjectives = new Map();
     this.nouns = new Map();
     this.connectors = new Map();
-    
+
     // English word banks
     this.adjectives.set('en', [
       'beautiful', 'elegant', 'vibrant', 'serene', 'dynamic', 'harmonious',
       'delicate', 'bold', 'graceful', 'stunning', 'peaceful', 'energetic'
     ]);
-    
+
     this.nouns.set('en', [
       'pattern', 'design', 'composition', 'collection', 'arrangement', 'sequence',
       'harmony', 'symphony', 'creation', 'artwork', 'expression', 'story'
     ]);
-    
+
     // French word banks
     this.adjectives.set('fr', [
       'beau', 'élégant', 'vibrant', 'serein', 'dynamique', 'harmonieux',
       'délicat', 'audacieux', 'gracieux', 'magnifique', 'paisible', 'énergique'
     ]);
-    
+
     this.nouns.set('fr', [
       'motif', 'design', 'composition', 'collection', 'arrangement', 'séquence',
       'harmonie', 'symphonie', 'création', 'œuvre', 'expression', 'histoire'

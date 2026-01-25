@@ -39,7 +39,7 @@ export class AnalyticsService {
             .where('id', '=', patternId)
             .execute();
           break;
-        
+
         case 'like':
           await db
             .updateTable('patterns')
@@ -56,7 +56,7 @@ export class AnalyticsService {
   }
 
   // Get comprehensive pattern analytics
-  async getPatternAnalytics(patternId: string): Promise<PatternAnalytics | null> {
+  async getPatternAnalytics(patternId: string): Promise<any | null> {
     try {
       // Get basic pattern analytics from materialized view
       const basicAnalytics = await db
@@ -85,12 +85,12 @@ export class AnalyticsService {
       const weeklyStats = await db
         .selectFrom('pattern_usage_stats')
         .select([
-          sql`DATE_TRUNC('day', created_at)`.as('date'),
-          sql`COUNT(*)`.as('actions'),
-          sql`COUNT(DISTINCT user_id)`.as('unique_users')
+          sql<Date>`DATE_TRUNC('day', created_at)`.as('date'),
+          sql<number>`COUNT(*)`.as('actions'),
+          sql<number>`COUNT(DISTINCT user_id)`.as('unique_users')
         ])
         .where('pattern_id', '=', patternId)
-        .where('created_at', '>=', sql`NOW() - INTERVAL '30 days'`)
+        .where(sql<boolean>`created_at >= NOW() - INTERVAL '30 days'`)
         .groupBy(sql`DATE_TRUNC('day', created_at)`)
         .orderBy('date')
         .execute();
@@ -119,8 +119,8 @@ export class AnalyticsService {
         }), {}),
         daily_stats: weeklyStats.map(stat => ({
           date: stat.date as Date,
-          actions: parseInt(stat.actions as string, 10),
-          unique_users: parseInt(stat.unique_users as string, 10)
+          actions: Number(stat.actions),
+          unique_users: Number(stat.unique_users)
         })),
         user_level_breakdown: userLevelBreakdown.reduce((acc, item) => ({
           ...acc,
@@ -215,7 +215,7 @@ export class AnalyticsService {
         ])
         .where('p.user_id', '=', userId)
         .where('p.deleted_at', 'is', null)
-        .where('p.created_at', '>=', sql`NOW() - INTERVAL '12 months'`)
+        .where(sql<boolean>`p.created_at >= NOW() - INTERVAL '12 months'`)
         .groupBy(sql`TO_CHAR(p.created_at, 'YYYY-MM')`)
         .orderBy('month')
         .execute();
@@ -228,7 +228,7 @@ export class AnalyticsService {
           sql`COUNT(*)`.as('actions_performed')
         ])
         .where('pus.user_id', '=', userId)
-        .where('pus.created_at', '>=', sql`NOW() - INTERVAL '12 months'`)
+        .where(sql<boolean>`pus.created_at >= NOW() - INTERVAL '12 months'`)
         .groupBy(sql`TO_CHAR(pus.created_at, 'YYYY-MM')`)
         .execute();
 
@@ -358,7 +358,7 @@ export class AnalyticsService {
       const activeUsers30d = await db
         .selectFrom('pattern_usage_stats')
         .select(sql`COUNT(DISTINCT user_id)`.as('count'))
-        .where('created_at', '>=', sql`NOW() - INTERVAL '30 days'`)
+        .where(sql<boolean>`created_at >= NOW() - INTERVAL '30 days'`)
         .where('user_id', 'is not', null)
         .executeTakeFirst();
 
@@ -402,7 +402,7 @@ export class AnalyticsService {
           sql`COUNT(p.id)`.as('patterns'),
           sql`COUNT(DISTINCT p.user_id)`.as('users')
         ])
-        .where('p.created_at', '>=', sql`NOW() - INTERVAL '30 days'`)
+        .where(sql<boolean>`p.created_at >= NOW() - INTERVAL '30 days'`)
         .where('p.deleted_at', 'is', null)
         .groupBy(sql`DATE_TRUNC('day', p.created_at)`)
         .orderBy('date')
@@ -526,8 +526,8 @@ export class AnalyticsService {
         .innerJoin('patterns as p', 'pus.pattern_id', 'p.id')
         .select([
           'pus.id',
-          'pus.user_id',
-          'u.username',
+          sql<string>`pus.user_id`.as('user_id'),
+          sql<string>`u.username`.as('username'),
           'pus.action_type',
           'pus.pattern_id',
           'p.name as pattern_name',

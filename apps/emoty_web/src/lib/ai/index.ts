@@ -4,18 +4,31 @@
  */
 
 // Core Services
-export { ClaudeService, claudeService } from './claude-service';
-export { LocalAIService, localAIService } from './local-ai-service';
-export { AIServiceManager, aiServiceManager } from './ai-service-manager';
+// Core Services
+import { ClaudeService, claudeService } from './claude-service';
+import { LocalAIService, localAIService } from './local-ai-service';
+import { AIServiceManager, aiServiceManager } from './ai-service-manager';
+
+export { ClaudeService, claudeService };
+export { LocalAIService, localAIService };
+export { AIServiceManager, aiServiceManager };
 
 // Safety & Privacy
-export { AISafety, aiSafety } from './ai-safety';
+import { AISafety, aiSafety } from './ai-safety';
+import type {
+  SafetyConfig,
+  ContentFilterResult,
+  UserConsentRecord,
+  AuditLogEntry
+} from './ai-safety';
+
+export { AISafety, aiSafety };
 export type {
   SafetyConfig,
   ContentFilterResult,
   UserConsentRecord,
   AuditLogEntry,
-} from './ai-safety';
+};
 
 // Type definitions for all AI services
 export interface AISystemConfig {
@@ -95,9 +108,9 @@ export function initializeAISystem(config: Partial<AISystemConfig> = {}): AIFeat
     }
 
     // Voice commands depend on browser APIs
-    features.voiceCommands = typeof window !== 'undefined' && 
-                             'speechSynthesis' in window && 
-                             'webkitSpeechRecognition' in window;
+    features.voiceCommands = typeof window !== 'undefined' &&
+      'speechSynthesis' in window &&
+      'webkitSpeechRecognition' in window;
 
     return features;
 

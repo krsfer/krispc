@@ -1,16 +1,16 @@
 /**
  * Voice command system using Web Speech API with multilingual support
  */
-import type { 
-  VoiceCommand, 
-  VoiceCommandConfig, 
-  ParsedVoiceCommand, 
+import type {
+  VoiceCommand,
+  VoiceCommandConfig,
+  ParsedVoiceCommand,
   VoiceCommandType,
   PatternTheme,
   PatternMood,
-  Language,
-  VoiceCommandError 
+  Language
 } from '@/types/ai';
+import { VoiceCommandError } from '@/types/ai';
 
 interface VoiceCommandPattern {
   pattern: RegExp;
@@ -19,13 +19,13 @@ interface VoiceCommandPattern {
 }
 
 export class VoiceCommandService {
-  private recognition: SpeechRecognition | null = null;
+  private recognition: any = null;
   private isListening = false;
   private language: Language = 'en';
   private listeners: Set<(command: ParsedVoiceCommand) => void> = new Set();
   private errorListeners: Set<(error: VoiceCommandError) => void> = new Set();
   private statusListeners: Set<(isListening: boolean) => void> = new Set();
-  
+
   // Command patterns for English and French
   private commandPatterns: Record<Language, VoiceCommandPattern[]> = {
     en: [
@@ -166,13 +166,13 @@ export class VoiceCommandService {
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     this.recognition = new SpeechRecognition();
-    
+
     this.recognition.continuous = false;
     this.recognition.interimResults = false;
     this.recognition.maxAlternatives = 3;
-    
+
     this.setupRecognitionEvents();
   }
 
@@ -182,7 +182,7 @@ export class VoiceCommandService {
   private setupRecognitionEvents(): void {
     if (!this.recognition) return;
 
-    this.recognition.onresult = (event) => {
+    this.recognition.onresult = (event: any) => {
       const result = event.results[event.results.length - 1];
       const transcript = result[0].transcript.trim();
       const confidence = result[0].confidence;
@@ -199,9 +199,9 @@ export class VoiceCommandService {
       }
     };
 
-    this.recognition.onerror = (event) => {
+    this.recognition.onerror = (event: any) => {
       let errorCode: 'NOT_SUPPORTED' | 'PERMISSION_DENIED' | 'RECOGNITION_ERROR';
-      
+
       switch (event.error) {
         case 'not-allowed':
           errorCode = 'PERMISSION_DENIED';
@@ -278,7 +278,7 @@ export class VoiceCommandService {
    */
   setLanguage(language: Language): void {
     this.language = language;
-    
+
     if (this.recognition) {
       this.recognition.lang = language === 'fr' ? 'fr-FR' : 'en-US';
     }
@@ -289,7 +289,7 @@ export class VoiceCommandService {
    */
   private parseCommand(transcript: string, confidence: number): ParsedVoiceCommand {
     const patterns = this.commandPatterns[this.language];
-    
+
     for (const pattern of patterns) {
       const match = transcript.match(pattern.pattern);
       if (match) {
@@ -310,7 +310,7 @@ export class VoiceCommandService {
    */
   private extractTheme(text: string, language: Language): PatternTheme | undefined {
     const normalizedText = text.toLowerCase().trim();
-    
+
     const themeMap: Record<Language, Record<string, PatternTheme>> = {
       en: {
         nature: 'nature',
@@ -394,7 +394,7 @@ export class VoiceCommandService {
    */
   private extractMood(text: string, language: Language): PatternMood | undefined {
     const normalizedText = text.toLowerCase().trim();
-    
+
     const moodMap: Record<Language, Record<string, PatternMood>> = {
       en: {
         happy: 'happy',
@@ -404,7 +404,6 @@ export class VoiceCommandService {
         peaceful: 'peaceful',
         serene: 'calm',
         relaxed: 'calm',
-        energetic: 'energetic',
         energetic: 'energetic',
         vibrant: 'energetic',
         romantic: 'romantic',
@@ -472,19 +471,19 @@ export class VoiceCommandService {
     if (config.language) {
       this.setLanguage(config.language);
     }
-    
+
     if (config.continuous !== undefined) {
       this.recognition.continuous = config.continuous;
     }
-    
+
     if (config.interimResults !== undefined) {
       this.recognition.interimResults = config.interimResults;
     }
-    
+
     if (config.maxAlternatives !== undefined) {
       this.recognition.maxAlternatives = config.maxAlternatives;
     }
-    
+
     if (config.grammars) {
       this.recognition.grammars = config.grammars;
     }

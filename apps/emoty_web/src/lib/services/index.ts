@@ -1,12 +1,21 @@
 // Pattern System Services - Main Export File
 // Provides unified access to all pattern-related services
 
-export { patternService, PatternService } from './pattern-service';
-export { patternCollectionService, PatternCollectionService } from './pattern-collection-service';
-export { patternSharingService, PatternSharingService } from './pattern-sharing-service';
-export { analyticsService, AnalyticsService } from './analytics-service';
-export { offlineSyncService, OfflineSyncService } from './offline-sync-service';
-export { patternCache } from '../cache/pattern-cache';
+import { patternService, PatternService } from './pattern-service';
+import { patternCollectionService, PatternCollectionService } from './pattern-collection-service';
+import { patternSharingService, PatternSharingService } from './pattern-sharing-service';
+import { analyticsService, AnalyticsService } from './analytics-service';
+import { offlineSyncService, OfflineSyncService } from './offline-sync-service';
+import { patternCache } from '../cache/pattern-cache';
+
+export {
+  patternService, PatternService,
+  patternCollectionService, PatternCollectionService,
+  patternSharingService, PatternSharingService,
+  analyticsService, AnalyticsService,
+  offlineSyncService, OfflineSyncService,
+  patternCache
+};
 
 // Re-export commonly used types
 export type {
@@ -23,17 +32,17 @@ export type {
   PatternSequence,
   EmojiCell,
   CachedPattern
-} from '../db/types';
+} from '@/db/types';
 
 // Service initialization helper
 export async function initializePatternServices(): Promise<void> {
   try {
     // Initialize cache
     await patternCache.init();
-    
+
     // Initialize offline sync
     await offlineSyncService.init();
-    
+
     console.log('Pattern services initialized successfully');
   } catch (error) {
     console.error('Error initializing pattern services:', error);
@@ -59,7 +68,7 @@ export async function checkServicesHealth(): Promise<{
     health.database = true;
   } catch (error) {
     // Expected to fail, we're just checking connection
-    health.database = !error.message.includes('connection');
+    health.database = !(error as any).message?.includes('connection');
   }
 
   try {

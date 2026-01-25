@@ -74,7 +74,6 @@ export function LevelIndicator({
 
   const userLevel = session.user.userLevel;
   const reputationScore = session.user.reputationScore;
-  const levelConfig = ProgressionEngine.PROGRESSION_CONFIG[userLevel];
 
   // Level badge styling
   const levelBadgeClass = {

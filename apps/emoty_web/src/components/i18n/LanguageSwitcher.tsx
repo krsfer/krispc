@@ -161,7 +161,7 @@ export function LanguageSwitcher({
               ${isRTL ? 'right-0' : 'left-0'}
             `}
             role="listbox"
-            aria-label={t('common', 'selectLanguage')}
+            aria-label={t('common.selectLanguage')}
           >
             {supportedLanguages.map((language, index) => (
               <button
@@ -213,7 +213,7 @@ export function LanguageSwitcher({
   if (variant === 'full') {
     return (
       <div className={`space-y-2 ${className}`}>
-        <h3 className="text-lg font-semibold mb-4">{t('common', 'selectLanguage')}</h3>
+        <h3 className="text-lg font-semibold mb-4">{t('common.selectLanguage')}</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {supportedLanguages.map((language) => (
             <button
@@ -261,7 +261,7 @@ export function LanguageSwitcher({
           transition-colors duration-200
           ${isRTL ? 'flex-row-reverse' : ''}
         `}
-        aria-label={t('common', 'currentLanguage', { language: getLanguageDisplayName(currentLanguage) })}
+        aria-label={t('common.currentLanguage', { language: getLanguageDisplayName(currentLanguage) })}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -291,7 +291,7 @@ export function LanguageSwitcher({
             ${isRTL ? 'right-0' : 'left-0'}
           `}
           role="listbox"
-          aria-label={t('common', 'selectLanguage')}
+          aria-label={t('common.selectLanguage')}
         >
           {supportedLanguages.map((language, index) => (
             <button

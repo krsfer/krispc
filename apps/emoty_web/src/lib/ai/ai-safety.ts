@@ -250,7 +250,7 @@ export class AISafety {
           .map(record => record.consentType)
       );
 
-      const missingConsent = requiredConsent.filter(consent => !grantedConsents.has(consent));
+      const missingConsent = requiredConsent.filter(consent => !grantedConsents.has(consent as UserConsentRecord['consentType']));
 
       return {
         hasConsent: missingConsent.length === 0,

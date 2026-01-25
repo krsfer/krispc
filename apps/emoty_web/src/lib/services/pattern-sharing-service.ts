@@ -1,7 +1,7 @@
 // Pattern Sharing and Permissions Service
 // Handles pattern sharing, permissions, and collaborative access
 
-import { sql } from 'kysely';
+import { sql, Selectable } from 'kysely';
 import { db } from '@/db/connection';
 import type {
   PatternShareTable,
@@ -19,7 +19,7 @@ export class PatternSharingService {
     sharedWithUserId: string,
     permissionLevel: PatternPermissionLevel = 'view',
     expiresAt?: Date
-  ): Promise<PatternShareTable> {
+  ): Promise<Selectable<PatternShareTable>> {
     try {
       return await db.transaction().execute(async (trx) => {
         // Verify the sharer owns the pattern or has admin permission
@@ -44,7 +44,7 @@ export class PatternSharingService {
         }
 
         // Check permissions
-        const canShare = 
+        const canShare =
           pattern.user_id === sharedByUserId || // Owner
           pattern.permission_level === 'admin'; // Has admin permission
 
@@ -121,7 +121,7 @@ export class PatternSharingService {
     patternId: string,
     sharedByUserId: string,
     expiresAt?: Date
-  ): Promise<PatternShareTable> {
+  ): Promise<Selectable<PatternShareTable>> {
     try {
       return await db.transaction().execute(async (trx) => {
         // Verify the sharer owns the pattern
@@ -219,7 +219,7 @@ export class PatternSharingService {
           throw new Error('Pattern not found');
         }
 
-        const canRevoke = 
+        const canRevoke =
           pattern.user_id === currentUserId || // Owner
           pattern.permission_level === 'admin'; // Has admin permission
 
@@ -277,7 +277,7 @@ export class PatternSharingService {
         throw new Error('Pattern not found');
       }
 
-      const canViewShares = 
+      const canViewShares =
         pattern.user_id === currentUserId || // Owner
         pattern.permission_level === 'admin'; // Has admin permission
 
@@ -334,6 +334,7 @@ export class PatternSharingService {
           'p.is_public', 'p.is_ai_generated', 'p.generation_prompt', 'p.tags',
           'p.difficulty_rating', 'p.view_count', 'p.like_count', 'p.complexity_score',
           'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id',
+          'p.search_vector', 'p.deleted_at', 'p.deleted_by',
           'p.created_at', 'p.updated_at',
           'u.username as user_username',
           'u.full_name as user_full_name',
@@ -345,7 +346,7 @@ export class PatternSharingService {
         ])
         .where('ps.shared_with_user_id', '=', userId)
         .where('p.deleted_at', 'is', null)
-        .where((eb) => 
+        .where((eb) =>
           eb.or([
             eb('ps.expires_at', 'is', null),
             eb('ps.expires_at', '>', new Date())
@@ -406,10 +407,10 @@ export class PatternSharingService {
 
       const isOwner = result.user_id === userId;
       const isPublic = result.is_public;
-      
+
       // Check if share is expired
       const shareExpired = result.expires_at && new Date() > result.expires_at;
-      
+
       let hasAccess = false;
       let permission: PatternPermissionLevel | null = null;
 
@@ -526,7 +527,7 @@ export class PatternSharingService {
       } catch (error) {
         results.failed.push({
           userId,
-          error: error.message || 'Unknown error'
+          error: (error as any).message || 'Unknown error'
         });
       }
     }

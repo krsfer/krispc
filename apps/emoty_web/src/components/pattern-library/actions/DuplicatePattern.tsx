@@ -102,7 +102,7 @@ export function DuplicatePattern({
                       </span>
                     )}
                     <div className="text-muted small">
-                      Created {new Date(pattern.created_at).toLocaleDateString()}
+                      Created {new Date(pattern.created_at as unknown as Date).toLocaleDateString()}
                       {pattern.tags && pattern.tags.length > 0 && (
                         <span className="ms-2">
                           • {pattern.tags.length} tag{pattern.tags.length !== 1 ? 's' : ''}

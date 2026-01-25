@@ -35,7 +35,7 @@ export class OfflineSyncService {
     if (typeof window !== 'undefined') {
       window.addEventListener('online', this.handleOnline.bind(this));
       window.addEventListener('offline', this.handleOffline.bind(this));
-      
+
       // Start periodic sync if online
       if (navigator.onLine) {
         this.startPeriodicSync();
@@ -67,7 +67,7 @@ export class OfflineSyncService {
   private handleOnline(): void {
     console.log('Device is online - starting sync');
     this.startPeriodicSync();
-    
+
     // Immediate sync when coming back online
     setTimeout(() => {
       this.syncOfflineChanges().catch(console.error);
@@ -86,9 +86,9 @@ export class OfflineSyncService {
       return { online: true };
     }
 
-    const connection = (navigator as any).connection || 
-                      (navigator as any).mozConnection || 
-                      (navigator as any).webkitConnection;
+    const connection = (navigator as any).connection ||
+      (navigator as any).mozConnection ||
+      (navigator as any).webkitConnection;
 
     return {
       online: navigator.onLine,
@@ -100,7 +100,7 @@ export class OfflineSyncService {
   // Check if we should sync based on network conditions
   private shouldSync(): boolean {
     const networkStatus = this.getNetworkStatus();
-    
+
     if (!networkStatus.online) {
       return false;
     }
@@ -129,7 +129,7 @@ export class OfflineSyncService {
 
     try {
       const pendingChanges = await patternCache.getPendingOfflineChanges();
-      
+
       if (pendingChanges.length === 0) {
         console.log('No pending changes to sync');
         return { success: true, synced: 0, failed: 0, errors: [] };
@@ -148,7 +148,7 @@ export class OfflineSyncService {
       const batchSize = 5;
       for (let i = 0; i < pendingChanges.length; i += batchSize) {
         const batch = pendingChanges.slice(i, i + batchSize);
-        
+
         const batchResults = await Promise.allSettled(
           batch.map(change => this.syncSingleChange(change))
         );
@@ -161,7 +161,7 @@ export class OfflineSyncService {
             results.failed++;
             results.errors.push({
               id: change.id,
-              error: result.status === 'rejected' 
+              error: result.status === 'rejected'
                 ? result.reason?.message || 'Unknown error'
                 : result.value.error
             });
@@ -175,7 +175,7 @@ export class OfflineSyncService {
       }
 
       console.log(`Sync completed: ${results.synced} synced, ${results.failed} failed`);
-      
+
       // Schedule retry for failed items
       if (results.failed > 0) {
         this.scheduleRetry();
@@ -190,7 +190,7 @@ export class OfflineSyncService {
         success: false,
         synced: 0,
         failed: 0,
-        errors: [{ id: 'sync_error', error: error.message }]
+        errors: [{ id: 'sync_error', error: (error as any).message }]
       };
     } finally {
       this.syncInProgress = false;
@@ -203,19 +203,19 @@ export class OfflineSyncService {
       switch (change.operation) {
         case 'create':
           return await this.syncCreatePattern(change);
-        
+
         case 'update':
           return await this.syncUpdatePattern(change);
-        
+
         case 'delete':
           return await this.syncDeletePattern(change);
-        
+
         default:
           throw new Error(`Unknown operation: ${change.operation}`);
       }
     } catch (error) {
       console.error(`Error syncing change ${change.id}:`, error);
-      return { success: false, error: error.message };
+      return { success: false, error: (error as any).message };
     }
   }
 
@@ -224,21 +224,21 @@ export class OfflineSyncService {
     try {
       const patternData: PatternInsert = change.data;
       const newPattern = await patternService.createPattern(patternData);
-      
+
       // Mark as synced and update the temporary ID
-      await patternCache.markOfflineChangeSynced(change.id, newPattern.id);
-      
+      await patternCache.markOfflineChangeSynced(change.id, newPattern.id as unknown as string);
+
       // Log analytics
       analyticsService.logPatternAction(
-        newPattern.id, 
-        newPattern.user_id, 
+        newPattern.id as unknown as string,
+        newPattern.user_id,
         'view'
       ).catch(console.error);
 
-      return { success: true, newId: newPattern.id };
+      return { success: true, newId: newPattern.id as unknown as string };
 
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: (error as any).message };
     }
   }
 
@@ -246,7 +246,7 @@ export class OfflineSyncService {
   private async syncUpdatePattern(change: any): Promise<{ success: boolean; error?: string }> {
     try {
       const updateData: PatternUpdate = change.changes;
-      
+
       // Skip if pattern ID is temporary (not yet synced)
       if (change.pattern_id.startsWith('temp_')) {
         return { success: false, error: 'Pattern not yet synced, skipping update' };
@@ -257,10 +257,10 @@ export class OfflineSyncService {
         updateData,
         change.user_id
       );
-      
+
       // Mark as synced
       await patternCache.markOfflineChangeSynced(change.id);
-      
+
       // Log analytics
       analyticsService.logPatternAction(
         change.pattern_id,
@@ -271,7 +271,7 @@ export class OfflineSyncService {
       return { success: true };
 
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: (error as any).message };
     }
   }
 
@@ -289,7 +289,7 @@ export class OfflineSyncService {
         change.pattern_id,
         change.user_id
       );
-      
+
       // Mark as synced
       await patternCache.markOfflineChangeSynced(change.id);
 
@@ -297,19 +297,19 @@ export class OfflineSyncService {
 
     } catch (error) {
       // If pattern not found, consider it already deleted
-      if (error.message.includes('Pattern not found')) {
+      if ((error as any).message.includes('Pattern not found')) {
         await patternCache.markOfflineChangeSynced(change.id);
         return { success: true };
       }
-      
-      return { success: false, error: error.message };
+
+      return { success: false, error: (error as any).message };
     }
   }
 
   // Schedule retry for failed syncs
   private scheduleRetry(): void {
     const retryDelay = this.baseRetryDelay * Math.pow(2, this.getRetryCount());
-    
+
     const timeoutId = setTimeout(() => {
       this.syncOfflineChanges().catch(console.error);
     }, retryDelay);
@@ -367,7 +367,7 @@ export class OfflineSyncService {
     for (const patternId of patternIds) {
       try {
         const pattern = await patternService.getPatternById(patternId, userId);
-        
+
         if (pattern) {
           await patternCache.cachePattern(pattern);
           results.downloaded++;
@@ -377,7 +377,7 @@ export class OfflineSyncService {
         }
       } catch (error) {
         results.failed++;
-        results.errors.push(`Error downloading pattern ${patternId}: ${error.message}`);
+        results.errors.push(`Error downloading pattern ${patternId}: ${(error as any).message}`);
       }
     }
 
@@ -400,7 +400,7 @@ export class OfflineSyncService {
       );
 
       await patternCache.cachePatterns(patterns.data);
-      
+
       console.log(`Preloaded ${patterns.data.length} user patterns for offline access`);
       return patterns.data.length;
 
@@ -413,7 +413,7 @@ export class OfflineSyncService {
   // Clean up
   destroy(): void {
     this.stopPeriodicSync();
-    
+
     // Clear retry timeouts
     this.retryTimeouts.forEach(timeout => clearTimeout(timeout));
     this.retryTimeouts.clear();

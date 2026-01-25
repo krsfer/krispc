@@ -158,7 +158,7 @@ export default function PatternLibrary({
     // Apply date range filter
     if (dateRange.start || dateRange.end) {
       filtered = filtered.filter(p => {
-        const createdAt = new Date(p.created_at);
+        const createdAt = new Date(p.created_at as unknown as Date);
         if (dateRange.start && createdAt < dateRange.start) return false;
         if (dateRange.end && createdAt > dateRange.end) return false;
         return true;
@@ -171,9 +171,9 @@ export default function PatternLibrary({
         case 'name':
           return a.name.localeCompare(b.name);
         case 'date':
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          return new Date(b.created_at as unknown as Date).getTime() - new Date(a.created_at as unknown as Date).getTime();
         case 'popularity':
-          return (b.view_count + b.like_count) - (a.view_count + a.like_count);
+          return (Number(b.view_count) + Number(b.like_count)) - (Number(a.view_count) + Number(a.like_count));
         case 'complexity':
           return (b.difficulty_rating || 2) - (a.difficulty_rating || 2);
         default:
@@ -206,7 +206,7 @@ export default function PatternLibrary({
 
   // Handle select all
   const selectAll = useCallback(() => {
-    setSelectedPatterns(new Set(filteredPatterns.map(p => p.id)));
+    setSelectedPatterns(new Set(filteredPatterns.map(p => String(p.id))));
   }, [filteredPatterns]);
 
   // Handle clear selection
@@ -224,12 +224,12 @@ export default function PatternLibrary({
   // Handle pattern actions
   const handlePatternLoad = useCallback((pattern: PatternWithDetails) => {
     onPatternLoad?.(pattern);
-    actions.trackAction('load_pattern', { patternId: pattern.id });
+    actions.trackAction('load_pattern', { patternId: String(pattern.id) });
   }, [onPatternLoad, actions]);
 
   const handlePatternDelete = useCallback(async (patternId: string) => {
-    setPatterns(prev => prev.filter(p => p.id !== patternId));
-    setFilteredPatterns(prev => prev.filter(p => p.id !== patternId));
+    setPatterns(prev => prev.filter(p => String(p.id) !== patternId));
+    setFilteredPatterns(prev => prev.filter(p => String(p.id) !== patternId));
     setSelectedPatterns(prev => {
       const newSet = new Set(prev);
       newSet.delete(patternId);
@@ -238,8 +238,8 @@ export default function PatternLibrary({
   }, []);
 
   const handleBatchDelete = useCallback(async (patternIds: string[]) => {
-    setPatterns(prev => prev.filter(p => !patternIds.includes(p.id)));
-    setFilteredPatterns(prev => prev.filter(p => !patternIds.includes(p.id)));
+    setPatterns(prev => prev.filter(p => !patternIds.includes(String(p.id))));
+    setFilteredPatterns(prev => prev.filter(p => !patternIds.includes(String(p.id))));
     clearSelection();
   }, [clearSelection]);
 
@@ -431,18 +431,18 @@ export default function PatternLibrary({
             <>
               <div className={viewMode === 'grid' ? 'row g-3' : 'list-group'}>
                 {filteredPatterns.slice(0, page * PATTERNS_PER_PAGE).map(pattern => (
-                  <div 
-                    key={pattern.id} 
+                  <div
+                    key={String(pattern.id)} 
                     className={viewMode === 'grid' ? 'col-12 col-sm-6 col-md-4' : ''}
                   >
                     <PatternCard
                       pattern={pattern}
                       viewMode={viewMode}
-                      isSelected={selectedPatterns.has(pattern.id)}
-                      onSelect={() => togglePatternSelection(pattern.id)}
+                      isSelected={selectedPatterns.has(String(pattern.id))}
+                      onSelect={() => togglePatternSelection(String(pattern.id))}
                       onLoad={() => handlePatternLoad(pattern)}
                       onView={() => setSelectedPattern(pattern)}
-                      onDelete={() => handlePatternDelete(pattern.id)}
+                      onDelete={() => handlePatternDelete(String(pattern.id))}
                       showSelection={actions.checkFeatureAccess('batch_operations')}
                     />
                   </div>
@@ -485,7 +485,7 @@ export default function PatternLibrary({
           onClose={() => setSelectedPattern(null)}
           onLoad={() => handlePatternLoad(selectedPattern)}
           onDelete={() => {
-            handlePatternDelete(selectedPattern.id);
+            handlePatternDelete(String(selectedPattern.id));
             setSelectedPattern(null);
           }}
           onUpdate={(updatedPattern) => {

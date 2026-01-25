@@ -47,6 +47,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               password_hash: hashedPassword,
               username: email.split('@')[0],
               language_preference: 'en',
+              user_level: 'beginner',
+              reputation_score: 0,
+              total_patterns_created: 0,
             })
             .returning(['id', 'email', 'username', 'user_level'])
             .executeTakeFirstOrThrow();

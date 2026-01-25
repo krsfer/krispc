@@ -307,7 +307,7 @@ export function AdaptiveHelp({ context, className = '' }: AdaptiveHelpProps) {
             <p>{helpContent.description}</p>
             {helpContent.steps && (
               <ol>
-                {helpContent.steps.map((step, index) => (
+                {helpContent.steps.map((step: string, index: number) => (
                   <li key={index}>{step}</li>
                 ))}
               </ol>
@@ -325,7 +325,7 @@ export function AdaptiveHelp({ context, className = '' }: AdaptiveHelpProps) {
               <p className="text-muted small">{helpContent.description}</p>
               {helpContent.steps && (
                 <ol className="small">
-                  {helpContent.steps.map((step, index) => (
+                  {helpContent.steps.map((step: string, index: number) => (
                     <li key={index}>{step}</li>
                   ))}
                 </ol>

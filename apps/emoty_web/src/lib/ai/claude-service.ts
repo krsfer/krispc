@@ -115,7 +115,7 @@ export class ClaudeService {
       });
 
       const result = await this.parsePatternResponse(response, request.language);
-      
+
       // Cache successful result
       if (result.success) {
         this.setCache(cacheKey, result);
@@ -158,7 +158,7 @@ export class ClaudeService {
       });
 
       const result = await this.parseNamingResponse(response, request.language);
-      
+
       // Cache successful result
       if (result.success) {
         this.setCache(cacheKey, result);
@@ -230,7 +230,7 @@ Format de réponse:
    */
   private buildUserPatternPrompt(request: PatternGenerationRequest): string {
     const { prompt, difficulty = 'medium', size = 5, style, availablePalettes } = request;
-    
+
     const difficultyGuide = {
       simple: 'Create a simple pattern with 2-3 emoji types, clear repetition',
       medium: 'Create a moderate complexity pattern with 3-5 emoji types, interesting variation',
@@ -300,7 +300,7 @@ Format de réponse:
    */
   private buildUserNamingPrompt(request: NamingRequest): string {
     const { pattern, style = 'creative' } = request;
-    
+
     const emojis = pattern.emojis.map(cell => cell.emoji).join('');
     const uniqueEmojis = [...new Set(pattern.emojis.map(cell => cell.emoji))];
 
@@ -331,7 +331,7 @@ Format de réponse:
       }
 
       const parsed = JSON.parse(jsonMatch[0]);
-      
+
       // Validate the response structure
       if (!parsed.pattern || !parsed.pattern.emojis || !Array.isArray(parsed.pattern.emojis)) {
         throw new Error('Invalid pattern structure in response');
@@ -339,9 +339,9 @@ Format de réponse:
 
       // Validate emoji cells
       for (const cell of parsed.pattern.emojis) {
-        if (!cell.emoji || !cell.position || 
-            typeof cell.position.row !== 'number' || 
-            typeof cell.position.col !== 'number') {
+        if (!cell.emoji || !cell.position ||
+          typeof cell.position.row !== 'number' ||
+          typeof cell.position.col !== 'number') {
           throw new Error('Invalid emoji cell structure');
         }
       }
@@ -358,7 +358,7 @@ Format de réponse:
     } catch (error) {
       return {
         success: false,
-        error: `Failed to parse pattern response: ${error.message}`,
+        error: `Failed to parse pattern response: ${this.getErrorMessage(error)}`,
       };
     }
   }
@@ -382,14 +382,14 @@ Format de réponse:
       }
 
       const parsed = JSON.parse(jsonMatch[0]);
-      
+
       if (!parsed.names || !Array.isArray(parsed.names)) {
         throw new Error('Invalid names array in response');
       }
 
       return {
         success: true,
-        names: parsed.names.filter(name => typeof name === 'string' && name.length > 0),
+        names: parsed.names.filter((name: any) => typeof name === 'string' && name.length > 0),
         explanation: parsed.explanation || '',
         tokensUsed: response.usage?.input_tokens + response.usage?.output_tokens || 0,
       };
@@ -397,7 +397,7 @@ Format de réponse:
     } catch (error) {
       return {
         success: false,
-        error: `Failed to parse naming response: ${error.message}`,
+        error: `Failed to parse naming response: ${this.getErrorMessage(error)}`,
       };
     }
   }

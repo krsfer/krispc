@@ -72,11 +72,11 @@ export function ExportDialog({
 
   // Available formats based on user level
   const availableFormats: { format: ExportFormat; label: string; icon: string; requiresLevel?: string }[] = [
-    { format: 'text', label: 'Text', icon: 'bi-file-text' },
-    { format: 'png', label: 'PNG Image', icon: 'bi-file-image' },
-    { format: 'json', label: 'JSON Data', icon: 'bi-file-code' },
-    { format: 'svg', label: 'SVG Vector', icon: 'bi-file-code', requiresLevel: 'intermediate' },
-    { format: 'pdf', label: 'PDF Document', icon: 'bi-file-pdf', requiresLevel: 'advanced' },
+    { format: 'text' as ExportFormat, label: 'Text', icon: 'bi-file-text' },
+    { format: 'png' as ExportFormat, label: 'PNG Image', icon: 'bi-file-image' },
+    { format: 'json' as ExportFormat, label: 'JSON Data', icon: 'bi-file-code' },
+    { format: 'svg' as ExportFormat, label: 'SVG Vector', icon: 'bi-file-code', requiresLevel: 'intermediate' },
+    { format: 'pdf' as ExportFormat, label: 'PDF Document', icon: 'bi-file-pdf', requiresLevel: 'advanced' },
   ].filter(formatOption => {
     if (!formatOption.requiresLevel) return true;
     return actions.checkFeatureAccess(getFeatureForFormat(formatOption.format));

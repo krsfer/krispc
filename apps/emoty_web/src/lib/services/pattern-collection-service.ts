@@ -1,7 +1,7 @@
 // Pattern Collection Service for organizing patterns into folders
 // Supports hierarchical organization and collaborative collections
 
-import { sql } from 'kysely';
+import { sql, Selectable } from 'kysely';
 import { db } from '@/db/connection';
 import type {
   PatternCollectionTable,
@@ -15,13 +15,13 @@ import type {
 
 export class PatternCollectionService {
   // Create a new pattern collection
-  async createCollection(data: PatternCollectionInsert): Promise<PatternCollectionTable> {
+  async createCollection(data: PatternCollectionInsert): Promise<Selectable<PatternCollectionTable>> {
     try {
       const [collection] = await db
         .insertInto('pattern_collections')
         .values(data)
         .returning([
-          'id', 'user_id', 'name', 'description', 'color', 
+          'id', 'user_id', 'name', 'description', 'color',
           'is_public', 'pattern_count', 'created_at', 'updated_at'
         ])
         .execute();
@@ -35,7 +35,7 @@ export class PatternCollectionService {
 
   // Get collection by ID with patterns
   async getCollectionById(
-    collectionId: string, 
+    collectionId: string,
     currentUserId?: string,
     includePatterns: boolean = true
   ): Promise<PatternCollectionWithDetails | null> {
@@ -59,8 +59,8 @@ export class PatternCollectionService {
         throw new Error('Permission denied');
       }
 
-      let patterns: PatternTable[] = [];
-      let preview_patterns: PatternTable[] = [];
+      let patterns: Selectable<PatternTable>[] = [];
+      let preview_patterns: Selectable<PatternTable>[] = [];
 
       if (includePatterns) {
         // Get all patterns in collection
@@ -71,7 +71,7 @@ export class PatternCollectionService {
             'p.id', 'p.user_id', 'p.name', 'p.sequence', 'p.palette_id', 'p.size',
             'p.is_public', 'p.is_ai_generated', 'p.generation_prompt', 'p.tags',
             'p.difficulty_rating', 'p.view_count', 'p.like_count', 'p.complexity_score',
-            'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id',
+            'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id', 'p.search_vector',
             'p.deleted_at', 'p.deleted_by', 'p.created_at', 'p.updated_at'
           ])
           .where('pci.collection_id', '=', collectionId)
@@ -113,7 +113,7 @@ export class PatternCollectionService {
         .orderBy('pc.updated_at', 'desc');
 
       if (includePublic) {
-        query = query.where((eb) => 
+        query = query.where((eb) =>
           eb.or([
             eb('pc.user_id', '=', userId),
             eb('pc.is_public', '=', true)
@@ -140,7 +140,7 @@ export class PatternCollectionService {
               'p.id', 'p.user_id', 'p.name', 'p.sequence', 'p.palette_id', 'p.size',
               'p.is_public', 'p.is_ai_generated', 'p.generation_prompt', 'p.tags',
               'p.difficulty_rating', 'p.view_count', 'p.like_count', 'p.complexity_score',
-              'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id',
+              'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id', 'p.search_vector',
               'p.deleted_at', 'p.deleted_by', 'p.created_at', 'p.updated_at'
             ])
             .where('pci.collection_id', '=', collection.id)
@@ -170,7 +170,7 @@ export class PatternCollectionService {
     collectionId: string,
     updates: PatternCollectionUpdate,
     currentUserId: string
-  ): Promise<PatternCollectionTable> {
+  ): Promise<Selectable<PatternCollectionTable>> {
     try {
       // Check ownership
       const collection = await db
@@ -408,7 +408,7 @@ export class PatternCollectionService {
         for (const patternId of patternIds) {
           try {
             const pattern = patterns.find(p => p.id === patternId);
-            
+
             if (!pattern) {
               results.errors.push(`Pattern ${patternId} not found`);
               continue;
@@ -438,7 +438,7 @@ export class PatternCollectionService {
             results.added.push(patternId);
 
           } catch (error) {
-            results.errors.push(`Error adding pattern ${patternId}: ${error.message}`);
+            results.errors.push(`Error adding pattern ${patternId}: ${(error as any).message}`);
           }
         }
 
@@ -487,7 +487,7 @@ export class PatternCollectionService {
               'p.id', 'p.user_id', 'p.name', 'p.sequence', 'p.palette_id', 'p.size',
               'p.is_public', 'p.is_ai_generated', 'p.generation_prompt', 'p.tags',
               'p.difficulty_rating', 'p.view_count', 'p.like_count', 'p.complexity_score',
-              'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id',
+              'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id', 'p.search_vector',
               'p.deleted_at', 'p.deleted_by', 'p.created_at', 'p.updated_at'
             ])
             .where('pci.collection_id', '=', collection.id)
@@ -532,7 +532,7 @@ export class PatternCollectionService {
 
       // Text search
       if (query.trim()) {
-        searchQuery = searchQuery.where((eb) => 
+        searchQuery = searchQuery.where((eb) =>
           eb.or([
             eb('pc.name', 'ilike', `%${query}%`),
             eb('pc.description', 'ilike', `%${query}%`)
@@ -571,7 +571,7 @@ export class PatternCollectionService {
               'p.id', 'p.user_id', 'p.name', 'p.sequence', 'p.palette_id', 'p.size',
               'p.is_public', 'p.is_ai_generated', 'p.generation_prompt', 'p.tags',
               'p.difficulty_rating', 'p.view_count', 'p.like_count', 'p.complexity_score',
-              'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id',
+              'p.estimated_time_minutes', 'p.version', 'p.parent_pattern_id', 'p.search_vector',
               'p.deleted_at', 'p.deleted_by', 'p.created_at', 'p.updated_at'
             ])
             .where('pci.collection_id', '=', collection.id)

@@ -172,8 +172,8 @@ export function ShareModal({ isOpen, onClose, pattern, userId }: ShareModalProps
           {[
             { id: 'options', label: t('sharing', 'privacySettings') },
             { id: 'link', label: t('sharing', 'shareLink') },
-            { id: 'social', label: t('sharing.platforms', 'socialMedia') },
-            { id: 'embed', label: t('sharing.platforms', 'embed') }
+            { id: 'social', label: 'Social Media' },
+            { id: 'embed', label: 'Embed' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -387,7 +387,7 @@ export function ShareModal({ isOpen, onClose, pattern, userId }: ShareModalProps
           {activeTab === 'social' && socialPlatforms.length > 0 && (
             <div className="space-y-6">
               <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                {t('sharing.platforms', 'socialMedia')}
+                Social Media
               </h3>
               
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -413,7 +413,7 @@ export function ShareModal({ isOpen, onClose, pattern, userId }: ShareModalProps
                     className="p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 flex flex-col items-center gap-2 transition-colors"
                   >
                     <span className="text-2xl">📧</span>
-                    <span className="text-sm font-medium">{t('sharing.platforms', 'email')}</span>
+                    <span className="text-sm font-medium">Email</span>
                   </button>
                 )}
               </div>
@@ -423,7 +423,7 @@ export function ShareModal({ isOpen, onClose, pattern, userId }: ShareModalProps
           {activeTab === 'embed' && shareResult?.embedCode && (
             <div className="space-y-6">
               <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                {t('sharing.platforms', 'embed')}
+                Embed
               </h3>
               
               <div>

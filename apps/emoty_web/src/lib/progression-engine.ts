@@ -110,15 +110,15 @@ export class ProgressionEngine {
   static canAccessFeature(userLevel: UserLevel, featureName: string): boolean {
     const levels: UserLevel[] = ['beginner', 'intermediate', 'advanced', 'expert'];
     const userLevelIndex = levels.indexOf(userLevel);
-    
+
     // Check all levels up to and including user's current level
     for (let i = 0; i <= userLevelIndex; i++) {
       const levelConfig = PROGRESSION_CONFIG[levels[i]];
-      if (levelConfig.features.includes(featureName)) {
+      if ((levelConfig.features as readonly string[]).includes(featureName)) {
         return true;
       }
     }
-    
+
     return false;
   }
 
@@ -129,12 +129,12 @@ export class ProgressionEngine {
     const levels: UserLevel[] = ['beginner', 'intermediate', 'advanced', 'expert'];
     const userLevelIndex = levels.indexOf(userLevel);
     const allFeatures: string[] = [];
-    
+
     // Collect all features from beginner up to user's level
     for (let i = 0; i <= userLevelIndex; i++) {
       allFeatures.push(...PROGRESSION_CONFIG[levels[i]].features);
     }
-    
+
     return allFeatures;
   }
 
@@ -202,7 +202,7 @@ export class ProgressionEngine {
         requirements: {
           reputation: { current: user.reputation_score, required: 100, met: true },
           patterns: { current: user.total_patterns_created, required: 0, met: true },
-          achievements: { current: parseInt(achievementCount?.count || '0'), required: 0, met: true },
+          achievements: { current: parseInt(String(achievementCount?.count || '0')), required: 0, met: true },
         },
         readyForPromotion: false,
       };
@@ -212,51 +212,54 @@ export class ProgressionEngine {
     const nextLevel = levels[levels.indexOf(currentLevel) + 1];
 
     // Calculate requirements
+    const nextReqs = nextLevelRequirements as any;
+
     const requirements = {
       reputation: {
         current: user.reputation_score,
-        required: nextLevelRequirements.reputation,
-        met: user.reputation_score >= nextLevelRequirements.reputation,
+        required: nextReqs.reputation,
+        met: user.reputation_score >= nextReqs.reputation,
       },
       patterns: {
         current: user.total_patterns_created,
-        required: nextLevelRequirements.patterns,
-        met: user.total_patterns_created >= nextLevelRequirements.patterns,
+        required: nextReqs.patterns,
+        met: user.total_patterns_created >= nextReqs.patterns,
       },
       achievements: {
-        current: parseInt(achievementCount?.count || '0'),
-        required: nextLevelRequirements.achievements,
-        met: parseInt(achievementCount?.count || '0') >= nextLevelRequirements.achievements,
+        current: parseInt(String(achievementCount?.count || '0')),
+        required: nextReqs.achievements,
+        met: parseInt(String(achievementCount?.count || '0')) >= nextReqs.achievements,
       },
-      ...(nextLevelRequirements.aiGenerations && {
+      ...(nextReqs.aiGenerations && {
         aiGenerations: {
-          current: parseInt(aiPatternsCount?.count || '0'),
-          required: nextLevelRequirements.aiGenerations,
-          met: parseInt(aiPatternsCount?.count || '0') >= nextLevelRequirements.aiGenerations,
+          current: parseInt(String(aiPatternsCount?.count || '0')),
+          required: nextReqs.aiGenerations,
+          met: parseInt(String(aiPatternsCount?.count || '0')) >= nextReqs.aiGenerations,
         },
       }),
-      ...(nextLevelRequirements.sharedPatterns && {
+      ...(nextReqs.sharedPatterns && {
         sharedPatterns: {
-          current: parseInt(sharedPatternsCount?.count || '0'),
-          required: nextLevelRequirements.sharedPatterns,
-          met: parseInt(sharedPatternsCount?.count || '0') >= nextLevelRequirements.sharedPatterns,
+          current: parseInt(String(sharedPatternsCount?.count || '0')),
+          required: nextReqs.sharedPatterns,
+          met: parseInt(String(sharedPatternsCount?.count || '0')) >= nextReqs.sharedPatterns,
         },
       }),
-      ...(nextLevelRequirements.communityHelp && {
+      ...(nextReqs.communityHelp && {
         communityHelp: {
           current: 0, // TODO: Implement community help tracking
-          required: nextLevelRequirements.communityHelp,
+          required: nextReqs.communityHelp,
           met: false,
         },
       }),
     };
 
     // Check if all requirements are met
-    const readyForPromotion = Object.values(requirements).every((req) => req.met);
+    const requirementsVals = Object.values(requirements) as { met: boolean }[];
+    const readyForPromotion = requirementsVals.every((req) => req.met);
 
     // Calculate progress percentage based on overall completion
-    const completedRequirements = Object.values(requirements).filter((req) => req.met).length;
-    const totalRequirements = Object.values(requirements).length;
+    const completedRequirements = requirementsVals.filter((req) => req.met).length;
+    const totalRequirements = requirementsVals.length;
     const progressPercentage = Math.round((completedRequirements / totalRequirements) * 100);
 
     return {
@@ -300,7 +303,7 @@ export class ProgressionEngine {
    */
   static async promoteUser(userId: string): Promise<UserLevel | null> {
     const progression = await this.calculateProgression(userId);
-    
+
     if (!progression.readyForPromotion || !progression.nextLevel) {
       return null;
     }
@@ -376,13 +379,13 @@ export class ProgressionEngine {
   } {
     const levels: UserLevel[] = ['beginner', 'intermediate', 'advanced', 'expert'];
     const currentIndex = levels.indexOf(userLevel);
-    
+
     if (currentIndex === levels.length - 1) {
       return { nextLevel: null, newFeatures: [] };
     }
 
     const nextLevel = levels[currentIndex + 1];
-    const newFeatures = PROGRESSION_CONFIG[nextLevel].features;
+    const newFeatures = [...PROGRESSION_CONFIG[nextLevel].features];
 
     return { nextLevel, newFeatures };
   }

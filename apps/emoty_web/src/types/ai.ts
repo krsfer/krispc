@@ -4,24 +4,24 @@
 
 export type UserLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 export type Language = 'en' | 'fr';
-export type PatternTheme = 
-  | 'nature' 
-  | 'emotions' 
-  | 'food' 
-  | 'travel' 
-  | 'animals' 
-  | 'abstract' 
+export type PatternTheme =
+  | 'nature'
+  | 'emotions'
+  | 'food'
+  | 'travel'
+  | 'animals'
+  | 'abstract'
   | 'seasonal'
   | 'celebration'
   | 'tech'
   | 'sports';
 
-export type PatternMood = 
-  | 'happy' 
-  | 'calm' 
-  | 'energetic' 
-  | 'romantic' 
-  | 'mysterious' 
+export type PatternMood =
+  | 'happy'
+  | 'calm'
+  | 'energetic'
+  | 'romantic'
+  | 'mysterious'
   | 'playful'
   | 'elegant'
   | 'bold'
@@ -54,6 +54,11 @@ export interface GeneratedPattern {
     reason?: string;
     prompt?: string;
     confidence?: number; // 0-100
+    userLevel?: UserLevel;
+    language?: Language;
+    generatedAt?: Date;
+    requestTheme?: PatternTheme;
+    requestMood?: PatternMood;
   };
 }
 
@@ -89,7 +94,7 @@ export interface VoiceCommandConfig {
   continuous: boolean;
   interimResults: boolean;
   maxAlternatives: number;
-  grammars?: SpeechGrammarList;
+  grammars?: any; // SpeechGrammarList
 }
 
 export interface EmotyBotMessage {
@@ -131,7 +136,7 @@ export interface EmotyBotSession {
 }
 
 // Voice command types
-export type VoiceCommandType = 
+export type VoiceCommandType =
   | 'generate_pattern'
   | 'change_theme'
   | 'change_mood'

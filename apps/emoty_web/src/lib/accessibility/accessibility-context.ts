@@ -476,9 +476,9 @@ export class AccessibilityManager {
    */
   private playActivationSound(): void {
     if (!this.state.capabilities.audioContextSupported) return;
-    
+
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new ((window as any).AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       

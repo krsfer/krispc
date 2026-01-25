@@ -1,6 +1,10 @@
 // Export system for Emoty Web
 // Comprehensive export functionality for patterns
 
+import { ExportService } from './export-service';
+import { BatchProcessor } from './batch-processor';
+import type { ExportFormat, ExportOptions } from '@/types/export';
+
 export { ExportService } from './export-service';
 export { ImageGenerator } from './image-generator';
 export { ShareCodeService, PatternCompressor } from './share-codes';
@@ -68,9 +72,9 @@ export const ExportUtils = {
     }
 
     if (options.size === 'custom') {
-      if (!options.dimensions || 
-          options.dimensions.width <= 0 || 
-          options.dimensions.height <= 0) {
+      if (!options.dimensions ||
+        options.dimensions.width <= 0 ||
+        options.dimensions.height <= 0) {
         return { valid: false, error: 'Custom dimensions must be positive numbers' };
       }
 
@@ -107,11 +111,11 @@ export const ExportUtils = {
    */
   formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 B';
-    
+
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   },
 };

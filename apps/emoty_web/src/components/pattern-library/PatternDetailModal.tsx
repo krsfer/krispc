@@ -34,7 +34,7 @@ export default function PatternDetailModal({
   // Parse pattern sequence to grid
   const patternGrid = React.useMemo(() => {
     try {
-      const sequence = JSON.parse(pattern.sequence);
+      const sequence = pattern.sequence.emojis.map(cell => cell.emoji);
       const size = pattern.size || 8;
       const grid: GridCell[][] = [];
       
@@ -303,11 +303,11 @@ export default function PatternDetailModal({
                   <div className="pattern-stats mt-3">
                     <div className="row text-center">
                       <div className="col-4">
-                        <div className="stat-value h5 mb-1">{pattern.view_count}</div>
+                        <div className="stat-value h5 mb-1">{Number(pattern.view_count)}</div>
                         <div className="stat-label text-muted small">Views</div>
                       </div>
                       <div className="col-4">
-                        <div className="stat-value h5 mb-1">{pattern.like_count}</div>
+                        <div className="stat-value h5 mb-1">{Number(pattern.like_count)}</div>
                         <div className="stat-label text-muted small">Likes</div>
                       </div>
                       <div className="col-4">
@@ -323,13 +323,13 @@ export default function PatternDetailModal({
                   {/* Metadata */}
                   <div className="pattern-metadata mb-3">
                     <div className="mb-2">
-                      <strong>Created:</strong> {formatDate(pattern.created_at)}
+                      <strong>Created:</strong> {formatDate(pattern.created_at as unknown as Date)}
                     </div>
                     <div className="mb-2">
                       <strong>Size:</strong> {pattern.size}x{pattern.size} grid
                     </div>
                     <div className="mb-2">
-                      <strong>Emojis:</strong> {JSON.parse(pattern.sequence).length} total
+                      <strong>Emojis:</strong> {pattern.sequence.emojis.length} total
                     </div>
                     {pattern.user_username && (
                       <div className="mb-2">

@@ -3,11 +3,11 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { voiceCommandService } from '@/lib/ai/voice-commands';
-import type { 
-  ParsedVoiceCommand, 
-  VoiceCommandError, 
+import { VoiceCommandError } from '@/types/ai';
+import type {
+  ParsedVoiceCommand,
   Language,
-  VoiceCommandConfig 
+  VoiceCommandConfig
 } from '@/types/ai';
 
 interface VoiceCommandState {
@@ -55,7 +55,7 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
    */
   const handleVoiceCommand = useCallback((command: ParsedVoiceCommand) => {
     console.log('Voice command received:', command);
-    
+
     // Add to history
     commandHistoryRef.current.unshift(command);
     if (commandHistoryRef.current.length > 10) {
@@ -71,59 +71,59 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
 
     // Execute command
     const currentHandlers = handlersRef.current;
-    
+
     try {
       switch (command.type) {
         case 'generate_pattern':
           currentHandlers.onGeneratePattern?.(command.parameters);
           break;
-          
+
         case 'change_theme':
           if (command.parameters.theme) {
             currentHandlers.onChangeTheme?.(command.parameters.theme);
           }
           break;
-          
+
         case 'change_mood':
           if (command.parameters.mood) {
             currentHandlers.onChangeMood?.(command.parameters.mood);
           }
           break;
-          
+
         case 'change_size':
           if (command.parameters.size) {
             currentHandlers.onChangeSize?.(command.parameters.size);
           }
           break;
-          
+
         case 'save_pattern':
           currentHandlers.onSavePattern?.(command.parameters.patternName);
           break;
-          
+
         case 'export_pattern':
           currentHandlers.onExportPattern?.(command.parameters.format);
           break;
-          
+
         case 'help':
           currentHandlers.onHelp?.();
           break;
-          
+
         case 'clear_canvas':
           currentHandlers.onClearCanvas?.();
           break;
-          
+
         case 'undo':
           currentHandlers.onUndo?.();
           break;
-          
+
         case 'redo':
           currentHandlers.onRedo?.();
           break;
-          
+
         case 'stop_listening':
           stopListening();
           break;
-          
+
         default:
           console.warn('Unhandled voice command type:', command.type);
       }
@@ -145,7 +145,7 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
    */
   const handleVoiceError = useCallback((error: VoiceCommandError) => {
     console.error('Voice command error:', error);
-    
+
     setState(prev => ({
       ...prev,
       error,
@@ -195,7 +195,7 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
     try {
       // Request microphone permission first
       const permission = await requestMicrophonePermission();
-      
+
       setState(prev => ({
         ...prev,
         permissionGranted: permission,
@@ -212,12 +212,12 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
 
       voiceCommandService.startListening(config);
       return true;
-      
+
     } catch (error: any) {
       setState(prev => ({
         ...prev,
-        error: error instanceof VoiceCommandError ? error : 
-               new VoiceCommandError('Failed to start listening', 'RECOGNITION_ERROR', error)
+        error: error instanceof VoiceCommandError ? error :
+          new VoiceCommandError('Failed to start listening', 'RECOGNITION_ERROR', error)
       }));
       return false;
     }
@@ -302,7 +302,7 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
     lastCommand: state.lastCommand,
     error: state.error,
     permissionGranted: state.permissionGranted,
-    
+
     // Actions
     startListening,
     stopListening,
@@ -310,11 +310,11 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
     setLanguage,
     clearError,
     clearLastCommand,
-    
+
     // Helpers
     getCommandHistory,
     clearCommandHistory,
-    
+
     // Status helpers
     canListen: state.isSupported && state.permissionGranted !== false,
     needsPermission: state.isSupported && state.permissionGranted === null,

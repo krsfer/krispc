@@ -2,14 +2,16 @@ import { jsPDF } from 'jspdf';
 import JSZip from 'jszip';
 import { v4 as uuidv4 } from 'uuid';
 import type { PatternState } from '@/types/pattern';
+import {
+  EXPORT_SIZE_PRESETS,
+  EXPORT_QUALITY_PRESETS,
+} from '@/types/export';
 import type {
   ExportFormat,
   ExportOptions,
   ExportResult,
   ExportDimensions,
   ExportMetadata,
-  EXPORT_SIZE_PRESETS,
-  EXPORT_QUALITY_PRESETS,
 } from '@/types/export';
 import { ImageGenerator } from './image-generator';
 
@@ -29,12 +31,12 @@ export class ExportService {
   ): Promise<ExportResult> {
     try {
       const startTime = Date.now();
-      
+
       // Validate options
       this.validateExportOptions(options);
-      
+
       let result: ExportResult;
-      
+
       switch (options.format) {
         case 'text':
           result = await this.exportAsText(pattern, options);
@@ -86,7 +88,7 @@ export class ExportService {
     options: ExportOptions
   ): Promise<ExportResult> {
     let textContent = '';
-    
+
     switch (options.textFormat || 'plain') {
       case 'plain':
         textContent = pattern.sequence.join('');
@@ -97,7 +99,7 @@ export class ExportService {
           });
         }
         break;
-        
+
       case 'markdown':
         textContent = `# ${pattern.name || 'Emoji Pattern'}\n\n`;
         textContent += `**Sequence:** ${pattern.sequence.join('')}\n\n`;
@@ -117,7 +119,7 @@ export class ExportService {
           textContent += `- AI Generated: ${pattern.metadata.aiGenerated ? 'Yes' : 'No'}\n`;
         }
         break;
-        
+
       case 'csv':
         textContent = 'Position,Emoji,Unicode\n';
         pattern.sequence.forEach((emoji, index) => {
@@ -148,9 +150,9 @@ export class ExportService {
     format: 'png' | 'svg'
   ): Promise<ExportResult> {
     const dimensions = this.getDimensions(options);
-    
+
     let data: Blob;
-    
+
     if (format === 'png') {
       data = await this.imageGenerator.generatePNG(pattern, {
         ...options,
@@ -202,7 +204,7 @@ export class ExportService {
     // Generate pattern image and add to PDF
     const imageSize = Math.min(contentWidth, contentHeight - 40);
     const imageDimensions = { width: imageSize * 2.83, height: imageSize * 2.83 }; // Convert mm to pixels roughly
-    
+
     const imageBlob = await this.imageGenerator.generatePNG(pattern, {
       ...options,
       dimensions: imageDimensions,
@@ -211,7 +213,7 @@ export class ExportService {
 
     // Convert blob to data URL
     const imageDataUrl = await this.blobToDataURL(imageBlob);
-    
+
     // Add image to PDF
     const imageX = (pageWidth - imageSize) / 2;
     const imageY = margin + 20;
@@ -220,30 +222,30 @@ export class ExportService {
     // Add pattern details
     let yPosition = imageY + imageSize + 20;
     pdf.setFontSize(12);
-    
+
     pdf.text('Pattern Sequence:', margin, yPosition);
     yPosition += 8;
-    
+
     // Add emojis in rows
     const emojiSize = 12;
     const emojisPerRow = Math.floor(contentWidth / emojiSize);
     let currentRow = 0;
-    
+
     pattern.sequence.forEach((emoji, index) => {
       const xPos = margin + (index % emojisPerRow) * emojiSize;
       const yPos = yPosition + currentRow * emojiSize;
-      
+
       if (index % emojisPerRow === 0 && index > 0) {
         currentRow++;
       }
-      
+
       // Check if we need a new page
       if (yPos > pageHeight - margin - emojiSize) {
         pdf.addPage();
         currentRow = 0;
         yPosition = margin;
       }
-      
+
       pdf.setFontSize(emojiSize);
       pdf.text(emoji, xPos, yPos + currentRow * emojiSize);
     });
@@ -251,23 +253,23 @@ export class ExportService {
     // Add metadata if requested
     if (options.includeMetadata && pattern.metadata) {
       yPosition += (currentRow + 1) * emojiSize + 10;
-      
+
       if (yPosition > pageHeight - margin - 40) {
         pdf.addPage();
         yPosition = margin;
       }
-      
+
       pdf.setFontSize(10);
       pdf.text('Pattern Details:', margin, yPosition);
       yPosition += 6;
-      
+
       const details = [
         `Created: ${pattern.createdAt?.toDateString() || 'Unknown'}`,
         `Complexity: ${pattern.metadata.complexity}`,
         `AI Generated: ${pattern.metadata.aiGenerated ? 'Yes' : 'No'}`,
         `Size: ${pattern.patternSize}x${pattern.patternSize}`,
       ];
-      
+
       details.forEach(detail => {
         pdf.text(detail, margin, yPosition);
         yPosition += 5;
@@ -373,7 +375,7 @@ export class ExportService {
     const name = pattern.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'pattern';
     const timestamp = new Date().toISOString().slice(0, 10);
     const extension = this.getFileExtension(format, subtype);
-    
+
     return `${name}_${timestamp}.${extension}`;
   }
 

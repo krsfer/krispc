@@ -33,8 +33,7 @@ urlpatterns = [
     # Documentation
     path("docs/mcp/", krispc.views.MCPDocsView.as_view(), name="mcp-docs"),
 
-    # Proxy to Emoty Web (Next.js)
-    re_path(r"^emo(?:/(?P<path>.*))?$", proxy_to_emoty),
+
     # Handle Next.js fonts that might request root path
     re_path(r"^(?P<path>__nextjs_font/.*)$", proxy_to_emoty),
 
@@ -53,6 +52,9 @@ urlpatterns += i18n_patterns(
     
     path('plexus/', include('plexus.urls')),
     path('analytics/', include('analytics.urls')),
+
+    # Proxy to Emoty Web (Next.js)
+    re_path(r"^emo(?:/(?P<path>.*))?$", proxy_to_emoty),
     path("login/", auth_views.LoginView.as_view(template_name="plexus/registration/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     

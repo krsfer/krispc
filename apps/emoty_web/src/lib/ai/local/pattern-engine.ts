@@ -37,9 +37,9 @@ export interface PatternGenerationResult {
  * Core pattern generation engine using rule-based algorithms
  */
 export class LocalPatternEngine {
-  private conceptWords: Map<string, string[]>;
-  private emotionMappings: Map<EmotionType, string[]>;
-  private complexityRules: Map<string, PatternComplexityRule>;
+  private conceptWords!: Map<string, string[]>;
+  private emotionMappings!: Map<EmotionType, string[]>;
+  private complexityRules!: Map<string, PatternComplexityRule>;
 
   constructor() {
     this.initializeConceptMappings();
@@ -52,23 +52,23 @@ export class LocalPatternEngine {
    */
   async generatePatterns(request: PatternGenerationRequest): Promise<PatternGenerationResult> {
     const startTime = performance.now();
-    
+
     try {
       // Analyze the request and determine generation strategy
       const strategy = this.determineGenerationStrategy(request);
-      
+
       // Generate primary pattern
       const primaryPattern = await this.generatePrimaryPattern(request, strategy);
-      
+
       // Generate alternatives
       const alternatives = await this.generateAlternatives(request, strategy, 2);
-      
+
       // Calculate confidence and quality metrics
       const confidence = this.calculateConfidence(primaryPattern, request);
       const qualityScore = this.calculateQualityScore(primaryPattern);
-      
+
       const processingTime = performance.now() - startTime;
-      
+
       return {
         pattern: primaryPattern,
         rationale: this.generateRationale(primaryPattern, request),
@@ -82,7 +82,7 @@ export class LocalPatternEngine {
       };
     } catch (error) {
       console.error('Pattern generation failed:', error);
-      
+
       // Fallback to simple random selection
       const fallbackPattern = this.generateFallbackPattern(request);
       return {
@@ -108,7 +108,7 @@ export class LocalPatternEngine {
   generateApiCompatibleResponse(request: PatternGenerationRequest): PatternResponse {
     // This matches the expected PatternResponse interface for seamless fallback
     const result = this.generatePatterns(request);
-    
+
     return result.then(res => ({
       patterns: [
         {
@@ -177,7 +177,7 @@ export class LocalPatternEngine {
    * Generate primary pattern using selected strategy
    */
   private async generatePrimaryPattern(
-    request: PatternGenerationRequest, 
+    request: PatternGenerationRequest,
     strategy: GenerationStrategy
   ): Promise<PatternState> {
     const complexity = request.complexity || 'moderate';
@@ -190,7 +190,7 @@ export class LocalPatternEngine {
       case 'emotion-based':
         selectedEmojis = this.generateEmotionBasedSequence(request.emotion!, targetSize, request);
         break;
-      
+
       case 'theme-based':
         selectedEmojis = this.generateThemeBasedSequence(
           request.theme || request.conceptPrompt!,
@@ -198,15 +198,15 @@ export class LocalPatternEngine {
           request
         );
         break;
-      
+
       case 'color-family':
         selectedEmojis = this.generateColorFamilySequence(request.colorFamily!, targetSize, request);
         break;
-      
+
       case 'complexity-first':
         selectedEmojis = this.generateComplexityFirstSequence(complexity, targetSize, request);
         break;
-      
+
       default:
         selectedEmojis = this.generateHarmoniousRandomSequence(targetSize, request);
     }
@@ -243,7 +243,7 @@ export class LocalPatternEngine {
   ): string[] {
     const emotionEmojis = this.emotionMappings.get(emotion) || [];
     const availableEmojis = this.filterAvailableEmojis(emotionEmojis, request);
-    
+
     if (availableEmojis.length === 0) {
       return this.generateFallbackSequence(targetSize, request);
     }
@@ -280,7 +280,7 @@ export class LocalPatternEngine {
 
       compatibilityScores.sort((a, b) => b.score - a.score);
       const selected = compatibilityScores[0]?.emoji || candidates[0];
-      
+
       sequence.push(selected);
       used.add(selected);
     }
@@ -303,7 +303,7 @@ export class LocalPatternEngine {
     for (const [emoji, concept] of Object.entries(EMOJI_CONCEPTS)) {
       const keywordsText = `${concept.keywords.en} ${concept.keywords.fr}`.toLowerCase();
       const categoryText = concept.categories.map(c => `${c.primary} ${c.secondary || ''}`).join(' ');
-      
+
       const relevanceScore = themeKeywords.reduce((score, keyword) => {
         if (keywordsText.includes(keyword) || categoryText.includes(keyword)) {
           return score + 1;
@@ -317,7 +317,7 @@ export class LocalPatternEngine {
     }
 
     const availableEmojis = this.filterAvailableEmojis(candidateEmojis, request);
-    
+
     if (availableEmojis.length === 0) {
       return this.generateFallbackSequence(targetSize, request);
     }
@@ -335,7 +335,7 @@ export class LocalPatternEngine {
   ): string[] {
     const colorEmojis = emojiRelationshipEngine.findByColorFamily(colorFamily);
     const availableEmojis = this.filterAvailableEmojis(colorEmojis, request);
-    
+
     if (availableEmojis.length === 0) {
       return this.generateFallbackSequence(targetSize, request);
     }
@@ -368,18 +368,18 @@ export class LocalPatternEngine {
     while (sequence.length < targetSize && remaining.length > used.size) {
       const lastEmoji = sequence[sequence.length - 1];
       const unusedCandidates = remaining.filter(emoji => !used.has(emoji));
-      
+
       const scored = unusedCandidates.map(emoji => ({
         emoji,
         score: emojiRelationshipEngine.calculateCompatibility(lastEmoji, emoji)
       }));
 
       scored.sort((a, b) => b.score - a.score);
-      
+
       // Add some randomness to avoid predictable patterns
       const topCandidates = scored.slice(0, Math.min(3, scored.length));
       const selected = topCandidates[Math.floor(Math.random() * topCandidates.length)];
-      
+
       if (selected) {
         sequence.push(selected.emoji);
         used.add(selected.emoji);
@@ -396,21 +396,21 @@ export class LocalPatternEngine {
     if (sequence.length < 2) return sequence;
 
     const optimized = [...sequence];
-    
+
     // Remove conflicts
     for (let i = 0; i < optimized.length - 1; i++) {
       const emoji1 = optimized[i];
       const emoji2 = optimized[i + 1];
-      
+
       const concept1 = EMOJI_CONCEPTS[emoji1];
       if (concept1?.visualHarmony.conflicts.includes(emoji2)) {
         // Find a better replacement for emoji2
         const alternatives = this.findAlternatives(emoji2, request);
-        const betterOption = alternatives.find(alt => 
-          !concept1.visualHarmony.conflicts.includes(alt) && 
+        const betterOption = alternatives.find(alt =>
+          !concept1.visualHarmony.conflicts.includes(alt) &&
           !optimized.includes(alt)
         );
-        
+
         if (betterOption) {
           optimized[i + 1] = betterOption;
         }
@@ -428,10 +428,10 @@ export class LocalPatternEngine {
     if (!concept) return [];
 
     const alternatives: string[] = [];
-    
+
     // Add relationship-based alternatives
     alternatives.push(...concept.relationships);
-    
+
     // Add category-based alternatives
     const categoryMatches = emojiRelationshipEngine.findCategoryMatches(
       emoji,
@@ -447,12 +447,12 @@ export class LocalPatternEngine {
    */
   private filterAvailableEmojis(emojis: string[], request: PatternGenerationRequest): string[] {
     let filtered = emojis.filter(emoji => EMOJI_CONCEPTS[emoji]); // Only known emojis
-    
+
     // Apply exclusions
     if (request.excludeEmojis) {
       filtered = filtered.filter(emoji => !request.excludeEmojis!.includes(emoji));
     }
-    
+
     // Ensure child-safe content
     filtered = filtered.filter(emoji => {
       const concept = EMOJI_CONCEPTS[emoji];
@@ -461,7 +461,7 @@ export class LocalPatternEngine {
 
     // Add inclusions if specified
     if (request.includeEmojis) {
-      const validInclusions = request.includeEmojis.filter(emoji => 
+      const validInclusions = request.includeEmojis.filter(emoji =>
         EMOJI_CONCEPTS[emoji] && !filtered.includes(emoji)
       );
       filtered.push(...validInclusions);
@@ -488,11 +488,11 @@ export class LocalPatternEngine {
   private generateFallbackSequence(targetSize: number, request: PatternGenerationRequest): string[] {
     const childSafeEmojis = emojiRelationshipEngine.getChildSafeEmojis();
     const availableEmojis = this.filterAvailableEmojis(childSafeEmojis, request);
-    
+
     // Simple random selection with deduplication
     const selected: string[] = [];
     const shuffled = [...availableEmojis].sort(() => Math.random() - 0.5);
-    
+
     for (let i = 0; i < Math.min(targetSize, shuffled.length); i++) {
       selected.push(shuffled[i]);
     }
@@ -506,11 +506,11 @@ export class LocalPatternEngine {
   private generatePatternName(sequence: string[], request: PatternGenerationRequest): string {
     // This will be expanded by the name generator
     const language = request.language || 'en';
-    
+
     // Simple fallback naming
     const emojiCount = sequence.length;
     const baseName = language === 'fr' ? 'Motif' : 'Pattern';
-    
+
     return `${baseName} ${sequence.slice(0, 3).join('')}`;
   }
 
@@ -520,7 +520,7 @@ export class LocalPatternEngine {
   private generatePatternDescription(sequence: string[], request: PatternGenerationRequest): string {
     const language = request.language || 'en';
     const emojiCount = sequence.length;
-    
+
     if (language === 'fr') {
       return `Motif concentrique avec ${emojiCount} éléments uniques créé localement`;
     } else {
@@ -533,13 +533,13 @@ export class LocalPatternEngine {
    */
   private generatePatternTags(sequence: string[], request: PatternGenerationRequest): string[] {
     const tags: Set<string> = new Set();
-    
+
     // Add theme-based tags
     if (request.theme) tags.add(request.theme);
     if (request.emotion) tags.add(request.emotion);
     if (request.colorFamily) tags.add(request.colorFamily);
     if (request.complexity) tags.add(request.complexity);
-    
+
     // Add content-based tags
     for (const emoji of sequence) {
       const concept = EMOJI_CONCEPTS[emoji];
@@ -553,7 +553,7 @@ export class LocalPatternEngine {
 
     tags.add('local-generated');
     tags.add('offline');
-    
+
     return Array.from(tags).slice(0, 8); // Limit to 8 tags
   }
 
@@ -562,9 +562,9 @@ export class LocalPatternEngine {
    */
   private generateRationale(pattern: PatternState, request: PatternGenerationRequest): LocalizedString {
     const language = request.language || 'en';
-    
+
     let rationale = '';
-    
+
     if (language === 'fr') {
       rationale = `Ce motif a été créé en utilisant des algorithmes locaux basés sur`;
       if (request.emotion) rationale += ` l'émotion "${request.emotion}",`;
@@ -582,7 +582,7 @@ export class LocalPatternEngine {
     }
 
     return {
-      en: language === 'en' ? rationale : 
+      en: language === 'en' ? rationale :
         `This pattern was created using local algorithms with ${pattern.metadata?.complexity || 'moderate'} complexity. Emojis were selected for visual harmony and thematic coherence.`,
       fr: language === 'fr' ? rationale :
         `Ce motif a été créé en utilisant des algorithmes locaux avec un niveau de complexité ${pattern.metadata?.complexity || 'modéré'}. Les emojis ont été sélectionnés pour leur harmonie visuelle.`
@@ -594,14 +594,14 @@ export class LocalPatternEngine {
    */
   private calculateConfidence(pattern: PatternState, request: PatternGenerationRequest): number {
     let confidence = 0.7; // Base confidence for local generation
-    
+
     // Boost for explicit requests
     if (request.emotion || request.theme || request.colorFamily) confidence += 0.1;
-    
+
     // Boost for good sequence length
     const sequenceLength = pattern.sequence.length;
     if (sequenceLength >= 3 && sequenceLength <= 8) confidence += 0.1;
-    
+
     // Check visual harmony
     let harmonyScore = 0;
     for (let i = 0; i < pattern.sequence.length - 1; i++) {
@@ -611,12 +611,12 @@ export class LocalPatternEngine {
       );
       harmonyScore += compatibility;
     }
-    
+
     if (pattern.sequence.length > 1) {
       const avgHarmony = harmonyScore / (pattern.sequence.length - 1);
       confidence += avgHarmony * 0.15;
     }
-    
+
     return Math.min(0.95, Math.max(0.5, confidence));
   }
 
@@ -625,25 +625,25 @@ export class LocalPatternEngine {
    */
   private calculateQualityScore(pattern: PatternState): number {
     let score = 0.7; // Base quality
-    
+
     // Factor in sequence diversity
     const uniqueEmojis = new Set(pattern.sequence).size;
     const diversity = uniqueEmojis / pattern.sequence.length;
     score += diversity * 0.1;
-    
+
     // Factor in complexity appropriateness
     const complexity = pattern.metadata?.complexity || 'moderate';
     const expectedSize = this.getTargetSequenceSize(complexity);
     const sizeDiff = Math.abs(pattern.sequence.length - expectedSize);
     if (sizeDiff <= 1) score += 0.1;
-    
+
     // Child safety compliance
     const allChildSafe = pattern.sequence.every(emoji => {
       const concept = EMOJI_CONCEPTS[emoji];
       return concept?.culturalContext.appropriatenessLevel === 'child-safe';
     });
     if (allChildSafe) score += 0.1;
-    
+
     return Math.min(1.0, Math.max(0.5, score));
   }
 
@@ -655,7 +655,7 @@ export class LocalPatternEngine {
 
   private initializeEmotionMappings(): void {
     this.emotionMappings = new Map();
-    
+
     // Build emotion mappings from EMOJI_CONCEPTS
     for (const [emoji, concept] of Object.entries(EMOJI_CONCEPTS)) {
       for (const emotion of concept.emotions) {
@@ -700,23 +700,23 @@ export class LocalPatternEngine {
   ): Promise<PatternState[]> {
     // Generate alternative patterns with slight variations
     const alternatives: Promise<PatternState>[] = [];
-    
+
     for (let i = 0; i < count; i++) {
       const modifiedRequest = {
         ...request,
         // Add slight variations
         complexity: request.complexity || (['simple', 'moderate', 'complex'] as const)[i % 3]
       };
-      
+
       alternatives.push(this.generatePrimaryPattern(modifiedRequest, strategy));
     }
-    
+
     return Promise.all(alternatives);
   }
 
   private generateFallbackPattern(request: PatternGenerationRequest): PatternState {
     const sequence = this.generateFallbackSequence(4, request);
-    
+
     return {
       sequence,
       insertionIndex: 0,

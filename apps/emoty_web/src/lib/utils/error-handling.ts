@@ -77,7 +77,7 @@ export class AppError extends Error {
     field?: string
   ) {
     super(message);
-    
+
     this.code = code;
     this.statusCode = statusCode;
     this.isOperational = isOperational;
@@ -178,14 +178,14 @@ export class ExternalServiceError extends AppError {
 // Error response helpers
 export function createErrorResponse(error: AppError | Error): NextResponse {
   if (error instanceof AppError) {
-    return NextResponse.json(error.toJSON(), { 
-      status: error.statusCode 
+    return NextResponse.json(error.toJSON(), {
+      status: error.statusCode
     });
   }
 
   // Handle unexpected errors
   console.error('Unexpected error:', error);
-  
+
   const internalError = new AppError(
     ErrorCode.INTERNAL_SERVER_ERROR,
     'An unexpected error occurred',
@@ -193,8 +193,8 @@ export function createErrorResponse(error: AppError | Error): NextResponse {
     false
   );
 
-  return NextResponse.json(internalError.toJSON(), { 
-    status: 500 
+  return NextResponse.json(internalError.toJSON(), {
+    status: 500
   });
 }
 
@@ -206,7 +206,7 @@ export function withErrorHandling<T extends any[]>(
     try {
       return await handler(...args);
     } catch (error) {
-      return createErrorResponse(error);
+      return createErrorResponse(error as Error);
     }
   };
 }
@@ -218,16 +218,16 @@ export function parseDatabaseError(error: any): AppError {
     switch (error.code) {
       case '23505': // unique_violation
         return new ConflictError('Resource already exists');
-      
+
       case '23503': // foreign_key_violation
         return new ValidationError('Referenced resource does not exist');
-      
+
       case '23502': // not_null_violation
         return new ValidationError('Required field is missing');
-      
+
       case '23514': // check_violation
         return new ValidationError('Value violates constraint');
-      
+
       case '42P01': // undefined_table
       case '42703': // undefined_column
         return new AppError(
@@ -236,7 +236,7 @@ export function parseDatabaseError(error: any): AppError {
           500,
           false
         );
-      
+
       default:
         return new DatabaseError(`Database error: ${error.message}`);
     }
@@ -369,8 +369,8 @@ export async function withRetry<T>(
     try {
       return await operation();
     } catch (error) {
-      lastError = error;
-      
+      lastError = error as Error;
+
       if (attempt === maxRetries) {
         break;
       }
@@ -393,7 +393,7 @@ export class CircuitBreaker {
   constructor(
     private readonly failureThreshold: number = 5,
     private readonly resetTimeout: number = 60000 // 1 minute
-  ) {}
+  ) { }
 
   async execute<T>(operation: () => Promise<T>): Promise<T> {
     if (this.state === 'OPEN') {
@@ -447,17 +447,17 @@ export class RateLimiter {
   constructor(
     private readonly maxRequests: number = 100,
     private readonly windowMs: number = 60000 // 1 minute
-  ) {}
+  ) { }
 
   isAllowed(identifier: string): boolean {
     const now = Date.now();
     const windowStart = now - this.windowMs;
-    
+
     const requests = this.requests.get(identifier) || [];
-    
+
     // Remove old requests
     const validRequests = requests.filter(time => time > windowStart);
-    
+
     if (validRequests.length >= this.maxRequests) {
       return false;
     }
@@ -465,7 +465,7 @@ export class RateLimiter {
     // Add current request
     validRequests.push(now);
     this.requests.set(identifier, validRequests);
-    
+
     return true;
   }
 
@@ -474,7 +474,7 @@ export class RateLimiter {
     const windowStart = now - this.windowMs;
     const requests = this.requests.get(identifier) || [];
     const validRequests = requests.filter(time => time > windowStart);
-    
+
     return Math.max(0, this.maxRequests - validRequests.length);
   }
 

@@ -14,12 +14,22 @@ class PatternCache {
   }
 
   /**
+   * Initialize cache (e.g. open IndexedDB)
+   */
+  async init(): Promise<void> {
+    // Initialization logic if needed
+    if (typeof window !== 'undefined') {
+      // Prepare IndexedDB
+    }
+  }
+
+  /**
    * Cache a single pattern
    */
   async cachePattern(pattern: PatternWithDetails): Promise<void> {
     try {
       // Update memory cache
-      this.memoryCache.set(pattern.id, pattern);
+      this.memoryCache.set(pattern.id as unknown as string, pattern);
       this.enforceCacheLimit();
 
       // If client-side, update IndexedDB (Placeholder)
@@ -37,7 +47,7 @@ class PatternCache {
   async cachePatterns(patterns: PatternWithDetails[]): Promise<void> {
     try {
       for (const pattern of patterns) {
-        this.memoryCache.set(pattern.id, pattern);
+        this.memoryCache.set(pattern.id as unknown as string, pattern);
       }
       this.enforceCacheLimit();
 
@@ -57,7 +67,7 @@ class PatternCache {
     if (typeof window === 'undefined') {
       throw new Error('Offline creation only supported on client');
     }
-    
+
     // Placeholder for offline creation logic
     const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     console.log('Created offline pattern stub:', tempId, data);
@@ -80,11 +90,40 @@ class PatternCache {
       // For a real LRU, we'd need to update insertion order on access
       const keysToDelete = Array.from(this.memoryCache.keys())
         .slice(0, this.memoryCache.size - this.MAX_CACHE_SIZE);
-      
+
       for (const key of keysToDelete) {
         this.memoryCache.delete(key);
       }
     }
+  }
+  /**
+   * Get pending offline changes
+   */
+  async getPendingOfflineChanges(): Promise<any[]> {
+    return [];
+  }
+
+  /**
+   * Mark offline change as synced
+   */
+  async markOfflineChangeSynced(changeId: string, syncedId?: string): Promise<void> {
+    // Stub implementation
+  }
+
+  /**
+   * Get cache statistics
+   */
+  async getCacheStats(): Promise<{ size: number }> {
+    return {
+      size: this.memoryCache.size
+    };
+  }
+
+  /**
+   * Clear all cache
+   */
+  async clearAllCache(): Promise<void> {
+    this.memoryCache.clear();
   }
 }
 

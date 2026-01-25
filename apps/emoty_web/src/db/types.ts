@@ -1,5 +1,5 @@
 // Enhanced Database types for Emoty Web Application - Phase 2
-import type { Generated, ColumnType } from 'kysely';
+import type { Generated, ColumnType, Insertable, Updateable, Selectable } from 'kysely';
 
 export interface Database {
   users: UserTable;
@@ -12,7 +12,19 @@ export interface Database {
   pattern_collection_items: PatternCollectionItemTable;
   pattern_usage_stats: PatternUsageStatsTable;
   pattern_shares: PatternShareTable;
+  share_codes: ShareCodeTable;
   pattern_analytics: PatternAnalyticsTable;
+}
+
+export interface ShareCodeTable {
+  id: Generated<string>;
+  code: string;
+  pattern_id: string;
+  user_id: string;
+  pattern_data: string;
+  view_count: Generated<number>;
+  expires_at: Date | null;
+  created_at: Generated<Date>;
 }
 
 export interface UserTable {
@@ -157,7 +169,7 @@ export type UserLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
 export type PatternMode = 'concentric' | 'sequential';
 
-export type AchievementCategory = 
+export type AchievementCategory =
   | 'pattern_creation'
   | 'social_engagement'
   | 'exploration'
@@ -237,7 +249,7 @@ export type UserWithStats = UserTable & {
   collection_count: number;
 };
 
-export type PatternWithDetails = PatternTable & {
+export type PatternWithDetails = Selectable<PatternTable> & {
   user_username: string;
   user_full_name: string | null;
   user_avatar_url: string | null;
@@ -246,31 +258,32 @@ export type PatternWithDetails = PatternTable & {
   analytics: PatternAnalyticsTable | null;
 };
 
-export type PatternCollectionWithDetails = PatternCollectionTable & {
-  patterns: PatternTable[];
-  preview_patterns: PatternTable[]; // First 3-4 patterns for preview
+export type PatternCollectionWithDetails = Selectable<PatternCollectionTable> & {
+  patterns: Selectable<PatternTable>[];
+  preview_patterns: Selectable<PatternTable>[]; // First 3-4 patterns for preview
   user_username: string;
 };
 
 // Database utility types
-export type UserInsert = Omit<UserTable, 'id' | 'created_at' | 'updated_at'>;
-export type UserUpdate = Partial<UserInsert>;
+export type UserInsert = Omit<Insertable<UserTable>, 'id' | 'created_at' | 'updated_at'>;
+export type UserUpdate = Updateable<UserTable>;
 
-export type PatternInsert = Omit<PatternTable, 'id' | 'created_at' | 'updated_at' | 'search_vector' | 'view_count' | 'like_count' | 'version' | 'deleted_at' | 'deleted_by'>;
-export type PatternUpdate = Partial<PatternInsert>;
+export type PatternInsert = Omit<Insertable<PatternTable>, 'id' | 'created_at' | 'updated_at' | 'search_vector' | 'view_count' | 'like_count' | 'version' | 'deleted_at' | 'deleted_by'>;
+export type PatternUpdate = Updateable<PatternTable>;
 
-export type PatternCollectionInsert = Omit<PatternCollectionTable, 'id' | 'created_at' | 'updated_at' | 'pattern_count'>;
-export type PatternCollectionUpdate = Partial<PatternCollectionInsert>;
+export type PatternCollectionInsert = Omit<Insertable<PatternCollectionTable>, 'id' | 'created_at' | 'updated_at' | 'pattern_count'>;
+export type PatternCollectionUpdate = Updateable<PatternCollectionTable>;
 
-export type PatternUsageStatsInsert = Omit<PatternUsageStatsTable, 'id' | 'created_at'>;
-export type PatternShareInsert = Omit<PatternShareTable, 'id' | 'created_at'>;
+export type PatternUsageStatsInsert = Omit<Insertable<PatternUsageStatsTable>, 'id' | 'created_at'>;
+export type PatternShareInsert = Omit<Insertable<PatternShareTable>, 'id' | 'created_at'>;
+export type ShareCodeInsert = Omit<Insertable<ShareCodeTable>, 'id' | 'created_at' | 'view_count'>;
 
 // Cache types for IndexedDB
-export interface CachedPattern extends PatternTable {
+export type CachedPattern = Selectable<PatternTable> & {
   cached_at: Date;
   needs_sync: boolean;
   offline_changes?: Partial<PatternUpdate>;
-}
+};
 
 export interface CacheMetadata {
   version: string;
