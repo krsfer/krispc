@@ -8,10 +8,10 @@ export const metadata: Metadata = {
   description: 'Create beautiful emoji patterns with AI assistance. Make concentric square patterns, save favorites, and share your creativity.',
   keywords: 'emoji, patterns, AI, creativity, design, art',
   authors: [{ name: 'Emoty Team' }],
-  manifest: '/manifest.json',
+  manifest: '/emo/manifest.json',
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png'
+    icon: '/favicon.ico', // Use root favicon
+    apple: '/apple-touch-icon.png' // Keep or update if needed
   },
   openGraph: {
     title: 'Emoty - Emoji Pattern Creator',
@@ -37,8 +37,8 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Font Awesome for icons */}
-        <link 
-          rel="stylesheet" 
+        <link
+          rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
           integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
           crossOrigin="anonymous"
@@ -67,7 +67,7 @@ export default function RootLayout({
         </ClientProviders>
 
         {/* Bootstrap JS for interactive components */}
-        <script 
+        <script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
           crossOrigin="anonymous"

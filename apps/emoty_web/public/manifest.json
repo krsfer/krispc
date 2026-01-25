@@ -1,0 +1,15 @@
+{
+    "name": "Emoty - Emoji Pattern Creator",
+    "short_name": "Emoty",
+    "start_url": "/emo/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#7B61FF",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}
