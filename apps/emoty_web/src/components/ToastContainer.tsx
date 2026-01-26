@@ -67,6 +67,9 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
       };
     };
 
+    // Store cleanup function reference
+    let cleanup: (() => void) | undefined;
+
     // If Bootstrap is already loaded, initialize immediately
     if (window.bootstrap) {
       return initToast();
@@ -76,12 +79,13 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
     const checkBootstrap = setInterval(() => {
       if (window.bootstrap) {
         clearInterval(checkBootstrap);
-        initToast();
+        cleanup = initToast(); // Capture cleanup function
       }
-    }, 50);
+    }, 100);
 
     return () => {
       clearInterval(checkBootstrap);
+      if (cleanup) cleanup(); // Run captured cleanup
     };
   }, [id, duration, onRemove]);
 
