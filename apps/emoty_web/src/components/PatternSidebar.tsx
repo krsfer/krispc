@@ -13,6 +13,7 @@ import {
   generateFilename,
 } from '@/lib/export/patternExport';
 import styles from './PatternSidebar.module.css';
+import { useToast } from '@/contexts/ToastContext';
 
 interface PatternSidebarProps {
   isOpen: boolean;
@@ -32,6 +33,9 @@ type ExportFormat = 'text' | 'json' | 'png' | 'copy';
  * - Responsive design
  */
 const PatternSidebar: React.FC<PatternSidebarProps> = ({ isOpen, onClose }) => {
+  // Toast notifications
+  const { showToast } = useToast();
+
   // Store state
   const savedPatterns = usePatternStore((state: StoreState) => state.savedPatterns);
   const isLoading = usePatternStore((state: StoreState) => state.isLoading);
@@ -138,6 +142,11 @@ const PatternSidebar: React.FC<PatternSidebarProps> = ({ isOpen, onClose }) => {
           case 'copy': {
             const text = exportAsText(pattern);
             await copyToClipboard(text);
+
+            // Show success toast
+            showToast('✓ Pattern copied to clipboard');
+
+            // Keep inline alert for redundancy in sidebar
             setExportSuccess('Copied to clipboard');
             break;
           }
@@ -148,7 +157,7 @@ const PatternSidebar: React.FC<PatternSidebarProps> = ({ isOpen, onClose }) => {
       }
       setExportingPattern(null);
     },
-    []
+    [showToast]
   );
 
   /**
