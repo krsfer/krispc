@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
 import { ClientProviders } from '@/components/ClientProviders';
+import { ToastProvider } from '@/contexts/ToastContext';
+import ToastContainer from '@/components/ToastContainer';
 
 export const metadata: Metadata = {
   title: 'Emoty - Emoji Pattern Creator',
@@ -60,11 +62,14 @@ export default function RootLayout({
           className="sr-only"
         />
 
-        <ClientProviders>
-          <main id="main-content">
-            {children}
-          </main>
-        </ClientProviders>
+        <ToastProvider>
+          <ClientProviders>
+            <main id="main-content">
+              {children}
+            </main>
+          </ClientProviders>
+          <ToastContainer />
+        </ToastProvider>
 
         {/* Bootstrap JS for interactive components */}
         <script
