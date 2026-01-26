@@ -946,6 +946,38 @@ const SkipLink: React.FC = () => {
 };
 ```
 
+### 6. Toast Notifications
+
+**Location:** `src/contexts/ToastContext.tsx`, `src/components/ToastContainer.tsx`
+
+**Purpose:** Provide non-intrusive success feedback for export actions.
+
+**Usage:**
+
+```typescript
+import { useToast } from '@/contexts/ToastContext';
+
+function MyComponent() {
+  const { showToast } = useToast();
+
+  const handleAction = async () => {
+    await performAction();
+    showToast('✓ Action completed successfully');
+  };
+}
+```
+
+**API:**
+
+- `showToast(message, type?, duration?)` - Display a toast notification
+  - `message`: Text to display
+  - `type`: 'success' | 'error' | 'info' (default: 'success')
+  - `duration`: Auto-dismiss time in ms (default: 3000)
+
+**Styling:** Uses Bootstrap 5 toast component with `.text-bg-success` for success messages.
+
+**Accessibility:** Includes proper ARIA attributes (`role="alert"`, `aria-live="assertive"`).
+
 ## Component Styling
 
 ### CSS Custom Properties
