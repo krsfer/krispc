@@ -214,10 +214,16 @@ export default function HomePage() {
     ).join('\n');
     
     navigator.clipboard.writeText(gridString).then(() => {
+      // Show success toast
+      showToast(language === 'en'
+        ? '✓ Pattern grid copied to clipboard'
+        : '✓ Grille du motif copiée');
+
+      // Keep ARIA announcer for redundancy
       const announcer = document.getElementById('aria-live-announcer');
       if (announcer) {
-        announcer.textContent = language === 'en' 
-          ? 'Pattern grid copied to clipboard!' 
+        announcer.textContent = language === 'en'
+          ? 'Pattern grid copied to clipboard!'
           : 'Grille du motif copiée !';
       }
     }).catch(err => {
