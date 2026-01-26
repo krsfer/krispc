@@ -9,11 +9,15 @@ import SequenceEditor from '@/components/SequenceEditor';
 import SaveIndicator from '@/components/SaveIndicator';
 import AuthModal from '@/components/AuthModal';
 import PatternSidebar from '@/components/PatternSidebar';
+import VoiceCommandOverlay from '@/components/VoiceCommandOverlay';
+import Tooltip from '@/components/Tooltip';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PatternGenerator } from '@/lib/utils/pattern-generator';
+import { PatternPrinter } from '@/lib/utils/pattern-printer';
 import { EMOJI_PALETTES, getDefaultPalette } from '@/lib/constants/emoji-palettes';
 import { PatternState, GridCell, PatternMode } from '@/types/pattern';
 import { usePatternStore } from '@/store';
+import { useVoiceCommands } from '@/hooks/useVoiceCommands';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -197,14 +201,50 @@ export default function HomePage() {
   }, [status, patternState.sequence, triggerAutoSave]);
 
   /**
-   * Share pattern (placeholder)
+   * Share pattern - Copies generated grid string to clipboard
    */
   const handleShare = useCallback(() => {
+    if (patternState.sequence.length === 0) return;
+
+    // Convert grid to string
+    const gridString = currentPatternGrid.map(row => 
+      row.map(cell => cell.emoji || '  ').join('')
+    ).join('\n');
+    
+    navigator.clipboard.writeText(gridString).then(() => {
+      const announcer = document.getElementById('aria-live-announcer');
+      if (announcer) {
+        announcer.textContent = language === 'en' 
+          ? 'Pattern grid copied to clipboard!' 
+          : 'Grille du motif copiée !';
+      }
+    }).catch(err => {
+      console.error('Failed to copy pattern: ', err);
+    });
+  }, [currentPatternGrid, language, patternState.sequence.length]);
+
+  /**
+   * Handle Print / PDF Export
+   */
+  const handlePrint = useCallback(async () => {
+    if (patternState.sequence.length === 0) return;
+    
     const announcer = document.getElementById('aria-live-announcer');
-    if (announcer) {
-      announcer.textContent = 'Share feature coming soon!';
+    if (announcer) announcer.textContent = 'Generating PDF... please wait.';
+
+    try {
+      await PatternPrinter.generatePDF(
+        patternState,
+        currentPatternGrid,
+        `emoty-${patternState.name?.replace(/\s+/g, '-').toLowerCase() || 'pattern'}.pdf`
+      );
+      
+      if (announcer) announcer.textContent = 'PDF downloaded successfully.';
+    } catch (error) {
+      console.error('PDF Generation failed:', error);
+      if (announcer) announcer.textContent = 'Failed to generate PDF. Please try again.';
     }
-  }, []);
+  }, [patternState, currentPatternGrid]);
 
   /**
    * Toggle language
@@ -213,34 +253,58 @@ export default function HomePage() {
     setLanguage(prev => prev === 'en' ? 'fr' : 'en');
   }, []);
 
+  // Voice Commands Hook Integration
+  const { isListening, toggleListening, transcript, feedback, error } = useVoiceCommands({
+    language,
+    onAddEmoji: handleEmojiSelect,
+    onRemoveLast: () => {
+      if (patternState.sequence.length > 0) {
+        handleEmojiRemove(patternState.sequence.length - 1);
+      }
+    },
+    onClear: handleClearPattern,
+    onUndo: handleUndo,
+    onRedo: handleRedo
+  });
+
   return (
     <div className="mobile-app-container">
       {/* Top Navigation Bar */}
       <nav className="top-nav" role="navigation" aria-label="Main navigation">
         <div className="nav-left">
-          <button 
-            className="nav-button"
-            onClick={handleLanguageToggle}
-            aria-label={`Switch to ${language === 'en' ? 'French' : 'English'}`}
-            type="button"
-          >
-            {language === 'en' ? '🇬🇧' : '🇫🇷'}
-          </button>
-          <button 
-            className="nav-button"
-            aria-label="Translate"
-            type="button"
-          >
-            🌐
-          </button>
-          <button 
-            className="nav-button"
-            onClick={() => setIsSidebarOpen(true)}
-            aria-label="Open pattern library"
-            type="button"
-          >
-            ☰
-          </button>
+          <Tooltip text={language === 'en' ? 'Passer en Français' : 'Switch to English'} position="bottom">
+            <button 
+              className="nav-button"
+              onClick={handleLanguageToggle}
+              aria-label={`Switch to ${language === 'en' ? 'French' : 'English'}`}
+              type="button"
+            >
+              {language === 'en' ? '🇬🇧' : '🇫🇷'}
+            </button>
+          </Tooltip>
+          
+          <Tooltip text={isListening ? 'Stop Voice Control' : 'Start Voice Control'} position="bottom">
+            <button 
+              className={`nav-button ${isListening ? 'text-danger' : ''}`}
+              onClick={toggleListening}
+              aria-label="Toggle voice commands"
+              type="button"
+              style={{ color: isListening ? '#ff4757' : undefined }}
+            >
+              {isListening ? '🛑' : '🎙️'}
+            </button>
+          </Tooltip>
+
+          <Tooltip text="Pattern Library" position="bottom">
+            <button 
+              className="nav-button"
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Open pattern library"
+              type="button"
+            >
+              ☰
+            </button>
+          </Tooltip>
         </div>
         
         <div className="nav-center">
@@ -251,19 +315,23 @@ export default function HomePage() {
         </div>
         
         <div className="nav-right">
-          <ThemeToggle />
+          <div style={{ display: 'inline-flex' }}>
+            <ThemeToggle />
+          </div>
+          
           {status === 'authenticated' ? (
             <div className="dropdown">
-              <button 
-                className="nav-button dropdown-toggle" 
-                type="button" 
-                id="userMenu" 
-                data-bs-toggle="dropdown" 
-                aria-expanded="false"
-                title={`Signed in as ${session.user?.email}`}
-              >
-                👤
-              </button>
+              <Tooltip text="User Profile" position="bottom">
+                <button 
+                  className="nav-button dropdown-toggle" 
+                  type="button" 
+                  id="userMenu" 
+                  data-bs-toggle="dropdown" 
+                  aria-expanded="false"
+                >
+                  👤
+                </button>
+              </Tooltip>
               <ul className="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userMenu">
                 <li className="px-3 py-2 small text-muted border-bottom">
                   {session.user?.email}
@@ -276,31 +344,38 @@ export default function HomePage() {
               </ul>
             </div>
           ) : (
-            <Link 
-              href="/auth/signin" 
-              className="nav-button" 
-              aria-label="Sign in"
-              title="Sign in or register"
-            >
-              🔑
-            </Link>
+            <Tooltip text="Sign In" position="bottom">
+              <Link 
+                href="/auth/signin" 
+                className="nav-button" 
+                aria-label="Sign in"
+              >
+                🔑
+              </Link>
+            </Tooltip>
           )}
-          <button 
-            className="nav-button"
-            aria-label="Favorites"
-            type="button"
-          >
-            ⭐
-          </button>
-          <button 
-            className="nav-button"
-            onClick={handleClearPattern}
-            aria-label="Clear pattern"
-            disabled={patternState.sequence.length === 0}
-            type="button"
-          >
-            🗑️
-          </button>
+          
+          <Tooltip text="Favorites" position="bottom">
+            <button 
+              className="nav-button"
+              aria-label="Favorites"
+              type="button"
+            >
+              ⭐
+            </button>
+          </Tooltip>
+
+          <Tooltip text="Clear Pattern" position="bottom">
+            <button 
+              className="nav-button"
+              onClick={handleClearPattern}
+              aria-label="Clear pattern"
+              disabled={patternState.sequence.length === 0}
+              type="button"
+            >
+              🗑️
+            </button>
+          </Tooltip>
         </div>
       </nav>
 
@@ -356,56 +431,82 @@ export default function HomePage() {
         {/* Bottom Toolbar */}
         <div className="bottom-toolbar">
           <div className="toolbar-group">
-            <button
-              className="toolbar-button"
-              onClick={handleUndo}
-              disabled={undoStack.length === 0}
-              aria-label="Undo last action"
-              type="button"
-            >
-              ↶
-            </button>
-            <button
-              className="toolbar-button"
-              onClick={handleRedo}
-              disabled={redoStack.length === 0}
-              aria-label="Redo last action"
-              type="button"
-            >
-              ↷
-            </button>
+            <Tooltip text="Undo" position="top">
+              <button
+                className="toolbar-button"
+                onClick={handleUndo}
+                disabled={undoStack.length === 0}
+                aria-label="Undo last action"
+                type="button"
+              >
+                ↶
+              </button>
+            </Tooltip>
+            
+            <Tooltip text="Redo" position="top">
+              <button
+                className="toolbar-button"
+                onClick={handleRedo}
+                disabled={redoStack.length === 0}
+                aria-label="Redo last action"
+                type="button"
+              >
+                ↷
+              </button>
+            </Tooltip>
           </div>
 
           <div className="toolbar-group">
-            <button
-              className="toolbar-button"
-              onClick={handleSave}
-              aria-label="Save pattern"
-              title="Save to your account"
-              type="button"
-            >
-              💾
-            </button>
-            <button
-              className="toolbar-button"
-              onClick={handleShare}
-              aria-label="Share pattern"
-              type="button"
-            >
-              📤
-            </button>
+            <Tooltip text="Save Pattern" position="top">
+              <button
+                className="toolbar-button"
+                onClick={handleSave}
+                aria-label="Save pattern"
+                type="button"
+              >
+                💾
+              </button>
+            </Tooltip>
+
+            <Tooltip text="Copy Grid to Clipboard" position="top">
+              <button
+                className="toolbar-button"
+                onClick={handleShare}
+                aria-label="Copy to clipboard"
+                type="button"
+                disabled={patternState.sequence.length === 0}
+              >
+                📤
+              </button>
+            </Tooltip>
+
+            <Tooltip text="Export PDF" position="top">
+              <button
+                className="toolbar-button"
+                onClick={handlePrint}
+                aria-label="Export to PDF"
+                type="button"
+                disabled={patternState.sequence.length === 0}
+              >
+                🖨️
+              </button>
+            </Tooltip>
+
             <div className="counter-badge">
               {patternState.sequence.length}
             </div>
-            <button
-              className="toolbar-button primary"
-              onClick={() => handleEmojiSelect(selectedEmoji)}
-              disabled={!selectedEmoji}
-              aria-label="Add selected emoji"
-              type="button"
-            >
-              +
-            </button>
+            
+            <Tooltip text="Add Selected Emoji" position="top">
+              <button
+                className="toolbar-button primary"
+                onClick={() => handleEmojiSelect(selectedEmoji)}
+                disabled={!selectedEmoji}
+                aria-label="Add selected emoji"
+                type="button"
+              >
+                +
+              </button>
+            </Tooltip>
           </div>
         </div>
       </div>
@@ -420,6 +521,13 @@ export default function HomePage() {
       <PatternSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+      />
+
+      <VoiceCommandOverlay 
+        isListening={isListening}
+        transcript={transcript}
+        feedback={feedback || (error ? `Error: ${error}` : '')}
+        onToggle={toggleListening}
       />
     </div>
   );

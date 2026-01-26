@@ -19,7 +19,7 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'ocean-waves',
     name: { en: 'Ocean Waves', fr: 'Vagues Océan' },
     category: PaletteCategory.COLOR,
-    emojis: ['🌊', '💙', '💎', '🔵', '🟦', '🐋', '🐟', '🐠', '🦈', '🌀', '💧', '❄️'],
+    emojis: ['🌊', '💙', '💎', '🔵', '🟦', '🐋', '🐟', '🐠', '🦈', '🌀', '💧', '❄️', '🐚', '🦀', '🐳', '🐬', '🐙', '🦑', '🐡', '🦞', '⚓'],
     orderIndex: 2,
     isCustom: false,
     description: { en: 'Blues of the ocean and sea life', fr: 'Bleus de l\'océan et vie marine' },
@@ -29,7 +29,7 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'forest-green',
     name: { en: 'Forest Green', fr: 'Vert Forêt' },
     category: PaletteCategory.COLOR,
-    emojis: ['🌲', '🌳', '🌿', '🍀', '🌱', '🥒', '🥬', '🥝', '💚', '✅', '🟢', '🔋'],
+    emojis: ['🌲', '🌳', '🌿', '🍀', '🌱', '🥒', '🥬', '🥝', '💚', '✅', '🟢', '🔋', '🐸', '🐢', '🐊', '🦎', '🐍', '🐲', '🌵', '🎄', '🎋'],
     orderIndex: 3,
     isCustom: false,
     description: { en: 'Rich greens of nature and growth', fr: 'Verts riches de la nature et croissance' },
@@ -39,7 +39,7 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'sunset-orange',
     name: { en: 'Sunset Orange', fr: 'Orange Coucher' },
     category: PaletteCategory.COLOR,
-    emojis: ['🧡', '🔥', '🌅', '🌄', '🍊', '🥕', '🎃', '🦊', '🟠', '⚡', '☄️', '🏀'],
+    emojis: ['🧡', '🔥', '🌅', '🌄', '🍊', '🥕', '🎃', '🦊', '🟠', '⚡', '☄️', '🏀', '🦁', '🐯', '🐱', '🔸', '🔶', '✴️', '🉑', '☢️', '☣️'],
     orderIndex: 4,
     isCustom: false,
     description: { en: 'Warm oranges of sunset and energy', fr: 'Oranges chauds du coucher de soleil et énergie' },
@@ -49,7 +49,7 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'royal-purple',
     name: { en: 'Royal Purple', fr: 'Violet Royal' },
     category: PaletteCategory.COLOR,
-    emojis: ['💜', '🔮', '🍇', '🍆', '🟣', '⚗️', '🎆', '👑', '🦄', '🌸', '☂️', '🎭'],
+    emojis: ['💜', '🔮', '🍇', '🍆', '🟣', '⚗️', '🎆', '👑', '🦄', '🌸', '☂️', '🎭', '😈', '👾', '👿', '🌂', '🕎', '☮️', '🔯', '⚛️', '🛐'],
     orderIndex: 5,
     isCustom: false,
     description: { en: 'Majestic purples and magical items', fr: 'Violets majestueux et objets magiques' },
@@ -59,33 +59,11 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'sunshine-yellow',
     name: { en: 'Sunshine Yellow', fr: 'Jaune Soleil' },
     category: PaletteCategory.COLOR,
-    emojis: ['💛', '☀️', '🌟', '⭐', '🌞', '🌝', '🍋', '🌻', '🟡', '⚡', '🔆', '💡'],
+    emojis: ['💛', '☀️', '🌟', '⭐', '🌞', '🌝', '🍋', '🌻', '🟡', '⚡', '🔆', '💡', '🐥', '🐣', '🐤', '🐝', '🧀', '🍌', '📒', '⚠️', '🔱'],
     orderIndex: 6,
     isCustom: false,
     description: { en: 'Bright yellows of sunshine and happiness', fr: 'Jaunes brillants du soleil et bonheur' },
     tags: ['yellow', 'sunshine', 'bright', 'happy']
-  },
-  
-  // Monochrome palettes
-  {
-    id: 'black-white',
-    name: { en: 'Black & White', fr: 'Noir & Blanc' },
-    category: PaletteCategory.MONOCHROME,
-    emojis: ['⚫', '⚪', '🖤', '🤍', '◼️', '◻️', '▪️', '▫️', '🔳', '🔲', '🎱', '♠️'],
-    orderIndex: 7,
-    isCustom: false,
-    description: { en: 'Classic black and white contrast', fr: 'Contraste classique noir et blanc' },
-    tags: ['monochrome', 'classic', 'contrast']
-  },
-  {
-    id: 'grayscale',
-    name: { en: 'Grayscale', fr: 'Nuances Gris' },
-    category: PaletteCategory.MONOCHROME,
-    emojis: ['⚫', '🔘', '🔴', '🟤', '🟫', '⚪', '🔳', '🔲', '◼️', '◻️', '⬛', '⬜'],
-    orderIndex: 8,
-    isCustom: false,
-    description: { en: 'Subtle shades of gray', fr: 'Nuances subtiles de gris' },
-    tags: ['grayscale', 'subtle', 'minimal']
   },
   
   // Themed palettes
@@ -93,8 +71,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'food-party',
     name: { en: 'Food Party', fr: 'Fête Nourriture' },
     category: PaletteCategory.COLOR,
-    emojis: ['🍕', '🍔', '🍟', '🌮', '🍩', '🍰', '🍪', '🧁', '🍎', '🍌', '🍓', '🥳'],
-    orderIndex: 9,
+    emojis: ['🍕', '🍔', '🍟', '🌮', '🍩', '🍰', '🍪', '🧁', '🍎', '🍌', '🍓', '🥳', '🥞', '🥨', '🥐', '🥯', '🥖', '🌭', '🥪', '🍖', '🍗'],
+    orderIndex: 7,
     isCustom: false,
     description: { en: 'Delicious foods and party vibes', fr: 'Nourritures délicieuses et ambiance fête' },
     tags: ['food', 'party', 'celebration', 'fun']
@@ -103,8 +81,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'space-galaxy',
     name: { en: 'Space Galaxy', fr: 'Galaxie Espace' },
     category: PaletteCategory.COLOR,
-    emojis: ['🚀', '🛸', '🌌', '🌠', '⭐', '🌟', '🪐', '🌕', '🌙', '☄️', '🛰️', '👽'],
-    orderIndex: 10,
+    emojis: ['🚀', '🛸', '🌌', '🌠', '⭐', '🌟', '🪐', '🌕', '🌙', '☄️', '🛰️', '👽', '🌑', '🌒', '🌓', '🌔', '🌖', '🌗', '🌘', '🌎', '🌍'],
+    orderIndex: 8,
     isCustom: false,
     description: { en: 'Cosmic wonders and space exploration', fr: 'Merveilles cosmiques et exploration spatiale' },
     tags: ['space', 'galaxy', 'cosmic', 'exploration']
@@ -113,8 +91,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'animals-cute',
     name: { en: 'Cute Animals', fr: 'Animaux Mignons' },
     category: PaletteCategory.COLOR,
-    emojis: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐸', '🐥', '🦄'],
-    orderIndex: 11,
+    emojis: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐸', '🐥', '🦄', '🐯', '🦁', '🐮', '🐷', '🐵', '🐒', '🐔', '🐧', '🐦'],
+    orderIndex: 9,
     isCustom: false,
     description: { en: 'Adorable animals and creatures', fr: 'Animaux et créatures adorables' },
     tags: ['animals', 'cute', 'pets', 'creatures']
@@ -123,8 +101,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'sports-games',
     name: { en: 'Sports & Games', fr: 'Sports & Jeux' },
     category: PaletteCategory.COLOR,
-    emojis: ['⚽', '🏀', '🏈', '🎾', '🏓', '🎯', '🎮', '🎲', '🏆', '🥇', '🎪', '🎨'],
-    orderIndex: 12,
+    emojis: ['⚽', '🏀', '🏈', '🎾', '🏓', '🎯', '🎮', '🎲', '🏆', '🥇', '🎪', '🎨', '🏐', '🏸', '🥊', '🎿', '⛷️', '🏂', '🚴‍♀️', '🏃‍♂️', '🏊‍♀️'],
+    orderIndex: 10,
     isCustom: false,
     description: { en: 'Sports equipment and gaming fun', fr: 'Équipement sportif et jeux amusants' },
     tags: ['sports', 'games', 'competition', 'fun']
@@ -133,8 +111,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'music-dance',
     name: { en: 'Music & Dance', fr: 'Musique & Danse' },
     category: PaletteCategory.COLOR,
-    emojis: ['🎵', '🎶', '🎤', '🎸', '🥁', '🎹', '🎺', '🎷', '💃', '🕺', '🎭', '🎪'],
-    orderIndex: 13,
+    emojis: ['🎵', '🎶', '🎤', '🎸', '🥁', '🎹', '🎺', '🎷', '💃', '🕺', '🎭', '🎪', '🎧', '🎼', '🎻', '🪕', '🎬', '🖼️', '📷', '🎯', '🎲'],
+    orderIndex: 11,
     isCustom: false,
     description: { en: 'Musical instruments and dance', fr: 'Instruments de musique et danse' },
     tags: ['music', 'dance', 'instruments', 'performance']
@@ -143,8 +121,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'travel-world',
     name: { en: 'Travel World', fr: 'Voyage Monde' },
     category: PaletteCategory.COLOR,
-    emojis: ['✈️', '🚗', '🚢', '🗺️', '🧳', '📷', '🏖️', '🏔️', '🗽', '🗼', '🎒', '🌍'],
-    orderIndex: 14,
+    emojis: ['✈️', '🚗', '🚢', '🗺️', '🧳', '📷', '🏖️', '🏔️', '🗽', '🗼', '🎒', '🌍', '🚆', '🚇', '🚍', '🚔', '🚘', '🚖', '🚲', '🛴', '🛵'],
+    orderIndex: 12,
     isCustom: false,
     description: { en: 'Travel and world exploration', fr: 'Voyage et exploration mondiale' },
     tags: ['travel', 'world', 'exploration', 'adventure']
@@ -153,8 +131,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'weather-seasons',
     name: { en: 'Weather & Seasons', fr: 'Météo & Saisons' },
     category: PaletteCategory.COLOR,
-    emojis: ['☀️', '⛅', '🌧️', '❄️', '🌈', '⛄', '🌸', '🍂', '🌊', '🌪️', '⚡', '🌙'],
-    orderIndex: 15,
+    emojis: ['☀️', '⛅', '🌧️', '❄️', '🌈', '⛄', '🌸', '🍂', '🌊', '🌪️', '⚡', '🌙', '⛈️', '🌤️', '☁️', '🌨️', '💧', '🔥', '🌡️', '🌬️', '🌦️'],
+    orderIndex: 13,
     isCustom: false,
     description: { en: 'Weather patterns and seasonal changes', fr: 'Conditions météo et changements saisonniers' },
     tags: ['weather', 'seasons', 'nature', 'climate']
@@ -163,8 +141,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'celebration-party',
     name: { en: 'Celebration Party', fr: 'Fête Célébration' },
     category: PaletteCategory.COLOR,
-    emojis: ['🎉', '🎊', '🎈', '🎂', '🎁', '🏆', '🥳', '🍾', '🎆', '🎇', '🎀', '🎪'],
-    orderIndex: 16,
+    emojis: ['🎉', '🎊', '🎈', '🎂', '🎁', '🏆', '🥳', '🍾', '🎆', '🎇', '🎀', '🎪', '🥂', '🎗️', '🥇', '🎯', '🎭', '🎨', '🎸', '🎵', '🎼'],
+    orderIndex: 14,
     isCustom: false,
     description: { en: 'Party decorations and celebrations', fr: 'Décorations de fête et célébrations' },
     tags: ['celebration', 'party', 'decorations', 'festive']
@@ -173,8 +151,8 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'tech-modern',
     name: { en: 'Tech Modern', fr: 'Technologie Moderne' },
     category: PaletteCategory.COLOR,
-    emojis: ['📱', '💻', '⌚', '🎮', '📷', '🎧', '⚡', '🔋', '💾', '🖥️', '🔌', '📡'],
-    orderIndex: 17,
+    emojis: ['📱', '💻', '⌚', '🎮', '📷', '🎧', '⚡', '🔋', '💾', '🖥️', '🔌', '📡', '🔧', '🚀', '💡', '🔊', '📀', '⚙️', '🖨️', '📟', '🛰️'],
+    orderIndex: 15,
     isCustom: false,
     description: { en: 'Modern technology and gadgets', fr: 'Technologie moderne et gadgets' },
     tags: ['technology', 'modern', 'gadgets', 'digital']
@@ -183,61 +161,113 @@ export const EMOJI_PALETTES: EmojiPalette[] = [
     id: 'facial-expressions',
     name: { en: 'Facial Expressions', fr: 'Expressions Faciales' },
     category: PaletteCategory.COLOR,
-    emojis: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '😉'],
-    orderIndex: 18,
+    emojis: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '😉', '🥰', '😍', '🤩', '😘', '😗', '☺️', '😚', '😙', '😋'],
+    orderIndex: 16,
     isCustom: false,
     description: { en: 'Happy facial expressions and smiles', fr: 'Expressions faciales heureuses et sourires' },
     tags: ['emotions', 'faces', 'happy', 'expressions']
   },
   {
-    id: 'symbols-signs',
-    name: { en: 'Symbols & Signs', fr: 'Symboles & Signes' },
+    id: 'rainbow-hearts',
+    name: { en: 'Rainbow Hearts', fr: 'Cœurs Arc-en-ciel' },
     category: PaletteCategory.COLOR,
-    emojis: ['❤️', '💯', '✨', '⭐', '🔥', '💫', '🌟', '✅', '❌', '⚠️', '📍', '🎯'],
+    emojis: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '♥️', '💯'],
+    orderIndex: 17,
+    isCustom: false,
+    description: { en: 'Colorful hearts in every shade', fr: 'Cœurs colorés dans toutes les nuances' },
+    tags: ['hearts', 'rainbow', 'colors', 'love']
+  },
+  {
+    id: 'text-typography',
+    name: { en: 'Text & Typography', fr: 'Texte & Typographie' },
+    category: PaletteCategory.COLOR,
+    emojis: ['🅰️', '🅱️', '🆎', '🆑', '🅾️', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '❗', '❓', '‼️', '⁉️', '✅', '❌'],
+    orderIndex: 18,
+    isCustom: false,
+    description: { en: 'Letters, numbers, and text symbols', fr: 'Lettres, nombres et symboles de texte' },
+    tags: ['text', 'letters', 'numbers', 'symbols']
+  },
+
+  // Monochrome palettes (Ported from Android)
+  {
+    id: 'black-white-symbols',
+    name: { en: 'Black & White Symbols', fr: 'Symboles Noir & Blanc' },
+    category: PaletteCategory.MONOCHROME,
+    emojis: ['⚫', '⚪', '◼️', '◻️', '▪️', '▫️', '⬛', '⬜', '◾', '◽', '❌', '✖️', '➕', '➖', '✔️', '☑️', '✅', '❎', '⭕', '🔘', '🔳'],
     orderIndex: 19,
     isCustom: false,
-    description: { en: 'Common symbols and signs', fr: 'Symboles et signes communs' },
-    tags: ['symbols', 'signs', 'communication', 'meaning']
+    description: { en: 'Pure monochrome symbols', fr: 'Symboles monochromes purs' },
+    tags: ['monochrome', 'symbols', 'black', 'white']
   },
   {
-    id: 'geometric-shapes',
-    name: { en: 'Geometric Shapes', fr: 'Formes Géométriques' },
+    id: 'basic-shapes',
+    name: { en: 'Basic Shapes', fr: 'Formes de Base' },
     category: PaletteCategory.MONOCHROME,
-    emojis: ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '🟤', '⚫', '⚪', '🔶', '🔷', '🔸'],
+    emojis: ['⬛', '⬜', '◼️', '◻️', '▪️', '▫️', '◾', '◽', '⚫', '⚪', '◆', '◇', '◈', '○', '●', '◐', '◑', '◒', '◓', '◔', '◕'],
     orderIndex: 20,
     isCustom: false,
-    description: { en: 'Basic geometric shapes and forms', fr: 'Formes et figures géométriques de base' },
-    tags: ['geometric', 'shapes', 'abstract', 'forms']
+    description: { en: 'Simple geometric shapes', fr: 'Formes géométriques simples' },
+    tags: ['shapes', 'geometric', 'simple']
   },
   {
-    id: 'hand-gestures',
-    name: { en: 'Hand Gestures', fr: 'Gestes Main' },
-    category: PaletteCategory.COLOR,
-    emojis: ['👍', '👎', '👌', '✌️', '🤞', '🤟', '🤘', '👏', '🙌', '👐', '🤲', '💪'],
+    id: 'simple-arrows',
+    name: { en: 'Simple Arrows', fr: 'Flèches Simples' },
+    category: PaletteCategory.MONOCHROME,
+    emojis: ['⬆️', '⬇️', '⬅️', '➡️', '↖️', '↗️', '↘️', '↙️', '↩️', '↪️', '⤴️', '⤵️', '🔄', '🔃', '🔂', '🔁', '⏪', '⏫', '⏬', '⏩', '🔀'],
     orderIndex: 21,
     isCustom: false,
-    description: { en: 'Hand signs and gestures', fr: 'Signes de main et gestes' },
-    tags: ['hands', 'gestures', 'communication', 'signs']
+    description: { en: 'Basic directional arrows', fr: 'Flèches directionnelles de base' },
+    tags: ['arrows', 'direction', 'navigation']
   },
   {
-    id: 'rainbow-pride',
-    name: { en: 'Rainbow Pride', fr: 'Arc-en-ciel Fierté' },
-    category: PaletteCategory.COLOR,
-    emojis: ['🌈', '❤️', '🧡', '💛', '💚', '💙', '💜', '🏳️‍🌈', '✨', '🌟', '💖', '🌸'],
+    id: 'check-marks',
+    name: { en: 'Check Marks', fr: 'Coches & Signes' },
+    category: PaletteCategory.MONOCHROME,
+    emojis: ['✔️', '✅', '☑️', '❌', '❎', '✖️', '➕', '➖', '➗', '➰', '➿', '❓', '❗', '‼️', '⁉️', '❕', '❔', '☢️', '☣️', '⚠️', '⛔'],
     orderIndex: 22,
     isCustom: false,
-    description: { en: 'Rainbow colors and pride symbols', fr: 'Couleurs arc-en-ciel et symboles de fierté' },
-    tags: ['rainbow', 'pride', 'colors', 'diversity']
+    description: { en: 'Checkmarks and basic symbols', fr: 'Coches et symboles de base' },
+    tags: ['check', 'marks', 'symbols', 'sign']
   },
   {
-    id: 'christmas-winter',
-    name: { en: 'Christmas Winter', fr: 'Noël Hiver' },
-    category: PaletteCategory.COLOR,
-    emojis: ['🎄', '🎅', '🤶', '🦌', '⛄', '❄️', '🎁', '🔔', '⭐', '🕯️', '🍪', '🥛'],
+    id: 'card-suits',
+    name: { en: 'Card Suits', fr: 'Enseignes de Cartes' },
+    category: PaletteCategory.MONOCHROME,
+    emojis: ['♠️', '♥️', '♦️', '♣️', '♠', '♥', '♦', '♣', '♟️', '♞', '♝', '♜', '♛', '♚', '♙', '♘', '♗', '♖', '♕', '♔', '⚪'],
     orderIndex: 23,
     isCustom: false,
-    description: { en: 'Christmas and winter holiday themes', fr: 'Thèmes de Noël et fêtes d\'hiver' },
-    tags: ['christmas', 'winter', 'holiday', 'festive']
+    description: { en: 'Playing card suit symbols', fr: 'Symboles de cartes à jouer' },
+    tags: ['cards', 'games', 'suits', 'poker']
+  },
+  {
+    id: 'office-symbols',
+    name: { en: 'Office Symbols', fr: 'Symboles de Bureau' },
+    category: PaletteCategory.MONOCHROME,
+    emojis: ['✏️', '✒️', '✂️', '🔍', '🔎', '🔗', '📎', '📏', '⛓️', '⚙️', '⛏️', '⛑️', '⚒️', '⚰️', '⚱️', '⚖️', '⚡', '✨', '✴️', '✳️', '©️'],
+    orderIndex: 24,
+    isCustom: false,
+    description: { en: 'Basic office and utility symbols', fr: 'Symboles de bureau et utilitaires' },
+    tags: ['office', 'utility', 'work', 'tools']
+  },
+  {
+    id: 'math-symbols',
+    name: { en: 'Math Symbols', fr: 'Symboles Maths' },
+    category: PaletteCategory.MONOCHROME,
+    emojis: ['➕', '➖', '✖️', '♾️', '➗', '=', '<', '>', '±', '×', '÷', '∞', '∑', '∆', '∇', '∈', '∉', '∋', '∌', '−', '¬'],
+    orderIndex: 25,
+    isCustom: false,
+    description: { en: 'Basic mathematical operators', fr: 'Opérateurs mathématiques de base' },
+    tags: ['math', 'numbers', 'calculation']
+  },
+  {
+    id: 'punctuation',
+    name: { en: 'Punctuation', fr: 'Ponctuation' },
+    category: PaletteCategory.MONOCHROME,
+    emojis: ['.', ',', ';', ':', '!', '?', '-', '_', '(', ')', '[', ']', '{', '}', '"', "'", '`', '~', '@', '#', '&'],
+    orderIndex: 26,
+    isCustom: false,
+    description: { en: 'Basic punctuation symbols', fr: 'Symboles de ponctuation' },
+    tags: ['punctuation', 'text', 'grammar']
   }
 ];
 

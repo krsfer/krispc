@@ -5,9 +5,10 @@ const nextConfig = {
   basePath: '/emo',
   assetPrefix: '/emo',
   experimental: {
-    optimizePackageImports: ['bootstrap'],
-    allowedDevOrigins: ['localhost:8000', '127.0.0.1:8000']
+    optimizePackageImports: ['bootstrap']
   },
+  // allowedDevOrigins is no longer a standard experimental key in Next.js 15
+  // and should be handled via headers or middleware if cross-origin dev is needed.
   images: {
     domains: ['localhost'],
     formats: ['image/webp', 'image/avif'],

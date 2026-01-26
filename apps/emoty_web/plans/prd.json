@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "feature": "Implement Web Voice Command Interface",
+    "details": "Create a `useVoiceCommands` hook and UI overlay that uses the Web Speech API to replicate the Android app's voice control (Add emoji, Remove emoji, Clear, etc.). Support English and French.",
+    "passes": true
+  },
+  {
+    "id": 2,
+    "feature": "Implement Professional PDF Export",
+    "details": "Create a `PatternPrinter` utility using `jspdf` to generate A4 PDFs with the pattern centered, AI-generated name, and footer, matching the Android app's print layout.",
+    "passes": true
+  },
+  {
+    "id": 3,
+    "feature": "Verify and Sync Palette Themes",
+    "details": "Check `src/lib/constants/palettes.ts` (or equivalent) against the Android app's `PaletteManager` to ensure all 23 curated themes are present.",
+    "passes": true
+  }
+]

@@ -1,0 +1,94 @@
+.tooltipWrapper {
+  position: relative;
+  display: inline-flex; /* Changed to inline-flex to match button behavior */
+}
+
+.tooltip {
+  position: absolute;
+  background-color: var(--surface, #333);
+  color: var(--text-primary, #fff);
+  border: 1px solid var(--border-color, #444);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 2000;
+  opacity: 0;
+  animation: fadeIn 0.2s forwards;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .tooltip {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Dark mode overrides if needed, using CSS variables from globals.css */
+:global([data-theme="light"]) .tooltip {
+  background-color: #1C1C1E;
+  color: #FFFFFF;
+}
+
+:global([data-theme="dark"]) .tooltip {
+  background-color: #F5F5F7;
+  color: #1C1C1E;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+/* Initial states for animation */
+.top {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  margin-bottom: 10px;
+}
+
+.bottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  margin-top: 10px;
+}
+
+/* Arrows */
+.tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+}
+
+.top::after {
+  top: 100%;
+  border-color: var(--text-primary, #333) transparent transparent transparent;
+}
+
+:global([data-theme="light"]) .top::after {
+  border-color: #1C1C1E transparent transparent transparent;
+}
+
+:global([data-theme="dark"]) .top::after {
+  border-color: #F5F5F7 transparent transparent transparent;
+}
+
+.bottom::after {
+  bottom: 100%;
+  border-color: transparent transparent var(--text-primary, #333) transparent;
+}
+
+:global([data-theme="light"]) .bottom::after {
+  border-color: transparent transparent #1C1C1E transparent;
+}
+
+:global([data-theme="dark"]) .bottom::after {
+  border-color: transparent transparent #F5F5F7 transparent;
+}

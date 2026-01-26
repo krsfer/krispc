@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 class WebSocketProxyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # The path from the client is something like /emo/_next/webpack-hmr
-        # We want to proxy to ws://localhost:3001/emo/_next/webpack-hmr
-        self.target_url = f"ws://localhost:3001{self.scope['path']}"
+        # We want to proxy to ws://localhost:3000/emo/_next/webpack-hmr
+        self.target_url = f"ws://localhost:3000{self.scope['path']}"
         if self.scope.get('query_string'):
             self.target_url += f"?{self.scope['query_string'].decode()}"
         

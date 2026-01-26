@@ -10,9 +10,9 @@ def proxy_to_emoty(request, path=''):
         
     # Construct target URL carefully to avoid redirect loops
     if path:
-        target_url = f'http://localhost:3001/emo/{path}'
+        target_url = f'http://localhost:3000/emo/{path}'
     else:
-        target_url = 'http://localhost:3001/emo'
+        target_url = 'http://localhost:3000/emo'
         
     if request.META.get('QUERY_STRING'):
         target_url += f'?{request.META.get('QUERY_STRING')}'
@@ -57,4 +57,4 @@ def proxy_to_emoty(request, path=''):
         return django_response
         
     except requests.exceptions.ConnectionError:
-        return HttpResponse("Emoty service is not running. Please start it on port 3001.", status=503)
+        return HttpResponse("Emoty service is not running. Please start it on port 3000.", status=503)
