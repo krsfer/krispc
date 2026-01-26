@@ -37,32 +37,52 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
   const bsToastRef = useRef<BootstrapToastInstance | null>(null);
 
   useEffect(() => {
-    if (toastRef.current && typeof window !== 'undefined' && window.bootstrap) {
-      // Initialize Bootstrap toast
-      bsToastRef.current = new window.bootstrap.Toast(toastRef.current, {
+    const element = toastRef.current;
+    if (!element) return;
+
+    // Wait for Bootstrap to be available
+    const initToast = () => {
+      if (typeof window === 'undefined' || !window.bootstrap) {
+        return;
+      }
+
+      bsToastRef.current = new window.bootstrap.Toast(element, {
         autohide: true,
         delay: duration,
       });
 
-      // Show the toast
       bsToastRef.current.show();
 
-      // Listen for hidden event to remove from state
       const handleHidden = () => {
         onRemove(id);
       };
 
-      toastRef.current.addEventListener('hidden.bs.toast', handleHidden);
+      element.addEventListener('hidden.bs.toast', handleHidden);
 
       return () => {
-        if (toastRef.current) {
-          toastRef.current.removeEventListener('hidden.bs.toast', handleHidden);
-        }
+        element.removeEventListener('hidden.bs.toast', handleHidden);
         if (bsToastRef.current) {
           bsToastRef.current.dispose();
         }
       };
+    };
+
+    // If Bootstrap is already loaded, initialize immediately
+    if (window.bootstrap) {
+      return initToast();
     }
+
+    // Otherwise wait for Bootstrap to load
+    const checkBootstrap = setInterval(() => {
+      if (window.bootstrap) {
+        clearInterval(checkBootstrap);
+        initToast();
+      }
+    }, 50);
+
+    return () => {
+      clearInterval(checkBootstrap);
+    };
   }, [id, duration, onRemove]);
 
   // Map type to Bootstrap class
@@ -72,9 +92,6 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
     <div
       ref={toastRef}
       className={`toast ${typeClass}`}
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
     >
       <div className="toast-body d-flex align-items-center">
         {message}
@@ -87,7 +104,7 @@ export default function ToastContainer() {
   const { toasts, removeToast } = useToast();
 
   return (
-    <div className={styles.toastContainer} aria-live="polite" aria-atomic="false">
+    <div className={styles.toastContainer}>
       {toasts.map((toast) => (
         <ToastItem
           key={toast.id}
