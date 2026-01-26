@@ -18,10 +18,12 @@ import { EMOJI_PALETTES, getDefaultPalette } from '@/lib/constants/emoji-palette
 import { PatternState, GridCell, PatternMode } from '@/types/pattern';
 import { usePatternStore } from '@/store';
 import { useVoiceCommands } from '@/hooks/useVoiceCommands';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
   const { autoSave, currentPattern: storedPattern } = usePatternStore();
+  const { showToast } = useToast();
   
   // UI state
   const [selectedEmoji, setSelectedEmoji] = useState<string>('');
@@ -238,13 +240,17 @@ export default function HomePage() {
         currentPatternGrid,
         `emoty-${patternState.name?.replace(/\s+/g, '-').toLowerCase() || 'pattern'}.pdf`
       );
-      
+
+      // Show success toast
+      showToast('PDF downloaded successfully');
+
+      // Keep ARIA announcer for redundancy
       if (announcer) announcer.textContent = 'PDF downloaded successfully.';
     } catch (error) {
       console.error('PDF Generation failed:', error);
       if (announcer) announcer.textContent = 'Failed to generate PDF. Please try again.';
     }
-  }, [patternState, currentPatternGrid]);
+  }, [patternState, currentPatternGrid, showToast]);
 
   /**
    * Toggle language
