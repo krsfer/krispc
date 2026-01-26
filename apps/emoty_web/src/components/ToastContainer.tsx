@@ -46,17 +46,27 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
         return;
       }
 
-      bsToastRef.current = new window.bootstrap.Toast(element, {
-        autohide: true,
-        delay: duration,
-      });
+      try {
+        bsToastRef.current = new window.bootstrap.Toast(element, {
+          autohide: true,
+          delay: duration,
+        });
 
-      bsToastRef.current.show();
+        bsToastRef.current.show();
+      } catch (error) {
+        // Bootstrap internal error during show() - toast still appears correctly
+        console.warn('Bootstrap toast show error (non-fatal):', error);
+      }
 
       const handleHidden = () => {
         // Dispose Bootstrap instance BEFORE removing from React state
         if (bsToastRef.current) {
-          bsToastRef.current.dispose();
+          try {
+            bsToastRef.current.dispose();
+          } catch (error) {
+            // Suppress dispose errors
+            console.warn('Bootstrap toast dispose error (non-fatal):', error);
+          }
           bsToastRef.current = null;
         }
         onRemove(id);
@@ -68,7 +78,11 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
         element.removeEventListener('hidden.bs.toast', handleHidden);
         // Only dispose if not already disposed by handleHidden
         if (bsToastRef.current) {
-          bsToastRef.current.dispose();
+          try {
+            bsToastRef.current.dispose();
+          } catch (error) {
+            // Suppress dispose errors
+          }
         }
       };
     };
