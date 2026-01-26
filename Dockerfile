@@ -28,6 +28,10 @@ RUN npm install --legacy-peer-deps
 
 COPY apps/emoty_web ./
 RUN npm run build
+
+# Copy static assets and public folder for standalone mode
+RUN cp -r .next/static .next/standalone/app/apps/emoty_web/.next/static
+RUN if [ -d "public" ]; then cp -r public .next/standalone/app/apps/emoty_web/public; fi
 # -------------------------------------
 
 # Stage 2: Install Python dependencies
