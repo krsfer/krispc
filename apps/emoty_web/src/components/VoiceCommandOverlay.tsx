@@ -27,7 +27,7 @@ const VoiceCommandOverlay: React.FC<VoiceCommandOverlayProps> = ({
         </button>
         <div className="voice-text">
           {isListening && <div className="status">Listening...</div>}
-          {transcript && <div className="transcript">"{transcript}"</div>}
+          {transcript && <div className="transcript">&quot;{transcript}&quot;</div>}
           {feedback && <div className="feedback">{feedback}</div>}
         </div>
       </div>
