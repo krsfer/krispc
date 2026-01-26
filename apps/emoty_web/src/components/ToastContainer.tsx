@@ -114,7 +114,7 @@ export default function ToastContainer() {
   const { toasts, removeToast } = useToast();
 
   return (
-    <div className={styles.toastContainer}>
+    <div className={`toast-container ${styles.toastContainer}`}>
       {toasts.map((toast) => (
         <ToastItem
           key={toast.id}
