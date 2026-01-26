@@ -54,6 +54,11 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
       bsToastRef.current.show();
 
       const handleHidden = () => {
+        // Dispose Bootstrap instance BEFORE removing from React state
+        if (bsToastRef.current) {
+          bsToastRef.current.dispose();
+          bsToastRef.current = null;
+        }
         onRemove(id);
       };
 
@@ -61,6 +66,7 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
 
       return () => {
         element.removeEventListener('hidden.bs.toast', handleHidden);
+        // Only dispose if not already disposed by handleHidden
         if (bsToastRef.current) {
           bsToastRef.current.dispose();
         }
