@@ -1,6 +1,7 @@
-You are an autonomous coding agent working on this project.
+You are an autonomous coding agent working on the KrisPC Monorepo.
 
-We are building the project according to the PRD provided below.
+Your goal is to **Normalize and Homogenize** the software stack and UI across all apps (`hub`, `krispc`, `plexus`, `p2c`).
+We are moving from a Mixed Stack (Bootstrap/Tailwind) to a **Pure Tailwind + Vite + HTMX** stack.
 
 ## Context
 1. **Product Requirements (PRD):**
@@ -12,34 +13,33 @@ We are building the project according to the PRD provided below.
 ## Instructions
 
 ### 1. Identify Task
-Open the PRD content above and find the single highest priority task where `"passes": false`.
+Open `plans/prd.json` and find the first task where `"passes": false`.
 
-### 2. Execute
-Work on exactly ONE task:
-1. Implement the change according to the task details.
-2. Run standard verification checks:
+### 2. Strategy: TDD & Homogenization
+*   **Think Globally:** Changes often affect shared templates in `templates/`.
+*   **Test First:** For UI standardization, use the `tests/test_ui_standardization.py` (once created) as your primary validation.
+*   **Conventions:**
+    *   Use **Tailwind CSS** for all styling.
+    *   Use **HTMX** for dynamic interactions.
+    *   Avoid introducing new CSS files; use utility classes.
+    *   Keep app-specific templates in `[app]/templates/[app]/`, but make them extend the global `layouts/golden_base.html`.
+
+### 3. Execute
+1. Implement the change.
+2. Run specific verification:
+   - `pytest tests/test_ui_standardization.py` (Critical for this plan)
    - `python manage.py check`
-   - `pytest` (or specific test file)
-   - `flake8 .` (if available)
+   - `pytest` (General suite)
 
-### 3. Log Progress
-Append a dated progress entry to `plans/activity.md` describing:
-- What you changed.
-- What commands you ran.
-- Any issues encountered and how you resolved them.
+### 4. Log & Update
+*   Append to `plans/activity.md`.
+*   Update `plans/prd.json` (`"passes": true`).
 
-### 4. Update Task Status
-When the task is confirmed working, update that task's `"passes"` field in `plans/prd.json` from `false` to `true`.
-
-### 5. Commit Changes
-Make one git commit for that task only with a clear, descriptive message:
+### 5. Commit
 ```bash
 git add .
-git commit -m "feat: [brief description of what was implemented]"
+git commit -m "refactor: [Task description]"
 ```
 
-## Completion Condition
-When ALL tasks in the PRD have `"passes": true`, output EXACTLY:
-`<promise>COMPLETE</promise>`
-
-If you cannot complete the task, log the issue in `plans/activity.md` and stop.
+## Completion
+When ALL tasks are done, output: `<promise>COMPLETE</promise>`

@@ -1,26 +1,50 @@
 [
   {
     "id": 1,
-    "feature": "Add required packages (django-filter, django-cors-headers) to Pipfile",
-    "details": "Update Pipfile to include 'django-filter' and 'django-cors-headers'. Ensure they are installed/locked.",
+    "feature": "Define Standard Stack & Design System",
+    "details": "Create a `STANDARDS.md` file in the root. Define the Golden Stack: Django 5.x, Tailwind CSS (via Vite), HTMX. Define Design Tokens: Color palette (Primary, Secondary, Accent), Typography (Sans/Serif), and Spacing. Document the decision to deprecate Bootstrap.",
     "passes": true
   },
   {
     "id": 2,
-    "feature": "Create custom exception handler in krispc/exceptions.py",
-    "details": "Implement a standardized exception handler for DRF to return consistent JSON error responses with fields like 'status', 'code', 'message', and 'details'.",
+    "feature": "Implement Global Integration Test",
+    "details": "Create `tests/test_ui_standardization.py`. It should have tests that visit the homepages of Hub, KrisPC, Plexus, and Pdf2Cal (using Django Client). The tests must assert 1) The presence of the standard Vite/Tailwind script tags, 2) The ABSENCE of Bootstrap CDN links or legacy CSS files, 3) The presence of a common 'data-theme-version' attribute on the <body> tag.",
     "passes": true
   },
   {
     "id": 3,
-    "feature": "Create middleware for API language detection",
-    "details": "Implement middleware in krispc/middleware.py to detect client language preference for API responses, checking headers or query params.",
+    "feature": "Create 'Golden' Shared Base Template",
+    "details": "Create `templates/layouts/golden_base.html`. This template must implement the stack defined in Task 1. It should include the Vite assets, HTMX script, and the defined design tokens (as CSS variables). It should feature a standardized Header and Footer structure.",
     "passes": true
   },
   {
     "id": 4,
-    "feature": "Add standardized response serializers",
-    "details": "Create base serializers or mixins to ensure all API responses follow a consistent envelope structure (e.g., data, meta).",
+    "feature": "Migrate KrisPC Hub to Golden Standard",
+    "details": "Refactor `hub/templates/hub/base.html` (or delete it) and make Hub views extend `layouts/golden_base.html`. Update Hub's UI components to use Tailwind classes instead of Bootstrap. Verify `test_ui_standardization.py` passes for Hub.",
+    "passes": true
+  },
+  {
+    "id": 5,
+    "feature": "Migrate KrisPC to Golden Standard",
+    "details": "Refactor `krispc/templates/the_base.html` to extend `layouts/golden_base.html`. Convert Bootstrap classes to Tailwind. Verify `test_ui_standardization.py` passes for KrisPC.",
+    "passes": true
+  },
+  {
+    "id": 6,
+    "feature": "Migrate Plexus to Golden Standard",
+    "details": "Refactor `plexus/templates/plexus/plexus_base.html` to extend `layouts/golden_base.html`. Convert Plexus-specific UI (Kanban, etc.) to Tailwind. Verify `test_ui_standardization.py` passes for Plexus.",
+    "passes": true
+  },
+  {
+    "id": 7,
+    "feature": "Migrate Pdf2Cal to Golden Standard",
+    "details": "Refactor `p2c/templates/p2c_base.html` to extend `layouts/golden_base.html`. Convert P2C UI components to Tailwind. Verify `test_ui_standardization.py` passes for Pdf2Cal.",
+    "passes": true
+  },
+  {
+    "id": 8,
+    "feature": "Global Cleanup",
+    "details": "Remove `django-crispy-forms` and `crispy-bootstrap5` from `Pipfile` if no longer used. Remove legacy CSS files. Ensure `pipenv install` cleans up dependencies. Run the full test suite.",
     "passes": true
   }
 ]

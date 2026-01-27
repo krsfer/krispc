@@ -159,7 +159,7 @@ export const usePatternStore = create<PatternState>((set, get) => ({
     try {
       console.log('[Store] Saving to local:', pattern.name, pattern.sequence.length);
       const stored = localStorage.getItem(LOCAL_STORAGE_PATTERNS_KEY);
-      let patterns: SavedPattern[] = stored ? JSON.parse(stored) : [];
+      const patterns: SavedPattern[] = stored ? JSON.parse(stored) : [];
       
       // Ensure dates are parsed correctly
       const now = new Date();

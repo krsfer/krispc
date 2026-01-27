@@ -1,55 +1,34 @@
+{% extends "layouts/golden_base.html" %}
 {% load i18n %}
 {% load static %}
 {% load django_vite %}
 {% load django_htmx %}
 
-<!DOCTYPE html>
-{% get_current_language as LANGUAGE_CODE %}
-<html lang="{{ LANGUAGE_CODE }}">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-
-    <title>{% block title %}KrisPC.{% endblock %}</title>
+{% block extra_head %}
     <meta content="{% block description %}Professional IT services and computer repair{% endblock %}" name="description" />
     <meta content="{% block keywords %}computer repair, IT support, maintenance{% endblock %}" name="keywords" />
+    {% block krispc_extra_css %}{% endblock %}
+{% endblock %}
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&display=swap" rel="stylesheet">
-
-    <!-- Vite Assets -->
-    {% if use_vue %}
-      {% vite_hmr_client %}
-      {% vite_asset 'main.js' %}
-    {% endif %}
-
-    {% block extra_css %}{% endblock %}
-  </head>
-
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="antialiased">
+{% block content %}
     <!-- Skip to main content for accessibility -->
-    <a href="/" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded">
       Skip to main content
     </a>
 
-    <!-- Vue App Root (only if Vue is used) -->
-    {% if use_vue %}
-      <div id="app">
-        {% block main %}{% endblock %}
-      </div>
-    {% else %}
-      {% block content %}{% endblock %}
-    {% endif %}
+    <div id="main-content">
+        {% if use_vue %}
+          <div id="app">
+            {% block main %}{% endblock %}
+          </div>
+        {% else %}
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {% block krispc_content %}{% endblock %}
+          </div>
+        {% endif %}
+    </div>
+{% endblock %}
 
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org" defer></script>
-    {% django_htmx_script %}
-
-    <!-- Analytics -->
-    <script src="{% static 'analytics/tracker.js' %}" defer></script>
-
-    {% block extra_js %}{% endblock %}
-  </body>
-</html>
+{% block extra_js %}
+    {% block krispc_extra_js %}{% endblock %}
+{% endblock %}

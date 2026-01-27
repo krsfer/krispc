@@ -1,47 +1,57 @@
-{% extends "hub/base.html" %}
+{% extends "layouts/golden_base.html" %}
 {% load i18n %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <section class="hero">
-        <h2 class="hero-title">{{ page_title }}</h2>
-        <p class="hero-tagline">{{ tagline }}</p>
-    </section>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Hero Section -->
+    <div class="text-center mb-16">
+        <h2 class="text-4xl font-brand text-primary sm:text-5xl mb-4">{{ page_title }}</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ tagline }}</p>
+    </div>
 
-    <section class="apps-grid">
+    <!-- Apps Grid -->
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {% for app in apps %}
-        <div class="app-card">
-            <div class="app-icon">{{ app.icon }}</div>
-            <h3 class="app-name">{{ app.name }}</h3>
-            <p class="app-description">{{ app.description }}</p>
-            <a href="{{ app.url }}" class="app-button">{{ app.button_text }}</a>
+        <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 flex flex-col items-center text-center border border-gray-100">
+            <div class="text-4xl mb-6 bg-gray-50 w-16 h-16 flex items-center justify-center rounded-xl">
+                {{ app.icon }}
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">{{ app.name }}</h3>
+            <p class="text-gray-500 mb-8 flex-grow leading-relaxed">{{ app.description }}</p>
+            <a href="{{ app.url }}" class="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl text-black bg-primary hover:bg-primary-dark transition-colors">
+                {{ app.button_text }}
+            </a>
         </div>
         {% endfor %}
-    </section>
+    </div>
 
     {% if not is_authenticated %}
-    <div style="text-align: center; margin-top: 2rem;">
-        <p style="color: #666; margin-bottom: 1rem;">{% trans "Already have an account?" %}</p>
-        <a href="{% url 'login' %}" class="app-button" style="display: inline-block; padding: 0.75rem 2rem;">{% trans "Login" %}</a>
+    <div class="mt-20 text-center bg-white rounded-2xl p-12 shadow-sm border border-gray-100 max-w-2xl mx-auto">
+        <p class="text-gray-600 mb-6 font-medium">{% trans "Already have an account?" %}</p>
+        <a href="{% url 'login' %}" class="inline-flex items-center px-8 py-3 border border-gray-300 shadow-sm text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+            {% trans "Login" %}
+        </a>
     </div>
     {% endif %}
 
     {% if admin_apps %}
-    <section class="admin-section" style="margin-top: 4rem; border-top: 1px solid #eee; padding-top: 2rem;">
-        <h3 style="text-align: center; color: #666; margin-bottom: 2rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">Admin Dashboard</h3>
-        <div class="apps-grid">
+    <div class="mt-32 pt-16 border-t border-gray-200">
+        <h3 class="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-12">Admin Dashboard</h3>
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
             {% for app in admin_apps %}
-            <div class="app-card admin-card" style="border-color: #e5e7eb;">
-                <div class="app-icon">{{ app.icon }}</div>
-                <h3 class="app-name">{{ app.name }}</h3>
-                <p class="app-description">{{ app.description }}</p>
-                <a href="{{ app.url }}" class="app-button" style="background: #6366f1;">{{ app.button_text }}</a>
+            <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 flex flex-col items-center text-center border border-gray-100">
+                <div class="text-3xl mb-4">{{ app.icon }}</div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ app.name }}</h3>
+                <p class="text-sm text-gray-500 mb-6">{{ app.description }}</p>
+                <a href="{{ app.url }}" class="inline-flex items-center px-6 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-accent hover:bg-accent-dark transition-colors">
+                    {{ app.button_text }}
+                </a>
             </div>
             {% endfor %}
         </div>
-    </section>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

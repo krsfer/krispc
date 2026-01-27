@@ -146,8 +146,6 @@ INSTALLED_APPS = [
     "django_vite",
     # "django_user_agents",
     "django_htmx",
-    "crispy_forms",
-    "crispy_bootstrap5",
     "channels",
     
     # Core Apps
@@ -335,12 +333,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
-CRISPY_FAIL_SILENTLY = not DEBUG
-
 
 
 # Static files (CSS, JavaScript, Images)

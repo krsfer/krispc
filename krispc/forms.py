@@ -8,8 +8,6 @@ from pprint import pprint
 from zoneinfo import ZoneInfo
 
 import coloredlogs
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
@@ -37,13 +35,6 @@ if DEBUG:
 if DEBUG:
     LG.setLevel(logging.DEBUG)
 
-# if DEBUG:
-#     LG.debug("This is a debug message")
-#     LG.info("This is an info message")
-#     LG.warning("This is a warning message")
-#     LG.error("This is an error message")
-#     LG.critical("This is a critical message")
-
 custom_errors = {
     'required': 'Ce champ est obligatoire'
 }
@@ -52,10 +43,8 @@ custom_errors = {
 from krispc.services import send_contact_email
 
 class ContactForm(forms.ModelForm):
-    # ... (init and Meta remain unchanged)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        super(ContactForm, self).__init__(*args, **kwargs)
 
         if DEBUG:
             self.fields["firstname"].initial = "Just"
@@ -71,9 +60,6 @@ class ContactForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].error_messages = custom_errors
 
-        self.helper = None
-        self.exec_helpers()
-
     class Meta:
         model = Contact
         fields = ["firstname", "surname", "from_email", "message"]
@@ -85,50 +71,12 @@ class ContactForm(forms.ModelForm):
         }
 
         widgets = {
-            "firstname":  forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    # 'placeholder': "Your first name"
-                }
-            ),
-            "surname":    forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    # 'placeholder': "Your surname"
-                }
-            ),
-            "from_email": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    # 'placeholder': "Your email addresse"
-                }
-            ),
-            "message":    forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    # 'placeholder': "Your message"
-                }
-            ),
+            "firstname":  forms.TextInput(attrs={"class": "form-control"}),
+            "surname":    forms.TextInput(attrs={"class": "form-control"}),
+            "from_email": forms.TextInput(attrs={"class": "form-control"}),
+            "message":    forms.Textarea(attrs={"class": "form-control"}),
         }
 
-
-    def exec_helpers(self):
-        self.helper = FormHelper()
-
-        self.helper.form_tag = False
-
-        self.helper.form_id = 'contact-form-id'
-        self.helper.form_tag = True
-        self.helper.attrs = {
-            'hx-post':      "create/",
-            'hx-headers':   '{"X-CSRFToken": "{{ csrf_token }}"}',
-            'hx-target':    "#merci",
-            'class':        'contact_form'
-        }
-        self.helper.form_error_title = "errors"
-        self.helper.form_show_errors = True
-
-        self.helper.add_input(Submit("submit", _("Submit"), css_class="btn-success"))
 
     def send_email(self):
         firstname = self.cleaned_data['firstname']
