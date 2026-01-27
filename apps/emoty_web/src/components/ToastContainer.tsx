@@ -40,72 +40,85 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
     const element = toastRef.current;
     if (!element) return;
 
-    // Wait for Bootstrap to be available
-    const initToast = () => {
-      if (typeof window === 'undefined' || !window.bootstrap) {
-        return;
+    let isMounted = true;
+    let checkInterval: NodeJS.Timeout;
+
+    const cleanupToast = () => {
+      if (bsToastRef.current) {
+        try {
+          bsToastRef.current.dispose();
+        } catch (error) {
+          // Ignore dispose errors if element is already gone
+        }
+        bsToastRef.current = null;
       }
+    };
+
+    const initToast = () => {
+      if (!isMounted) return;
+      if (typeof window === 'undefined' || !window.bootstrap) return;
+      if (!element.isConnected) return; // Critical check: Ensure element is in DOM
+
+      // Clean up any existing instance
+      cleanupToast();
 
       try {
-        bsToastRef.current = new window.bootstrap.Toast(element, {
+        const toastInstance = new window.bootstrap.Toast(element, {
           autohide: true,
           delay: duration,
         });
+        bsToastRef.current = toastInstance;
 
-        bsToastRef.current.show();
+        const handleHidden = () => {
+          if (isMounted) {
+            onRemove(id);
+          }
+        };
+
+        element.addEventListener('hidden.bs.toast', handleHidden);
+        
+        // Show the toast
+        // Wrap in requestAnimationFrame to ensure DOM is ready
+        requestAnimationFrame(() => {
+          if (isMounted && element.isConnected) {
+             try {
+               toastInstance.show();
+             } catch (e) {
+               console.warn('Bootstrap toast show failed', e);
+             }
+          }
+        });
+
+        // Cleanup listener on unmount (or re-init)
+        return () => {
+          element.removeEventListener('hidden.bs.toast', handleHidden);
+        };
       } catch (error) {
-        // Bootstrap internal error during show() - toast still appears correctly
-        console.warn('Bootstrap toast show error (non-fatal):', error);
+        console.warn('Bootstrap toast init failed:', error);
       }
-
-      const handleHidden = () => {
-        // Dispose Bootstrap instance BEFORE removing from React state
-        if (bsToastRef.current) {
-          try {
-            bsToastRef.current.dispose();
-          } catch (error) {
-            // Suppress dispose errors
-            console.warn('Bootstrap toast dispose error (non-fatal):', error);
-          }
-          bsToastRef.current = null;
-        }
-        onRemove(id);
-      };
-
-      element.addEventListener('hidden.bs.toast', handleHidden);
-
-      return () => {
-        element.removeEventListener('hidden.bs.toast', handleHidden);
-        // Only dispose if not already disposed by handleHidden
-        if (bsToastRef.current) {
-          try {
-            bsToastRef.current.dispose();
-          } catch (error) {
-            // Suppress dispose errors
-          }
-        }
-      };
     };
 
-    // Store cleanup function reference
-    let cleanup: (() => void) | undefined;
-
-    // If Bootstrap is already loaded, initialize immediately
+    // Initialize or wait for Bootstrap
     if (window.bootstrap) {
-      return initToast();
+      const removeListener = initToast();
+      return () => {
+        isMounted = false;
+        if (removeListener) removeListener();
+        cleanupToast();
+      };
+    } else {
+      checkInterval = setInterval(() => {
+        if (window.bootstrap) {
+          clearInterval(checkInterval);
+          initToast();
+        }
+      }, 100);
     }
 
-    // Otherwise wait for Bootstrap to load
-    const checkBootstrap = setInterval(() => {
-      if (window.bootstrap) {
-        clearInterval(checkBootstrap);
-        cleanup = initToast(); // Capture cleanup function
-      }
-    }, 100);
-
     return () => {
-      clearInterval(checkBootstrap);
-      if (cleanup) cleanup(); // Run captured cleanup
+      isMounted = false;
+      clearInterval(checkInterval);
+      cleanupToast();
     };
   }, [id, duration, onRemove]);
 
@@ -116,6 +129,9 @@ function ToastItem({ id, message, type, duration, onRemove }: ToastItemProps) {
     <div
       ref={toastRef}
       className={`toast ${typeClass}`}
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
     >
       <div className="toast-body d-flex align-items-center">
         {message}

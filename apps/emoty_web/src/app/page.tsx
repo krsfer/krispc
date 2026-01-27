@@ -22,7 +22,13 @@ import { useToast } from '@/contexts/ToastContext';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
-  const { autoSave, currentPattern: storedPattern } = usePatternStore();
+  const { 
+    autoSave, 
+    savePattern, 
+    currentPattern: storedPattern, 
+    loadPatterns, 
+    migrateAnonymousPatterns 
+  } = usePatternStore();
   const { showToast } = useToast();
   
   // UI state
@@ -39,7 +45,26 @@ export default function HomePage() {
     PatternGenerator.createPatternState([], PatternMode.CONCENTRIC)
   );
 
-  // Sync with store on mount
+  // Initial Load: Fetch patterns (Local or Remote)
+  useEffect(() => {
+    loadPatterns();
+  }, [loadPatterns]);
+
+  // Migration Hook: Sync local patterns when user logs in
+  useEffect(() => {
+    if (status === 'authenticated') {
+      migrateAnonymousPatterns().then(count => {
+        if (count > 0) {
+          showToast(language === 'en' 
+            ? `Successfully migrated ${count} patterns!` 
+            : `${count} motifs migrés avec succès !`
+          );
+        }
+      });
+    }
+  }, [status, migrateAnonymousPatterns, showToast, language]);
+
+  // Sync component state with store when currentPattern changes (e.g. after loadPatterns)
   useEffect(() => {
     if (storedPattern) {
       setPatternState(prev => ({
@@ -51,16 +76,14 @@ export default function HomePage() {
     }
   }, [storedPattern]);
 
-  // Helper to trigger auto-save
+  // Helper to trigger auto-save (Local Storage if unauth, API if auth)
   const triggerAutoSave = useCallback((sequence: string[], name?: string) => {
-    if (status === 'authenticated') {
-      autoSave({
-        id: patternState.id,
-        name: name || patternState.name || 'Untitled Pattern',
-        sequence
-      });
-    }
-  }, [patternState.id, patternState.name, status, autoSave]);
+    autoSave({
+      id: patternState.id,
+      name: name || patternState.name || 'Untitled Pattern',
+      sequence
+    });
+  }, [patternState.id, patternState.name, autoSave]);
 
   // Generate current pattern grid
   const currentPatternGrid: GridCell[][] = PatternGenerator.generateConcentricPattern(patternState.sequence);
@@ -195,12 +218,20 @@ export default function HomePage() {
    * Manual save handler
    */
   const handleSave = useCallback(() => {
+    // Always save immediately (Local if unauth, Remote if auth)
+    savePattern({
+      id: patternState.id,
+      name: patternState.name || 'Untitled Pattern',
+      sequence: patternState.sequence
+    });
+
+    // If not logged in, show auth modal to encourage syncing
     if (status === 'unauthenticated') {
       setIsAuthModalOpen(true);
     } else {
-      triggerAutoSave(patternState.sequence);
+      showToast(language === 'en' ? 'Pattern saved' : 'Motif enregistré');
     }
-  }, [status, patternState.sequence, triggerAutoSave]);
+  }, [status, patternState, savePattern, showToast, language]);
 
   /**
    * Share pattern - Copies generated grid string to clipboard
@@ -229,7 +260,7 @@ export default function HomePage() {
     }).catch(err => {
       console.error('Failed to copy pattern: ', err);
     });
-  }, [currentPatternGrid, language, patternState.sequence.length]);
+  }, [currentPatternGrid, language, patternState.sequence.length, showToast]);
 
   /**
    * Handle Print / PDF Export

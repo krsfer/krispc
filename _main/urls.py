@@ -53,6 +53,9 @@ urlpatterns += i18n_patterns(
     path('plexus/', include('plexus.urls')),
     path('analytics/', include('analytics.urls')),
 
+    # Handle Next.js fonts with i18n prefix
+    re_path(r"^(?P<path>__nextjs_font/.*)$", proxy_to_emoty),
+
     # Proxy to Emoty Web (Next.js)
     re_path(r"^emo(?:/(?P<path>.*))?$", proxy_to_emoty),
     path("login/", auth_views.LoginView.as_view(template_name="plexus/registration/login.html"), name="login"),

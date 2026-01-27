@@ -16,5 +16,29 @@
     "feature": "Verify and Sync Palette Themes",
     "details": "Check `src/lib/constants/palettes.ts` (or equivalent) against the Android app's `PaletteManager` to ensure all 23 curated themes are present.",
     "passes": true
+  },
+  {
+    "id": 4,
+    "feature": "Implement Local Storage Persistence (Store & Helpers)",
+    "details": "Implement `saveToLocalStorage` (with debouncing), `restoreFromLocalStorage`, and helper functions in `src/store/patternStore.ts`. Ensure pattern state is persisted locally for anonymous users.",
+    "passes": true
+  },
+  {
+    "id": 5,
+    "feature": "Implement Pattern Session Management",
+    "details": "Add `setActivePatternId` and `loadActivePattern` actions to `patternStore` to manage which pattern is currently being edited.",
+    "passes": true
+  },
+  {
+    "id": 6,
+    "feature": "Implement Anonymous-to-User Migration",
+    "details": "Implement `migrateAnonymousPatternToServer` action to sync local patterns when a user signs in, including Toast notifications for feedback.",
+    "passes": true
+  },
+  {
+    "id": 7,
+    "feature": "Integrate Persistence in Page Component",
+    "details": "Update `src/app/page.tsx` to utilize the new persistence actions, ensuring patterns are automatically saved and restored on page load.",
+    "passes": true
   }
 ]
