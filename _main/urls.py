@@ -29,6 +29,9 @@ urlpatterns = [
     
     # KrisPC API
     path("api/krispc/", include("krispc.api_urls")),
+
+    # Analytics API (Non-i18n)
+    path("analytics/api/", include("analytics.api_urls")),
     
     # Documentation
     path("docs/mcp/", krispc.views.MCPDocsView.as_view(), name="mcp-docs"),
