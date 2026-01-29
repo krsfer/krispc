@@ -4,7 +4,14 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 # Hub Subdomain (hub.krispc.fr)
-urlpatterns = i18n_patterns(
+
+# Non-i18n Patterns (APIs)
+urlpatterns = [
+    path("analytics/api/", include("analytics.api_urls")),
+    path("api/krispc/", include("krispc.api_urls")),
+]
+
+urlpatterns += i18n_patterns(
     # Local App (Root)
     path('', include('hub.urls')),
     

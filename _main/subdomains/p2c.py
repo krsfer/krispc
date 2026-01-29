@@ -4,7 +4,14 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 # P2C Subdomain (p2c.krispc.fr)
-urlpatterns = i18n_patterns(
+
+# Non-i18n Patterns (APIs)
+urlpatterns = [
+    path("analytics/api/", include("analytics.api_urls")),
+    path("api/krispc/", include("krispc.api_urls")), # Also include global APIs if needed
+]
+
+urlpatterns += i18n_patterns(
     # Local App (Root)
     path('', include('p2c.urls')),
     
