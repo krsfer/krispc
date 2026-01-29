@@ -9,7 +9,10 @@ def proxy_to_emoty(request, path=''):
         path = ''
         
     # Construct target URL carefully to avoid redirect loops
-    if path:
+    # If path already starts with 'emo/', assume it's fully qualified (e.g. asset request on subdomain)
+    if path == 'emo' or path.startswith('emo/'):
+        target_url = f'http://localhost:3000/{path}'
+    elif path:
         target_url = f'http://localhost:3000/emo/{path}'
     else:
         target_url = 'http://localhost:3000/emo'
