@@ -1,45 +1,41 @@
-You are an autonomous coding agent working on the KrisPC Monorepo.
+You are an autonomous frontend architect and engineer. Your goal is to **modernize and unify** the visual design of the KrisPC suite using a **Component-Driven** and **Test-Driven** approach.
 
-Your goal is to **Normalize and Homogenize** the software stack and UI across all apps (`hub`, `krispc`, `plexus`, `p2c`).
-We are moving from a Mixed Stack (Bootstrap/Tailwind) to a **Pure Tailwind + Vite + HTMX** stack.
+We have established a "Golden Stack" (Django + Tailwind + Vite + HTMX). Now we must build a "Modern Design System" on top of it.
 
-## Context
-1. **Product Requirements (PRD):**
-{{PRD_CONTENT}}
+## The "Modern v2" Aesthetic
+*   **Card Style:** "Glass" effect (light borders, slight transparency), large border radius (`rounded-xl` or `rounded-2xl`), soft shadows (`shadow-sm` hover: `shadow-md`).
+*   **Typography:** Clean, readable, generous line height. High contrast headings.
+*   **Interactivity:** Smooth transitions (`transition-all duration-200`) on all interactive elements.
+*   **Layout:** Spacious padding (`p-6` or `p-8`). Sticky headers with blur (`backdrop-blur-md`).
 
-2. **Activity Log:**
-{{ACTIVITY_CONTENT}}
+## Workflow
 
-## Instructions
+### 1. Spec & Test (The "Red" Phase)
+*   Before modifying templates, you must define what "correct" looks like.
+*   Update `STANDARDS.md` with the new design tokens.
+*   Create or update `tests/test_design_system.py`. This test should crawl the site and check for violations (e.g., "Found a button without `rounded-lg`", "Found inline `style` attribute").
+*   **Note:** We can't easily test visual pixels, so we test *implementation intent* (presence of correct classes and components).
 
-### 1. Identify Task
-Open `plans/prd.json` and find the first task where `"passes": false`.
+### 2. Component Implementation (The "Green" Phase)
+*   Create reusable partials in `templates/components/` (e.g., `card.html`, `button.html`).
+*   These components must encapsulate the "Modern v2" classes.
+*   Update the apps to use these components instead of raw HTML.
 
-### 2. Strategy: TDD & Homogenization
-*   **Think Globally:** Changes often affect shared templates in `templates/`.
-*   **Test First:** For UI standardization, use the `tests/test_ui_standardization.py` (once created) as your primary validation.
-*   **Conventions:**
-    *   Use **Tailwind CSS** for all styling.
-    *   Use **HTMX** for dynamic interactions.
-    *   Avoid introducing new CSS files; use utility classes.
-    *   Keep app-specific templates in `[app]/templates/[app]/`, but make them extend the global `layouts/golden_base.html`.
+### 3. Verification
+*   Run `pytest tests/test_design_system.py` to ensure compliance.
+*   Run `pytest tests/test_ui_standardization.py` to ensure we haven't broken the basic stack rules.
 
-### 3. Execute
-1. Implement the change.
-2. Run specific verification:
-   - `pytest tests/test_ui_standardization.py` (Critical for this plan)
-   - `python manage.py check`
-   - `pytest` (General suite)
+## Constraints
+*   **Do not revert** to Bootstrap.
+*   **Do not introduce** new CSS files. Use Tailwind utilities.
+*   **Keep it clean.** Refactor complex inline HTML into readable components.
+*   **Emoty:** Ensure the `emoty_web` app is included in this refresh.
 
-### 4. Log & Update
-*   Append to `plans/activity.md`.
-*   Update `plans/prd.json` (`"passes": true`).
-
-### 5. Commit
-```bash
-git add .
-git commit -m "refactor: [Task description]"
+## Component Contract
+When creating `templates/components/card.html`, expected usage:
+```django
+{% include "components/card.html" with title="My Card" content="Some content" footer="Action" %}
 ```
+Or with `{% block %}` if using `django-template-partials` (if available) or standard include-with-context. Use standard Django `{% include %}` for simplicity unless `django-template-partials` is installed.
 
-## Completion
-When ALL tasks are done, output: `<promise>COMPLETE</promise>`
+Let's build a beautiful, consistent system.

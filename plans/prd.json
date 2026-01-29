@@ -1,50 +1,50 @@
 [
   {
     "id": 1,
-    "feature": "Define Standard Stack & Design System",
-    "details": "Create a `STANDARDS.md` file in the root. Define the Golden Stack: Django 5.x, Tailwind CSS (via Vite), HTMX. Define Design Tokens: Color palette (Primary, Secondary, Accent), Typography (Sans/Serif), and Spacing. Document the decision to deprecate Bootstrap.",
-    "passes": true
+    "feature": "Design System Specification & Test Harness",
+    "details": "Update `STANDARDS.md` with specific 'Modern v2' design tokens (Glassmorphism, large border-radius, Tailwind colors). Create `tests/test_design_system.py` which crawls app pages and asserts that key elements (buttons, cards, inputs) adhere to the new class conventions (e.g., `rounded-xl`, no inline styles).",
+    "passes": false
   },
   {
     "id": 2,
-    "feature": "Implement Global Integration Test",
-    "details": "Create `tests/test_ui_standardization.py`. It should have tests that visit the homepages of Hub, KrisPC, Plexus, and Pdf2Cal (using Django Client). The tests must assert 1) The presence of the standard Vite/Tailwind script tags, 2) The ABSENCE of Bootstrap CDN links or legacy CSS files, 3) The presence of a common 'data-theme-version' attribute on the <body> tag.",
-    "passes": true
+    "feature": "Component Library Implementation",
+    "details": "Create standard Django partials in `templates/components/` for: `button.html`, `card.html`, `input.html`, `modal.html`. Implement these using the Modern v2 tokens. Create a 'Kitchen Sink' view in Hub to visually verify these components.",
+    "passes": false
   },
   {
     "id": 3,
-    "feature": "Create 'Golden' Shared Base Template",
-    "details": "Create `templates/layouts/golden_base.html`. This template must implement the stack defined in Task 1. It should include the Vite assets, HTMX script, and the defined design tokens (as CSS variables). It should feature a standardized Header and Footer structure.",
-    "passes": true
+    "feature": "Modernize Global Layout",
+    "details": "Update `templates/layouts/golden_base.html`. Implement a sticky 'Glass' navbar and a modernized footer. Add global transition effects. Verify with `test_design_system.py`.",
+    "passes": false
   },
   {
     "id": 4,
-    "feature": "Migrate KrisPC Hub to Golden Standard",
-    "details": "Refactor `hub/templates/hub/base.html` (or delete it) and make Hub views extend `layouts/golden_base.html`. Update Hub's UI components to use Tailwind classes instead of Bootstrap. Verify `test_ui_standardization.py` passes for Hub.",
-    "passes": true
+    "feature": "Hub Visual Refresh",
+    "details": "Refactor Hub templates to use `templates/components/*`. Replace manual HTML cards with the `card.html` partial. Ensure the App Grid is responsive and animated.",
+    "passes": false
   },
   {
     "id": 5,
-    "feature": "Migrate KrisPC to Golden Standard",
-    "details": "Refactor `krispc/templates/the_base.html` to extend `layouts/golden_base.html`. Convert Bootstrap classes to Tailwind. Verify `test_ui_standardization.py` passes for KrisPC.",
-    "passes": true
+    "feature": "KrisPC Visual Refresh",
+    "details": "Refactor KrisPC templates. Update the Hero section to use modern typography and spacing. Replace form widgets with `input.html` partials.",
+    "passes": false
   },
   {
     "id": 6,
-    "feature": "Migrate Plexus to Golden Standard",
-    "details": "Refactor `plexus/templates/plexus/plexus_base.html` to extend `layouts/golden_base.html`. Convert Plexus-specific UI (Kanban, etc.) to Tailwind. Verify `test_ui_standardization.py` passes for Plexus.",
-    "passes": true
+    "feature": "Plexus Visual Refresh",
+    "details": "Refactor Plexus templates. Focus on Dark Mode polish. Ensure the 'Dashboard' and 'Capture' views use the glassmorphic card style.",
+    "passes": false
   },
   {
     "id": 7,
-    "feature": "Migrate Pdf2Cal to Golden Standard",
-    "details": "Refactor `p2c/templates/p2c_base.html` to extend `layouts/golden_base.html`. Convert P2C UI components to Tailwind. Verify `test_ui_standardization.py` passes for Pdf2Cal.",
-    "passes": true
+    "feature": "Pdf2Cal Visual Refresh",
+    "details": "Refactor Pdf2Cal templates. Clean up the dense 'Event Settings' forms using the new component library to improve readability and touch targets.",
+    "passes": false
   },
   {
     "id": 8,
-    "feature": "Global Cleanup",
-    "details": "Remove `django-crispy-forms` and `crispy-bootstrap5` from `Pipfile` if no longer used. Remove legacy CSS files. Ensure `pipenv install` cleans up dependencies. Run the full test suite.",
-    "passes": true
+    "feature": "Emoty Integration & Refresh",
+    "details": "Migrate `apps/emoty_web` templates to extend `layouts/golden_base.html`. Apply the design system to its main views. Add Emoty to `tests/test_ui_standardization.py` and `tests/test_design_system.py`.",
+    "passes": false
   }
 ]
