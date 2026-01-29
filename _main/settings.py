@@ -384,6 +384,9 @@ LANGUAGE_COOKIE_AGE = 60 * 60 * 24 * 365  # 1 year
 LANGUAGE_COOKIE_SAMESITE = 'Lax'
 LANGUAGE_COOKIE_HTTPONLY = False  # Allow JS to read if needed
 
+# Share session across subdomains
+SESSION_COOKIE_DOMAIN = ".krispc.fr"
+CSRF_COOKIE_DOMAIN = ".krispc.fr"
 
 STORAGES = {
     # Default file storage for uploaded files
