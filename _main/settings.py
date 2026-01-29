@@ -61,6 +61,11 @@ IS_PRODUCTION = bool(IS_FLY_APP) or env.str("ENVIRONMENT", default="") == "produ
 CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "https://krispc.fr",
     "https://www.krispc.fr",
+    "https://hub.krispc.fr",
+    "https://com.krispc.fr",
+    "https://p2c.krispc.fr",
+    "https://plexus.krispc.fr",
+    "https://emo.krispc.fr",
     "https://pdf2cal.fly.dev"
 ])
 
@@ -105,6 +110,11 @@ else:
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
     "https://krispc.fr",
     "https://www.krispc.fr",
+    "https://hub.krispc.fr",
+    "https://com.krispc.fr",
+    "https://p2c.krispc.fr",
+    "https://plexus.krispc.fr",
+    "https://emo.krispc.fr",
     "http://localhost:3000",
     "http://localhost:5173",
 ])
@@ -244,6 +254,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",  # CORS - must be before CommonMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "_main.subdomain_middleware.SubdomainRoutingMiddleware", # Subdomain Routing
     "hub.middleware.EnsureDefaultLanguageMiddleware",  # Restored
     "django.middleware.locale.LocaleMiddleware",  # Required for i18n URL patterns
     "krispc.middleware.APILanguageMiddleware",  # API-specific language detection
