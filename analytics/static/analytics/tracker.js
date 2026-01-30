@@ -1,4 +1,4 @@
-(function() {
+(function () {
     let visitId = null;
     let metrics = {};
     let interactions = [];
@@ -21,7 +21,7 @@
 
     const csrftoken = getCookie('csrftoken');
 
-    function sendRequest(endpoint, data, keepalive=false) {
+    function sendRequest(endpoint, data, keepalive = false) {
         const headers = {
             'Content-Type': 'application/json',
         };
@@ -30,7 +30,7 @@
         }
 
         if (keepalive && navigator.sendBeacon) {
-            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
             // navigator.sendBeacon does not support custom headers like CSRF easily without Blob
             // But Django requires CSRF. 
             // If we use fetch with keepalive: true, it works in modern browsers.
@@ -69,22 +69,27 @@
             },
             body: JSON.stringify(data)
         })
-        .then(res => res.json())
-        .then(res => {
-            visitId = res.visit_id;
-            startTracking();
-        })
-        .catch(err => console.error('Analytics init failed', err));
+            .then(res => res.json())
+            .then(res => {
+                visitId = res.visit_id;
+                startTracking();
+            })
+            .catch(err => console.error('Analytics init failed', err));
     }
 
     function startTracking() {
         trackPerformance();
         trackScroll();
         trackRageClicks();
-        
+
+        // Clear any existing interval to prevent duplicates (e.g. HTMX re-execution)
+        if (window.analyticsInterval) {
+            clearInterval(window.analyticsInterval);
+        }
+
         // Send updates every 10 seconds
-        setInterval(sendUpdate, 10000);
-        
+        window.analyticsInterval = setInterval(sendUpdate, 10000);
+
         // Send on page hide/unload
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') {
@@ -95,16 +100,16 @@
 
     function sendUpdate(isUnload = false) {
         if (!visitId) return;
-        
+
         // Calculate time on page
         const timeOnPage = (performance.now()) / 1000;
-        
+
         const data = {
             ...metrics,
             scroll_depth: maxScrollDepth,
             time_on_page: timeOnPage
         };
-        
+
         sendRequest(`${API_BASE}/update/${visitId}/`, data, isUnload);
     }
 
@@ -133,7 +138,7 @@
         if (/Mobi|Android/i.test(navigator.userAgent)) return "Mobile";
         return "Desktop";
     }
-    
+
     function getNetworkType() {
         const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
         return conn ? conn.effectiveType : 'unknown';
@@ -154,14 +159,14 @@
         // Web Vitals (LCP, CLS, INP) - simplified observation
         // Note: For production accuracy, use 'web-vitals' library. 
         // Here we implement basic observers.
-        
+
         try {
             // LCP
             new PerformanceObserver((entryList) => {
                 const entries = entryList.getEntries();
                 const lastEntry = entries[entries.length - 1];
                 metrics.lcp = lastEntry.startTime;
-            }).observe({type: 'largest-contentful-paint', buffered: true});
+            }).observe({ type: 'largest-contentful-paint', buffered: true });
 
             // CLS
             let clsValue = 0;
@@ -172,14 +177,14 @@
                         metrics.cls = clsValue;
                     }
                 }
-            }).observe({type: 'layout-shift', buffered: true});
+            }).observe({ type: 'layout-shift', buffered: true });
 
             // INP (Approximated by First Input Delay as INP is complex to polyfill)
             new PerformanceObserver((entryList) => {
                 const firstInput = entryList.getEntries()[0];
                 metrics.inp = firstInput.processingStart - firstInput.startTime;
-            }).observe({type: 'first-input', buffered: true});
-            
+            }).observe({ type: 'first-input', buffered: true });
+
         } catch (e) {
             // Observers not supported
         }
@@ -207,13 +212,13 @@
             const now = Date.now();
             // Filter clicks older than 1s
             clickLog = clickLog.filter(t => now - t.time < 1000);
-            
+
             // Add current click
-            clickLog.push({time: now, target: e.target});
-            
+            clickLog.push({ time: now, target: e.target });
+
             // Check for rage clicks (3+ clicks on same element)
             const clicksOnTarget = clickLog.filter(c => c.target === e.target).length;
-            
+
             if (clicksOnTarget === 3) {
                 // Detected Rage Click
                 reportInteraction('rage_click', e.target);
@@ -225,17 +230,17 @@
 
     function reportInteraction(type, target) {
         if (!visitId) return;
-        
+
         const selector = getSelector(target);
-        
+
         const data = {
             type: type,
             selector: selector
         };
-        
+
         sendRequest(`${API_BASE}/interaction/${visitId}/`, data);
     }
-    
+
     function getSelector(el) {
         if (el.id) return '#' + el.id;
         if (el.className) return '.' + el.className.split(' ').join('.');
