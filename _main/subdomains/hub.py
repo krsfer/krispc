@@ -15,6 +15,9 @@ urlpatterns += i18n_patterns(
     # Local App (Root)
     path('', include('hub.urls')),
     
+    # Analytics Dashboard
+    path('analytics/', include('analytics.urls')),
+    
     # Shadow Apps (for Reverse Resolution)
     path('krispc/', include('krispc.urls')),
     path('p2c/', include('p2c.urls')),
