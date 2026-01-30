@@ -66,6 +66,9 @@ class IndexView(TemplateView):
             else 'Professional Services & Tools'
         )
 
+        # Build subdomain URLs with language prefix
+        lang_path = '' if is_french else '/en'
+        
         context['apps'] = [
             {
                 'name': 'KrisPC',
@@ -74,7 +77,7 @@ class IndexView(TemplateView):
                     'Réparations informatiques professionnelles' if is_french
                     else 'Professional computer repairs'
                 ),
-                'url': f'{lang_prefix}/krispc/',
+                'url': f'https://com.krispc.fr{lang_path}/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             },
             {
@@ -84,7 +87,7 @@ class IndexView(TemplateView):
                     'Convertissez vos PDF en calendriers' if is_french
                     else 'Convert your PDFs to calendars'
                 ),
-                'url': f'{lang_prefix}/importpdf/',
+                'url': f'https://p2c.krispc.fr{lang_path}/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             },
             {
@@ -94,7 +97,7 @@ class IndexView(TemplateView):
                     'Système de déchargement cognitif' if is_french
                     else 'Cognitive offloading system'
                 ),
-                'url': f'{lang_prefix}/plexus/',
+                'url': f'https://plexus.krispc.fr{lang_path}/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             },
             {
@@ -104,7 +107,7 @@ class IndexView(TemplateView):
                     'Créateur de motifs Emoji' if is_french
                     else 'Emoji Pattern Creator'
                 ),
-                'url': '/emo/',
+                'url': 'https://emo.krispc.fr/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             }
         ]

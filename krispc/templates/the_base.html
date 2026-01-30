@@ -5,30 +5,43 @@
 {% load django_htmx %}
 
 {% block extra_head %}
-    <meta content="{% block description %}Professional IT services and computer repair{% endblock %}" name="description" />
-    <meta content="{% block keywords %}computer repair, IT support, maintenance{% endblock %}" name="keywords" />
-    {% block krispc_extra_css %}{% endblock %}
+<meta content="{% block description %}Professional IT services and computer repair{% endblock %}" name="description" />
+<meta content="{% block keywords %}computer repair, IT support, maintenance{% endblock %}" name="keywords" />
+{% block krispc_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block sub_nav %}
+<div class="bg-white border-b border-slate-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center h-14 space-x-4">
+      <a href="https://hub.krispc.fr" class="text-slate-400 hover:text-primary transition-colors text-sm">↩ Hub</a>
+      <span class="text-slate-300">|</span>
+      <span class="font-bold text-slate-500">KrisPC</span>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block content %}
-    <!-- Skip to main content for accessibility -->
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded">
-      Skip to main content
-    </a>
+<!-- Skip to main content for accessibility -->
+<a href="#main-content"
+  class="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded">
+  Skip to main content
+</a>
 
-    <div id="main-content">
-        {% if use_vue %}
-          <div id="app">
-            {% block main %}{% endblock %}
-          </div>
-        {% else %}
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            {% block krispc_content %}{% endblock %}
-          </div>
-        {% endif %}
-    </div>
+<div id="main-content">
+  {% if use_vue %}
+  <div id="app">
+    {% block main %}{% endblock %}
+  </div>
+  {% else %}
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    {% block krispc_content %}{% endblock %}
+  </div>
+  {% endif %}
+</div>
 {% endblock %}
 
 {% block extra_js %}
-    {% block krispc_extra_js %}{% endblock %}
+{% block krispc_extra_js %}{% endblock %}
 {% endblock %}

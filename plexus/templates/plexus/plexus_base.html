@@ -9,19 +9,30 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-14">
             <div class="flex items-center space-x-8">
+                <a href="https://hub.krispc.fr" class="text-slate-400 hover:text-white transition-colors text-sm">↩
+                    Hub</a>
                 <a href="{% url 'plexus:index' %}" class="font-bold text-lg flex items-center space-x-2">
                     <span>🪞</span>
                     <span class="hidden sm:inline">{% trans "Second Brain" %}</span>
                 </a>
                 {% if user.is_authenticated %}
                 <div class="hidden md:flex space-x-4">
-                    <a href="{% url 'plexus:capture' %}" class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Capture" %}</a>
-                    <a href="{% url 'plexus:capture' %}?mode=voice" class="text-slate-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">
+                    <a href="{% url 'plexus:capture' %}"
+                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{%
+                        trans "Capture" %}</a>
+                    <a href="{% url 'plexus:capture' %}?mode=voice"
+                        class="text-slate-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">
                         <span>🎙️</span><span>{% trans "Voice" %}</span>
                     </a>
-                    <a href="{% url 'plexus:dashboard' %}" class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Dashboard" %}</a>
-                    <a href="{% url 'plexus:action_kanban' %}" class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Action Center" %}</a>
-                    <a href="{% url 'plexus:review_queue' %}" class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Review Queue" %}</a>
+                    <a href="{% url 'plexus:dashboard' %}"
+                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{%
+                        trans "Dashboard" %}</a>
+                    <a href="{% url 'plexus:action_kanban' %}"
+                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{%
+                        trans "Action Center" %}</a>
+                    <a href="{% url 'plexus:review_queue' %}"
+                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{%
+                        trans "Review Queue" %}</a>
                 </div>
                 {% endif %}
             </div>
@@ -31,8 +42,8 @@
 {% endblock %}
 
 {% block extra_js %}
-    {% if user.is_authenticated %}
-        {% include "plexus/partials/bottom_nav.html" %}
-    {% endif %}
-    {{ block.super }}
+{% if user.is_authenticated %}
+{% include "plexus/partials/bottom_nav.html" %}
+{% endif %}
+{{ block.super }}
 {% endblock %}
