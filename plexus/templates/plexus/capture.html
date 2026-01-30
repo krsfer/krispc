@@ -4,65 +4,219 @@
 {% block title %}{% trans "Capture" %} - {% trans "Second Brain" %}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h3 class="card-title mb-0">{% trans "Capture New Thought" %}</h3>
-            </div>
-            <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="{{ form.content.id_for_label }}" class="form-label">{% trans "Content" %}</label>
+<div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{% trans "Capture New Thought" %}</h1>
+        <p class="text-gray-600 dark:text-slate-400">{% blocktrans %}Quickly save an idea, task, or memory to your
+            second brain.{% endblocktrans %}</p>
+    </div>
+
+    <div
+        class="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
+        <!-- Card Header -->
+        <div class="px-6 py-4 bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{% trans "Input Details" %}</h3>
+        </div>
+
+        <div class="p-6 md:p-8">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Content Field -->
+                <div>
+                    <label for="{{ form.content.id_for_label }}"
+                        class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                        {% trans "Content" %}
+                    </label>
+                    <div class="relative rounded-md shadow-sm">
                         {{ form.content }}
-                        {% if form.content.errors %}
-                            <div class="text-danger small">{{ form.content.errors }}</div>
-                        {% endif %}
                     </div>
-                    <div class="mb-3">
-                        <label for="{{ form.image.id_for_label }}" class="form-label">{% trans "Image / Screenshot" %}</label>
-                        {{ form.image }}
-                        {% if form.image.errors %}
-                            <div class="text-danger small">{{ form.image.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.source.id_for_label }}" class="form-label">{% trans "Source" %}</label>
-                        {{ form.source }}
-                        {% if form.source.errors %}
-                            <div class="text-danger small">{{ form.source.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">{% trans "Capture" %}</button>
-                    </div>
-                </form>
-
-                <div class="text-center my-4">
-                    <hr class="border-secondary">
-                    <span class="bg-dark px-2 text-muted small uppercase">{% trans "OR" %}</span>
+                    {% if form.content.errors %}
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.content.errors|striptags }}</p>
+                    {% endif %}
                 </div>
 
-                <!-- Voice Capture UI -->
-                <div class="voice-mode text-center">
-                    <div id="voice-status" class="mb-3" style="min-height: 24px;"></div>
-                    <div class="d-grid gap-2">
-                        <button id="record-button" class="btn btn-outline-danger btn-lg py-4">
-                            🎙️ {% trans "Start Voice Note" %}
-                        </button>
+                <!-- Image Upload -->
+                <div>
+                    <label for="{{ form.image.id_for_label }}"
+                        class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                        {% trans "Image / Screenshot" %}
+                    </label>
+                    <div
+                        class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-slate-600 border-dashed rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
+                        <div class="space-y-1 text-center">
+                            <span class="mx-auto text-4xl mb-3 block">🖼️</span>
+                            <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-400">
+                                <label for="{{ form.image.id_for_label }}"
+                                    class="relative cursor-pointer bg-white dark:bg-slate-800 rounded-md font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                    <span>{% trans "Upload a file" %}</span>
+                                    {{ form.image }}
+                                </label>
+                                <p>{% trans "or drag and drop" %}</p>
+                            </div>
+                            <p id="file-name-display"
+                                class="text-sm text-gray-500 dark:text-slate-400 mt-2 font-medium">
+                                {% trans "No file chosen" %}
+                            </p>
+                            <p class="text-xs text-gray-500 dark:text-slate-500 mt-1">
+                                PNG, JPG, GIF up to 10MB
+                            </p>
+                        </div>
                     </div>
-                    <p class="text-muted small mt-3 italic">
-                        {% trans "Speak your thought and we'll transcribe it automatically." %}
-                    </p>
+                    {% if form.image.errors %}
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.image.errors|striptags }}</p>
+                    {% endif %}
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const fileInput = document.getElementById('{{ form.image.id_for_label }}');
+                            const fileNameDisplay = document.getElementById('file-name-display');
+
+                            if (fileInput && fileNameDisplay) {
+                                fileInput.addEventListener('change', function (e) {
+                                    if (this.files && this.files.length > 0) {
+                                        fileNameDisplay.textContent = this.files[0].name;
+                                        fileNameDisplay.classList.add('text-blue-600', 'dark:text-blue-400');
+                                    } else {
+                                        fileNameDisplay.textContent = "{% trans 'No file chosen' %}";
+                                        fileNameDisplay.classList.remove('text-blue-600', 'dark:text-blue-400');
+                                    }
+                                });
+                            }
+                        });
+                    </script>
                 </div>
 
-                <div class="text-center mt-4">
-                    <a href="{% url 'plexus:index' %}" class="btn btn-link text-muted">{% trans "Cancel" %}</a>
+                <!-- Source Field -->
+                <div>
+                    <label for="{{ form.source.id_for_label }}"
+                        class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                        {% trans "Source" %}
+                    </label>
+                    {{ form.source }}
+                    {% if form.source.errors %}
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.source.errors|striptags }}</p>
+                    {% endif %}
                 </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        {% trans "Capture Thought" %}
+                    </button>
+                </div>
+            </form>
+
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200 dark:border-slate-700"></div>
+                </div>
+                <div class="relative flex justify-center">
+                    <span
+                        class="px-3 bg-white dark:bg-slate-800 text-sm text-gray-500 dark:text-slate-400 uppercase tracking-widest font-semibold">
+                        {% trans "OR" %}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Voice Capture UI -->
+            <div
+                class="voice-mode text-center bg-gray-50 dark:bg-slate-900/50 rounded-xl p-6 border border-gray-100 dark:border-slate-700">
+                <div id="voice-status" class="mb-4 min-h-[24px] text-sm font-medium text-blue-600 dark:text-blue-400">
+                </div>
+
+                <button id="record-button"
+                    class="group relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-gradient-to-br from-red-500 to-orange-500 group-hover:from-red-500 group-hover:to-orange-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-red-200 dark:focus:ring-red-800 w-24 h-24 shadow-lg transition-transform active:scale-95">
+                    <span
+                        class="relative flex items-center justify-center transition-all ease-in duration-75 bg-white dark:bg-slate-900 text-red-500 dark:text-red-400 rounded-full w-[98%] h-[98%] group-hover:bg-opacity-0 group-hover:text-white text-3xl">
+                        🎙️
+                    </span>
+                </button>
+
+                <p class="mt-4 text-sm text-gray-500 dark:text-slate-400 italic">
+                    {% trans "Tap to speak. We'll transcribe it automatically." %}
+                </p>
+            </div>
+
+            <div class="text-center mt-6">
+                <a href="{% url 'plexus:index' %}"
+                    class="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                    {% trans "Cancel" %}
+                </a>
             </div>
         </div>
     </div>
+</div>
+<!-- Voice Recording Modal -->
+<div id="voice-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <!-- Backdrop -->
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+            id="voice-modal-backdrop"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <!-- Modal Panel -->
+        <div
+            class="relative inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+            <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
+                            {% trans "Voice Capture" %}
+                        </h3>
+
+                        <!-- Status & Animation -->
+                        <div class="mt-4 flex justify-center py-4">
+                            <div id="recording-animation" class="flex space-x-1 items-center h-8">
+                                <!-- Simple CSS animation bars -->
+                                <div class="w-1.5 h-3 bg-red-500 rounded-full animate-bounce"></div>
+                                <div class="w-1.5 h-5 bg-red-500 rounded-full animate-bounce"
+                                    style="animation-delay: 0.1s"></div>
+                                <div class="w-1.5 h-8 bg-red-500 rounded-full animate-bounce"
+                                    style="animation-delay: 0.2s"></div>
+                                <div class="w-1.5 h-5 bg-red-500 rounded-full animate-bounce"
+                                    style="animation-delay: 0.1s"></div>
+                                <div class="w-1.5 h-3 bg-red-500 rounded-full animate-bounce"></div>
+                            </div>
+                        </div>
+
+                        <p id="modal-status-text" class="text-sm text-center text-gray-500 dark:text-slate-400 mb-4">
+                            {% trans "Listening..." %}
+                        </p>
+
+                        <!-- Transcript Area -->
+                        <div class="mt-2">
+                            <textarea id="voice-transcript" rows="4"
+                                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-md p-3"
+                                placeholder="{% trans 'Transcript will appear here...' %}" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer / Actions -->
+            <div class="bg-gray-50 dark:bg-slate-800/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                <!-- Accept Button (Initially Hidden) -->
+                <button type="button" id="modal-accept-btn"
+                    class="hidden w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    {% trans "Capture Thought" %}
+                </button>
+                <!-- Stop Button (Initially Visible) -->
+                <button type="button" id="modal-stop-btn"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    {% trans "Stop Recording" %}
+                </button>
+                <!-- Reject / Cancel Button -->
+                <button type="button" id="modal-reject-btn"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-700 text-base font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    {% trans "Discard" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 {% endblock %}
 
@@ -73,13 +227,24 @@
         voiceRecorder.init({
             recordButtonId: 'record-button',
             statusId: 'voice-status',
+
+            // Modal Elements
+            modalId: 'voice-modal',
+            modalStopBtnId: 'modal-stop-btn',
+            modalAcceptBtnId: 'modal-accept-btn',
+            modalRejectBtnId: 'modal-reject-btn',
+            transcriptId: 'voice-transcript',
+            animationId: 'recording-animation',
+            statusTextId: 'modal-status-text',
+
             uploadUrl: '{% url "plexus:voice_capture" %}',
+            redirectUrl: '{% url "plexus:dashboard" %}',
             csrfToken: '{{ csrf_token }}'
         });
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('mode') === 'voice') {
-            voiceRecorder.start();
+            voiceRecorder.startRecordingFlow();
         }
     });
 </script>

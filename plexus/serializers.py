@@ -4,7 +4,7 @@ Serializers for the Plexus application.
 Provides REST API serialization for Input, Thought, Action, and ThoughtLink models.
 """
 from rest_framework import serializers
-from plexus.models import Input, Thought, Action, ThoughtLink
+from plexus.models import Input, Thought, Action, ThoughtLink, Pattern
 
 
 class ActionSerializer(serializers.ModelSerializer):
@@ -60,3 +60,20 @@ class InputSerializer(serializers.ModelSerializer):
         model = Input
         fields = ["id", "content", "image", "source", "timestamp", "processed", "thoughts", "created_at", "updated_at", "deleted_at"]
         read_only_fields = ["id", "timestamp", "processed", "created_at", "updated_at"]
+
+
+class PatternSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Pattern model.
+    Represents creative patterns with sequence data and analytics.
+    """
+    class Meta:
+        model = Pattern
+        fields = [
+            "id", "user_id", "name", "sequence", "palette_id", "size",
+            "is_public", "is_ai_generated", "generation_prompt", "tags",
+            "difficulty_rating", "view_count", "like_count", "complexity_score",
+            "estimated_time_minutes", "version", "parent_pattern_id",
+            "created_at", "updated_at", "deleted_at"
+        ]
+        read_only_fields = ["id", "created_at", "updated_at", "view_count", "like_count", "version"]

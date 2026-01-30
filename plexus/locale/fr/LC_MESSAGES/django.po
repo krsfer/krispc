@@ -413,6 +413,93 @@ msgstr "Déconnexion"
 msgid "Login"
 msgstr "Connexion"
 
-#: plexus/templates/plexus/plexus_base.html:86
-msgid "LOGOUT"
-msgstr "DÉCONNEXION"
+#: plexus/templates/plexus/capture.html:116
+msgid "Tap to speak. We'll transcribe it automatically."
+msgstr "Appuyez pour parler. Nous transcrirons automatiquement."
+
+#: plexus/forms.py:13
+msgid "What's on your mind? Text or Image..."
+msgstr "Qu'avez-vous à l'esprit ? Texte ou Image..."
+
+#: plexus/templates/plexus/capture.html:11
+msgid "Quickly save an idea, task, or memory to your second brain."
+msgstr "Enregistrez rapidement une idée, une tâche ou un souvenir dans votre second cerveau."
+
+#: plexus/templates/plexus/capture.html:53
+msgid "Upload a file"
+msgstr "Télécharger un fichier"
+
+#: plexus/templates/plexus/capture.html:56
+msgid "or drag and drop"
+msgstr "ou glisser-déposer"
+
+#: plexus/templates/plexus/capture.html:59
+msgid "PNG, JPG, GIF up to 10MB"
+msgstr "PNG, JPG, GIF jusqu'à 10 Mo"
+
+#: plexus/templates/plexus/capture.html:44
+msgid "Image / Screenshot"
+msgstr "Image / Capture d'écran"
+
+#: plexus/templates/plexus/capture.html:56
+msgid "No file chosen"
+msgstr "Aucun fichier choisi"
+
+#: plexus/templates/plexus/thought_edit.html:14
+msgid "Original Input"
+msgstr "Entrée originale"
+
+
+
+
+#: plexus/templates/plexus/bouncer/queue.html:21
+msgid "Pending Review"
+msgstr "En attente de révision"
+
+#: plexus/templates/plexus/bouncer/queue.html:33
+msgid "Raw Input"
+msgstr "Entrée brute"
+
+#: plexus/templates/plexus/bouncer/queue.html:37
+msgid "AI Suggestion"
+msgstr "Suggestion IA"
+
+#: plexus/templates/plexus/bouncer/queue.html:56
+msgid "Resolve Now"
+msgstr "Résoudre maintenant"
+
+#: plexus/templates/plexus/bouncer/queue.html:64
+msgid "Your review queue is empty. All caught up!"
+msgstr "Votre file de révision est vide. Tout est à jour !"
+
+#: plexus/templates/plexus/bouncer/queue.html:67
+msgid "Back to Dashboard"
+msgstr "Retour au tableau de bord"
+
+#: plexus/services/processor.py:82
+msgid "Low confidence score: %(score)s"
+msgstr "Score de confiance faible : %(score)s"
+
+#: plexus/templates/plexus/capture.html:158
+msgid "Voice Capture"
+msgstr "Capture vocale"
+
+#: plexus/templates/plexus/capture.html:176
+msgid "Listening..."
+msgstr "Écoute en cours..."
+
+#: plexus/templates/plexus/capture.html:183
+msgid "Transcript will appear here..."
+msgstr "La transcription apparaîtra ici..."
+
+#: plexus/templates/plexus/capture.html:191
+msgid "Capture Thought"
+msgstr "Capturer la pensée"
+
+#: plexus/templates/plexus/capture.html:195
+msgid "Stop Recording"
+msgstr "Arrêter l'enregistrement"
+
+#: plexus/templates/plexus/capture.html:199
+msgid "Discard"
+msgstr "Rejeter"

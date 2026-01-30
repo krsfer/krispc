@@ -167,3 +167,37 @@ class SystemConfiguration(models.Model):
     def save(self, *args, **kwargs):
         self.pk = 1
         super().save(*args, **kwargs)
+
+class Pattern(models.Model):
+    user_id = models.CharField(max_length=255, verbose_name=_("User ID"))
+    name = models.CharField(max_length=100, verbose_name=_("Name"))
+    sequence = models.JSONField(verbose_name=_("Sequence"))
+    palette_id = models.CharField(max_length=50, verbose_name=_("Palette ID"))
+    size = models.IntegerField(verbose_name=_("Size"))
+    is_public = models.BooleanField(default=False, verbose_name=_("Is Public"))
+    is_ai_generated = models.BooleanField(default=False, verbose_name=_("Is AI Generated"))
+    generation_prompt = models.TextField(null=True, blank=True, verbose_name=_("Generation Prompt"))
+    tags = models.JSONField(null=True, blank=True, verbose_name=_("Tags"))
+    difficulty_rating = models.IntegerField(null=True, blank=True, verbose_name=_("Difficulty Rating"))
+    view_count = models.IntegerField(default=0, verbose_name=_("View Count"))
+    like_count = models.IntegerField(default=0, verbose_name=_("Like Count"))
+    complexity_score = models.FloatField(null=True, blank=True, verbose_name=_("Complexity Score"))
+    estimated_time_minutes = models.IntegerField(null=True, blank=True, verbose_name=_("Estimated Time (min)"))
+    version = models.IntegerField(default=1, verbose_name=_("Version"))
+    parent_pattern_id = models.CharField(max_length=255, null=True, blank=True, verbose_name=_("Parent Pattern ID"))
+    search_vector = models.TextField(null=True, blank=True, verbose_name=_("Search Vector"))
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+    deleted_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Deleted at"))
+    deleted_by = models.CharField(max_length=255, null=True, blank=True, verbose_name=_("Deleted by"))
+
+    class Meta:
+        db_table = 'patterns'
+        verbose_name = _("Pattern")
+        verbose_name_plural = _("Patterns")
+        managed = False  # Schema managed by external tools/migrations
+
+    def __str__(self):
+        return self.name

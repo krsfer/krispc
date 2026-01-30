@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
-from plexus.models import Input, Thought, Action, ThoughtLink
-from plexus.serializers import InputSerializer, ThoughtSerializer, ActionSerializer, ThoughtLinkSerializer
+from plexus.models import Input, Thought, Action, ThoughtLink, Pattern
+from plexus.serializers import InputSerializer, ThoughtSerializer, ActionSerializer, ThoughtLinkSerializer, PatternSerializer
 
 class InputViewSet(viewsets.ModelViewSet):
     queryset = Input.objects.all().order_by("-timestamp")
@@ -104,3 +104,20 @@ class SyncView(APIView):
         else:
             # In a real app, we might return these errors in the response
             print(f"Sync Validation Error: {serializer.errors}")
+
+class PatternViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for interacting with Pattern data.
+    Provides standard CRUD operations for patterns.
+    """
+    queryset = Pattern.objects.filter(deleted_at__isnull=True).order_by("-created_at")
+    serializer_class = PatternSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name", "tags", "generation_prompt"]
+    ordering_fields = ["created_at", "view_count", "like_count", "difficulty_rating"]
+
+    def perform_destroy(self, instance):
+        # Soft delete
+        instance.deleted_at = timezone.now()
+        instance.save()

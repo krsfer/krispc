@@ -21,12 +21,12 @@
 
                 <form method="post">
                     {% csrf_token %}
-                    
+
                     <div class="mb-3">
                         <label for="{{ form.content.id_for_label }}" class="form-label">Refined Content</label>
                         {{ form.content }}
                         {% if form.content.errors %}
-                            <div class="text-danger small">{{ form.content.errors }}</div>
+                        <div class="text-danger small">{{ form.content.errors }}</div>
                         {% endif %}
                     </div>
 
@@ -34,7 +34,7 @@
                         <label for="{{ form.type.id_for_label }}" class="form-label">Classification</label>
                         {{ form.type }}
                         {% if form.type.errors %}
-                            <div class="text-danger small">{{ form.type.errors }}</div>
+                        <div class="text-danger small">{{ form.type.errors }}</div>
                         {% endif %}
                     </div>
 

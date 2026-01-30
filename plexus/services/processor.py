@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 from plexus.models import Input, Thought, Action, ReviewQueue
 from .llm import classify_input
 from .linking import find_relevant_links
@@ -79,6 +80,6 @@ class InputProcessor:
         if thought.confidence_score < self.CONFIDENCE_THRESHOLD:
             ReviewQueue.objects.create(
                 thought=thought,
-                reason=f"Low confidence score: {thought.confidence_score}",
+                reason=_("Low confidence score: %(score)s") % {'score': thought.confidence_score},
                 status="pending"
             )

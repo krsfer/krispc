@@ -8,16 +8,16 @@ class InputForm(forms.ModelForm):
         fields = ["content", "image", "source"]
         widgets = {
             "content": forms.Textarea(attrs={
-                "class": "form-control",
+                "class": "block w-full rounded-md border-gray-300 dark:border-slate-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-700 dark:text-white sm:text-sm",
                 "rows": 5,
                 "placeholder": _("What's on your mind? Text or Image...")
             }),
             "image": forms.FileInput(attrs={
-                "class": "form-control",
+                "class": "sr-only",
                 "accept": "image/*"
             }),
             "source": forms.Select(attrs={
-                "class": "form-control"
+                "class": "block w-full rounded-md border-gray-300 dark:border-slate-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-700 dark:text-white sm:text-sm"
             }),
         }
     
@@ -38,10 +38,10 @@ class ThoughtForm(forms.ModelForm):
         fields = ["content", "type"]
         widgets = {
             "content": forms.Textarea(attrs={
-                "class": "form-control",
+                "class": "block w-full rounded-md border-gray-300 dark:border-slate-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-700 dark:text-white sm:text-sm",
                 "rows": 5
             }),
             "type": forms.Select(attrs={
-                "class": "form-control"
+                "class": "block w-full rounded-md border-gray-300 dark:border-slate-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-700 dark:text-white sm:text-sm"
             }),
         }

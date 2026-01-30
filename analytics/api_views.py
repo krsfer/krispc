@@ -1,10 +1,20 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from .models import PageVisit, UserInteraction, ErrorEvent
 from .tasks import resolve_geoip
 from django.utils import timezone
+
+class DashboardDataView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        from .services import get_analytics_dashboard_data
+        # Optional: Allow filtering by days via query param
+        days = int(request.query_params.get('days', 30))
+        data = get_analytics_dashboard_data(days_back=days)
+        return Response(data)
 
 class TrackVisitView(APIView):
     permission_classes = [AllowAny]

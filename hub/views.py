@@ -23,6 +23,13 @@ def switch_language(request):
             request.session.save() # Explicitly save
             logger.info(f"Language switched to {language} (Session updated)")
         
+        # Rewrite URL to new language
+        from django.urls import translate_url
+        if next_url:
+            translated_url = translate_url(next_url, language)
+            if translated_url:
+                next_url = translated_url
+
         # Also set cookie for redundancy
         response = HttpResponseRedirect(next_url)
         response.set_cookie(
