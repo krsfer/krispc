@@ -24,8 +24,11 @@ class EnsureDefaultLanguageMiddleware:
     def __call__(self, request):
         # Skip API paths and i18n paths - let LocaleMiddleware handle them
         # We check for '/i18n/' anywhere in path to handle prefixed URLs like /en/i18n/
-        # Also skip our custom switch_language view
-        if request.path.startswith('/api/') or '/i18n/' in request.path or 'switch-lang' in request.path:
+        # Also skip our custom switch_language view and analytics API
+        if (request.path.startswith('/api/') or 
+            request.path.startswith('/analytics/api/') or 
+            '/i18n/' in request.path or 
+            'switch-lang' in request.path):
             return self.get_response(request)
 
         # Determine language from URL path

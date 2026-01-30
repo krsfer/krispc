@@ -111,6 +111,7 @@ export function TagFilter({
         <input
           ref={inputRef}
           type="text"
+          role="combobox"
           className="form-control form-control-sm"
           value={inputValue}
           onChange={(e) => {
@@ -125,14 +126,23 @@ export function TagFilter({
           aria-label="Add tags"
           aria-autocomplete="list"
           aria-expanded={showSuggestions}
+          aria-controls="tag-suggestions-list"
+          aria-haspopup="listbox"
         />
 
         {/* Suggestions dropdown */}
         {showSuggestions && suggestions.length > 0 && (
-          <div className="dropdown-menu show w-100 mt-1" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+          <div 
+            id="tag-suggestions-list" 
+            role="listbox" 
+            className="dropdown-menu show w-100 mt-1" 
+            style={{ maxHeight: '200px', overflowY: 'auto' }}
+          >
             {suggestions.map((tag, index) => (
               <button
                 key={tag}
+                role="option"
+                aria-selected={index === focusedIndex}
                 className={`dropdown-item ${index === focusedIndex ? 'active' : ''}`}
                 onClick={() => addTag(tag)}
                 onMouseEnter={() => setFocusedIndex(index)}

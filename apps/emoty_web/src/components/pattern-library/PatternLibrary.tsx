@@ -189,7 +189,7 @@ export default function PatternLibrary({
     if (!initialPatterns.length && session?.user?.id) {
       fetchPatterns(1);
     }
-  }, [session, initialPatterns.length]);
+  }, [session, initialPatterns.length, fetchPatterns]);
 
   // Handle pattern selection for batch operations
   const togglePatternSelection = useCallback((patternId: string) => {

@@ -31,7 +31,7 @@ export function SearchInput({
     }, debounceMs);
 
     return () => clearTimeout(timer);
-  }, [localValue, debounceMs]);
+  }, [localValue, debounceMs, onChange, value]);
 
   // Update local value when external value changes
   useEffect(() => {

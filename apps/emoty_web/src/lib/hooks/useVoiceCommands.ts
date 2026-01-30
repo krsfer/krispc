@@ -45,10 +45,55 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
   const handlersRef = useRef(handlers);
   const commandHistoryRef = useRef<ParsedVoiceCommand[]>([]);
 
-  // Update handlers ref when handlers change
-  useEffect(() => {
-    handlersRef.current = handlers;
-  }, [handlers]);
+  /**
+   * Stop listening for voice commands
+   */
+  const stopListening = useCallback(() => {
+    voiceCommandService.stopListening();
+  }, []);
+
+  /**
+   * Start listening for voice commands
+   */
+  const startListening = useCallback(async (config?: Partial<VoiceCommandConfig>) => {
+    if (!state.isSupported) {
+      setState(prev => ({
+        ...prev,
+        error: new VoiceCommandError('Speech recognition not supported', 'NOT_SUPPORTED')
+      }));
+      return false;
+    }
+
+    try {
+      // Request microphone permission first
+      const permission = await requestMicrophonePermission();
+
+      setState(prev => ({
+        ...prev,
+        permissionGranted: permission,
+        error: null
+      }));
+
+      if (!permission) {
+        setState(prev => ({
+          ...prev,
+          error: new VoiceCommandError('Microphone permission denied', 'PERMISSION_DENIED')
+        }));
+        return false;
+      }
+
+      voiceCommandService.startListening(config);
+      return true;
+
+    } catch (error: any) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof VoiceCommandError ? error :
+          new VoiceCommandError('Failed to start listening', 'RECOGNITION_ERROR', error)
+      }));
+      return false;
+    }
+  }, [state.isSupported]);
 
   /**
    * Handle voice command
@@ -138,7 +183,7 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
         )
       }));
     }
-  }, []);
+  }, [stopListening]);
 
   /**
    * Handle voice command error
@@ -179,56 +224,6 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers = {}) {
       unsubscribeStatus();
     };
   }, [state.isSupported, handleVoiceCommand, handleVoiceError, handleStatusChange]);
-
-  /**
-   * Start listening for voice commands
-   */
-  const startListening = useCallback(async (config?: Partial<VoiceCommandConfig>) => {
-    if (!state.isSupported) {
-      setState(prev => ({
-        ...prev,
-        error: new VoiceCommandError('Speech recognition not supported', 'NOT_SUPPORTED')
-      }));
-      return false;
-    }
-
-    try {
-      // Request microphone permission first
-      const permission = await requestMicrophonePermission();
-
-      setState(prev => ({
-        ...prev,
-        permissionGranted: permission,
-        error: null
-      }));
-
-      if (!permission) {
-        setState(prev => ({
-          ...prev,
-          error: new VoiceCommandError('Microphone permission denied', 'PERMISSION_DENIED')
-        }));
-        return false;
-      }
-
-      voiceCommandService.startListening(config);
-      return true;
-
-    } catch (error: any) {
-      setState(prev => ({
-        ...prev,
-        error: error instanceof VoiceCommandError ? error :
-          new VoiceCommandError('Failed to start listening', 'RECOGNITION_ERROR', error)
-      }));
-      return false;
-    }
-  }, [state.isSupported]);
-
-  /**
-   * Stop listening for voice commands
-   */
-  const stopListening = useCallback(() => {
-    voiceCommandService.stopListening();
-  }, []);
 
   /**
    * Toggle listening state

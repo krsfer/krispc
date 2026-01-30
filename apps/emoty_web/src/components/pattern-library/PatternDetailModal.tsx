@@ -120,6 +120,18 @@ export default function PatternDetailModal({
     }
   }, [pattern.id, onDelete, actions]);
 
+  // Handle copy link
+  const handleCopyLink = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+      actions.trackAction('share_pattern', { patternId: pattern.id, method: 'copy' });
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+    }
+  }, [shareUrl, pattern.id, actions]);
+
   // Handle share
   const handleShare = useCallback(async () => {
     if (navigator.share) {
@@ -137,19 +149,7 @@ export default function PatternDetailModal({
       // Fallback to copy URL
       handleCopyLink();
     }
-  }, [pattern, shareUrl, actions]);
-
-  // Handle copy link
-  const handleCopyLink = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-      actions.trackAction('share_pattern', { patternId: pattern.id, method: 'copy' });
-    } catch (error) {
-      console.error('Failed to copy link:', error);
-    }
-  }, [shareUrl, pattern.id, actions]);
+  }, [pattern, shareUrl, actions, handleCopyLink]);
 
   // Handle duplicate
   const handleDuplicate = useCallback(async () => {

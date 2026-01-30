@@ -5,6 +5,8 @@ export default {
     './krispc/static/src/**/*.{vue,js}',
     './p2c/templates/**/*.html',
     './hub/templates/**/*.html',
+    './plexus/templates/**/*.html',
+    './templates/**/*.html',
   ],
   darkMode: 'class',
   theme: {

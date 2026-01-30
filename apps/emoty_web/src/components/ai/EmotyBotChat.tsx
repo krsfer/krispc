@@ -26,6 +26,7 @@ export default function EmotyBotChat({
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const chatSessionRef = useRef<string | null>(null);
 
   // Voice command handlers
   const voiceHandlers = {
@@ -69,6 +70,7 @@ export default function EmotyBotChat({
             user.languagePreference || 'en'
           );
           setChatSession(newSession);
+          chatSessionRef.current = newSession.id;
         } catch (error) {
           console.error('Failed to initialize EmotyBot session:', error);
         }
@@ -79,8 +81,8 @@ export default function EmotyBotChat({
 
     return () => {
       // Cleanup on unmount
-      if (chatSession) {
-        emotyBot.endSession(chatSession.id);
+      if (chatSessionRef.current) {
+        emotyBot.endSession(chatSessionRef.current);
       }
     };
   }, [session?.user?.id, user]);

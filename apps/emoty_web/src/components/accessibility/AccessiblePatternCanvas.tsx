@@ -48,26 +48,23 @@ export const AccessiblePatternCanvas: React.FC<PatternCanvasProps> = ({
     handleGestureAction
   );
 
-  // Generate comprehensive pattern description for screen readers
-  const generatePatternDescription = useCallback((): string => {
-    if (pattern.length === 0) return "Empty pattern canvas";
+  // Extract layers for spatial description
+  const extractLayers = useCallback((pattern: GridCell[][]): Array<{ emoji: string; layer: number }> => {
+    const center = Math.floor(pattern.length / 2);
+    const layers: Array<{ emoji: string; layer: number }> = [];
     
-    const filledCells = pattern.flat().filter(cell => cell.emoji);
-    const totalCells = pattern.length * pattern.length;
-    const sequence = extractSequenceFromPattern(pattern);
-    
-    let description = `Pattern canvas with ${pattern.length} by ${pattern.length} grid containing ${filledCells.length} emojis out of ${totalCells} cells. `;
-    
-    if (sequence.length > 0) {
-      description += `Emoji sequence from center outward: ${sequence.join(', ')}. `;
+    for (let layer = 0; layer < Math.ceil(pattern.length / 2); layer++) {
+      const emoji = pattern[center - layer]?.[center - layer]?.emoji ||
+                   pattern[center]?.[center - layer]?.emoji ||
+                   pattern[center + layer]?.[center]?.emoji;
+      
+      if (emoji) {
+        layers.push({ emoji, layer });
+      }
     }
     
-    if (preferences.verboseDescriptions) {
-      description += generateSpatialDescription(pattern);
-    }
-    
-    return description;
-  }, [pattern, preferences.verboseDescriptions]);
+    return layers;
+  }, []);
 
   // Generate spatial layout description
   const generateSpatialDescription = useCallback((pattern: GridCell[][]): string => {
@@ -82,7 +79,7 @@ export const AccessiblePatternCanvas: React.FC<PatternCanvasProps> = ({
     });
     
     return description.slice(0, -2); // Remove trailing comma
-  }, []);
+  }, [extractLayers]);
 
   // Extract emoji sequence from pattern (center to outer)
   const extractSequenceFromPattern = useCallback((pattern: GridCell[][]): string[] => {
@@ -109,23 +106,26 @@ export const AccessiblePatternCanvas: React.FC<PatternCanvasProps> = ({
     return sequence;
   }, []);
 
-  // Extract layers for spatial description
-  const extractLayers = useCallback((pattern: GridCell[][]): Array<{ emoji: string; layer: number }> => {
-    const center = Math.floor(pattern.length / 2);
-    const layers: Array<{ emoji: string; layer: number }> = [];
+  // Generate comprehensive pattern description for screen readers
+  const generatePatternDescription = useCallback((): string => {
+    if (pattern.length === 0) return "Empty pattern canvas";
     
-    for (let layer = 0; layer < Math.ceil(pattern.length / 2); layer++) {
-      const emoji = pattern[center - layer]?.[center - layer]?.emoji ||
-                   pattern[center]?.[center - layer]?.emoji ||
-                   pattern[center + layer]?.[center]?.emoji;
-      
-      if (emoji) {
-        layers.push({ emoji, layer });
-      }
+    const filledCells = pattern.flat().filter(cell => cell.emoji);
+    const totalCells = pattern.length * pattern.length;
+    const sequence = extractSequenceFromPattern(pattern);
+    
+    let description = `Pattern canvas with ${pattern.length} by ${pattern.length} grid containing ${filledCells.length} emojis out of ${totalCells} cells. `;
+    
+    if (sequence.length > 0) {
+      description += `Emoji sequence from center outward: ${sequence.join(', ')}. `;
     }
     
-    return layers;
-  }, []);
+    if (preferences.verboseDescriptions) {
+      description += generateSpatialDescription(pattern);
+    }
+    
+    return description;
+  }, [pattern, preferences.verboseDescriptions, extractSequenceFromPattern, generateSpatialDescription]);
 
   // Handle cell interaction
   const handleCellInteraction = useCallback((row: number, col: number, source: 'click' | 'keyboard' | 'gesture' = 'click') => {

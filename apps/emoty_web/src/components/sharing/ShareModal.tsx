@@ -4,6 +4,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { useTranslation, useIsRTL } from '@/lib/i18n/context';
 import { sharingService, type ShareOptions, type ShareResult, type SocialSharePlatform } from '@/lib/sharing/sharing-service';
 import type { PatternState } from '@/types/pattern';
@@ -368,11 +369,15 @@ export function ShareModal({ isOpen, onClose, pattern, userId }: ShareModalProps
                   <h4 className="text-md font-medium text-gray-900 dark:text-gray-100 mb-3">
                     QR Code
                   </h4>
-                  <img 
-                    src={shareResult.qrCodeUrl} 
-                    alt="QR Code" 
-                    className="mx-auto w-48 h-48 border border-gray-300 rounded-lg"
-                  />
+                  <div className="mx-auto w-48 h-48 relative">
+                    <Image 
+                      src={shareResult.qrCodeUrl} 
+                      alt="QR Code" 
+                      fill
+                      className="border border-gray-300 rounded-lg object-contain"
+                      unoptimized
+                    />
+                  </div>
                   <button
                     onClick={downloadQRCode}
                     className="mt-3 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg dark:hover:bg-blue-900/20"

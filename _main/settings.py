@@ -350,7 +350,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 # Media files (uploaded by users)
 if IS_FLY_APP:
@@ -358,7 +358,7 @@ if IS_FLY_APP:
 else:
     MEDIA_ROOT = BASE_DIR / "media"
     
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 
 # Additional locations for static files
 STATICFILES_DIRS = [
@@ -385,8 +385,13 @@ LANGUAGE_COOKIE_SAMESITE = 'Lax'
 LANGUAGE_COOKIE_HTTPONLY = False  # Allow JS to read if needed
 
 # Share session across subdomains
-SESSION_COOKIE_DOMAIN = ".krispc.fr"
-CSRF_COOKIE_DOMAIN = ".krispc.fr"
+if IS_PRODUCTION:
+    SESSION_COOKIE_DOMAIN = ".krispc.fr"
+    CSRF_COOKIE_DOMAIN = ".krispc.fr"
+else:
+    # For localhost development, let browser set default (host-only)
+    SESSION_COOKIE_DOMAIN = None
+    CSRF_COOKIE_DOMAIN = None
 
 STORAGES = {
     # Default file storage for uploaded files
@@ -497,10 +502,10 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.ScopedRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "100/hour",           # Anonymous users: 100 requests per hour
-        "user": "1000/hour",          # Authenticated users: 1000 requests per hour
-        "contacts": "5/minute",       # Contact form: 5 per minute
-        "read_only": "60/minute",     # Read-only endpoints: 60 per minute
+        "anon": "1000/hour",           # Anonymous users: 1000 requests per hour (increased for dev)
+        "user": "5000/hour",          # Authenticated users: 5000 requests per hour
+        "contacts": "50/minute",       # Contact form: 50 per minute
+        "read_only": "600/minute",     # Read-only endpoints: 600 per minute
     },
     
     # Pagination

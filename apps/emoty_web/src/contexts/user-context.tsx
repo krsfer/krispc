@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { ProgressionEngine } from '@/lib/progression-engine';
 import type { UserLevel, AccessibilityPreferences } from '@/db/types';
@@ -64,7 +64,7 @@ export function UserProvider({ children }: UserProviderProps) {
   const isAuthenticated = !!session?.user;
 
   // Refresh progression data
-  const refreshProgression = async () => {
+  const refreshProgression = useCallback(async () => {
     if (!session?.user?.id) return;
 
     setIsLoadingProgression(true);
@@ -83,7 +83,7 @@ export function UserProvider({ children }: UserProviderProps) {
     } finally {
       setIsLoadingProgression(false);
     }
-  };
+  }, [session?.user?.id]);
 
   // Track user action
   const trackAction = async (action: string, metadata?: any) => {
@@ -168,7 +168,7 @@ export function UserProvider({ children }: UserProviderProps) {
       setProgression(null);
       setAvailableFeatures([]);
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, refreshProgression]);
 
   // Update available features when user level changes
   useEffect(() => {

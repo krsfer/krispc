@@ -1,7 +1,7 @@
 /**
  * React hook for AI pattern generation with error handling and caching
  */
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import type { 
   PatternGenerationRequest, 
   AIResponse, 
@@ -206,9 +206,9 @@ export function useAIPatternGeneration() {
   /**
    * Get rate limit info
    */
-  const getRateLimitInfo = useCallback(() => {
-    const { isRateLimited, nextRetryAt } = state;
-    
+  const { isRateLimited, nextRetryAt, isGenerating } = state;
+
+  const rateLimitInfo = useMemo(() => {
     if (!isRateLimited || !nextRetryAt) {
       return { isRateLimited: false, canRetryIn: 0 };
     }
@@ -220,20 +220,18 @@ export function useAIPatternGeneration() {
       canRetryIn: Math.ceil(canRetryIn / 1000), // seconds
       nextRetryAt
     };
-  }, [state.isRateLimited, state.nextRetryAt]);
+  }, [isRateLimited, nextRetryAt]);
 
   /**
    * Check if we can generate more patterns
    */
-  const canGenerate = useCallback(() => {
-    const { isGenerating, isRateLimited, nextRetryAt } = state;
-    
+  const canGenerate = useMemo(() => {
     if (isGenerating) return false;
     if (!isRateLimited) return true;
     if (!nextRetryAt) return true;
     
     return Date.now() >= nextRetryAt.getTime();
-  }, [state.isGenerating, state.isRateLimited, state.nextRetryAt]);
+  }, [isGenerating, isRateLimited, nextRetryAt]);
 
   return {
     // State
@@ -254,7 +252,7 @@ export function useAIPatternGeneration() {
     clearCache,
     
     // Helpers
-    canGenerate: canGenerate(),
-    rateLimitInfo: getRateLimitInfo()
+    canGenerate,
+    rateLimitInfo
   };
 }

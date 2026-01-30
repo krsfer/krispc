@@ -16,22 +16,29 @@ class SubdomainRoutingMiddleware:
         host = request.get_host().split(':')[0]
         port = request.get_host().split(':')[1] if ':' in request.get_host() else None
         
+        # Check if host is an IP address
+        is_ip = bool(re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', host))
+
         parts = host.split('.')
         
-        # Determine Base Domain (e.g. krispc.fr or localhost)
-        # If localhost, parts=['hub', 'localhost'] -> base='localhost'
-        # If krispc.fr, parts=['hub', 'krispc', 'fr'] -> base='krispc.fr'
-        if 'localhost' in host:
+        # Determine Base Domain
+        if is_ip:
+             base_domain = host
+             current_subdomain = 'www' # Treat IP access as root
+        elif 'localhost' in host:
              base_domain = "localhost"
+             if len(parts) >= 2:
+                 current_subdomain = parts[0]
+             else:
+                 current_subdomain = 'www'
         else:
              # Join all parts except the first one (subdomain)
              base_domain = ".".join(parts[1:])
-
-        # Determine current subdomain
-        if len(parts) >= 3 or (len(parts) == 2 and 'localhost' in host):
-            current_subdomain = parts[0]
-        else:
-            current_subdomain = 'www' # or root fallback
+             # Determine current subdomain
+             if len(parts) >= 3:
+                current_subdomain = parts[0]
+             else:
+                current_subdomain = 'www'
 
         # 1. Switch URLConf
         if current_subdomain == 'hub':
@@ -56,7 +63,8 @@ class SubdomainRoutingMiddleware:
             target_subdomain = self.app_domains.get(target_app)
             
             # If we are targeting a different subdomain than the current one
-            if target_subdomain and target_subdomain != current_subdomain:
+            # AND we are not using an IP address (redirects don't work well with IPs)
+            if not is_ip and target_subdomain and target_subdomain != current_subdomain:
                 
                 # Construct new host
                 if port:

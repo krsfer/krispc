@@ -156,7 +156,7 @@ export function TutorialSystem({ className = '' }: TutorialSystemProps) {
       setCurrentStep(0);
       setIsVisible(true);
     }
-  }, [user?.userLevel, completedTutorials, currentTutorial]);
+  }, [user, completedTutorials, currentTutorial]);
 
   const handleNext = () => {
     if (!currentTutorial) return;

@@ -59,6 +59,12 @@ urlpatterns += i18n_patterns(
     # Handle Next.js fonts with i18n prefix
     re_path(r"^(?P<path>__nextjs_font/.*)$", proxy_to_emoty),
 
+    # Fallback: Serve media files with i18n prefix (e.g. /en/media/...)
+    # This handles relative path resolution issues
+    re_path(r'^media/(?P<path>.*)$', serve, {
+        'document_root': settings.MEDIA_ROOT,
+    }),
+
     # Proxy to Emoty Web (Next.js)
     re_path(r"^emo(?:/(?P<path>.*))?$", proxy_to_emoty),
     path("login/", auth_views.LoginView.as_view(template_name="plexus/registration/login.html"), name="login"),
