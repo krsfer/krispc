@@ -553,11 +553,25 @@ GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-pro-latest")
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "filters": {
+        "suppress_analytics_tracking": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": lambda record: "/analytics/api/track/" not in record.getMessage(),
+        },
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        "console_filtered": {
+            "class": "logging.StreamHandler",
+            "filters": ["suppress_analytics_tracking"],
+        },
+    },
     "loggers": {
         "django": {"handlers": ["console"], "level": "INFO"},
         "p2c": {"handlers": ["console"], "level": "INFO", "propagate": True},
         "plexus": {"handlers": ["console"], "level": "INFO", "propagate": True},
+        "daphne.server": {"handlers": ["console_filtered"], "level": "INFO", "propagate": False},
+        "daphne.http": {"handlers": ["console_filtered"], "level": "INFO", "propagate": False},
     },
 }
 
