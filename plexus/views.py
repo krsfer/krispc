@@ -4,6 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status, permissions
@@ -14,6 +16,7 @@ from .models import Input, Thought, Action, ReviewQueue, SystemConfiguration
 from .services.stats import get_system_stats
 from .services.transcription import transcribe_audio
 from .services.surfacing import get_on_this_day, get_random_resurface
+from .guest import get_guest_status, can_create_thought, is_guest_user
 
 class IndexView(TemplateView):
     template_name = "plexus/index.html"
@@ -23,6 +26,25 @@ class CaptureView(LoginRequiredMixin, CreateView):
     form_class = InputForm
     template_name = "plexus/capture.html"
     success_url = reverse_lazy("plexus:dashboard")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["guest_status"] = get_guest_status(self.request.user)
+        return context
+
+    def form_valid(self, form):
+        # Check guest limit
+        can_create, remaining = can_create_thought(self.request.user)
+        if not can_create:
+            messages.error(
+                self.request,
+                _("Guest limit reached. Please create an account to continue.")
+            )
+            return redirect("plexus:capture")
+        
+        # Assign user to input
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 class ThoughtDeleteView(LoginRequiredMixin, DeleteView):
     model = Thought
@@ -39,7 +61,13 @@ class DashboardView(LoginRequiredMixin, ListView):
             "actions", 
             "outgoing_links", 
             "outgoing_links__target"
-        ).all().order_by("-input__timestamp")
+        )
+        
+        # Filter by user for all users (guest and regular)
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(input__user=self.request.user)
+        
+        queryset = queryset.order_by("-input__timestamp")
         
         # Search
         query = self.request.GET.get("q")
@@ -61,6 +89,8 @@ class DashboardView(LoginRequiredMixin, ListView):
         # Add surfacing insights
         context["on_this_day"] = get_on_this_day()
         context["random_thought"] = get_random_resurface()
+        # Add guest status for UI
+        context["guest_status"] = get_guest_status(self.request.user)
         return context
 
 class ReviewQueueListView(LoginRequiredMixin, ListView):

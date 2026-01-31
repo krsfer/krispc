@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -17,6 +18,14 @@ class Input(SyncableModel):
         ("api", _("API")),
     ]
 
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="plexus_inputs",
+        verbose_name=_("User")
+    )
     content = models.TextField(verbose_name=_("Content"), blank=True)
     image = models.ImageField(upload_to="plexus/inputs/", null=True, blank=True, verbose_name=_("Image"))
     source = models.CharField(max_length=50, choices=SOURCE_CHOICES, default="web", verbose_name=_("Source"))

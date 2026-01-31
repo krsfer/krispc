@@ -9,23 +9,20 @@
     <!-- Header Section: Calendar and Month Selection -->
     <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
         <h2 class="text-2xl font-bold mb-4">{% trans "Google Calendar Editor" %}</h2>
-        <p class="text-gray-600 mb-4">{% trans "Edit existing events in your Google Calendar. Select a calendar and
-            month to load events." %}</p>
+        <p class="text-gray-600 mb-4">{% trans "Edit existing events in your Google Calendar. Select a calendar and month to load events." %}</p>
 
         <form id="load-events-form" class="space-y-4">
             {% csrf_token %}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label for="calendar_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans
-                        "Calendar" %}</label>
+                    <label for="calendar_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Calendar" %}</label>
                     <select id="calendar_select" name="calendar_id"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="">{% trans "Loading calendars..." %}</option>
                     </select>
                 </div>
                 <div>
-                    <label for="month_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Month"
-                        %}</label>
+                    <label for="month_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Month" %}</label>
                     <select id="month_select" name="month"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="1">{% trans "January" %}</option>
@@ -43,8 +40,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="year_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Year"
-                        %}</label>
+                    <label for="year_select" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Year" %}</label>
                     <select id="year_select" name="year"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                     </select>
@@ -66,8 +62,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h4 class="font-medium text-indigo-900">{% trans "Re-apply Caregiver Settings" %}</h4>
-                    <p class="text-sm text-indigo-700">{% trans "Update all events with colors, location, Tél, and
-                        description from saved caregiver settings" %}</p>
+                    <p class="text-sm text-indigo-700">{% trans "Update all events with colors, location, Tél, and description from saved caregiver settings" %}</p>
                 </div>
                 <button type="button" id="reapply-settings-btn"
                     class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md transition-colors">
@@ -82,16 +77,14 @@
                 <h4 class="font-medium text-gray-900 mb-3">{% trans "Batch Rename Caregiver" %}</h4>
                 <div class="space-y-3">
                     <div>
-                        <label for="rename_from" class="block text-sm font-medium text-gray-700 mb-1">{% trans "From"
-                            %}</label>
+                        <label for="rename_from" class="block text-sm font-medium text-gray-700 mb-1">{% trans "From" %}</label>
                         <select id="rename_from"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">{% trans "Select caregiver..." %}</option>
                         </select>
                     </div>
                     <div>
-                        <label for="rename_to" class="block text-sm font-medium text-gray-700 mb-1">{% trans "To"
-                            %}</label>
+                        <label for="rename_to" class="block text-sm font-medium text-gray-700 mb-1">{% trans "To" %}</label>
                         <input type="text" id="rename_to" placeholder="{% trans 'New name' %}"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
@@ -107,8 +100,7 @@
                 <h4 class="font-medium text-gray-900 mb-3">{% trans "Bulk Description Update" %}</h4>
                 <div class="space-y-3">
                     <div>
-                        <label for="desc_target" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Apply
-                            to" %}</label>
+                        <label for="desc_target" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Apply to" %}</label>
                         <select id="desc_target"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="all">{% trans "All events" %}</option>
@@ -116,8 +108,7 @@
                         </select>
                     </div>
                     <div>
-                        <label for="desc_text" class="block text-sm font-medium text-gray-700 mb-1">{% trans
-                            "Description to add" %}</label>
+                        <label for="desc_text" class="block text-sm font-medium text-gray-700 mb-1">{% trans "Description to add" %}</label>
                         <textarea id="desc_text" rows="2" placeholder="{% trans 'Enter description text...' %}"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                     </div>
@@ -146,14 +137,11 @@
             <h2 class="text-2xl font-bold text-gray-900" id="events-title">{% trans "Calendar Events" %}</h2>
             <div class="flex gap-2">
                 <button id="show-all-events"
-                    class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors hidden">{%
-                    trans "Show All" %}</button>
+                    class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors hidden">{% trans "Show All" %}</button>
                 <button id="select-all-btn"
-                    class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">{% trans
-                    "Select All" %}</button>
+                    class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">{% trans "Select All" %}</button>
                 <button id="deselect-all-btn"
-                    class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">{% trans
-                    "Deselect All" %}</button>
+                    class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">{% trans "Deselect All" %}</button>
             </div>
         </div>
 

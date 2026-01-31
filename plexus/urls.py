@@ -9,6 +9,7 @@ from .views import (
 )
 from .api_views import InputViewSet, ThoughtViewSet, ActionViewSet, SyncView, PatternViewSet, ReminderViewSet, NotificationViewSet
 from .api_views_experimental import DynamicViewGenerator
+from .guest_views import GuestLoginView
 
 app_name = "plexus"
 
@@ -24,6 +25,7 @@ router.register(r"notifications", NotificationViewSet)
 urlpatterns = [
     # Web Views
     path("", IndexView.as_view(), name="index"),
+    path("guest/login/", GuestLoginView.as_view(), name="guest_login"),
     path("capture/", CaptureView.as_view(), name="capture"),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path("dashboard/admin/", AdminDashboardView.as_view(), name="admin_dashboard"),
