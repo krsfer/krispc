@@ -70,8 +70,7 @@
                     </span>
                     <div class="flex items-center space-x-3">
                         <span class="text-xs text-gray-500 dark:text-slate-400 local-time"
-                            data-utc="{{ thought.input.timestamp|date:'c' }}">{{ thought.input.timestamp|date:"M d, Y
-                            H:i" }}</span>
+                            data-utc="{{ thought.input.timestamp|date:'c' }}">{{ thought.input.timestamp|date:"M d, Y H:i" }}</span>
                         <a href="{% url 'plexus:thought_edit' thought.pk %}"
                             class="text-gray-400 hover:text-blue-500 transition-colors"
                             title="{% trans 'Edit Thought' %}">✏️</a>
@@ -109,14 +108,12 @@
 
                     {% if thought.outgoing_links.all %}
                     <div class="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700">
-                        <h4 class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase mb-2">{% trans
-                            "Related Thoughts" %}</h4>
+                        <h4 class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase mb-2">{% trans "Related Thoughts" %}</h4>
                         <ul class="space-y-1">
                             {% for link in thought.outgoing_links.all %}
                             <li class="text-sm">
                                 <span class="text-gray-400 mr-1">🔗</span>
-                                <span class="text-gray-700 dark:text-slate-300" title="{{ link.reason }}">{{
-                                    link.target.content|truncatechars:60 }}</span>
+                                <span class="text-gray-700 dark:text-slate-300" title="{{ link.reason }}">{{ link.target.content|truncatechars:60 }}</span>
                             </li>
                             {% endfor %}
                         </ul>
@@ -125,8 +122,7 @@
 
                     {% if thought.actions.all %}
                     <div class="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700">
-                        <h4 class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase mb-2">{% trans
-                            "Actions" %}</h4>
+                        <h4 class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase mb-2">{% trans "Actions" %}</h4>
                         <ul class="space-y-2">
                             {% for action in thought.actions.all %}
                             <li class="flex items-center text-sm group">
@@ -155,8 +151,7 @@
                 <!-- Card Footer -->
                 <div
                     class="px-6 py-3 bg-gray-50 dark:bg-slate-800/50 border-t border-gray-100 dark:border-slate-700 flex justify-between items-center text-xs">
-                    <span class="text-gray-500 dark:text-slate-400">{% trans "Confidence" %}: {{
-                        thought.confidence_score|floatformat:2 }}</span>
+                    <span class="text-gray-500 dark:text-slate-400">{% trans "Confidence" %}: {{ thought.confidence_score|floatformat:2 }}</span>
                     {% if thought.ai_model %}
                     <div class="flex items-center space-x-2">
                         <span class="text-gray-400 italic">via {{ thought.ai_model }}</span>
@@ -164,7 +159,7 @@
                         <form action="{% url 'plexus:thought_retry' thought.pk %}" method="post" class="inline">
                             {% csrf_token %}
                             <button type="submit" class="text-yellow-500 hover:text-yellow-600 transition-colors"
-                                title="{% trans " Retry AI Processing" %}">🔄</button>
+                                title="{% trans "Retry AI Processing" %}">🔄</button>
                         </form>
                         {% endif %}
                     </div>
