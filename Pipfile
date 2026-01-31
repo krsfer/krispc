@@ -73,6 +73,7 @@ pytest-mock = "*"
 coverage = "*"
 factory-boy = "*"
 pytest-cov = "*"
+pip-audit = "*"
 
 [requires]
 python_version = "3.13"
