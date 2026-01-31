@@ -227,10 +227,20 @@ class VoiceCaptureView(APIView):
     serializer_class = InputSerializer
 
     def post(self, request, *args, **kwargs):
+        from .validators import validate_audio_file, validate_audio_duration
+        from django.core.exceptions import ValidationError
+        
         if "audio" not in request.FILES:
             return Response({"error": "No audio file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         audio_file = request.FILES["audio"]
+        
+        # Validate audio file size and duration
+        try:
+            validate_audio_file(audio_file)
+            validate_audio_duration(audio_file)
+        except ValidationError as e:
+            return Response({"error": str(e.message)}, status=status.HTTP_400_BAD_REQUEST)
         
         # Transcribe
         transcript = transcribe_audio(audio_file)
@@ -247,6 +257,7 @@ class VoiceCaptureView(APIView):
         # Return serialized input
         serializer = InputSerializer(input_obj)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class IngestAPIView(APIView):
     """

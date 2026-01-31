@@ -61,6 +61,20 @@ class InputSerializer(serializers.ModelSerializer):
         fields = ["id", "content", "image", "source", "timestamp", "processed", "thoughts", "created_at", "updated_at", "deleted_at"]
         read_only_fields = ["id", "timestamp", "processed", "created_at", "updated_at"]
 
+    def validate_content(self, value):
+        """Validate text content length."""
+        from plexus.validators import validate_text_length
+        if value:
+            validate_text_length(value)
+        return value
+
+    def validate_image(self, value):
+        """Validate image file size."""
+        from plexus.validators import validate_image_size
+        if value:
+            validate_image_size(value)
+        return value
+
 
 class PatternSerializer(serializers.ModelSerializer):
     """
