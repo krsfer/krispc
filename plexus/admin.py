@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Input, Thought, Action, ReviewQueue, SystemConfiguration
+from .models import Input, Thought, Action, ReviewQueue, SystemConfiguration, Reminder, Notification
 
 @admin.register(Input)
 class InputAdmin(admin.ModelAdmin):
@@ -53,3 +53,25 @@ class SystemConfigurationAdmin(admin.ModelAdmin):
         # Only allow adding if no object exists
 
         return not SystemConfiguration.objects.exists()
+
+
+@admin.register(Reminder)
+class ReminderAdmin(admin.ModelAdmin):
+    list_display = ("action_preview", "remind_at", "is_sent", "created_at")
+    list_filter = ("is_sent", "remind_at")
+    search_fields = ("message", "action__description")
+    
+    def action_preview(self, obj):
+        return obj.action.description[:50] + "..." if len(obj.action.description) > 50 else obj.action.description
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ("title", "notification_type", "is_read", "created_at")
+    list_filter = ("notification_type", "is_read", "created_at")
+    search_fields = ("title", "message")
+    actions = ["mark_as_read"]
+    
+    @admin.action(description="Mark selected notifications as read")
+    def mark_as_read(self, request, queryset):
+        queryset.update(is_read=True)

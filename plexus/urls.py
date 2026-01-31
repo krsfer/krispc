@@ -7,7 +7,7 @@ from .views import (
     ActionListView, KanbanView, ActionToggleView, ThoughtUpdateView, ThoughtDeleteView,
     AdminDashboardView, VoiceCaptureView, ThoughtRetryView
 )
-from .api_views import InputViewSet, ThoughtViewSet, ActionViewSet, SyncView, PatternViewSet
+from .api_views import InputViewSet, ThoughtViewSet, ActionViewSet, SyncView, PatternViewSet, ReminderViewSet, NotificationViewSet
 from .api_views_experimental import DynamicViewGenerator
 
 app_name = "plexus"
@@ -18,6 +18,8 @@ router.register(r"inputs", InputViewSet)
 router.register(r"thoughts", ThoughtViewSet)
 router.register(r"actions", ActionViewSet)
 router.register(r"patterns", PatternViewSet)
+router.register(r"reminders", ReminderViewSet)
+router.register(r"notifications", NotificationViewSet)
 
 urlpatterns = [
     # Web Views

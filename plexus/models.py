@@ -94,6 +94,45 @@ class Action(SyncableModel):
         return f"{self.status}: {self.description[:30]}..."
 
 
+class Reminder(SyncableModel):
+    """A scheduled reminder for an Action."""
+    action = models.ForeignKey(Action, on_delete=models.CASCADE, related_name="reminders", verbose_name=_("Action"))
+    remind_at = models.DateTimeField(verbose_name=_("Remind at"))
+    is_sent = models.BooleanField(default=False, verbose_name=_("Is sent"))
+    message = models.TextField(blank=True, verbose_name=_("Message"))
+
+    class Meta:
+        verbose_name = _("Reminder")
+        verbose_name_plural = _("Reminders")
+        ordering = ["-remind_at"]
+
+    def __str__(self):
+        return f"Reminder for {self.action.description[:30]} at {self.remind_at}"
+
+
+class Notification(models.Model):
+    """In-app notification for users."""
+    TYPE_CHOICES = [
+        ("reminder", _("Reminder")),
+        ("system", _("System")),
+    ]
+
+    title = models.CharField(max_length=255, verbose_name=_("Title"))
+    message = models.TextField(verbose_name=_("Message"))
+    notification_type = models.CharField(max_length=50, choices=TYPE_CHOICES, default="reminder", verbose_name=_("Type"))
+    action = models.ForeignKey(Action, on_delete=models.SET_NULL, null=True, blank=True, related_name="notifications", verbose_name=_("Action"))
+    is_read = models.BooleanField(default=False, verbose_name=_("Is read"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+
+    class Meta:
+        verbose_name = _("Notification")
+        verbose_name_plural = _("Notifications")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.notification_type}: {self.title[:50]}"
+
+
 
 class ReviewQueue(models.Model):
 

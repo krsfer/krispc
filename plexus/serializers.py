@@ -4,7 +4,7 @@ Serializers for the Plexus application.
 Provides REST API serialization for Input, Thought, Action, and ThoughtLink models.
 """
 from rest_framework import serializers
-from plexus.models import Input, Thought, Action, ThoughtLink, Pattern
+from plexus.models import Input, Thought, Action, ThoughtLink, Pattern, Reminder, Notification
 
 
 class ActionSerializer(serializers.ModelSerializer):
@@ -77,3 +77,25 @@ class PatternSerializer(serializers.ModelSerializer):
             "created_at", "updated_at", "deleted_at"
         ]
         read_only_fields = ["id", "created_at", "updated_at", "view_count", "like_count", "version"]
+
+
+class ReminderSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Reminder model.
+    Represents scheduled reminders for actions.
+    """
+    class Meta:
+        model = Reminder
+        fields = ["id", "action", "remind_at", "is_sent", "message", "created_at", "updated_at"]
+        read_only_fields = ["id", "is_sent", "created_at", "updated_at"]
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Notification model.
+    Represents in-app notifications.
+    """
+    class Meta:
+        model = Notification
+        fields = ["id", "title", "message", "notification_type", "action", "is_read", "created_at"]
+        read_only_fields = ["id", "created_at"]

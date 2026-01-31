@@ -1,10 +1,11 @@
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
-from plexus.models import Input, Thought, Action, ThoughtLink, Pattern
-from plexus.serializers import InputSerializer, ThoughtSerializer, ActionSerializer, ThoughtLinkSerializer, PatternSerializer
+from plexus.models import Input, Thought, Action, ThoughtLink, Pattern, Reminder, Notification
+from plexus.serializers import InputSerializer, ThoughtSerializer, ActionSerializer, ThoughtLinkSerializer, PatternSerializer, ReminderSerializer, NotificationSerializer
 
 class InputViewSet(viewsets.ModelViewSet):
     queryset = Input.objects.all().order_by("-timestamp")
@@ -121,3 +122,35 @@ class PatternViewSet(viewsets.ModelViewSet):
         # Soft delete
         instance.deleted_at = timezone.now()
         instance.save()
+
+
+class ReminderViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing reminders.
+    Provides CRUD operations for scheduled action reminders.
+    """
+    queryset = Reminder.objects.select_related('action').all().order_by('-remind_at')
+    serializer_class = ReminderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['message', 'action__description']
+    ordering_fields = ['remind_at', 'is_sent', 'created_at']
+
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing notifications.
+    Provides CRUD operations and bulk mark-as-read functionality.
+    """
+    queryset = Notification.objects.all().order_by('-created_at')
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'message']
+    ordering_fields = ['created_at', 'is_read', 'notification_type']
+
+    @action(detail=False, methods=['post'])
+    def mark_all_read(self, request):
+        """Mark all unread notifications as read."""
+        count = Notification.objects.filter(is_read=False).update(is_read=True)
+        return Response({'status': 'ok', 'marked_read': count})

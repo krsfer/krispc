@@ -462,6 +462,14 @@ if REDIS_URL and REDIS_URL.startswith("rediss://"):
     }
     CELERY_REDIS_BACKEND_USE_SSL = CELERY_BROKER_USE_SSL
 
+# Celery Beat Schedule for periodic tasks
+CELERY_BEAT_SCHEDULE = {
+    'check-due-reminders': {
+        'task': 'plexus.tasks.check_due_reminders',
+        'schedule': 60.0,  # every 60 seconds
+    },
+}
+
 # Google OAuth2 Settings
 GOOGLE_OAUTH2_CLIENT_ID = env("GOOGLE_OAUTH2_CLIENT_ID", default=None)
 GOOGLE_OAUTH2_CLIENT_SECRET = env("GOOGLE_OAUTH2_CLIENT_SECRET", default=None)

@@ -18,7 +18,7 @@ primary_region = "cdg"
   # To re-enable, you need to either:
   # 1. Reconfigure Redis Cloud to allow password-only auth (no client certs)
   # 2. Use a different Redis provider (Upstash, Fly Redis, etc.)
-  app = "bash -c 'python manage.py migrate && python manage.py enable_wal && celery -A _main worker -l info & (echo \"[DEBUG] STARTING NEXTJS...\" && cd apps/emoty_web/.next/standalone/app/apps/emoty_web && PORT=3000 HOSTNAME=0.0.0.0 node server.js || echo \"[DEBUG] NEXTJS FAILED CODE $?\") & daphne _main.asgi:application --port 8080 --bind 0.0.0.0'"
+  app = "bash -c 'python manage.py migrate && python manage.py enable_wal && celery -A _main worker -l info & celery -A _main beat -l info & (echo \"[DEBUG] STARTING NEXTJS...\" && cd apps/emoty_web/.next/standalone/app/apps/emoty_web && PORT=3000 HOSTNAME=0.0.0.0 node server.js || echo \"[DEBUG] NEXTJS FAILED CODE $?\") & daphne _main.asgi:application --port 8080 --bind 0.0.0.0'"
 
 [[services]]
   internal_port = 8080
