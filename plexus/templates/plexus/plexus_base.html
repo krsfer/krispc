@@ -18,17 +18,21 @@
                 {% if user.is_authenticated %}
                 <div class="hidden md:flex space-x-4">
                     <a href="{% url 'plexus:capture' %}"
-                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Capture" %}</a>
+                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{%
+                        trans "Capture" %}</a>
                     <a href="{% url 'plexus:capture' %}?mode=voice"
                         class="text-slate-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">
                         <span>🎙️</span><span>{% trans "Voice" %}</span>
                     </a>
                     <a href="{% url 'plexus:dashboard' %}"
-                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Dashboard" %}</a>
+                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{%
+                        trans "Dashboard" %}</a>
                     <a href="{% url 'plexus:action_kanban' %}"
-                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Action Center" %}</a>
+                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{%
+                        trans "Action Center" %}</a>
                     <a href="{% url 'plexus:review_queue' %}"
-                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Review Queue" %}</a>
+                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{%
+                        trans "Review Queue" %}</a>
                 </div>
                 {% endif %}
             </div>
@@ -42,4 +46,15 @@
 {% include "plexus/partials/bottom_nav.html" %}
 {% endif %}
 {{ block.super }}
+<script>
+    // Convert UTC timestamps to browser local timezone
+    document.querySelectorAll('.local-time').forEach(function (el) {
+        const utc = el.getAttribute('data-utc');
+        if (utc) {
+            const date = new Date(utc);
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            el.textContent = date.toLocaleDateString(undefined, options);
+        }
+    });
+</script>
 {% endblock %}
