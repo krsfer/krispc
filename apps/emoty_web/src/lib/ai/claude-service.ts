@@ -62,10 +62,9 @@ export class ClaudeService {
   private readonly MAX_CACHE_SIZE = 1000;
 
   constructor(config: Partial<ClaudeConfig> = {}) {
-    const apiKey = config.apiKey || process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      throw new Error('ANTHROPIC_API_KEY is required for Claude service');
-    }
+    // During build time or if env var is missing, we shouldn't crash immediately
+    // to allow static generation to proceed
+    const apiKey = config.apiKey || process.env.ANTHROPIC_API_KEY || '';
 
     this.config = {
       apiKey,
@@ -74,11 +73,26 @@ export class ClaudeService {
       timeout: config.timeout || 30000,
     };
 
-    this.client = new Anthropic({
-      apiKey: this.config.apiKey,
-      maxRetries: 2,
-      timeout: this.config.timeout,
-    });
+    if (apiKey) {
+      this.client = new Anthropic({
+        apiKey: this.config.apiKey,
+        maxRetries: 2,
+        timeout: this.config.timeout,
+      });
+    } else {
+      console.warn('ClaudeService: No API key provided. Service calls will fail.');
+      // Initialize with dummy key to satisfy type checker, or strictly handle optional client
+      // Since strictNullChecks might be on and client is non-optional, we can either:
+      // 1. Make client optional (requires updating all usages)
+      // 2. Cast as Anthropic (risky if usage not guarded)
+      // 3. Initialize with dummy compliant object?
+      // For now, let's initialize with dummy if missing to avoid huge refactor, 
+      // but methods should guard against empty key.
+      this.client = new Anthropic({
+        apiKey: 'dummy-key-for-build',
+        maxRetries: 0
+      });
+    }
   }
 
   /**

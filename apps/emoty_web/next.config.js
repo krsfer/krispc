@@ -15,7 +15,6 @@ const nextConfig = {
     unoptimized: true
   },
   output: 'standalone',
-  outputFileTracingRoot: path.join(__dirname, '../../..'),
   headers: async () => [
     {
       source: '/(.*)',
