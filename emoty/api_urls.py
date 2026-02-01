@@ -1,0 +1,22 @@
+"""
+URL Configuration for Emoty API.
+"""
+from django.urls import path
+from drf_spectacular.views import (
+    SpectacularAPIView, 
+    SpectacularRedocView, 
+    SpectacularSwaggerView
+)
+from . import api_views
+
+urlpatterns = [
+    # API endpoints
+    path('services/', api_views.ServicesView.as_view(), name='api-services'),
+    path('pricelist/', api_views.PricelistView.as_view(), name='api-pricelist'),
+    path('mcp/', api_views.MCPView.as_view(), name='api-mcp'),
+    
+    # Schema and Documentation
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+]

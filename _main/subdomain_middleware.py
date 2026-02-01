@@ -40,6 +40,8 @@ class SubdomainRoutingMiddleware:
              else:
                 current_subdomain = 'www'
 
+        print(f"DEBUG SUBDOMAIN: host='{host}' subdomain='{current_subdomain}' path='{request.path}'")
+
         # 1. Switch URLConf
         if current_subdomain == 'hub':
             request.urlconf = '_main.subdomains.hub'
@@ -56,7 +58,7 @@ class SubdomainRoutingMiddleware:
         # Detect if we are accessing a "Shadow App" path (e.g., /p2c/ on Hub subdomain)
         # Regex matches: /hub/, /en/hub/, /fr/p2c/, etc.
         path = request.path_info
-        match = re.match(r'^/(?:[a-z]{2}/)?(hub|krispc|p2c|plexus)/', path)
+        match = re.match(r'^/(?:[a-z]{2}/)?(hub|krispc|p2c|plexus|emo)/', path)
         
         if match:
             target_app = match.group(1)

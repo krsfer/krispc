@@ -32,6 +32,10 @@ urlpatterns = [
 
     # Analytics API (Non-i18n)
     path("analytics/api/", include("analytics.api_urls")),
+
+    # Emoty API (Non-i18n)
+    path("api/emoty/", include("emoty.api_urls")),
+
     
     # Documentation
     path("docs/mcp/", krispc.views.MCPDocsView.as_view(), name="mcp-docs"),

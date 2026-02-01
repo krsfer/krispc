@@ -18,7 +18,7 @@ def proxy_to_emoty(request, path=''):
         target_url = 'http://localhost:3000/emo'
         
     if request.META.get('QUERY_STRING'):
-        target_url += f'?{request.META.get('QUERY_STRING')}'
+        target_url += f"?{request.META.get('QUERY_STRING')}"
     
     headers = {}
     for key, value in request.headers.items():
@@ -29,6 +29,8 @@ def proxy_to_emoty(request, path=''):
     headers['X-Forwarded-Host'] = request.get_host()
     headers['X-Forwarded-Proto'] = request.scheme
     
+    print(f"DEBUG PROXY: Request path='{request.path}' captured path='{path}' -> target='{target_url}'")
+
     try:
         response = requests.request(
             method=request.method,
@@ -39,6 +41,8 @@ def proxy_to_emoty(request, path=''):
             stream=True,
             allow_redirects=False 
         )
+        
+        print(f"DEBUG PROXY: Target returned {response.status_code}")
         
         django_response = StreamingHttpResponse(
             response.iter_content(chunk_size=4096),

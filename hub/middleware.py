@@ -25,11 +25,18 @@ class EnsureDefaultLanguageMiddleware:
         # Skip API paths and i18n paths - let LocaleMiddleware handle them
         # We check for '/i18n/' anywhere in path to handle prefixed URLs like /en/i18n/
         # Also skip our custom switch_language view and analytics API
+        # SKIP EMOTY Subdomain: It handles its own i18n and assets via Next.js
+        host = request.get_host().split(':')[0]
         if (request.path.startswith('/api/') or 
             request.path.startswith('/analytics/api/') or 
+            request.path.startswith('/emo/') or
+            request.path == '/emo' or
             '/i18n/' in request.path or 
-            'switch-lang' in request.path):
+            'switch-lang' in request.path or
+            host == 'emo' or host.startswith('emo.') or host.startswith('emo-')):
             return self.get_response(request)
+        
+        print(f"DEBUG MIDDLEWARE: NOT skipping for {host}")
 
         # Determine language from URL path
         path = request.path

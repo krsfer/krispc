@@ -165,6 +165,7 @@ INSTALLED_APPS = [
     "hub",
     "analytics",
     "plexus.apps.PlexusConfig",
+    "emoty",
 
     "rest_framework",
     "drf_spectacular",
@@ -541,8 +542,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'KrisPC & Plexus API',
-    'DESCRIPTION': 'API for KrisPC IT services and Plexus SecondBrain.',
+    'TITLE': 'KrisPC, Plexus & Emoty API',
+    'DESCRIPTION': 'API for KrisPC IT services, Plexus SecondBrain, and Emoty emotion analysis.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
