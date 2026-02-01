@@ -1,12 +1,12 @@
 <template>
-  <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+  <section class="relative min-h-[70vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
     <!-- Animated background shapes -->
     <div class="absolute inset-0 overflow-hidden">
       <div class="absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
       <div class="absolute -bottom-1/2 -left-1/2 w-full h-full bg-gradient-to-tr from-accent/20 to-transparent rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
     </div>
 
-    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center pt-16">
+    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center pt-8 md:pt-16">
       <h1 class="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-primary to-accent bg-clip-text text-transparent dark:from-gray-100 dark:via-primary dark:to-accent">
         {{ heroTitle }}
       </h1>
