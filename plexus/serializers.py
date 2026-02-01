@@ -62,10 +62,12 @@ class InputSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "timestamp", "processed", "created_at", "updated_at"]
 
     def validate_content(self, value):
-        """Validate text content length."""
-        from plexus.validators import validate_text_length
+        """Validate text content length and security."""
+        from plexus.validators import validate_text_length, validate_content_security
         if value:
             validate_text_length(value)
+            # Security check - logs warnings but doesn't block
+            validate_content_security(value)
         return value
 
     def validate_image(self, value):

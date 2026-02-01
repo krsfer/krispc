@@ -1,11 +1,15 @@
 """
 Input validation limits and validators for Plexus.
 
-Provides reusable validation for text content, images, and audio inputs.
+Provides reusable validation for text content, images, audio inputs,
+and security validation against prompt injection attacks.
 """
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import BaseValidator
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # =============================================================================
@@ -24,6 +28,9 @@ INPUT_LIMITS = {
     'AUDIO_MIN_DURATION': 1,    # seconds
     'AUDIO_MAX_DURATION': 120,  # seconds (2 minutes)
     'AUDIO_MAX_SIZE': 10 * 1024 * 1024,  # 10 MB
+    
+    # Security settings
+    'MAX_INJECTION_RISK_SCORE': 0.7,  # Block inputs with risk score above this
 }
 
 
@@ -206,7 +213,7 @@ def validate_audio_duration(audio_file, min_duration=None, max_duration=None):
 # COMBINED VALIDATOR FOR INPUT
 # =============================================================================
 
-def validate_input(content=None, image=None, audio=None):
+def validate_input(content=None, image=None, audio=None, check_security=True):
     """
     Validate all input types at once.
     
@@ -214,6 +221,7 @@ def validate_input(content=None, image=None, audio=None):
         content: Text content
         image: Image file
         audio: Audio file
+        check_security: Whether to perform security validation (default True)
         
     Raises:
         ValidationError: If any validation fails
@@ -226,6 +234,13 @@ def validate_input(content=None, image=None, audio=None):
             validate_text_length(content)
         except ValidationError as e:
             errors['content'] = e.messages
+        
+        # Security validation
+        if check_security:
+            try:
+                validate_content_security(content)
+            except ValidationError as e:
+                errors['security'] = e.messages
     
     # Validate image if provided
     if image:
@@ -244,3 +259,61 @@ def validate_input(content=None, image=None, audio=None):
     
     if errors:
         raise ValidationError(errors)
+
+
+# =============================================================================
+# SECURITY VALIDATION
+# =============================================================================
+
+def validate_content_security(content, max_risk_score=None, raise_on_detection=False):
+    """
+    Validate content for potential prompt injection patterns.
+    
+    This function detects suspicious patterns but does NOT block by default.
+    It logs warnings for monitoring and only raises if explicitly configured.
+    
+    Args:
+        content: Text content to validate
+        max_risk_score: Maximum allowed risk score (default from INPUT_LIMITS)
+        raise_on_detection: If True, raise ValidationError on high risk; if False, just log
+        
+    Raises:
+        ValidationError: If raise_on_detection is True and risk score exceeds threshold
+    """
+    if not content:
+        return
+    
+    if max_risk_score is None:
+        max_risk_score = INPUT_LIMITS['MAX_INJECTION_RISK_SCORE']
+    
+    # Import here to avoid circular imports
+    from plexus.services.prompt_security import (
+        detect_injection_attempt,
+        get_risk_score,
+    )
+    
+    # Detect injection patterns
+    is_suspicious, categories = detect_injection_attempt(content)
+    
+    if is_suspicious:
+        risk_score = get_risk_score(content)
+        
+        logger.warning(
+            "Security validation: Suspicious content detected. "
+            "Categories: %s, Risk score: %.2f, Content preview: '%s...'",
+            categories,
+            risk_score,
+            content[:50]
+        )
+        
+        # Only raise if explicitly configured and risk is high
+        if raise_on_detection and risk_score > max_risk_score:
+            raise ValidationError(
+                _('Content contains patterns that may indicate a security concern. '
+                  'Please rephrase your input.'),
+                code='security_risk',
+                params={'risk_score': risk_score, 'categories': categories}
+            )
+    
+    return is_suspicious
+
