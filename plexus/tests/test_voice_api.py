@@ -17,7 +17,7 @@ class VoiceCaptureApiTest(APITestCase):
     def test_voice_capture_success(self, mock_transcribe):
         mock_transcribe.return_value = "Transcribed voice note"
         
-        audio_file = SimpleUploadedFile("note.webm", b"audio data", content_type="audio/webm")
+        audio_file = SimpleUploadedFile("note.webm", b"a" * 15000, content_type="audio/webm")
         data = {"audio": audio_file}
         
         with translation.override("en"):

@@ -1,5 +1,5 @@
 import re
-from django.http import HttpResponsePermanentRedirect
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 
 class SubdomainRoutingMiddleware:
     def __init__(self, get_response):
@@ -16,8 +16,8 @@ class SubdomainRoutingMiddleware:
         host = request.get_host().split(':')[0]
         port = request.get_host().split(':')[1] if ':' in request.get_host() else None
         
-        # Check if host is an IP address
-        is_ip = bool(re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', host))
+        # Check if host is an IP address or the Django test server
+        is_ip = bool(re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', host)) or host == 'testserver'
 
         parts = host.split('.')
         
@@ -32,13 +32,19 @@ class SubdomainRoutingMiddleware:
              else:
                  current_subdomain = 'www'
         else:
-             # Join all parts except the first one (subdomain)
-             base_domain = ".".join(parts[1:])
-             # Determine current subdomain
-             if len(parts) >= 3:
-                current_subdomain = parts[0]
+             # If hostname has only 2 parts, it's the base domain (e.g. krispc.fr)
+             if len(parts) == 2:
+                 base_domain = host
+                 current_subdomain = 'www'
+             elif len(parts) == 1:
+                 # Single part hostname (like 'testserver')
+                 base_domain = host
+                 current_subdomain = 'www'
              else:
-                current_subdomain = 'www'
+                 # Join all parts except the first one (subdomain)
+                 base_domain = ".".join(parts[1:])
+                 # Determine current subdomain
+                 current_subdomain = parts[0]
 
         print(f"DEBUG SUBDOMAIN: host='{host}' subdomain='{current_subdomain}' path='{request.path}'")
 
@@ -82,6 +88,15 @@ class SubdomainRoutingMiddleware:
                 if request.GET:
                     new_url += f"?{request.GET.urlencode()}"
                     
+                
+                # Use 307 Temporary Redirect for POST requests to preserve method and data
+                # For GET requests, we can stay with 301/302, but 307/308 is safer for cross-domain app routing
+                if request.method == 'POST':
+                    from django.http import HttpResponse
+                    response = HttpResponse(status=307)
+                    response['Location'] = new_url
+                    return response
+                
                 return HttpResponsePermanentRedirect(new_url)
 
         return self.get_response(request)

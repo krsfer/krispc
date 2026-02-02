@@ -8,6 +8,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 @require_POST
 def switch_language(request):
     """

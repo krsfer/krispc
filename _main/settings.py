@@ -66,7 +66,12 @@ CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "https://p2c.krispc.fr",
     "https://plexus.krispc.fr",
     "https://emo.krispc.fr",
-    "https://pdf2cal.fly.dev"
+    "https://pdf2cal.fly.dev",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://plexus.localhost:8000",
+    "http://hub.localhost:8000",
+    "http://www.localhost:8000",
 ])
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
@@ -390,7 +395,7 @@ if IS_PRODUCTION:
     SESSION_COOKIE_DOMAIN = ".krispc.fr"
     CSRF_COOKIE_DOMAIN = ".krispc.fr"
 else:
-    # For localhost development, let browser set default (host-only)
+    # For localhost development with subdomains
     SESSION_COOKIE_DOMAIN = None
     CSRF_COOKIE_DOMAIN = None
 

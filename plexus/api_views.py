@@ -14,6 +14,9 @@ class InputViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ["content"]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user if self.request.user.is_authenticated else None)
+
 class ThoughtViewSet(viewsets.ModelViewSet):
     queryset = Thought.objects.select_related("input").prefetch_related("actions").all().order_by("-input__timestamp")
     serializer_class = ThoughtSerializer
@@ -101,7 +104,14 @@ class SyncView(APIView):
             serializer = Serializer(data=data)
             
         if serializer.is_valid():
-            serializer.save()
+            # For new items in sync, we prefer assigning the current sync user
+            # unless the serializer already has a user (which it won't if data is from client)
+            if not pk and hasattr(Model, 'user'):
+                 # We don't have request here directly but we can pass it to save_item or use a context-based approach.
+                 # However, SyncView is an APIView, we have self.request.
+                 serializer.save(user=self.request.user if self.request.user.is_authenticated else None)
+            else:
+                serializer.save()
         else:
             # In a real app, we might return these errors in the response
             print(f"Sync Validation Error: {serializer.errors}")

@@ -10,7 +10,7 @@ from .models import Input
 User = get_user_model()
 
 # Guest account constants
-GUEST_THOUGHT_LIMIT = 4
+GUEST_THOUGHT_LIMIT = 10
 GUEST_USERNAME_PREFIX = "guest_"
 
 

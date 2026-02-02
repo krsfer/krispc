@@ -70,7 +70,7 @@ class DashboardViewTest(APITestCase):
         self.url = reverse("plexus:dashboard")
         self.user = User.objects.create_user(username="testuser", password="password")
         self.client.force_login(self.user)
-        self.input_obj = Input.objects.create(content="A thought", source="web")
+        self.input_obj = Input.objects.create(content="A thought", source="web", user=self.user)
         self.thought = Thought.objects.create(
             input=self.input_obj,
             content="Structured thought",
@@ -90,7 +90,7 @@ class DashboardViewTest(APITestCase):
 
     def test_dashboard_search(self):
         # Create another thought
-        input2 = Input.objects.create(content="Buy milk")
+        input2 = Input.objects.create(content="Buy milk", user=self.user)
         Thought.objects.create(
             input=input2,
             content="Shopping list",
@@ -110,7 +110,7 @@ class DashboardViewTest(APITestCase):
 
     def test_dashboard_filter_type(self):
         # Create another thought of type 'task'
-        input2 = Input.objects.create(content="Buy milk")
+        input2 = Input.objects.create(content="Buy milk", user=self.user)
         Thought.objects.create(
             input=input2,
             content="Shopping list",
@@ -153,3 +153,13 @@ class DashboardViewTest(APITestCase):
             content = response.content.decode()
             self.assertTrue("Related Thoughts" in content or "Pensées liées" in content)
 
+    def test_dashboard_unprocessed_input(self):
+        # Create an unprocessed input
+        Input.objects.create(content="Pending thought", user=self.user, processed=False)
+        with translation.override("en"):
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "Pending thought")
+            # The heading might be translated or capitalized differently
+            content = response.content.decode().lower()
+            self.assertTrue("process" in content)

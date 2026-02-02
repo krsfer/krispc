@@ -91,6 +91,21 @@ class DashboardView(LoginRequiredMixin, ListView):
         context["random_thought"] = get_random_resurface()
         # Add guest status for UI
         context["guest_status"] = get_guest_status(self.request.user)
+        
+        # Add unprocessed info
+        if self.request.user.is_authenticated:
+            unprocessed = Input.objects.filter(
+                user=self.request.user, 
+                processed=False
+            )
+            
+            # Apply same search filter
+            query = self.request.GET.get("q")
+            if query:
+                unprocessed = unprocessed.filter(content__icontains=query)
+            
+            context["unprocessed_inputs"] = unprocessed.order_by("-timestamp")
+        
         return context
 
 class ReviewQueueListView(LoginRequiredMixin, ListView):
@@ -230,6 +245,14 @@ class VoiceCaptureView(APIView):
         from .validators import validate_audio_file, validate_audio_duration
         from django.core.exceptions import ValidationError
         
+        # Check guest limit
+        can_create, remaining = can_create_thought(request.user)
+        if not can_create:
+            return Response(
+                {"error": _("Guest limit reached. Please create an account to continue.")}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         if "audio" not in request.FILES:
             return Response({"error": "No audio file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -251,7 +274,8 @@ class VoiceCaptureView(APIView):
         # Create Input
         input_obj = Input.objects.create(
             content=transcript,
-            source="voice"
+            source="voice",
+            user=request.user if request.user.is_authenticated else None
         )
         
         # Return serialized input
@@ -269,6 +293,6 @@ class IngestAPIView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = InputSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user if request.user.is_authenticated else None)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

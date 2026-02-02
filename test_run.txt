@@ -1,0 +1,527 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.9, pytest-8.4.2, pluggy-1.6.0 -- /opt/homebrew/opt/python@3.11/bin/python3.11
+cachedir: .pytest_cache
+django: version: 5.0.2, settings: _main.test_settings (from ini)
+rootdir: /Users/chris/dev/src/py/krispcBase
+configfile: pytest.ini
+plugins: anyio-4.12.1, tdd-guard-pytest-0.1.2, cov-4.1.0, asyncio-0.21.1, Faker-37.8.0, django-4.11.1, mock-3.12.0
+asyncio: mode=Mode.STRICT
+collecting ... collected 2 items
+
+plexus/tests/test_dashboard_accordion.py::TestDashboardAccordion::test_actions_section_has_accordion_classes FAILED [ 50%]
+plexus/tests/test_dashboard_accordion.py::TestDashboardAccordion::test_action_center_has_accordion_structure FAILED [100%]
+
+=================================== FAILURES ===================================
+______ TestDashboardAccordion.test_actions_section_has_accordion_classes _______
+
+self = <plexus.tests.test_dashboard_accordion.TestDashboardAccordion object at 0x124420590>
+
+    def test_actions_section_has_accordion_classes(self):
+        """
+        Verify that the actions section in dashboard has accordion classes/attributes.
+        """
+        context = {
+            "thoughts": [self.thought],
+            "user": self.user,
+            "request": type('Request', (object,), {'GET': {}, 'user': self.user})(),
+        }
+    
+        with translation.override("en"):
+>           rendered_html = render_to_string("plexus/dashboard.html", context)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+plexus/tests/test_dashboard_accordion.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/lib/python3.11/site-packages/django/template/loader.py:61: in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/loader.py:15: in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/backends/django.py:33: in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/engine.py:177: in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/engine.py:159: in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/loaders/cached.py:57: in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/loaders/base.py:28: in get_template
+    return Template(
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:154: in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:196: in compile_nodelist
+    return parser.parse()
+           ^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:510: in parse
+    raise self.error(token, e)
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:508: in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/loader_tags.py:295: in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:510: in parse
+    raise self.error(token, e)
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:508: in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/loader_tags.py:234: in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:510: in parse
+    raise self.error(token, e)
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:508: in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/defaulttags.py:961: in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:510: in parse
+    raise self.error(token, e)
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:508: in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/defaulttags.py:861: in do_for
+    nodelist_loop = parser.parse(
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:510: in parse
+    raise self.error(token, e)
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:508: in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/defaulttags.py:961: in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:510: in parse
+    raise self.error(token, e)
+/opt/homebrew/lib/python3.11/site-packages/django/template/base.py:508: in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+parser = <Parser tokens=[<Block token: "endblock...">, <Text token: "<script>    functi...">, <Block token: "block extra_js..."...ext token: "                   ...">, <Block token: "if thought.actions.a...">, <Text token: "                  ...">]>
+token = <Block token: "endif...">
+
+    @register.tag("blocktranslate")
+    @register.tag("blocktrans")
+    def do_block_translate(parser, token):
+        """
+        Translate a block of text with parameters.
+    
+        Usage::
+    
+            {% blocktranslate with bar=foo|filter boo=baz|filter %}
+            This is {{ bar }} and {{ boo }}.
+            {% endblocktranslate %}
+    
+        Additionally, this supports pluralization::
+    
+            {% blocktranslate count count=var|length %}
+            There is {{ count }} object.
+            {% plural %}
+            There are {{ count }} objects.
+            {% endblocktranslate %}
+    
+        This is much like ngettext, only in template syntax.
+    
+        The "var as value" legacy format is still supported::
+    
+            {% blocktranslate with foo|filter as bar and baz|filter as boo %}
+            {% blocktranslate count var|length as count %}
+    
+        The translated string can be stored in a variable using `asvar`::
+    
+            {% blocktranslate with bar=foo|filter boo=baz|filter asvar var %}
+            This is {{ bar }} and {{ boo }}.
+            {% endblocktranslate %}
+            {{ var }}
+    
+        Contextual translations are supported::
+    
+            {% blocktranslate with bar=foo|filter context "greeting" %}
+                This is {{ bar }}.
+            {% endblocktranslate %}
+    
+        This is equivalent to calling pgettext/npgettext instead of
+        (u)gettext/(u)ngettext.
+        """
+        bits = token.split_contents()
+    
+        options = {}
+        remaining_bits = bits[1:]
+        asvar = None
+        while remaining_bits:
+            option = remaining_bits.pop(0)
+            if option in options:
+                raise TemplateSyntaxError(
+                    "The %r option was specified more than once." % option
+                )
+            if option == "with":
+                value = token_kwargs(remaining_bits, parser, support_legacy=True)
+                if not value:
+                    raise TemplateSyntaxError(
+                        '"with" in %r tag needs at least one keyword argument.' % bits[0]
+                    )
+            elif option == "count":
+                value = token_kwargs(remaining_bits, parser, support_legacy=True)
+                if len(value) != 1:
+                    raise TemplateSyntaxError(
+                        '"count" in %r tag expected exactly '
+                        "one keyword argument." % bits[0]
+                    )
+            elif option == "context":
+                try:
+                    value = remaining_bits.pop(0)
+                    value = parser.compile_filter(value)
+                except Exception:
+                    raise TemplateSyntaxError(
+                        '"context" in %r tag expected exactly one argument.' % bits[0]
+                    )
+            elif option == "trimmed":
+                value = True
+            elif option == "asvar":
+                try:
+                    value = remaining_bits.pop(0)
+                except IndexError:
+                    raise TemplateSyntaxError(
+                        "No argument provided to the '%s' tag for the asvar option."
+                        % bits[0]
+                    )
+                asvar = value
+            else:
+                raise TemplateSyntaxError(
+                    "Unknown argument for %r tag: %r." % (bits[0], option)
+                )
+            options[option] = value
+    
+        if "count" in options:
+            countervar, counter = next(iter(options["count"].items()))
+        else:
+            countervar, counter = None, None
+        if "context" in options:
+            message_context = options["context"]
+        else:
+            message_context = None
+        extra_context = options.get("with", {})
+    
+        trimmed = options.get("trimmed", False)
+    
+        singular = []
+        plural = []
+        while parser.tokens:
+            token = parser.next_token()
+            if token.token_type in (TokenType.VAR, TokenType.TEXT):
+                singular.append(token)
+            else:
+                break
+        if countervar and counter:
+            if token.contents.strip() != "plural":
+                raise TemplateSyntaxError(
+                    "%r doesn't allow other block tags inside it" % bits[0]
+                )
+            while parser.tokens:
+                token = parser.next_token()
+                if token.token_type in (TokenType.VAR, TokenType.TEXT):
+                    plural.append(token)
+                else:
+                    break
+        end_tag_name = "end%s" % bits[0]
+        if token.contents.strip() != end_tag_name:
+>           raise TemplateSyntaxError(
+                "%r doesn't allow other block tags (seen %r) inside it"
+                % (bits[0], token.contents)
+            )
+E           django.template.exceptions.TemplateSyntaxError: 'blocktrans' doesn't allow other block tags (seen 'endif') inside it
+
+/opt/homebrew/lib/python3.11/site-packages/django/templatetags/i18n.py:581: TemplateSyntaxError
+---------------------------- Captured stdout setup -----------------------------
+Operations to perform:
+  Synchronize unmigrated apps: celery_progress, channels, corsheaders, daphne, django_filters, django_htmx, django_vite, drf_spectacular, emoty, messages, rest_framework, runserver_nostatic, staticfiles
+  Apply all migrations: admin, analytics, auth, contenttypes, krispc, p2c, plexus, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying analytics.0001_initial... OK
+  Applying analytics.0002_pagevisit_city_pagevisit_country_pagevisit_latitude_and_more... OK
+  Applying analytics.0003_pagevisit_isp_pagevisit_organization_and_more... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying krispc.0001_initial... OK
+  Applying krispc.0002_add_timestamps_to_contact... OK
+  Applying p2c.0001_initial... OK
+  Applying plexus.0001_initial... OK
+  Applying plexus.0002_action_created_at_action_deleted_at_and_more... OK
+  Applying plexus.0003_thoughtlink... OK
+  Applying plexus.0004_alter_action_options_alter_input_options_and_more... OK
+  Applying plexus.0005_alter_input_content... OK
+  Applying plexus.0006_add_reminders_and_notifications... OK
+  Applying plexus.0007_add_user_to_input... OK
+  Applying sessions.0001_initial... OK
+Gemini Error: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\nPlease retry in 2.017530115s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-2.5-pro', 'location': 'global'}}, {'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-2.5-pro', 'location': 'global'}}, {'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_input_token_count', 'quotaId': 'GenerateContentInputTokensPerModelPerMinute-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-pro'}}, {'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_input_token_count', 'quotaId': 'GenerateContentInputTokensPerModelPerDay-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-pro'}}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '2s'}]}}
+---------------------------- Captured stderr setup -----------------------------
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+______ TestDashboardAccordion.test_action_center_has_accordion_structure _______
+
+self = <plexus.tests.test_dashboard_accordion.TestDashboardAccordion object at 0x124421290>
+
+    def test_action_center_has_accordion_structure(self):
+        """
+        Verify that the action center uses accordions for actions.
+        """
+        context = {
+            "actions": [self.action],
+            "current_status": "pending",
+            "user": self.user,
+            "request": type('Request', (object,), {'GET': {}, 'user': self.user})(),
+        }
+    
+        with translation.override("en"):
+            rendered_html = render_to_string("plexus/action_center.html", context)
+    
+        # This should also fail initially
+>       assert 'id="accordion-action-center"' in rendered_html or 'class="accordion"' in rendered_html
+E       assert ('id="accordion-action-center"' in '\n\n\n\n\n<!DOCTYPE html>\n\n<html lang="en">\n\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Action Center - Second Brain</title>\n\n    <!-- Google Fonts: Inter & Lobster -->\n    <link rel="preconnect" href="https://fonts.googleapis.com">\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&display=swap"\n        rel="stylesheet">\n\n    <!-- Vite Assets (Tailwind & JS) -->\n    \n    <link  rel="stylesheet" href="/static/assets/main-CgqdwNMn.css" />\n<script type="module" crossorigin="" src="/static/assets/main-CpyEJtTC.js"></script>\n\n    <!-- HTMX -->\n    <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>\n    \n\n    \n</head>\n\n<body class="bg-gray-50 text-gray-900 font-sans antialiased" hx-headers=\'{"X-CSRFToken": ""}\'\n    data-theme-version="v2">\n\n    <!-- Global Header -->\n    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">\n        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n            <div class="flex justify-between h-16 items-center">\n                <!-- Brand -->\n                <div class="flex items-center">\n                    <a href="/en/"\n                        class="font-brand text-3xl text-primary hover:text-primary-dark transition-colors">\n                        KrisPC\n                    </a>\n                </div>\n\n                <!-- Main Navigation -->\n                <nav class="hidden md:flex space-x-8">\n                    <a href="https://hub.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Hub</a>\n                    <a href="https://com.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">KrisPC</a>\n                    <a href="https://plexus.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Plexus</a>\n                    <a href="https://p2c.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Pdf2Cal</a>\n                </nav>\n\n                <!-- Right Side: User & Lang -->\n                <div class="flex items-center space-x-4">\n                    \n                    <span class="text-xs text-gray-500 hidden sm:inline">testuser</span>\n                    <form action="/en/logout/" method="post" class="inline">\n                        \n                        <button type="submit"\n                            class="text-xs font-semibold text-gray-600 hover:text-red-600 transition-colors">\n                            Logout\n                        </button>\n                    </form>\n                    \n                </div>\n            </div>\n        </div>\n    </header>\n\n    <!-- Sub Navigation -->\n    \n<div class="bg-slate-900 text-white shadow-lg">\n    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n        <div class="flex items-center justify-between h-14">\n            <div class="flex items-center space-x-8">\n                <a href="https://hub.krispc.fr" class="text-slate-400 hover:text-white transition-colors text-sm">\u21a9\n                    Hub</a>\n                <a href="/en/plexus/" class="font-bold text-lg flex items-center space-x-2">\n                    <span>\U0001fa9e</span>\n                    <span class="hidden sm:inline">Second Brain</span>\n                </a>\n                \n                <div class="hidden md:flex space-x-4">\n                    <a href="/en/plexus/capture/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Capture</a>\n                    <a href="/en/plexus/capture/?mode=voice"\n                        class="text-slate-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">\n                        <span>\U0001f399\ufe0f</span><span>Voice</span>\n                    </a>\n                    <a href="/en/plexus/dashboard/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>\n                    <a href="/en/plexus/action-kanban/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Action Center</a>\n                    <a href="/en/plexus/review-queue/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Review Queue</a>\n                </div>\n                \n            </div>\n        </div>\n    </div>\n</div>\n\n\n    <!-- Messages -->\n    \n\n    <!-- Main Content -->\n    <main class="min-h-screen">\n        \n<div class="d-flex justify-content-between align-items-center mb-4">\n    <h1>Action Center</h1>\n    <div>\n        <a href="/en/plexus/action-kanban/" class="btn btn-outline-primary me-2">Kanban Board</a>\n        <div class="btn-group" role="group">\n            <a href="?status=pending"\n                class="btn btn-primary">Pending</a>\n            <a href="?status=done"\n                class="btn btn-outline-primary">Done</a>\n        </div>\n    </div>\n\n</div>\n\n\n\n<div class="accordion shadow-sm" id="accordionActionCenter">\n    \n    <div class="accordion-item bg-dark-subtle border-secondary mb-2 rounded overflow-hidden">\n        <h2 class="accordion-header" id="heading2">\n            <button class="accordion-button collapsed bg-dark-subtle text-white border-secondary shadow-none"\n                type="button" data-bs-toggle="collapse" data-bs-target="#collapse2"\n                aria-expanded="false" aria-controls="collapse2">\n                <div class="d-flex w-100 justify-content-between align-items-center pe-3">\n                    <div class="d-flex align-items-center">\n                        <span class="badge bg-primary rounded-pill me-3">1</span>\n                        <span class="text-truncate" style="max-width: 500px;">Test Thought</span>\n                    </div>\n                    <small class="text-muted local-time"\n                        data-utc="2026-02-02T09:48:58.445162+00:00">{{\n                        thought_group.grouper.input.timestamp|date:"M d, Y" }}</small>\n                </div>\n            </button>\n        </h2>\n        <div id="collapse2" class="accordion-collapse collapse"\n            aria-labelledby="heading2" data-bs-parent="#accordionActionCenter">\n            <div class="accordion-body p-0">\n                <div class="list-group list-group-flush">\n                    \n                    <div class="list-group-item bg-transparent border-secondary py-3 ps-5">\n                        <div class="d-flex w-100 justify-content-between align-items-center">\n                            <div class="d-flex align-items-center">\n                                <form action="/en/plexus/action/1/toggle/" method="post" class="me-3">\n                                    \n                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">\n                                        \n                                        <span class="fs-4">\u2b1c</span>\n                                        \n                                    </button>\n                                </form>\n                                <div>\n                                    <h6\n                                        class="mb-0 ">\n                                        Test Action\n                                    </h6>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n            </div>\n        </div>\n    </div>\n    \n</div>\n\n\n    </main>\n\n    <!-- Global Footer -->\n    <footer class="bg-white border-t border-gray-200 py-12">\n        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">\n                <div class="font-brand text-2xl text-gray-400">\n                    KrisPC\n                </div>\n                <nav class="flex space-x-6 text-sm text-gray-500">\n                    <a href="/en/privacy/" class="hover:text-primary transition-colors">Privacy</a>\n                    <a href="/en/terms/" class="hover:text-primary transition-colors">Terms</a>\n                    <span>&copy; 2026</span>\n                </nav>\n                <div class="flex space-x-4">\n                    <form action="/en/switch-lang/" method="post">\n                        \n                        <input name="next" type="hidden"\n                            value="">\n                        <button type="submit" name="language" value="fr"\n                            class="text-xs text-gray-400 hover:text-primary transition-colors">\n                            FR\n                        </button>\n                    </form>\n                    <span class="text-gray-300">|</span>\n                    <form action="/en/switch-lang/" method="post">\n                        \n                        <input name="next" type="hidden"\n                            value="">\n                        <button type="submit" name="language" value="en"\n                            class="text-xs font-bold text-primary hover:text-primary transition-colors">\n                            EN\n                        </button>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </footer>\n\n    \n\n\n<nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary d-md-none py-0 shadow-lg">\n    <div class="container-fluid px-0">\n        <div class="d-flex w-100 justify-content-around align-items-center">\n            <a href="/en/plexus/dashboard/" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\U0001f3e0</div>\n                <div style="font-size: 0.7rem;">Home</div>\n            </a>\n            <a href="/en/plexus/action-center/" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\u2705</div>\n                <div style="font-size: 0.7rem;">Actions</div>\n            </a>\n            \n            <!-- FAB (Floating Action Button) for Capture -->\n            <a href="/en/plexus/capture/" class="btn btn-primary rounded-circle shadow d-flex align-items-center justify-content-center" \n               style="width: 60px; height: 60px; margin-top: -35px; border: 5px solid #121212; z-index: 1031;">\n                <span class="fs-3">\u2795</span>\n            </a>\n\n            <a href="/en/plexus/capture/?mode=voice" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\U0001f399\ufe0f</div>\n                <div style="font-size: 0.7rem;">Voice</div>\n            </a>\n            \n            \n        </div>\n    </div>\n</nav>\n\n<!-- Spacer to prevent content from being hidden behind the bottom nav -->\n<div class="d-md-none" style="height: 70px;"></div>\n\n\n<script>\n    // Convert UTC timestamps to browser local timezone\n    document.querySelectorAll(\'.local-time\').forEach(function (el) {\n        const utc = el.getAttribute(\'data-utc\');\n        if (utc) {\n            const date = new Date(utc);\n            const options = { year: \'numeric\', month: \'short\', day: \'numeric\', hour: \'2-digit\', minute: \'2-digit\' };\n            el.textContent = date.toLocaleDateString(undefined, options);\n        }\n    });\n</script>\n\n\n    <!-- Global Analytics -->\n    <script src="/static/analytics/tracker.js" defer></script>\n</body>\n\n</html>' or 'class="accordion"' in '\n\n\n\n\n<!DOCTYPE html>\n\n<html lang="en">\n\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Action Center - Second Brain</title>\n\n    <!-- Google Fonts: Inter & Lobster -->\n    <link rel="preconnect" href="https://fonts.googleapis.com">\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&display=swap"\n        rel="stylesheet">\n\n    <!-- Vite Assets (Tailwind & JS) -->\n    \n    <link  rel="stylesheet" href="/static/assets/main-CgqdwNMn.css" />\n<script type="module" crossorigin="" src="/static/assets/main-CpyEJtTC.js"></script>\n\n    <!-- HTMX -->\n    <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>\n    \n\n    \n</head>\n\n<body class="bg-gray-50 text-gray-900 font-sans antialiased" hx-headers=\'{"X-CSRFToken": ""}\'\n    data-theme-version="v2">\n\n    <!-- Global Header -->\n    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">\n        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n            <div class="flex justify-between h-16 items-center">\n                <!-- Brand -->\n                <div class="flex items-center">\n                    <a href="/en/"\n                        class="font-brand text-3xl text-primary hover:text-primary-dark transition-colors">\n                        KrisPC\n                    </a>\n                </div>\n\n                <!-- Main Navigation -->\n                <nav class="hidden md:flex space-x-8">\n                    <a href="https://hub.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Hub</a>\n                    <a href="https://com.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">KrisPC</a>\n                    <a href="https://plexus.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Plexus</a>\n                    <a href="https://p2c.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Pdf2Cal</a>\n                </nav>\n\n                <!-- Right Side: User & Lang -->\n                <div class="flex items-center space-x-4">\n                    \n                    <span class="text-xs text-gray-500 hidden sm:inline">testuser</span>\n                    <form action="/en/logout/" method="post" class="inline">\n                        \n                        <button type="submit"\n                            class="text-xs font-semibold text-gray-600 hover:text-red-600 transition-colors">\n                            Logout\n                        </button>\n                    </form>\n                    \n                </div>\n            </div>\n        </div>\n    </header>\n\n    <!-- Sub Navigation -->\n    \n<div class="bg-slate-900 text-white shadow-lg">\n    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n        <div class="flex items-center justify-between h-14">\n            <div class="flex items-center space-x-8">\n                <a href="https://hub.krispc.fr" class="text-slate-400 hover:text-white transition-colors text-sm">\u21a9\n                    Hub</a>\n                <a href="/en/plexus/" class="font-bold text-lg flex items-center space-x-2">\n                    <span>\U0001fa9e</span>\n                    <span class="hidden sm:inline">Second Brain</span>\n                </a>\n                \n                <div class="hidden md:flex space-x-4">\n                    <a href="/en/plexus/capture/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Capture</a>\n                    <a href="/en/plexus/capture/?mode=voice"\n                        class="text-slate-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">\n                        <span>\U0001f399\ufe0f</span><span>Voice</span>\n                    </a>\n                    <a href="/en/plexus/dashboard/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>\n                    <a href="/en/plexus/action-kanban/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Action Center</a>\n                    <a href="/en/plexus/review-queue/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Review Queue</a>\n                </div>\n                \n            </div>\n        </div>\n    </div>\n</div>\n\n\n    <!-- Messages -->\n    \n\n    <!-- Main Content -->\n    <main class="min-h-screen">\n        \n<div class="d-flex justify-content-between align-items-center mb-4">\n    <h1>Action Center</h1>\n    <div>\n        <a href="/en/plexus/action-kanban/" class="btn btn-outline-primary me-2">Kanban Board</a>\n        <div class="btn-group" role="group">\n            <a href="?status=pending"\n                class="btn btn-primary">Pending</a>\n            <a href="?status=done"\n                class="btn btn-outline-primary">Done</a>\n        </div>\n    </div>\n\n</div>\n\n\n\n<div class="accordion shadow-sm" id="accordionActionCenter">\n    \n    <div class="accordion-item bg-dark-subtle border-secondary mb-2 rounded overflow-hidden">\n        <h2 class="accordion-header" id="heading2">\n            <button class="accordion-button collapsed bg-dark-subtle text-white border-secondary shadow-none"\n                type="button" data-bs-toggle="collapse" data-bs-target="#collapse2"\n                aria-expanded="false" aria-controls="collapse2">\n                <div class="d-flex w-100 justify-content-between align-items-center pe-3">\n                    <div class="d-flex align-items-center">\n                        <span class="badge bg-primary rounded-pill me-3">1</span>\n                        <span class="text-truncate" style="max-width: 500px;">Test Thought</span>\n                    </div>\n                    <small class="text-muted local-time"\n                        data-utc="2026-02-02T09:48:58.445162+00:00">{{\n                        thought_group.grouper.input.timestamp|date:"M d, Y" }}</small>\n                </div>\n            </button>\n        </h2>\n        <div id="collapse2" class="accordion-collapse collapse"\n            aria-labelledby="heading2" data-bs-parent="#accordionActionCenter">\n            <div class="accordion-body p-0">\n                <div class="list-group list-group-flush">\n                    \n                    <div class="list-group-item bg-transparent border-secondary py-3 ps-5">\n                        <div class="d-flex w-100 justify-content-between align-items-center">\n                            <div class="d-flex align-items-center">\n                                <form action="/en/plexus/action/1/toggle/" method="post" class="me-3">\n                                    \n                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">\n                                        \n                                        <span class="fs-4">\u2b1c</span>\n                                        \n                                    </button>\n                                </form>\n                                <div>\n                                    <h6\n                                        class="mb-0 ">\n                                        Test Action\n                                    </h6>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n            </div>\n        </div>\n    </div>\n    \n</div>\n\n\n    </main>\n\n    <!-- Global Footer -->\n    <footer class="bg-white border-t border-gray-200 py-12">\n        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">\n                <div class="font-brand text-2xl text-gray-400">\n                    KrisPC\n                </div>\n                <nav class="flex space-x-6 text-sm text-gray-500">\n                    <a href="/en/privacy/" class="hover:text-primary transition-colors">Privacy</a>\n                    <a href="/en/terms/" class="hover:text-primary transition-colors">Terms</a>\n                    <span>&copy; 2026</span>\n                </nav>\n                <div class="flex space-x-4">\n                    <form action="/en/switch-lang/" method="post">\n                        \n                        <input name="next" type="hidden"\n                            value="">\n                        <button type="submit" name="language" value="fr"\n                            class="text-xs text-gray-400 hover:text-primary transition-colors">\n                            FR\n                        </button>\n                    </form>\n                    <span class="text-gray-300">|</span>\n                    <form action="/en/switch-lang/" method="post">\n                        \n                        <input name="next" type="hidden"\n                            value="">\n                        <button type="submit" name="language" value="en"\n                            class="text-xs font-bold text-primary hover:text-primary transition-colors">\n                            EN\n                        </button>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </footer>\n\n    \n\n\n<nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary d-md-none py-0 shadow-lg">\n    <div class="container-fluid px-0">\n        <div class="d-flex w-100 justify-content-around align-items-center">\n            <a href="/en/plexus/dashboard/" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\U0001f3e0</div>\n                <div style="font-size: 0.7rem;">Home</div>\n            </a>\n            <a href="/en/plexus/action-center/" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\u2705</div>\n                <div style="font-size: 0.7rem;">Actions</div>\n            </a>\n            \n            <!-- FAB (Floating Action Button) for Capture -->\n            <a href="/en/plexus/capture/" class="btn btn-primary rounded-circle shadow d-flex align-items-center justify-content-center" \n               style="width: 60px; height: 60px; margin-top: -35px; border: 5px solid #121212; z-index: 1031;">\n                <span class="fs-3">\u2795</span>\n            </a>\n\n            <a href="/en/plexus/capture/?mode=voice" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\U0001f399\ufe0f</div>\n                <div style="font-size: 0.7rem;">Voice</div>\n            </a>\n            \n            \n        </div>\n    </div>\n</nav>\n\n<!-- Spacer to prevent content from being hidden behind the bottom nav -->\n<div class="d-md-none" style="height: 70px;"></div>\n\n\n<script>\n    // Convert UTC timestamps to browser local timezone\n    document.querySelectorAll(\'.local-time\').forEach(function (el) {\n        const utc = el.getAttribute(\'data-utc\');\n        if (utc) {\n            const date = new Date(utc);\n            const options = { year: \'numeric\', month: \'short\', day: \'numeric\', hour: \'2-digit\', minute: \'2-digit\' };\n            el.textContent = date.toLocaleDateString(undefined, options);\n        }\n    });\n</script>\n\n\n    <!-- Global Analytics -->\n    <script src="/static/analytics/tracker.js" defer></script>\n</body>\n\n</html>')
+
+plexus/tests/test_dashboard_accordion.py:58: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+Gemini Error: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\nPlease retry in 1.372370505s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_input_token_count', 'quotaId': 'GenerateContentInputTokensPerModelPerDay-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-pro'}}, {'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-pro'}}, {'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-pro'}}, {'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_input_token_count', 'quotaId': 'GenerateContentInputTokensPerModelPerMinute-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-pro'}}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '1s'}]}}
+--------------------------- Captured stderr teardown ---------------------------
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+---------- coverage: platform darwin, python 3.11.9-final-0 ----------
+Name                                                                                        Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------------------------------------------------------------
+_main/__init__.py                                                                               2      0   100%
+_main/asgi.py                                                                                   9      9     0%   10-22
+_main/celery.py                                                                                11      0   100%
+_main/consumers.py                                                                             39     39     0%   1-51
+_main/proxy.py                                                                                 32     27    16%   8-67
+_main/settings.py                                                                             147     39    73%   34-37, 90, 97-109, 217-247, 309, 363, 395-396, 590-602
+_main/subdomain_middleware.py                                                                  58     58     0%   1-102
+_main/subdomains/__init__.py                                                                    0      0   100%
+_main/subdomains/com.py                                                                         6      6     0%   1-14
+_main/subdomains/emo.py                                                                         3      3     0%   1-5
+_main/subdomains/hub.py                                                                         6      6     0%   1-14
+_main/subdomains/p2c.py                                                                         6      6     0%   1-14
+_main/subdomains/plexus.py                                                                      6      6     0%   1-14
+_main/test_settings.py                                                                          4      0   100%
+_main/urls.py                                                                                  18      2    89%   20, 90
+_main/wsgi.py                                                                                   4      4     0%   10-16
+analytics/__init__.py                                                                           0      0   100%
+analytics/admin.py                                                                             35      0   100%
+analytics/api_urls.py                                                                           3      0   100%
+analytics/api_views.py                                                                         81     58    28%   13-17, 23-52, 55-60, 67-94, 101-119, 125-147
+analytics/apps.py                                                                               4      0   100%
+analytics/migrations/0001_initial.py                                                            7      0   100%
+analytics/migrations/0002_pagevisit_city_pagevisit_country_pagevisit_latitude_and_more.py       4      0   100%
+analytics/migrations/0003_pagevisit_isp_pagevisit_organization_and_more.py                      4      0   100%
+analytics/migrations/__init__.py                                                                0      0   100%
+analytics/models.py                                                                            65      3    95%   57, 74, 99
+analytics/services.py                                                                          57     57     0%   1-149
+analytics/tasks.py                                                                             29     23    21%   8-38
+analytics/tests.py                                                                             28     28     0%   1-50
+analytics/urls.py                                                                               3      0   100%
+analytics/views.py                                                                             17      4    76%   15-41
+emoty/api_urls.py                                                                               4      0   100%
+emoty/api_views.py                                                                             38     13    66%   38-45, 76-83, 104
+emoty/apps.py                                                                                   4      0   100%
+emoty/pricelist.py                                                                             46     43     7%   11, 52-107
+emoty/services.py                                                                              25     22    12%   7, 29-60
+final_fix_queue.py                                                                             20     20     0%   1-53
+fix_queue_robust.py                                                                            20     20     0%   1-50
+fix_tags_queue.py                                                                              17     17     0%   1-28
+fix_tags_thought.py                                                                            15     15     0%   1-26
+hub/__init__.py                                                                                 0      0   100%
+hub/admin.py                                                                                    1      0   100%
+hub/apps.py                                                                                     4      0   100%
+hub/middleware.py                                                                              57     57     0%   1-118
+hub/migrations/__init__.py                                                                      0      0   100%
+hub/models.py                                                                                   1      0   100%
+hub/tests/__init__.py                                                                           0      0   100%
+hub/tests/test_language_persistence.py                                                         79     79     0%   7-174
+hub/tests/test_subdomain_language.py                                                           13     13     0%   1-38
+hub/tests/test_views.py                                                                        41     41     0%   1-54
+hub/urls.py                                                                                     4      0   100%
+hub/views.py                                                                                   59     38    36%   20-48, 55-139, 146-150, 157-161
+krispc/__init__.py                                                                              0      0   100%
+krispc/admin.py                                                                                 1      0   100%
+krispc/api_serializers.py                                                                      31      0   100%
+krispc/api_urls.py                                                                              8      0   100%
+krispc/api_views.py                                                                           107     38    64%   52-59, 109-110, 141-142, 148-161, 220-230, 301-311, 351-352, 393-394, 426-427
+krispc/apps.py                                                                                  4      0   100%
+krispc/colophon.py                                                                              4      2    50%   8-19
+krispc/exceptions.py                                                                           30     30     0%   6-101
+krispc/forms.py                                                                                53     17    68%   47-61, 82-87
+krispc/lst_prod_prices.py                                                                      15     10    33%   41-63, 83, 109-111
+krispc/lst_products.py                                                                         20     16    20%   9-29, 35-94
+krispc/lst_villes.py                                                                            3      2    33%   4-18
+krispc/marques.py                                                                               3      2    33%   7-20
+krispc/middleware.py                                                                           46     46     0%   6-154
+krispc/migrations/0001_initial.py                                                               5      0   100%
+krispc/migrations/0002_add_timestamps_to_contact.py                                             5      0   100%
+krispc/migrations/__init__.py                                                                   0      0   100%
+krispc/models.py                                                                               12      1    92%   17
+krispc/permissions.py                                                                          22     15    32%   27-31, 52-67, 90-94
+krispc/pricelist.py                                                                            75     71     5%   26, 157-216, 230-269
+krispc/serializers.py                                                                          17      7    59%   28-33, 37-39
+krispc/services.py                                                                             36     27    25%   15-85
+krispc/tests/__init__.py                                                                        0      0   100%
+krispc/tests/test_api.py                                                                      145    145     0%   15-360
+krispc/tests/test_i18n.py                                                                      29     29     0%   1-46
+krispc/tests/test_models.py                                                                    74     74     0%   4-162
+krispc/tests/test_pricelist.py                                                                 38     38     0%   1-67
+krispc/tests/test_security.py                                                                  23     23     0%   1-37
+krispc/tests/test_serializers.py                                                               94     94     0%   4-195
+krispc/tests/test_services.py                                                                  95     95     0%   4-176
+krispc/tests/test_throttling.py                                                                29     29     0%   1-68
+krispc/tests/test_views.py                                                                     72     72     0%   4-196
+krispc/urls.py                                                                                  4      0   100%
+krispc/views.py                                                                                80     38    52%   60-168, 171, 178-180, 187-189, 199, 211-238
+manage.py                                                                                      11     11     0%   3-22
+mcp_server.py                                                                                 141    141     0%   13-389
+p2c/__init__.py                                                                                 0      0   100%
+p2c/apps.py                                                                                     8      0   100%
+p2c/backup_utils.py                                                                            24     14    42%   28-51, 64-68, 81-84
+p2c/calendar_integration/__init__.py                                                            0      0   100%
+p2c/calendar_integration/google_calendar.py                                                   194    166    14%   17-33, 51-72, 78-119, 125-132, 138-176, 182-192, 198-245, 249-261, 265-272, 294-340, 344-351, 357-380, 384-389, 398-407
+p2c/celery.py                                                                                  10     10     0%   1-29
+p2c/celery_progress_backend.py                                                                  4      0   100%
+p2c/celery_progress_config.py                                                                   3      3     0%   4-8
+p2c/celery_views.py                                                                            31     23    26%   13-58
+p2c/config/__init__.py                                                                          0      0   100%
+p2c/config/caregiver_settings.py                                                              149    129    13%   37-43, 52-53, 66-70, 82-87, 96, 110-116, 133-149, 158-176, 185-186, 200-215, 227-252, 269-321, 336-374
+p2c/config/event_settings.py                                                                   22     10    55%   16-24, 35-36, 45-49
+p2c/config/event_settings_data.py                                                               1      0   100%
+p2c/config/rate_config.py                                                                      19      8    58%   16-18, 23-27
+p2c/context_processors.py                                                                       6      6     0%   1-9
+p2c/core/__init__.py                                                                            0      0   100%
+p2c/core/parse_models.py                                                                       37     37     0%   1-49
+p2c/domain/models/beneficiary_event.py                                                         34     16    53%   23-24, 28, 37-72
+p2c/domain/services/calendar_service.py                                                       161    135    16%   34-53, 57, 60-61, 68-94, 102-157, 170-196, 211-234, 238-304, 308-324
+p2c/encryption_utils.py                                                                        24      9    62%   15, 38-42, 49-53
+p2c/json_views.py                                                                             379    334    12%   32-35, 46-204, 212-267, 278-393, 404-557, 576-593, 626-662, 673-694, 722-819
+p2c/migrations/0001_initial.py                                                                  8      0   100%
+p2c/migrations/__init__.py                                                                      0      0   100%
+p2c/models.py                                                                                  84     18    79%   22, 32, 65, 69-85, 90, 122, 151
+p2c/pdf_processing/__init__.py                                                                  5      0   100%
+p2c/pdf_processing/auxiliadom_parser.py                                                       364    309    15%   19, 48-49, 95-116, 122, 126, 132-136, 140-142, 146, 150-168, 172-299, 303-335, 341-396, 400-452, 458-493, 499-540, 546-549, 554-571, 576-580, 586-610, 614-636, 642-650, 654-662, 666-673, 677-684
+p2c/pdf_processing/parser_factory.py                                                           19     11    42%   31-52
+p2c/pdf_processing/pdf_schedule_processor.py                                                  211    178    16%   30-35, 61-80, 87-105, 109-285, 300-347, 360-367, 378-433, 438-457, 461
+p2c/pdf_processing/schedule_parser.py                                                          71     63    11%   12-19, 24, 28-65, 69-115
+p2c/redis_connection.py                                                                        45     38    16%   19-86
+p2c/serializers.py                                                                             23     14    39%   35-62
+p2c/services/__init__.py                                                                        0      0   100%
+p2c/services/conversion_service.py                                                            165    138    16%   25-28, 32, 36, 40-47, 51, 61-68, 71-73, 81-93, 99-149, 155-181, 187-212, 222-319, 323-348, 352-358
+p2c/services/ingest.py                                                                         77     77     0%   1-152
+p2c/tasks.py                                                                                  319    292     8%   27-43, 49-53, 61-217, 232-403, 414-628, 645-792
+p2c/templatetags/__init__.py                                                                    0      0   100%
+p2c/templatetags/custom_filters.py                                                             30     16    47%   12, 18-22, 28, 34, 43-50
+p2c/templatetags/p2c_filters.py                                                                13      9    31%   9-17
+p2c/tests/__init__.py                                                                           0      0   100%
+p2c/tests/conftest.py                                                                          36     36     0%   1-60
+p2c/tests/factories.py                                                                         23     23     0%   1-30
+p2c/tests/test_auxiliadom_parser.py                                                            45     45     0%   1-76
+p2c/tests/test_models.py                                                                       20     20     0%   1-26
+p2c/tests/test_schedule_parser.py                                                              30     30     0%   1-67
+p2c/tests/test_serializers.py                                                                  51     51     0%   6-107
+p2c/tests/test_tasks.py                                                                        39     39     0%   1-77
+p2c/tests/test_views.py                                                                        56     56     0%   1-78
+p2c/text_processing/auxiliadom_parser.py                                                      246    228     7%   19-28, 40-101, 112-178, 184-279, 283-317, 325-326, 340-344, 354-360, 363-367, 375-476, 481-503
+p2c/urls.py                                                                                    11      0   100%
+p2c/utils/__init__.py                                                                           0      0   100%
+p2c/utils/beneficiary_utils.py                                                                 34     34     0%   2-80
+p2c/utils/diff.py                                                                              37     33    11%   23-24, 33-87
+p2c/utils/oauth_utils.py                                                                        3      1    67%   13
+p2c/utils/tesseract_wrapper.py                                                                 13     13     0%   2-25
+p2c/utils/time_gaps.py                                                                         52     46    12%   16-30, 44-51, 67-115, 130-148
+p2c/views.py                                                                                 1198   1044    13%   67-77, 82-89, 94-99, 104-367, 374-564, 571-698, 705-772, 789, 793-812, 825-1009, 1016-1033, 1049-1172, 1180-1217, 1224-1259, 1265-1294, 1301-1398, 1405-1452, 1459-1510, 1516-1542, 1549-1591, 1599-1625, 1633-1658, 1666-1703, 1711-1744, 1750-1752, 1757-1773, 1777-1903, 1909-1929, 1934-1950, 1954-1957, 1961, 1965, 1970-1984, 1990-2005, 2011-2041, 2052-2109, 2116-2137, 2142, 2147
+plexus/__init__.py                                                                              0      0   100%
+plexus/admin.py                                                                                49      6    88%   11, 20, 29, 55, 65, 77
+plexus/api_views.py                                                                           102     44    57%   18, 37, 44-68, 83-90, 93-117, 133-134, 165-166
+plexus/api_views_experimental.py                                                               34     23    32%   18-73
+plexus/apps.py                                                                                  6      0   100%
+plexus/forms.py                                                                                35     16    54%   27-28, 31-35, 38-41, 44-54
+plexus/guest.py                                                                                31     20    35%   22-28, 36-38, 46-49, 59-65, 79-90
+plexus/guest_views.py                                                                          12      4    67%   20-28
+plexus/management/__init__.py                                                                   0      0   100%
+plexus/management/commands/__init__.py                                                          0      0   100%
+plexus/management/commands/plexus_session.py                                                   41     41     0%   1-53
+plexus/management/commands/process_stuck_inputs.py                                             19     19     0%   1-26
+plexus/migrations/0001_initial.py                                                               7      0   100%
+plexus/migrations/0002_action_created_at_action_deleted_at_and_more.py                          5      0   100%
+plexus/migrations/0003_thoughtlink.py                                                           5      0   100%
+plexus/migrations/0004_alter_action_options_alter_input_options_and_more.py                     6      0   100%
+plexus/migrations/0005_alter_input_content.py                                                   4      0   100%
+plexus/migrations/0006_add_reminders_and_notifications.py                                       5      0   100%
+plexus/migrations/0007_add_user_to_input.py                                                     6      0   100%
+plexus/migrations/__init__.py                                                                   0      0   100%
+plexus/models.py                                                                              138      9    93%   40, 60, 74, 103, 119, 142, 175, 208, 251
+plexus/serializers.py                                                                          51      9    82%   66-71, 75-78
+plexus/services/__init__.py                                                                     0      0   100%
+plexus/services/linking.py                                                                     29     22    24%   14-73
+plexus/services/llm.py                                                                        129     74    43%   34, 43, 45, 54-88, 93, 112-118, 131-134, 142-192, 196, 200, 203, 214, 248-254
+plexus/services/processor.py                                                                   38      5    87%   31-33, 69, 72
+plexus/services/prompt_security.py                                                             91     57    37%   83, 89, 135, 141, 156-172, 191-234, 239-254, 260-264, 282-301
+plexus/services/stats.py                                                                       67     54    19%   12, 19-32, 41-51, 57-92, 98, 106-122
+plexus/services/surfacing.py                                                                   15      9    40%   10-23, 29-40
+plexus/services/transcription.py                                                               14     10    29%   9-30
+plexus/signals.py                                                                               8      0   100%
+plexus/tasks.py                                                                                26     12    54%   13-14, 20, 30-49
+plexus/tests/__init__.py                                                                        0      0   100%
+plexus/tests/test_action_center.py                                                             36     36     0%   1-58
+plexus/tests/test_admin.py                                                                     20     20     0%   1-26
+plexus/tests/test_admin_models.py                                                              20     20     0%   1-31
+plexus/tests/test_admin_views.py                                                               86     86     0%   1-139
+plexus/tests/test_auth.py                                                                      25     25     0%   1-32
+plexus/tests/test_bouncer_models.py                                                            25     25     0%   1-62
+plexus/tests/test_dashboard_accordion.py                                                       24      3    88%   39-41
+plexus/tests/test_dashboard_rendering.py                                                       17     17     0%   1-42
+plexus/tests/test_guest.py                                                                    121    121     0%   4-268
+plexus/tests/test_index.py                                                                     12     12     0%   1-14
+plexus/tests/test_models.py                                                                    51     51     0%   1-128
+plexus/tests/test_production_subdomain.py                                                      24     24     0%   1-45
+plexus/tests/test_prompt_security.py                                                          128    128     0%   6-312
+plexus/tests/test_reminders.py                                                                119    119     0%   4-312
+plexus/tests/test_serializers.py                                                               28     28     0%   1-46
+plexus/tests/test_services.py                                                                  27     27     0%   1-40
+plexus/tests/test_signals.py                                                                   15     15     0%   1-25
+plexus/tests/test_surfacing.py                                                                 30     30     0%   1-64
+plexus/tests/test_sync.py                                                                      56     56     0%   1-99
+plexus/tests/test_tasks.py                                                                     72     72     0%   1-178
+plexus/tests/test_thought_edit.py                                                              49     49     0%   1-79
+plexus/tests/test_transcription.py                                                             24     24     0%   1-40
+plexus/tests/test_validators.py                                                               133    133     0%   6-239
+plexus/tests/test_views.py                                                                    100    100     0%   1-165
+plexus/tests/test_voice_api.py                                                                 29     29     0%   1-36
+plexus/urls.py                                                                                 16      0   100%
+plexus/validators.py                                                                           99     82    17%   52, 55-57, 76-94, 116-127, 149-160, 182-205, 229-261, 283-318
+plexus/views.py                                                                               188    106    44%   31-33, 37-47, 60-85, 88-109, 117, 126-127, 130-134, 142-143, 146-148, 154-163, 167-176, 185-200, 206, 209-212, 215-228, 232-238, 245-283, 294-298
+verify_emoty.py                                                                                41     41     0%   1-60
+-------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                        9490   7504    21%
+
+=========================== short test summary info ============================
+FAILED plexus/tests/test_dashboard_accordion.py::TestDashboardAccordion::test_actions_section_has_accordion_classes - django.template.exceptions.TemplateSyntaxError: 'blocktrans' doesn't allow other block tags (seen 'endif') inside it
+FAILED plexus/tests/test_dashboard_accordion.py::TestDashboardAccordion::test_action_center_has_accordion_structure - assert ('id="accordion-action-center"' in '\n\n\n\n\n<!DOCTYPE html>\n\n<html lang="en">\n\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Action Center - Second Brain</title>\n\n    <!-- Google Fonts: Inter & Lobster -->\n    <link rel="preconnect" href="https://fonts.googleapis.com">\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&display=swap"\n        rel="stylesheet">\n\n    <!-- Vite Assets (Tailwind & JS) -->\n    \n    <link  rel="stylesheet" href="/static/assets/main-CgqdwNMn.css" />\n<script type="module" crossorigin="" src="/static/assets/main-CpyEJtTC.js"></script>\n\n    <!-- HTMX -->\n    <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>\n    \n\n    \n</head>\n\n<body class="bg-gray-50 text-gray-900 font-sans antialiased" hx-headers=\'{"X-CSRFToken": ""}\'\n    data-theme-version="v2">\n\n    <!-- Global Header -->\n    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">\n        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n            <div class="flex justify-between h-16 items-center">\n                <!-- Brand -->\n                <div class="flex items-center">\n                    <a href="/en/"\n                        class="font-brand text-3xl text-primary hover:text-primary-dark transition-colors">\n                        KrisPC\n                    </a>\n                </div>\n\n                <!-- Main Navigation -->\n                <nav class="hidden md:flex space-x-8">\n                    <a href="https://hub.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Hub</a>\n                    <a href="https://com.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">KrisPC</a>\n                    <a href="https://plexus.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Plexus</a>\n                    <a href="https://p2c.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Pdf2Cal</a>\n                </nav>\n\n                <!-- Right Side: User & Lang -->\n                <div class="flex items-center space-x-4">\n                    \n                    <span class="text-xs text-gray-500 hidden sm:inline">testuser</span>\n                    <form action="/en/logout/" method="post" class="inline">\n                        \n                        <button type="submit"\n                            class="text-xs font-semibold text-gray-600 hover:text-red-600 transition-colors">\n                            Logout\n                        </button>\n                    </form>\n                    \n                </div>\n            </div>\n        </div>\n    </header>\n\n    <!-- Sub Navigation -->\n    \n<div class="bg-slate-900 text-white shadow-lg">\n    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n        <div class="flex items-center justify-between h-14">\n            <div class="flex items-center space-x-8">\n                <a href="https://hub.krispc.fr" class="text-slate-400 hover:text-white transition-colors text-sm">\u21a9\n                    Hub</a>\n                <a href="/en/plexus/" class="font-bold text-lg flex items-center space-x-2">\n                    <span>\U0001fa9e</span>\n                    <span class="hidden sm:inline">Second Brain</span>\n                </a>\n                \n                <div class="hidden md:flex space-x-4">\n                    <a href="/en/plexus/capture/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Capture</a>\n                    <a href="/en/plexus/capture/?mode=voice"\n                        class="text-slate-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">\n                        <span>\U0001f399\ufe0f</span><span>Voice</span>\n                    </a>\n                    <a href="/en/plexus/dashboard/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>\n                    <a href="/en/plexus/action-kanban/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Action Center</a>\n                    <a href="/en/plexus/review-queue/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Review Queue</a>\n                </div>\n                \n            </div>\n        </div>\n    </div>\n</div>\n\n\n    <!-- Messages -->\n    \n\n    <!-- Main Content -->\n    <main class="min-h-screen">\n        \n<div class="d-flex justify-content-between align-items-center mb-4">\n    <h1>Action Center</h1>\n    <div>\n        <a href="/en/plexus/action-kanban/" class="btn btn-outline-primary me-2">Kanban Board</a>\n        <div class="btn-group" role="group">\n            <a href="?status=pending"\n                class="btn btn-primary">Pending</a>\n            <a href="?status=done"\n                class="btn btn-outline-primary">Done</a>\n        </div>\n    </div>\n\n</div>\n\n\n\n<div class="accordion shadow-sm" id="accordionActionCenter">\n    \n    <div class="accordion-item bg-dark-subtle border-secondary mb-2 rounded overflow-hidden">\n        <h2 class="accordion-header" id="heading2">\n            <button class="accordion-button collapsed bg-dark-subtle text-white border-secondary shadow-none"\n                type="button" data-bs-toggle="collapse" data-bs-target="#collapse2"\n                aria-expanded="false" aria-controls="collapse2">\n                <div class="d-flex w-100 justify-content-between align-items-center pe-3">\n                    <div class="d-flex align-items-center">\n                        <span class="badge bg-primary rounded-pill me-3">1</span>\n                        <span class="text-truncate" style="max-width: 500px;">Test Thought</span>\n                    </div>\n                    <small class="text-muted local-time"\n                        data-utc="2026-02-02T09:48:58.445162+00:00">{{\n                        thought_group.grouper.input.timestamp|date:"M d, Y" }}</small>\n                </div>\n            </button>\n        </h2>\n        <div id="collapse2" class="accordion-collapse collapse"\n            aria-labelledby="heading2" data-bs-parent="#accordionActionCenter">\n            <div class="accordion-body p-0">\n                <div class="list-group list-group-flush">\n                    \n                    <div class="list-group-item bg-transparent border-secondary py-3 ps-5">\n                        <div class="d-flex w-100 justify-content-between align-items-center">\n                            <div class="d-flex align-items-center">\n                                <form action="/en/plexus/action/1/toggle/" method="post" class="me-3">\n                                    \n                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">\n                                        \n                                        <span class="fs-4">\u2b1c</span>\n                                        \n                                    </button>\n                                </form>\n                                <div>\n                                    <h6\n                                        class="mb-0 ">\n                                        Test Action\n                                    </h6>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n            </div>\n        </div>\n    </div>\n    \n</div>\n\n\n    </main>\n\n    <!-- Global Footer -->\n    <footer class="bg-white border-t border-gray-200 py-12">\n        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">\n                <div class="font-brand text-2xl text-gray-400">\n                    KrisPC\n                </div>\n                <nav class="flex space-x-6 text-sm text-gray-500">\n                    <a href="/en/privacy/" class="hover:text-primary transition-colors">Privacy</a>\n                    <a href="/en/terms/" class="hover:text-primary transition-colors">Terms</a>\n                    <span>&copy; 2026</span>\n                </nav>\n                <div class="flex space-x-4">\n                    <form action="/en/switch-lang/" method="post">\n                        \n                        <input name="next" type="hidden"\n                            value="">\n                        <button type="submit" name="language" value="fr"\n                            class="text-xs text-gray-400 hover:text-primary transition-colors">\n                            FR\n                        </button>\n                    </form>\n                    <span class="text-gray-300">|</span>\n                    <form action="/en/switch-lang/" method="post">\n                        \n                        <input name="next" type="hidden"\n                            value="">\n                        <button type="submit" name="language" value="en"\n                            class="text-xs font-bold text-primary hover:text-primary transition-colors">\n                            EN\n                        </button>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </footer>\n\n    \n\n\n<nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary d-md-none py-0 shadow-lg">\n    <div class="container-fluid px-0">\n        <div class="d-flex w-100 justify-content-around align-items-center">\n            <a href="/en/plexus/dashboard/" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\U0001f3e0</div>\n                <div style="font-size: 0.7rem;">Home</div>\n            </a>\n            <a href="/en/plexus/action-center/" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\u2705</div>\n                <div style="font-size: 0.7rem;">Actions</div>\n            </a>\n            \n            <!-- FAB (Floating Action Button) for Capture -->\n            <a href="/en/plexus/capture/" class="btn btn-primary rounded-circle shadow d-flex align-items-center justify-content-center" \n               style="width: 60px; height: 60px; margin-top: -35px; border: 5px solid #121212; z-index: 1031;">\n                <span class="fs-3">\u2795</span>\n            </a>\n\n            <a href="/en/plexus/capture/?mode=voice" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\U0001f399\ufe0f</div>\n                <div style="font-size: 0.7rem;">Voice</div>\n            </a>\n            \n            \n        </div>\n    </div>\n</nav>\n\n<!-- Spacer to prevent content from being hidden behind the bottom nav -->\n<div class="d-md-none" style="height: 70px;"></div>\n\n\n<script>\n    // Convert UTC timestamps to browser local timezone\n    document.querySelectorAll(\'.local-time\').forEach(function (el) {\n        const utc = el.getAttribute(\'data-utc\');\n        if (utc) {\n            const date = new Date(utc);\n            const options = { year: \'numeric\', month: \'short\', day: \'numeric\', hour: \'2-digit\', minute: \'2-digit\' };\n            el.textContent = date.toLocaleDateString(undefined, options);\n        }\n    });\n</script>\n\n\n    <!-- Global Analytics -->\n    <script src="/static/analytics/tracker.js" defer></script>\n</body>\n\n</html>' or 'class="accordion"' in '\n\n\n\n\n<!DOCTYPE html>\n\n<html lang="en">\n\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Action Center - Second Brain</title>\n\n    <!-- Google Fonts: Inter & Lobster -->\n    <link rel="preconnect" href="https://fonts.googleapis.com">\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&display=swap"\n        rel="stylesheet">\n\n    <!-- Vite Assets (Tailwind & JS) -->\n    \n    <link  rel="stylesheet" href="/static/assets/main-CgqdwNMn.css" />\n<script type="module" crossorigin="" src="/static/assets/main-CpyEJtTC.js"></script>\n\n    <!-- HTMX -->\n    <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>\n    \n\n    \n</head>\n\n<body class="bg-gray-50 text-gray-900 font-sans antialiased" hx-headers=\'{"X-CSRFToken": ""}\'\n    data-theme-version="v2">\n\n    <!-- Global Header -->\n    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">\n        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n            <div class="flex justify-between h-16 items-center">\n                <!-- Brand -->\n                <div class="flex items-center">\n                    <a href="/en/"\n                        class="font-brand text-3xl text-primary hover:text-primary-dark transition-colors">\n                        KrisPC\n                    </a>\n                </div>\n\n                <!-- Main Navigation -->\n                <nav class="hidden md:flex space-x-8">\n                    <a href="https://hub.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Hub</a>\n                    <a href="https://com.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">KrisPC</a>\n                    <a href="https://plexus.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Plexus</a>\n                    <a href="https://p2c.krispc.fr"\n                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Pdf2Cal</a>\n                </nav>\n\n                <!-- Right Side: User & Lang -->\n                <div class="flex items-center space-x-4">\n                    \n                    <span class="text-xs text-gray-500 hidden sm:inline">testuser</span>\n                    <form action="/en/logout/" method="post" class="inline">\n                        \n                        <button type="submit"\n                            class="text-xs font-semibold text-gray-600 hover:text-red-600 transition-colors">\n                            Logout\n                        </button>\n                    </form>\n                    \n                </div>\n            </div>\n        </div>\n    </header>\n\n    <!-- Sub Navigation -->\n    \n<div class="bg-slate-900 text-white shadow-lg">\n    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n        <div class="flex items-center justify-between h-14">\n            <div class="flex items-center space-x-8">\n                <a href="https://hub.krispc.fr" class="text-slate-400 hover:text-white transition-colors text-sm">\u21a9\n                    Hub</a>\n                <a href="/en/plexus/" class="font-bold text-lg flex items-center space-x-2">\n                    <span>\U0001fa9e</span>\n                    <span class="hidden sm:inline">Second Brain</span>\n                </a>\n                \n                <div class="hidden md:flex space-x-4">\n                    <a href="/en/plexus/capture/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Capture</a>\n                    <a href="/en/plexus/capture/?mode=voice"\n                        class="text-slate-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">\n                        <span>\U0001f399\ufe0f</span><span>Voice</span>\n                    </a>\n                    <a href="/en/plexus/dashboard/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>\n                    <a href="/en/plexus/action-kanban/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Action Center</a>\n                    <a href="/en/plexus/review-queue/"\n                        class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Review Queue</a>\n                </div>\n                \n            </div>\n        </div>\n    </div>\n</div>\n\n\n    <!-- Messages -->\n    \n\n    <!-- Main Content -->\n    <main class="min-h-screen">\n        \n<div class="d-flex justify-content-between align-items-center mb-4">\n    <h1>Action Center</h1>\n    <div>\n        <a href="/en/plexus/action-kanban/" class="btn btn-outline-primary me-2">Kanban Board</a>\n        <div class="btn-group" role="group">\n            <a href="?status=pending"\n                class="btn btn-primary">Pending</a>\n            <a href="?status=done"\n                class="btn btn-outline-primary">Done</a>\n        </div>\n    </div>\n\n</div>\n\n\n\n<div class="accordion shadow-sm" id="accordionActionCenter">\n    \n    <div class="accordion-item bg-dark-subtle border-secondary mb-2 rounded overflow-hidden">\n        <h2 class="accordion-header" id="heading2">\n            <button class="accordion-button collapsed bg-dark-subtle text-white border-secondary shadow-none"\n                type="button" data-bs-toggle="collapse" data-bs-target="#collapse2"\n                aria-expanded="false" aria-controls="collapse2">\n                <div class="d-flex w-100 justify-content-between align-items-center pe-3">\n                    <div class="d-flex align-items-center">\n                        <span class="badge bg-primary rounded-pill me-3">1</span>\n                        <span class="text-truncate" style="max-width: 500px;">Test Thought</span>\n                    </div>\n                    <small class="text-muted local-time"\n                        data-utc="2026-02-02T09:48:58.445162+00:00">{{\n                        thought_group.grouper.input.timestamp|date:"M d, Y" }}</small>\n                </div>\n            </button>\n        </h2>\n        <div id="collapse2" class="accordion-collapse collapse"\n            aria-labelledby="heading2" data-bs-parent="#accordionActionCenter">\n            <div class="accordion-body p-0">\n                <div class="list-group list-group-flush">\n                    \n                    <div class="list-group-item bg-transparent border-secondary py-3 ps-5">\n                        <div class="d-flex w-100 justify-content-between align-items-center">\n                            <div class="d-flex align-items-center">\n                                <form action="/en/plexus/action/1/toggle/" method="post" class="me-3">\n                                    \n                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">\n                                        \n                                        <span class="fs-4">\u2b1c</span>\n                                        \n                                    </button>\n                                </form>\n                                <div>\n                                    <h6\n                                        class="mb-0 ">\n                                        Test Action\n                                    </h6>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                    \n                </div>\n            </div>\n        </div>\n    </div>\n    \n</div>\n\n\n    </main>\n\n    <!-- Global Footer -->\n    <footer class="bg-white border-t border-gray-200 py-12">\n        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\n            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">\n                <div class="font-brand text-2xl text-gray-400">\n                    KrisPC\n                </div>\n                <nav class="flex space-x-6 text-sm text-gray-500">\n                    <a href="/en/privacy/" class="hover:text-primary transition-colors">Privacy</a>\n                    <a href="/en/terms/" class="hover:text-primary transition-colors">Terms</a>\n                    <span>&copy; 2026</span>\n                </nav>\n                <div class="flex space-x-4">\n                    <form action="/en/switch-lang/" method="post">\n                        \n                        <input name="next" type="hidden"\n                            value="">\n                        <button type="submit" name="language" value="fr"\n                            class="text-xs text-gray-400 hover:text-primary transition-colors">\n                            FR\n                        </button>\n                    </form>\n                    <span class="text-gray-300">|</span>\n                    <form action="/en/switch-lang/" method="post">\n                        \n                        <input name="next" type="hidden"\n                            value="">\n                        <button type="submit" name="language" value="en"\n                            class="text-xs font-bold text-primary hover:text-primary transition-colors">\n                            EN\n                        </button>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </footer>\n\n    \n\n\n<nav class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary d-md-none py-0 shadow-lg">\n    <div class="container-fluid px-0">\n        <div class="d-flex w-100 justify-content-around align-items-center">\n            <a href="/en/plexus/dashboard/" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\U0001f3e0</div>\n                <div style="font-size: 0.7rem;">Home</div>\n            </a>\n            <a href="/en/plexus/action-center/" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\u2705</div>\n                <div style="font-size: 0.7rem;">Actions</div>\n            </a>\n            \n            <!-- FAB (Floating Action Button) for Capture -->\n            <a href="/en/plexus/capture/" class="btn btn-primary rounded-circle shadow d-flex align-items-center justify-content-center" \n               style="width: 60px; height: 60px; margin-top: -35px; border: 5px solid #121212; z-index: 1031;">\n                <span class="fs-3">\u2795</span>\n            </a>\n\n            <a href="/en/plexus/capture/?mode=voice" class="nav-link text-center py-2 text-muted">\n                <div class="fs-4">\U0001f399\ufe0f</div>\n                <div style="font-size: 0.7rem;">Voice</div>\n            </a>\n            \n            \n        </div>\n    </div>\n</nav>\n\n<!-- Spacer to prevent content from being hidden behind the bottom nav -->\n<div class="d-md-none" style="height: 70px;"></div>\n\n\n<script>\n    // Convert UTC timestamps to browser local timezone\n    document.querySelectorAll(\'.local-time\').forEach(function (el) {\n        const utc = el.getAttribute(\'data-utc\');\n        if (utc) {\n            const date = new Date(utc);\n            const options = { year: \'numeric\', month: \'short\', day: \'numeric\', hour: \'2-digit\', minute: \'2-digit\' };\n            el.textContent = date.toLocaleDateString(undefined, options);\n        }\n    });\n</script>\n\n\n    <!-- Global Analytics -->\n    <script src="/static/analytics/tracker.js" defer></script>\n</body>\n\n</html>')
+============================== 2 failed in 3.39s ===============================
