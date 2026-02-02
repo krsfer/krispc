@@ -30,3 +30,5 @@ krispc/static/dist/
 # Emoty Web logs and temp files
 apps/emoty_web/*.log
 apps/emoty_web/test-db.js
+
+.worktrees/
