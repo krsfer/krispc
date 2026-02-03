@@ -10,9 +10,21 @@ const nextConfig = {
   // allowedDevOrigins is no longer a standard experimental key in Next.js 15
   // and should be handled via headers or middleware if cross-origin dev is needed.
   images: {
-    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost'
+      },
+      {
+        protocol: 'https',
+        hostname: 'localhost'
+      }
+    ],
     formats: ['image/webp', 'image/avif'],
     unoptimized: true
+  },
+  turbopack: {
+    root: __dirname
   },
   output: 'standalone',
   headers: async () => [
