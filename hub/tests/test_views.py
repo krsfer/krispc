@@ -1,4 +1,5 @@
 from django.test import TestCase, RequestFactory
+from django.test.utils import override_settings
 from django.urls import reverse, resolve
 from django.utils.translation import activate
 from hub.views import IndexView, PrivacyView, TermsView
@@ -33,6 +34,18 @@ class IndexViewTests(TestCase):
         self.assertEqual(context['tagline'], 'Professional Services & Tools')
         self.assertEqual(context['apps'][0]['button_text'], 'Visit')
 
+    @override_settings(ALLOWED_HOSTS=[".localhost", "testserver"])
+    def test_index_view_context_localhost_uses_localhost_urls(self):
+        activate('en')
+        request = self.factory.get('/', HTTP_HOST='hub.localhost:8000')
+        view = IndexView()
+        view.request = request
+        context = view.get_context_data()
+
+        self.assertEqual(context['apps'][0]['url'], 'http://com.localhost:8000/en/')
+        self.assertEqual(context['apps'][1]['url'], 'http://p2c.localhost:8000/en/')
+        self.assertEqual(context['apps'][2]['url'], 'http://plexus.localhost:8000/en/')
+        self.assertEqual(context['apps'][3]['url'], 'http://emo.localhost:8000/')
 
 class HubURLTests(TestCase):
     def test_index_url_resolves(self):
@@ -52,4 +65,3 @@ class HubURLTests(TestCase):
         # URL may have language prefix (e.g., /en/terms/) due to i18n
         self.assertTrue(url.endswith('/terms/'), f"URL should end with /terms/: {url}")
         self.assertEqual(resolve(url).func.view_class, TermsView)
-

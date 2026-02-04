@@ -9,6 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.views.decorators.csrf import csrf_exempt
+from krispc.context_processors import resolve_base_url
 
 @csrf_exempt
 @require_POST
@@ -71,6 +72,12 @@ class IndexView(TemplateView):
 
         # Build subdomain URLs with language prefix
         lang_path = '' if is_french else '/en'
+
+        hub_base_url = resolve_base_url(self.request, settings.HUB_BASE_URL, "hub")
+        krispc_base_url = resolve_base_url(self.request, settings.KRISPC_BASE_URL, "com")
+        p2c_base_url = resolve_base_url(self.request, settings.P2C_BASE_URL, "p2c")
+        plexus_base_url = resolve_base_url(self.request, settings.PLEXUS_BASE_URL, "plexus")
+        emo_base_url = resolve_base_url(self.request, settings.EMO_BASE_URL, "emo")
         
         context['apps'] = [
             {
@@ -80,7 +87,7 @@ class IndexView(TemplateView):
                     'Réparations informatiques professionnelles' if is_french
                     else 'Professional computer repairs'
                 ),
-                'url': f'https://com.krispc.fr{lang_path}/',
+                'url': f'{krispc_base_url}{lang_path}/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             },
             {
@@ -90,7 +97,7 @@ class IndexView(TemplateView):
                     'Convertissez vos PDF en calendriers' if is_french
                     else 'Convert your PDFs to calendars'
                 ),
-                'url': f'https://p2c.krispc.fr{lang_path}/',
+                'url': f'{p2c_base_url}{lang_path}/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             },
             {
@@ -100,7 +107,7 @@ class IndexView(TemplateView):
                     'Système de déchargement cognitif' if is_french
                     else 'Cognitive offloading system'
                 ),
-                'url': f'https://plexus.krispc.fr{lang_path}/',
+                'url': f'{plexus_base_url}{lang_path}/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             },
             {
@@ -110,7 +117,7 @@ class IndexView(TemplateView):
                     'Créateur de motifs Emoji' if is_french
                     else 'Emoji Pattern Creator'
                 ),
-                'url': 'https://emo.krispc.fr/',
+                'url': f'{emo_base_url}/',
                 'button_text': 'Accéder' if is_french else 'Visit',
             }
         ]
@@ -152,6 +159,19 @@ class PrivacyView(TemplateView):
 
 class TermsView(TemplateView):
     template_name = "hub/terms.html"
+
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get current language (set by middleware)
+        current_lang = get_language()
+        context['current_language'] = current_lang[:2]
+        return context
+
+
+class DeveloperIndexView(TemplateView):
+    """Landing page for developer resources at the Hub level."""
+    template_name = "hub/developers.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

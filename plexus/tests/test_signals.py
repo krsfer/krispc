@@ -1,8 +1,9 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from unittest.mock import patch
 from plexus.models import Input
 
 class InputSignalTest(TestCase):
+    @override_settings(PLEXUS_DISABLE_INPUT_PROCESSING=False)
     @patch("plexus.tasks.process_input.delay")
     def test_input_post_save_triggers_task(self, mock_task_delay):
         # Create Input
@@ -11,6 +12,7 @@ class InputSignalTest(TestCase):
         # Verify task was called with delay (asynchronously)
         mock_task_delay.assert_called_once_with(input_obj.id)
 
+    @override_settings(PLEXUS_DISABLE_INPUT_PROCESSING=False)
     @patch("plexus.tasks.process_input.delay")
     def test_input_update_does_not_retrigger_task(self, mock_task_delay):
         # Create Input

@@ -152,6 +152,8 @@ The app is configured for Railway deployment with:
 ```env
 NODE_ENV=production
 PORT=3000
+# Optional: override Hub link in the sub-nav
+NEXT_PUBLIC_HUB_BASE_URL=http://hub.localhost:8000
 # DATABASE_URL (automatically set by Railway)
 # ANTHROPIC_API_KEY (for AI features in Phase 2)
 ```

@@ -28,13 +28,13 @@ urlpatterns = [
     path("", hub.views.IndexView.as_view(), name="index"),
     
     # KrisPC API
-    path("api/krispc/", include("krispc.api_urls")),
+    path("api/krispc/", include(("krispc.api_urls", "krispc_api"), namespace="krispc_api")),
 
     # Analytics API (Non-i18n)
     path("analytics/api/", include("analytics.api_urls")),
 
     # Emoty API (Non-i18n)
-    path("api/emoty/", include("emoty.api_urls")),
+    path("api/emoty/", include(("emoty.api_urls", "emoty_api"), namespace="emoty_api")),
 
     
     # Documentation
@@ -70,8 +70,10 @@ urlpatterns += i18n_patterns(
     }),
 
     # Proxy to Emoty Web (Next.js)
+    path('emo/developers/', include('emoty.urls')),
     re_path(r"^emo(?:/(?P<path>.*))?$", proxy_to_emoty),
     path("login/", auth_views.LoginView.as_view(template_name="plexus/registration/login.html"), name="login"),
+    path("login/google/", p2c.views.google_login, name="google_login_i18n"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     
     # PDF2Cal app

@@ -22,6 +22,7 @@ urlpatterns += i18n_patterns(
     path('krispc/', include('krispc.urls')),
     path('p2c/', include('p2c.urls')),
     path('plexus/', include('plexus.urls')),
+    path('emo/developers/', include('emoty.urls')),
     
     # Shared
     path("login/", auth_views.LoginView.as_view(template_name="plexus/registration/login.html"), name="login"),

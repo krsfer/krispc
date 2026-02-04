@@ -17,7 +17,8 @@ app_name = "p2c"
 router = DefaultRouter()
 router.register(r"documents", views.DocumentViewSet)
 
-urlpatterns = [
+# Non-schema patterns
+api_urls = [
     path("", views.home, name="home"),
     path("google-login/", views.google_login, name="google_login"),
     path("login/google/", views.google_login, name="google_login"),
@@ -147,8 +148,17 @@ urlpatterns = [
     path("backup/restore/<int:backup_id>/", views.backup_restore, name="backup_restore"),
     path("backup/delete/<int:backup_id>/", views.backup_delete, name="backup_delete"),
     
+    # Developer Section
+    path("developers/", views.DeveloperIndexView.as_view(), name="developer-index"),
+    path("api/v1/services/", views.ServicesView.as_view(), name="api-services"),
+    path("api/v1/pricelist/", views.PricelistView.as_view(), name="api-pricelist"),
+    path("api/v1/mcp/", views.MCPView.as_view(), name="api-mcp"),
+
+]
+
+urlpatterns = api_urls + [
     # API Documentation (OpenAPI/Swagger/ReDoc)
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/schema/", SpectacularAPIView.as_view(patterns=api_urls), name="schema"),
     path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="p2c:schema"), name="swagger-ui"),
     path("api/docs/redoc/", SpectacularRedocView.as_view(url_name="p2c:schema"), name="redoc"),
 ]

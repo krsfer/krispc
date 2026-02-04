@@ -5,9 +5,12 @@ from .views import (
     IngestAPIView, IndexView, CaptureView, DashboardView, 
     ReviewQueueListView, ReviewResolveView,
     ActionListView, KanbanView, ActionToggleView, ThoughtUpdateView, ThoughtDeleteView,
-    AdminDashboardView, VoiceCaptureView, ThoughtRetryView
+    AdminDashboardView, VoiceCaptureView, ThoughtRetryView, DeveloperIndexView
 )
-from .api_views import InputViewSet, ThoughtViewSet, ActionViewSet, SyncView, PatternViewSet, ReminderViewSet, NotificationViewSet
+from .api_views import (
+    InputViewSet, ThoughtViewSet, ActionViewSet, SyncView, PatternViewSet, 
+    ReminderViewSet, NotificationViewSet, ServicesView, PricelistView, MCPView
+)
 from .api_views_experimental import DynamicViewGenerator
 from .guest_views import GuestLoginView
 
@@ -22,7 +25,8 @@ router.register(r"patterns", PatternViewSet)
 router.register(r"reminders", ReminderViewSet)
 router.register(r"notifications", NotificationViewSet)
 
-urlpatterns = [
+# Non-schema patterns
+api_urls = [
     # Web Views
     path("", IndexView.as_view(), name="index"),
     path("guest/login/", GuestLoginView.as_view(), name="guest_login"),
@@ -46,11 +50,19 @@ urlpatterns = [
     # Experimental (2026 Trends)
     path("api/v1/generate-view/", DynamicViewGenerator.as_view(), name="generate_view"),
 
+    # Developer Section
+    path("developers/", DeveloperIndexView.as_view(), name="developer-index"),
+    path("api/v1/services/", ServicesView.as_view(), name="api-services"),
+    path("api/v1/pricelist/", PricelistView.as_view(), name="api-pricelist"),
+    path("api/v1/mcp/", MCPView.as_view(), name="api-mcp"),
+
     # REST API via Router
     path("api/v1/", include(router.urls)),
+]
 
+urlpatterns = api_urls + [
     # API Documentation
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/schema/", SpectacularAPIView.as_view(patterns=api_urls), name="schema"),
     path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="plexus:schema"), name="swagger-ui"),
     path("api/docs/redoc/", SpectacularRedocView.as_view(url_name="plexus:schema"), name="redoc"),
 ]

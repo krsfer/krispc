@@ -1,6 +1,7 @@
 """Utility functions for detecting time gaps between appointments."""
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
+from django.utils.translation import gettext as _
 
 
 def parse_time(time_str: str) -> Optional[datetime]:
@@ -108,7 +109,10 @@ def find_time_gap_warnings(
                         "start_time": next_apt.get("start_time", ""),
                     },
                     "gap_minutes": gap_minutes,
-                    "warning_message": f"Only {gap_minutes} minute{'s' if gap_minutes != 1 else ''} between appointments",
+                    "warning_message": _("Only {gap_minutes} minute{plural} between appointments").format(
+                        gap_minutes=gap_minutes,
+                        plural='s' if gap_minutes != 1 else ''
+                    ),
                 }
                 warnings.append(warning)
 

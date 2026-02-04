@@ -17,6 +17,21 @@ from .services.stats import get_system_stats
 from .services.transcription import transcribe_audio
 from .services.surfacing import get_on_this_day, get_random_resurface
 from .guest import get_guest_status, can_create_thought, is_guest_user
+from .pricelist import get_pricelist
+from .services_info import get_services
+
+class DeveloperIndexView(TemplateView):
+    template_name = "plexus/developers.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['api_docs_swagger'] = reverse_lazy('plexus:swagger-ui')
+        context['api_docs_redoc'] = reverse_lazy('plexus:redoc')
+        context['pricelist_json'] = reverse_lazy('plexus:api-pricelist')
+        context['pricelist_text'] = reverse_lazy('plexus:api-pricelist') + "?output=text"
+        context['services_text'] = reverse_lazy('plexus:api-services') + "?output=text"
+        context['mcp_server_info'] = reverse_lazy('plexus:api-mcp')
+        return context
 
 class IndexView(TemplateView):
     template_name = "plexus/index.html"

@@ -1,0 +1,121 @@
+{% extends "layouts/golden_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "For Developers" %} - KrisPC Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-dark text-white py-4 text-center"
+                    style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                    <h1 class="h3 mb-0 fw-bold">{% trans "KrisPC Hub Developers" %}</h1>
+                    <p class="mb-0 opacity-75">{% trans "Central access to all KrisPC APIs and services" %}</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <p class="lead text-center mb-5">
+                        {% blocktrans %}Welcome to the central developer hub. Choose an application below to access its
+                        specific API documentation and developer resources.{% endblocktrans %}
+                    </p>
+
+                    <div class="row g-4">
+                        <!-- KrisPC API -->
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-box bg-warning text-dark rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                                        style="width: 60px; height: 60px; font-size: 24px;">
+                                        <i class="fas fa-desktop"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">KrisPC</h5>
+                                    <p class="card-text text-muted small mb-4">{% blocktrans %}Computer repair services,
+                                        pricing, and coverage area API.{% endblocktrans %}</p>
+                                    <a href="{% url 'krispc:developer-index' %}"
+                                        class="btn btn-outline-dark btn-sm w-100">
+                                        {% trans "View Docs" %} <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emoty API -->
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-box bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                                        style="width: 60px; height: 60px; font-size: 24px;">
+                                        <i class="fas fa-smile"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">Emoty</h5>
+                                    <p class="card-text text-muted small mb-4">{% blocktrans %}Emoji patterns and
+                                        emotion analysis services.{% endblocktrans %}</p>
+                                    <a href="{% url 'emoty:developer-index' %}"
+                                        class="btn btn-outline-primary btn-sm w-100">
+                                        {% trans "View Docs" %} <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plexus API -->
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-box bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                                        style="width: 60px; height: 60px; font-size: 24px;">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">Plexus</h5>
+                                    <p class="card-text text-muted small mb-4">{% blocktrans %}Cognitive offloading and
+                                        thought management system.{% endblocktrans %}</p>
+                                    <a href="{% url 'plexus:developer-index' %}"
+                                        class="btn btn-outline-info btn-sm w-100">
+                                        {% trans "View Docs" %} <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pdf2Cal API -->
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-box bg-danger text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                                        style="width: 60px; height: 60px; font-size: 24px;">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold">Pdf2Cal</h5>
+                                    <p class="card-text text-muted small mb-4">{% blocktrans %}PDF processing and
+                                        calendar event extraction API.{% endblocktrans %}</p>
+                                    <a href="{% url 'p2c:developer-index' %}"
+                                        class="btn btn-outline-danger btn-sm w-100">
+                                        {% trans "View Docs" %} <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 text-center">
+                        <a href="/" class="text-decoration-none text-muted small">
+                            <i class="fas fa-arrow-left me-1"></i> {% trans "Back to Hub" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+    }
+
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}

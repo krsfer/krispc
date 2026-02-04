@@ -29,13 +29,14 @@ v1_patterns = [
     path('villes/', api_views.VillesView.as_view(), name='api-villes'),
 ]
 
-# Main URL patterns
-urlpatterns = [
-    # API endpoints
+# API endpoints to be documented
+api_urlpatterns = [
     path('', include(v1_patterns)),
-    
-    # Schema and Documentation
-    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+]
+
+# Schema and Documentation
+urlpatterns = api_urlpatterns + [
+    path('schema/', SpectacularAPIView.as_view(patterns=api_urlpatterns), name='schema'),
     path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]

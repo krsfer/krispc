@@ -189,6 +189,21 @@ class TermsView(IndexPageView):
         return context
 
 
+class DeveloperIndexView(TemplateView):
+    """Landing page for developer resources."""
+    template_name = "krispc/developers.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['api_docs_swagger'] = reverse('krispc_api:swagger-ui')
+        context['api_docs_redoc'] = reverse('krispc_api:redoc')
+        context['pricelist_json'] = reverse('krispc_api:api-pricelist')
+        context['pricelist_text'] = reverse('krispc_api:api-pricelist') + "?output=text"
+        context['services_text'] = reverse('krispc_api:api-services') + "?output=text"
+        context['mcp_server_info'] = reverse('mcp-docs') # Reuse existing MCP docs view
+        return context
+
+
 class MCPDocsView(TemplateView):
     """MCP Server documentation page."""
     template_name = "mcp_docs.html"

@@ -8,4 +8,5 @@ urlpatterns = [
     path('switch-lang/', views.switch_language, name='switch_language'),
     path('privacy/', views.PrivacyView.as_view(), name='privacy'),
     path('terms/', views.TermsView.as_view(), name='terms'),
+    path('developers/', views.DeveloperIndexView.as_view(), name='developer-index'),
 ]

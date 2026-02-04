@@ -157,7 +157,7 @@ class DashboardViewTest(APITestCase):
         # Create an unprocessed input
         Input.objects.create(content="Pending thought", user=self.user, processed=False)
         with translation.override("en"):
-            response = self.client.get(self.url)
+            response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE="en")
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "Pending thought")
             # The heading might be translated or capitalized differently

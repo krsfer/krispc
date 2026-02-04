@@ -38,7 +38,7 @@
             <div class="flex justify-between h-16 items-center">
                 <!-- Brand -->
                 <div class="flex items-center">
-                    <a href="{% url 'hub:index' %}"
+                    <a href="{{ current_app_home_url }}"
                         class="font-brand text-3xl text-primary hover:text-primary-dark transition-colors">
                         KrisPC
                     </a>
@@ -46,13 +46,15 @@
 
                 <!-- Main Navigation -->
                 <nav class="hidden md:flex space-x-8">
-                    <a href="https://hub.krispc.fr"
+                    {% if request.resolver_match.app_name == 'hub' %}
+                    <a href="{{ hub_base_url }}"
                         class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Hub</a>
-                    <a href="https://com.krispc.fr"
+                    {% endif %}
+                    <a href="{{ krispc_base_url }}"
                         class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">KrisPC</a>
-                    <a href="https://plexus.krispc.fr"
+                    <a href="{{ plexus_base_url }}"
                         class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Plexus</a>
-                    <a href="https://p2c.krispc.fr"
+                    <a href="{{ p2c_base_url }}"
                         class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Pdf2Cal</a>
                 </nav>
 

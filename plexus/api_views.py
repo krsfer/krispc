@@ -162,5 +162,33 @@ class NotificationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def mark_all_read(self, request):
         """Mark all unread notifications as read."""
-        count = Notification.objects.filter(is_read=False).update(is_read=True)
-        return Response({'status': 'ok', 'marked_read': count})
+from django.http import HttpResponse
+from .services_info import get_services, format_services_as_text
+from .pricelist import get_pricelist, format_pricelist_as_text
+
+class ServicesView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        data = get_services()
+        if request.query_params.get('output') == 'text':
+            return HttpResponse(format_services_as_text(data, request.LANGUAGE_CODE), content_type="text/plain")
+        return Response(data)
+
+class PricelistView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        data = get_pricelist()
+        if request.query_params.get('output') == 'text':
+            return HttpResponse(format_pricelist_as_text(data, request.LANGUAGE_CODE), content_type="text/plain")
+        return Response(data)
+
+class MCPView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        return Response({
+            "name": "Plexus MCP Server",
+            "version": "1.0.0",
+            "description": "SecondBrain tools for thoughts and actions.",
+            "documentation": f"{request.scheme}://{request.get_host()}/docs/mcp/"
+        })
+

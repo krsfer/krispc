@@ -1,0 +1,108 @@
+{% extends "layouts/golden_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "For Developers" %} - Emoty{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-4 text-center">
+                    <h1 class="h3 mb-0">{% trans "For Developers" %} - Emoty</h1>
+                    <p class="mb-0 opacity-75">{% trans "Integration resources and API access" %}</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <div class="row g-4">
+                        <!-- API Docs -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start p-3 bg-light rounded-3 h-100">
+                                <div class="icon-box bg-primary text-white rounded-circle me-3 flex-shrink-0"
+                                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-2">{% trans "API Documentation" %}</h5>
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ api_docs_swagger }}"
+                                            class="btn btn-outline-primary btn-sm text-start" target="_blank">
+                                            <i class="fas fa-code me-2"></i> Swagger UI
+                                        </a>
+                                        <a href="{{ api_docs_redoc }}" class="btn btn-outline-primary btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-file-alt me-2"></i> ReDoc
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data & Lists -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start p-3 bg-light rounded-3 h-100">
+                                <div class="icon-box bg-success text-white rounded-circle me-3 flex-shrink-0"
+                                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-list-alt"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-2">{% trans "Pricelist & Services" %}</h5>
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ pricelist_json }}" class="btn btn-outline-success btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-json me-2"></i> Pricelist (JSON)
+                                        </a>
+                                        <a href="{{ pricelist_text }}" class="btn btn-outline-success btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-font me-2"></i> Pricelist (Text)
+                                        </a>
+                                        <a href="{{ services_text }}" class="btn btn-outline-success btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-align-left me-2"></i> Services (Text)
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI & MCP -->
+                        <div class="col-12 mt-4">
+                            <div class="d-flex align-items-start p-4 bg-dark text-white rounded-3">
+                                <div class="icon-box bg-info text-white rounded-circle me-3 flex-shrink-0"
+                                    style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-robot fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-2 text-info">{% trans "MCP Server for AI" %}</h5>
+                                    <p class="small text-white-50 mb-3">
+                                        {% trans "Connect Emoty directly to AI assistants like Claude Desktop using the Model Context Protocol." %}
+                                    </p>
+                                    <div class="d-flex gap-3">
+                                        <a href="{{ mcp_server_info }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-info-circle me-2"></i> {% trans "Server Details" %}
+                                        </a>
+                                        <a href="/docs/mcp/" class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-book-open me-2"></i> {% trans "MCP Guide" %}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 text-center">
+                        <a href="/" class="text-decoration-none text-muted small">
+                            <i class="fas fa-arrow-left me-1"></i> {% trans "Back to Homepage" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-box {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}

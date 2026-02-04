@@ -25,3 +25,6 @@ REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
     "contacts": "100/minute",  # Higher limit for tests
     "read_only": "100/minute",
 }
+
+# Prevent async processing from mutating inputs during tests unless explicitly enabled
+PLEXUS_DISABLE_INPUT_PROCESSING = True

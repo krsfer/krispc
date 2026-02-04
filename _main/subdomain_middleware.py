@@ -1,5 +1,5 @@
 import re
-from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect, HttpResponseNotFound
 
 class SubdomainRoutingMiddleware:
     def __init__(self, get_response):
@@ -46,7 +46,9 @@ class SubdomainRoutingMiddleware:
                  # Determine current subdomain
                  current_subdomain = parts[0]
 
-        print(f"DEBUG SUBDOMAIN: host='{host}' subdomain='{current_subdomain}' path='{request.path}'")
+        # Silent 404 for smtp subdomain to prevent log noise and unnecessary processing
+        if current_subdomain == 'smtp':
+            return HttpResponseNotFound()
 
         # 1. Switch URLConf
         if current_subdomain == 'hub':

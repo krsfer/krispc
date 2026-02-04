@@ -1,0 +1,103 @@
+{% extends "p2c_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "For Developers" %} - Pdf2Cal{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-4 text-center">
+                    <h1 class="h3 mb-0">{% trans "For Developers" %} - Pdf2Cal</h1>
+                    <p class="mb-0 opacity-75">{% trans "PDF to Calendar API & MCP" %}</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <div class="row g-4">
+                        <!-- API Docs -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start p-3 bg-light rounded-3 h-100 border">
+                                <div class="icon-box bg-dark text-white rounded-circle me-3 flex-shrink-0"
+                                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-2">{% trans "API Documentation" %}</h5>
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ api_docs_swagger }}" class="btn btn-outline-dark btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-code me-2"></i> Swagger UI
+                                        </a>
+                                        <a href="{{ api_docs_redoc }}" class="btn btn-outline-dark btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-file-alt me-2"></i> ReDoc
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data & Lists -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start p-3 bg-light rounded-3 h-100 border">
+                                <div class="icon-box bg-primary text-white rounded-circle me-3 flex-shrink-0"
+                                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-table"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-2">{% trans "Pricing & Services" %}</h5>
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ pricelist_json }}" class="btn btn-outline-primary btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-json me-2"></i> Pricelist (JSON)
+                                        </a>
+                                        <a href="{{ pricelist_text }}" class="btn btn-outline-primary btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-font me-2"></i> Pricelist (Text)
+                                        </a>
+                                        <a href="{{ services_text }}" class="btn btn-outline-primary btn-sm text-start"
+                                            target="_blank">
+                                            <i class="fas fa-align-left me-2"></i> Services (Text)
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI & MCP -->
+                        <div class="col-12 mt-4">
+                            <div
+                                class="d-flex align-items-start p-4 bg-info text-white rounded-3 shadow-sm border border-light">
+                                <div class="icon-box bg-white text-info rounded-circle me-3 flex-shrink-0"
+                                    style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-robot fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-2 text-white fw-bold">{% trans "MCP Server for AI" %}</h5>
+                                    <p class="small text-white-90 mb-3">
+                                        {% trans "Automate PDF schedule processing using the Model Context Protocol." %}
+                                    </p>
+                                    <div class="d-flex gap-3">
+                                        <a href="{{ mcp_server_info }}" class="btn btn-light btn-sm text-info fw-bold">
+                                            <i class="fas fa-info-circle me-2"></i> {% trans "Server Details" %}
+                                        </a>
+                                        <a href="/docs/mcp/" class="btn btn-outline-light btn-sm">
+                                            <i class="fas fa-book-open me-2"></i> {% trans "MCP Guide" %}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 text-center">
+                        <a href="{% url 'p2c:home' %}" class="text-decoration-none text-muted small">
+                            <i class="fas fa-arrow-left me-1"></i> {% trans "Back to App" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
