@@ -42,6 +42,9 @@ from krispc import lst_products, marques, lst_villes
 from plexus.models import Input, Thought, Action
 from django.db.models import Q
 
+# Import Emoty pattern generator
+from emoty.pattern_generator import PatternGenerator
+
 logger = logging.getLogger(__name__)
 
 # Create MCP server
@@ -234,6 +237,28 @@ async def list_tools() -> List[Tool]:
                 "required": ["action_id"],
             },
         ),
+        
+        # --- Emoty Tools ---
+        Tool(
+            name="generate_emoji_pattern",
+            description="Generate a concentric square emoji pattern grid from an emoji sequence. First emoji becomes center, each subsequent emoji wraps around as an outer layer.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "emojis": {
+                        "type": "string", 
+                        "description": "String of emojis to generate pattern from (e.g., '🐋🐳🏵️'). Min 1, max 10 emojis."
+                    },
+                    "format": {
+                        "type": "string", 
+                        "enum": ["text", "json"],
+                        "default": "text",
+                        "description": "Output format: 'text' for newline-separated rows, 'json' for structured data"
+                    },
+                },
+                "required": ["emojis"],
+            },
+        ),
     ]
 
 
@@ -260,6 +285,10 @@ async def call_tool(name: str, arguments: Any) -> List[TextContent]:
         return await list_actions_tool(arguments)
     elif name == "toggle_action":
         return await toggle_action_tool(arguments)
+    
+    # Emoty
+    elif name == "generate_emoji_pattern":
+        return await generate_emoji_pattern_tool(arguments)
     
     else:
         raise ValueError(f"Unknown tool: {name}")
@@ -366,6 +395,43 @@ async def toggle_action_tool(arguments: Dict[str, Any]) -> List[TextContent]:
             return {"error": "Not found"}
     result = await asyncio.to_thread(_toggle)
     return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+#
+# TOOL IMPLEMENTATIONS (EMOTY)
+#
+
+async def generate_emoji_pattern_tool(arguments: Dict[str, Any]) -> List[TextContent]:
+    """Generate emoji pattern grid from sequence."""
+    emojis = arguments.get("emojis")
+    output_format = arguments.get("format", "text")
+    
+    try:
+        # Validate and parse emoji sequence
+        sequence = PatternGenerator.validate_emoji_sequence(emojis)
+        
+        # Generate pattern grid
+        grid = PatternGenerator.generate_concentric_pattern(sequence)
+        
+        if output_format == "json":
+            # Return structured JSON
+            grid_strings = [PatternGenerator.format_grid_as_text([row]) for row in grid]
+            result = {
+                "emojis": emojis,
+                "grid": grid_strings,
+                "size": len(grid)
+            }
+            return [TextContent(type="text", text=json.dumps(result, ensure_ascii=False, indent=2))]
+        else:
+            # Return as plain text (default)
+            text_output = PatternGenerator.format_grid_as_text(grid)
+            return [TextContent(type="text", text=text_output)]
+            
+    except ValueError as e:
+        error_result = {"error": str(e)}
+        return [TextContent(type="text", text=json.dumps(error_result, indent=2))]
+    except Exception as e:
+        error_result = {"error": "Internal error", "details": str(e)}
+        return [TextContent(type="text", text=json.dumps(error_result, indent=2))]
 
 #
 # MAIN

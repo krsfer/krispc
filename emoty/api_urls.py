@@ -16,6 +16,7 @@ api_urlpatterns = [
     path('services/', api_views.ServicesView.as_view(), name='api-services'),
     path('pricelist/', api_views.PricelistView.as_view(), name='api-pricelist'),
     path('mcp/', api_views.MCPView.as_view(), name='api-mcp'),
+    path('generate/', api_views.PatternGeneratorView.as_view(), name='api-generate'),
 ]
 
 # Schema and Documentation
