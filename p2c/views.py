@@ -572,23 +572,23 @@ def upload_pdf(request):
     """Handle PDF upload."""
     if "pdf_file" not in request.FILES:
         messages.error(request, _("No file provided"))
-        return redirect("p2c:index")
+        return redirect("p2c:home")
 
     file = request.FILES["pdf_file"]
 
     # Check for empty file
     if not file.size:
         messages.error(request, _("The submitted file is empty."))
-        return redirect("p2c:index")
+        return redirect("p2c:home")
 
     # Validate file type
     if not file.content_type == "application/pdf":
         messages.error(request, _("Invalid file type. Only PDF files are allowed"))
-        return redirect("p2c:index")
+        return redirect("p2c:home")
 
     if file.size > 10 * 1024 * 1024:  # 10MB limit
         messages.error(request, _("File too large. Maximum size is 10.0MB"))
-        return redirect("p2c:index")
+        return redirect("p2c:home")
 
     try:
         document = Document(file=file, user=request.user)
@@ -641,7 +641,7 @@ def upload_pdf(request):
                 request,
                 f"[{parser_name}] Could not extract any appointments from the PDF. Please check the file format.",
             )
-            return redirect("p2c:index")
+            return redirect("p2c:home")
 
         # Store in session immediately to ensure home view picks up this exact data
         request.session["appointments"] = appointments
@@ -675,7 +675,7 @@ def upload_pdf(request):
             _("[%(parser)s] PDF uploaded successfully. Found %(count)d appointments.")
             % {"parser": parser_name, "count": actual_appointments},
         )
-        return redirect("p2c:index")
+        return redirect("p2c:home")
 
     except ValidationError as e:
         messages.error(request, str(e))
@@ -697,7 +697,7 @@ def upload_pdf(request):
 
         messages.error(request, error_msg)
 
-    return redirect("p2c:index")
+    return redirect("p2c:home")
 
 
 @login_required
@@ -706,7 +706,7 @@ def process_text(request):
     """Handle text input processing."""
     if "schedule_text" not in request.POST or not request.POST["schedule_text"].strip():
         messages.error(request, _("No text provided"))
-        return redirect("p2c:index")
+        return redirect("p2c:home")
 
     schedule_text = request.POST["schedule_text"]
 
@@ -755,7 +755,7 @@ def process_text(request):
             )
 
             # Redirect to home; it will populate schedule and metadata from session
-            return redirect("p2c:index")
+            return redirect("p2c:home")
 
         finally:
             # Clean up the temporary file
@@ -771,7 +771,7 @@ def process_text(request):
             request, _("Error processing text: %(error)s") % {"error": str(e)}
         )
 
-    return redirect("p2c:index")
+    return redirect("p2c:home")
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
