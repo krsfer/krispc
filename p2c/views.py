@@ -28,13 +28,15 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google.oauth2.id_token import verify_oauth2_token
 from googleapiclient.discovery import build
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, permissions
+from rest_framework.views import APIView
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from django.http import JsonResponse, HttpResponse
 
 from .calendar_integration.google_calendar import GoogleCalendarService
 from .config.event_settings import EVENT_SETTINGS, load_event_settings, save_event_settings
@@ -429,8 +431,8 @@ def google_login(request):
                 # Log the user in
                 login(request, user)
 
-                # Redirect to /importpdf/ after successful login
-                return JsonResponse({"success": True, "redirect": "/importpdf/"})
+                # Redirect to p2c home page after successful login
+                return JsonResponse({"success": True, "redirect": "/"})
 
             except ValueError as e:
                 error_msg = str(e)
@@ -551,8 +553,8 @@ def google_login(request):
                 # Log the user in
                 login(request, user)
 
-                # Redirect to /importpdf/ after successful login
-                return redirect('/importpdf/')
+                # Redirect to p2c home page after successful login
+                return redirect('/')
 
             except requests.RequestException as e:
                 return JsonResponse(
@@ -570,23 +572,23 @@ def upload_pdf(request):
     """Handle PDF upload."""
     if "pdf_file" not in request.FILES:
         messages.error(request, _("No file provided"))
-        return redirect("index")
+        return redirect("p2c:index")
 
     file = request.FILES["pdf_file"]
 
     # Check for empty file
     if not file.size:
         messages.error(request, _("The submitted file is empty."))
-        return redirect("index")
+        return redirect("p2c:index")
 
     # Validate file type
     if not file.content_type == "application/pdf":
         messages.error(request, _("Invalid file type. Only PDF files are allowed"))
-        return redirect("index")
+        return redirect("p2c:index")
 
     if file.size > 10 * 1024 * 1024:  # 10MB limit
         messages.error(request, _("File too large. Maximum size is 10.0MB"))
-        return redirect("index")
+        return redirect("p2c:index")
 
     try:
         document = Document(file=file, user=request.user)
@@ -639,7 +641,7 @@ def upload_pdf(request):
                 request,
                 f"[{parser_name}] Could not extract any appointments from the PDF. Please check the file format.",
             )
-            return redirect("index")
+            return redirect("p2c:index")
 
         # Store in session immediately to ensure home view picks up this exact data
         request.session["appointments"] = appointments
@@ -673,7 +675,7 @@ def upload_pdf(request):
             _("[%(parser)s] PDF uploaded successfully. Found %(count)d appointments.")
             % {"parser": parser_name, "count": actual_appointments},
         )
-        return redirect("index")
+        return redirect("p2c:index")
 
     except ValidationError as e:
         messages.error(request, str(e))
@@ -695,7 +697,7 @@ def upload_pdf(request):
 
         messages.error(request, error_msg)
 
-    return redirect("index")
+    return redirect("p2c:index")
 
 
 @login_required
@@ -704,7 +706,7 @@ def process_text(request):
     """Handle text input processing."""
     if "schedule_text" not in request.POST or not request.POST["schedule_text"].strip():
         messages.error(request, _("No text provided"))
-        return redirect("index")
+        return redirect("p2c:index")
 
     schedule_text = request.POST["schedule_text"]
 
@@ -753,7 +755,7 @@ def process_text(request):
             )
 
             # Redirect to home; it will populate schedule and metadata from session
-            return redirect("index")
+            return redirect("p2c:index")
 
         finally:
             # Clean up the temporary file
@@ -769,7 +771,7 @@ def process_text(request):
             request, _("Error processing text: %(error)s") % {"error": str(e)}
         )
 
-    return redirect("index")
+    return redirect("p2c:index")
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -2145,3 +2147,48 @@ def privacy_policy(request):
 def terms_of_service(request):
     """Display the terms of service."""
     return render(request, "terms.html")
+
+
+from .pricelist import get_pricelist, format_pricelist_as_text
+from .services_info import get_services, format_services_as_text
+from django.urls import reverse
+from django.views.generic import TemplateView
+
+class DeveloperIndexView(TemplateView):
+    template_name = "p2c/developers.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['api_docs_swagger'] = reverse('p2c:swagger-ui')
+        context['api_docs_redoc'] = reverse('p2c:redoc')
+        context['pricelist_json'] = reverse('p2c:api-pricelist')
+        context['pricelist_text'] = reverse('p2c:api-pricelist') + "?output=text"
+        context['services_text'] = reverse('p2c:api-services') + "?output=text"
+        context['mcp_server_info'] = reverse('p2c:api-mcp')
+        return context
+
+class ServicesView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        data = get_services()
+        if request.query_params.get('output') == 'text':
+            return HttpResponse(format_services_as_text(data, request.LANGUAGE_CODE), content_type="text/plain")
+        return Response(data)
+
+class PricelistView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        data = get_pricelist()
+        if request.query_params.get('output') == 'text':
+            return HttpResponse(format_pricelist_as_text(data, request.LANGUAGE_CODE), content_type="text/plain")
+        return Response(data)
+
+class MCPView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        return Response({
+            "name": "Pdf2Cal MCP Server",
+            "version": "1.0.0",
+            "description": "Tools for converting PDF schedules to calendar events.",
+            "documentation": f"{request.scheme}://{request.get_host()}/docs/mcp/"
+        })

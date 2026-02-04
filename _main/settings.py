@@ -58,6 +58,18 @@ SECRET_KEY = env('SECRET_KEY')
 IS_FLY_APP = env.str("FLY_APP", default="")
 IS_PRODUCTION = bool(IS_FLY_APP) or env.str("ENVIRONMENT", default="") == "production"
 
+DEFAULT_HUB_BASE_URL = "https://hub.krispc.fr" if IS_PRODUCTION else "http://hub.localhost:8000"
+DEFAULT_KRISPC_BASE_URL = "https://com.krispc.fr" if IS_PRODUCTION else "http://com.localhost:8000"
+DEFAULT_P2C_BASE_URL = "https://p2c.krispc.fr" if IS_PRODUCTION else "http://p2c.localhost:8000"
+DEFAULT_PLEXUS_BASE_URL = "https://plexus.krispc.fr" if IS_PRODUCTION else "http://plexus.localhost:8000"
+DEFAULT_EMO_BASE_URL = "https://emo.krispc.fr" if IS_PRODUCTION else "http://emo.localhost:8000"
+
+HUB_BASE_URL = env("HUB_BASE_URL", default=DEFAULT_HUB_BASE_URL).rstrip("/")
+KRISPC_BASE_URL = env("KRISPC_BASE_URL", default=DEFAULT_KRISPC_BASE_URL).rstrip("/")
+P2C_BASE_URL = env("P2C_BASE_URL", default=DEFAULT_P2C_BASE_URL).rstrip("/")
+PLEXUS_BASE_URL = env("PLEXUS_BASE_URL", default=DEFAULT_PLEXUS_BASE_URL).rstrip("/")
+EMO_BASE_URL = env("EMO_BASE_URL", default=DEFAULT_EMO_BASE_URL).rstrip("/")
+
 CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "https://krispc.fr",
     "https://www.krispc.fr",
@@ -291,8 +303,10 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
+                "django.template.context_processors.csrf",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "krispc.context_processors.hub_urls",
                 "p2c.context_processors.unread_updates_context",
             ],
         },
