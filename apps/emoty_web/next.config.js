@@ -26,6 +26,7 @@ const nextConfig = {
   turbopack: {
     root: __dirname
   },
+  output: 'standalone',
   headers: async () => [
     {
       source: '/(.*)',

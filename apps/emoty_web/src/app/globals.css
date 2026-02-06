@@ -216,7 +216,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: auto;
-  padding-bottom: var(--spacing-lg);
+  padding-bottom: 0;
 }
 
 /* Pattern canvas section */
@@ -225,13 +225,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
 }
 
 .canvas-wrapper {
   background: var(--surface);
   border-radius: var(--radius-xl);
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
   box-shadow: var(--shadow-lg);
   position: relative;
   width: calc(100vw - 40px);
