@@ -129,7 +129,8 @@ body {
 .mobile-app-container {
   width: 100%;
   max-width: 100%;
-  height: 100vh;
+  height: 100vh; /* Fallback */
+  height: 100dvh;
   display: grid;
   grid-template-rows: 56px 1fr auto;
   background: var(--background);
@@ -237,7 +238,7 @@ body {
   width: calc(100vw - 40px);
   max-width: 300px;
   height: calc(100vw - 40px);
-  max-height: 300px;
+  max-height: min(300px, 45dvh);
   display: flex;
   align-items: center;
   justify-content: center;
