@@ -2,49 +2,58 @@
 {% load i18n %}
 
 {% block content %}
-<div class="container mx-auto px-4">
-    <h1 class="text-2xl font-bold my-4">{% trans "Updates" %}</h1>
+<div class="max-w-5xl mx-auto px-4 py-8">
+    <p class="text-xs uppercase tracking-[0.35em] text-stone-400 font-semibold">PDF2Cal</p>
+    <h1 class="mt-3 text-3xl sm:text-4xl font-brand text-stone-900">{% trans "Updates" %}</h1>
 
     {% if not_enough_snapshots %}
-        <p>{% trans "Not enough snapshots to compare. At least two are required." %}</p>
+        <p class="mt-4 text-stone-600">{% trans "Not enough snapshots to compare. At least two are required." %}</p>
     {% else %}
-        <h2 class="text-xl font-semibold mb-2">{% trans "Changes Summary" %}</h2>
-        <p>{% blocktrans with prev_date=previous_snapshot.created_at curr_date=latest_snapshot.created_at %}Comparing snapshot from {{ prev_date }} with snapshot from {{ curr_date }}{% endblocktrans %}</p>
-
-        <div class="my-4">
-            <h3 class="text-lg font-semibold">{% trans "Added" %} ({{ diff.summary.added }})</h3>
-            {% for item in diff.added %}
-                <div class="p-2 my-1 bg-green-100 border border-green-200 rounded">
-                    {{ item.normalized_name }} {% trans "on" %} {{ item.day }}/{{ item.month }}/{{ item.year }} {% trans "at" %} {{ item.start_time }}
-                </div>
-            {% endfor %}
+        <div class="mt-6 bg-white/80 border border-stone-200/80 rounded-2xl p-6 shadow-sm">
+            <h2 class="text-xl font-semibold text-stone-900 mb-2">{% trans "Changes Summary" %}</h2>
+            <p class="text-stone-600">{% blocktrans with prev_date=previous_snapshot.created_at curr_date=latest_snapshot.created_at %}Comparing snapshot from {{ prev_date }} with snapshot from {{ curr_date }}{% endblocktrans %}</p>
         </div>
 
-        <div class="my-4">
-            <h3 class="text-lg font-semibold">{% trans "Modified" %} ({{ diff.summary.modified }})</h3>
-            {% for item in diff.modified %}
-                <div class="p-2 my-1 bg-yellow-100 border border-yellow-200 rounded">
-                    <p>{{ item.key }}</p>
-                    {% for field, changes in item.changes.items %}
-                        <p class="ml-4">
-                            {% if field == 'start_time' %}{% trans "Start Time" %}
-                            {% elif field == 'end_time' %}{% trans "End Time" %}
-                            {% elif field == 'location' %}{% trans "Location" %}
-                            {% elif field == 'event_description' %}{% trans "Description" %}
-                            {% else %}{{ field }}{% endif %}: {{ changes.old }} -> {{ changes.new }}
-                        </p>
-                    {% endfor %}
-                </div>
-            {% endfor %}
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-stone-900">{% trans "Added" %} ({{ diff.summary.added }})</h3>
+            <div class="mt-2 space-y-2">
+                {% for item in diff.added %}
+                    <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-800">
+                        {{ item.normalized_name }} {% trans "on" %} {{ item.day }}/{{ item.month }}/{{ item.year }} {% trans "at" %} {{ item.start_time }}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
 
-        <div class="my-4">
-            <h3 class="text-lg font-semibold">{% trans "Deleted" %} ({{ diff.summary.deleted }})</h3>
-            {% for item in diff.deleted %}
-                <div class="p-2 my-1 bg-red-100 border border-red-200 rounded">
-                    {{ item.normalized_name }} {% trans "on" %} {{ item.day }}/{{ item.month }}/{{ item.year }} {% trans "at" %} {{ item.start_time }}
-                </div>
-            {% endfor %}
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-stone-900">{% trans "Modified" %} ({{ diff.summary.modified }})</h3>
+            <div class="mt-2 space-y-2">
+                {% for item in diff.modified %}
+                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+                        <p class="font-semibold text-amber-900">{{ item.key }}</p>
+                        {% for field, changes in item.changes.items %}
+                            <p class="ml-4">
+                                {% if field == 'start_time' %}{% trans "Start Time" %}
+                                {% elif field == 'end_time' %}{% trans "End Time" %}
+                                {% elif field == 'location' %}{% trans "Location" %}
+                                {% elif field == 'event_description' %}{% trans "Description" %}
+                                {% else %}{{ field }}{% endif %}: {{ changes.old }} -> {{ changes.new }}
+                            </p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-stone-900">{% trans "Deleted" %} ({{ diff.summary.deleted }})</h3>
+            <div class="mt-2 space-y-2">
+                {% for item in diff.deleted %}
+                    <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-sm text-rose-800">
+                        {{ item.normalized_name }} {% trans "on" %} {{ item.day }}/{{ item.month }}/{{ item.year }} {% trans "at" %} {{ item.start_time }}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     {% endif %}
 </div>

@@ -44,3 +44,9 @@ class TestUIRefresh:
         assert response.status_code == 200
         content = response.content.decode('utf-8')
         assert 'data-ui="krispc-primary-cta"' in content
+
+    def test_p2c_home_premium_elements(self):
+        response = self.client.get(reverse('p2c:home'), follow=True)
+        assert response.status_code == 200
+        content = response.content.decode('utf-8')
+        assert 'data-ui="p2c-home-cta"' in content

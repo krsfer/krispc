@@ -5,15 +5,15 @@
 {% block title %}PDF2Cal - {% block page_title %}{% endblock %}{% endblock %}
 
 {% block sub_nav %}
-<div class="bg-white border-b border-slate-200">
+<div class="bg-white/80 border-b border-stone-200/80">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-14 items-center">
             <div class="flex items-center space-x-2">
-                <a href="{{ hub_base_url }}" class="text-slate-400 hover:text-primary transition-colors text-sm">↩
+                <a href="{{ hub_base_url }}" class="text-stone-400 hover:text-primary transition-colors text-sm">↩
                     Hub</a>
-                <span class="text-slate-300">|</span>
+                <span class="text-stone-300">|</span>
                 <a href="{% url 'p2c:home' %}"
-                    class="font-bold text-slate-500 hover:text-primary transition-colors">PDF2Cal</a>
+                    class="font-semibold text-stone-600 hover:text-primary transition-colors">PDF2Cal</a>
             </div>
 
             <div class="flex items-center space-x-4">
@@ -21,22 +21,22 @@
                 <!-- Desktop Nav -->
                 <nav class="hidden md:flex space-x-6">
                     <a href="{% url 'p2c:event_settings' %}"
-                        class="text-sm font-medium text-slate-600 hover:text-primary transition-colors">{% trans "Settings" %}</a>
+                        class="text-sm font-medium text-stone-600 hover:text-primary transition-colors">{% trans "Settings" %}</a>
                     <a href="{% url 'p2c:pay_view' %}"
-                        class="text-sm font-medium text-slate-600 hover:text-primary transition-colors">{% trans "Pay" %}</a>
+                        class="text-sm font-medium text-stone-600 hover:text-primary transition-colors">{% trans "Pay" %}</a>
                     <a href="{% url 'p2c:updates' %}"
-                        class="text-sm font-medium text-slate-600 hover:text-primary transition-colors relative">
+                        class="text-sm font-medium text-stone-600 hover:text-primary transition-colors relative">
                         {% trans "Updates" %}
                         {% if has_unread_updates %}<span
                             class="absolute -top-1 -right-2 block h-2 w-2 rounded-full bg-red-500"></span>{% endif %}
                     </a>
                     <a href="{% url 'p2c:calendar_editor' %}"
-                        class="text-sm font-medium text-slate-600 hover:text-primary transition-colors">{% trans "Editor" %}</a>
+                        class="text-sm font-medium text-stone-600 hover:text-primary transition-colors">{% trans "Editor" %}</a>
                 </nav>
 
                 <!-- Mobile Menu Button -->
                 <button type="button" id="p2c_mobile_menu_btn"
-                    class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+                    class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-stone-400 hover:text-stone-600 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
                     aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
                     <!-- Menu icon -->
@@ -49,26 +49,26 @@
                 {% endif %}
 
                 <button onclick="document.getElementById('info-modal').classList.remove('hidden')"
-                    class="text-slate-400 hover:text-slate-600 p-2"><span class="text-xl">ⓘ</span></button>
+                    class="text-stone-400 hover:text-stone-600 p-2"><span class="text-xl">ⓘ</span></button>
             </div>
         </div>
     </div>
 
     <!-- Mobile Menu -->
     {% if user.is_authenticated %}
-    <div id="p2c_mobile_menu" class="hidden md:hidden border-t border-slate-200">
+    <div id="p2c_mobile_menu" class="hidden md:hidden border-t border-stone-200/80">
         <div class="px-2 pt-2 pb-3 space-y-1">
             <a href="{% url 'p2c:event_settings' %}"
-                class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50">{% trans "Settings" %}</a>
+                class="block px-3 py-2 rounded-md text-base font-medium text-stone-700 hover:text-primary hover:bg-stone-50">{% trans "Settings" %}</a>
             <a href="{% url 'p2c:pay_view' %}"
-                class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50">{% trans "Pay" %}</a>
+                class="block px-3 py-2 rounded-md text-base font-medium text-stone-700 hover:text-primary hover:bg-stone-50">{% trans "Pay" %}</a>
             <a href="{% url 'p2c:updates' %}"
-                class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50 flex items-center justify-between">
+                class="block px-3 py-2 rounded-md text-base font-medium text-stone-700 hover:text-primary hover:bg-stone-50 flex items-center justify-between">
                 <span>{% trans "Updates" %}</span>
                 {% if has_unread_updates %}<span class="inline-block h-2 w-2 rounded-full bg-red-500"></span>{% endif %}
             </a>
             <a href="{% url 'p2c:calendar_editor' %}"
-                class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-slate-50">{% trans "Editor" %}</a>
+                class="block px-3 py-2 rounded-md text-base font-medium text-stone-700 hover:text-primary hover:bg-stone-50">{% trans "Editor" %}</a>
         </div>
     </div>
     {% endif %}
@@ -92,17 +92,17 @@
 
 {% block extra_scripts %}
 <!-- Info Modal -->
-<div id="info-modal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-[100]"
+<div id="info-modal" class="fixed inset-0 bg-stone-900/50 hidden flex items-center justify-center z-[100]"
     aria-hidden="true">
-    <div class="bg-white rounded-xl shadow-2xl p-6 m-4 max-w-xl w-full">
+    <div class="bg-white/90 border border-stone-200/80 rounded-2xl shadow-2xl p-6 m-4 max-w-xl w-full">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold text-slate-900">{% trans "About PDF2Cal" %}</h3>
+            <h3 class="text-lg font-bold text-stone-900">{% trans "About PDF2Cal" %}</h3>
             <button onclick="document.getElementById('info-modal').classList.add('hidden')"
-                class="text-slate-400 hover:text-slate-600">✕</button>
+                class="text-stone-400 hover:text-stone-600">✕</button>
         </div>
-        <div class="space-y-4 text-slate-600">
+        <div class="space-y-4 text-stone-600">
             <p>{% trans "PDF2Cal is a powerful tool that helps you convert PDF documents containing event information into calendar events." %}</p>
-            <div class="pt-4 border-t border-slate-100 text-sm">
+            <div class="pt-4 border-t border-stone-200/80 text-sm">
                 <a href="{% url 'hub:privacy' %}" class="text-primary hover:underline">{% trans "Privacy" %}</a>
                 <span class="mx-2">·</span>
                 <a href="{% url 'hub:terms' %}" class="text-primary hover:underline">{% trans "Terms" %}</a>

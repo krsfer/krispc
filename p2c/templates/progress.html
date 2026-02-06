@@ -1,10 +1,17 @@
 {% extends 'p2c_base.html' %}
 
 {% block content %}
-<div class="progress-wrapper">
-    <div id="progress-bar" class="progress-bar" style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+<div class="max-w-3xl mx-auto px-4 py-10">
+    <div class="bg-white/80 border border-stone-200/80 rounded-2xl p-6 shadow-sm text-center">
+        <p class="text-xs uppercase tracking-[0.35em] text-stone-400 font-semibold">PDF2Cal</p>
+        <h1 class="mt-3 text-2xl sm:text-3xl font-brand text-stone-900">Processing</h1>
+        <p class="mt-2 text-stone-600">Your calendar updates are on the way.</p>
+        <div class="progress-wrapper mt-6">
+            <div id="progress-bar" class="progress-bar" style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+        </div>
+        <div id="progress-bar-message" class="mt-3 text-sm text-stone-500">Waiting for progress to start...</div>
+    </div>
 </div>
-<div id="progress-bar-message">Waiting for progress to start...</div>
 
 <script>
     // Initialize the progress bar

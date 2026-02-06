@@ -7,58 +7,62 @@
 
 {% block content %}
     {% if not user.is_authenticated %}
-        <div class="text-center py-8 px-4 sm:py-12">
-            <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-4">{% trans "Welcome to PDF2Calendar" %}</h1>
-            <p class="text-base sm:text-xl text-gray-600 mb-6 sm:mb-8">{% trans "Please sign in with Google to get started." %}</p>
-            {% if google_oauth2_client_id %}
-                <div id="google-signin-button" class="flex justify-center mt-4">
-                    <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow flex items-center">
-                        <img src="https://www.google.com/favicon.ico" alt="Google" class="w-4 h-4 mr-2">
-                        {% trans "Sign in with Google" %}
-                    </button>
-                </div>
-                <div class="mt-12 text-sm text-gray-500">
-                    {% if current_language == 'fr' %}
-                    <a href="https://www.krispc.fr/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a>
-                    <span class="mx-2">·</span>
-                    <a href="https://www.krispc.fr/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a>
-                    {% else %}
-                    <a href="https://www.krispc.fr/en/privacy/" class="hover:text-gray-900 underline">{% trans "Privacy Policy" %}</a>
-                    <span class="mx-2">·</span>
-                    <a href="https://www.krispc.fr/en/terms/" class="hover:text-gray-900 underline">{% trans "Terms of Service" %}</a>
-                    {% endif %}
-                </div>
-            {% else %}
-                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
-                    <p>{% trans "Google Sign-In is currently unavailable. Please try again later." %}</p>
-                </div>
-            {% endif %}
+        <div class="max-w-3xl mx-auto py-8 px-4 sm:py-12">
+            <div data-ui="p2c-home-cta" class="bg-white/80 border border-stone-200/80 rounded-3xl p-8 sm:p-12 shadow-sm text-center">
+                <p class="text-xs uppercase tracking-[0.35em] text-stone-400 font-semibold">PDF2Cal</p>
+                <h1 class="mt-4 text-3xl sm:text-5xl font-brand text-stone-900">{% trans "Welcome to PDF2Calendar" %}</h1>
+                <p class="mt-4 text-base sm:text-lg text-stone-600">{% trans "Please sign in with Google to get started." %}</p>
+                {% if google_oauth2_client_id %}
+                    <div id="google-signin-button" class="flex justify-center mt-6">
+                        <button data-ui="p2c-home-cta"
+                            class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors shadow-sm">
+                            <img src="https://www.google.com/favicon.ico" alt="Google" class="w-4 h-4 mr-2">
+                            {% trans "Sign in with Google" %}
+                        </button>
+                    </div>
+                    <div class="mt-10 text-sm text-stone-500">
+                        {% if current_language == 'fr' %}
+                        <a href="https://www.krispc.fr/privacy/" class="hover:text-stone-700 underline">{% trans "Privacy Policy" %}</a>
+                        <span class="mx-2">·</span>
+                        <a href="https://www.krispc.fr/terms/" class="hover:text-stone-700 underline">{% trans "Terms of Service" %}</a>
+                        {% else %}
+                        <a href="https://www.krispc.fr/en/privacy/" class="hover:text-stone-700 underline">{% trans "Privacy Policy" %}</a>
+                        <span class="mx-2">·</span>
+                        <a href="https://www.krispc.fr/en/terms/" class="hover:text-stone-700 underline">{% trans "Terms of Service" %}</a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="mt-6 bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl" role="alert">
+                        <p>{% trans "Google Sign-In is currently unavailable. Please try again later." %}</p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     {% else %}
         <!-- Main container with natural page scroll (avoid collapsing the appointments section) -->
         <div class="flex flex-col min-h-screen" id="fixed-layout-container">
             <!-- Fixed header section -->
-            <div class="bg-gray-100 flex-none">
+            <div class="bg-stone-100/60 flex-none">
                 <div class="w-full px-3 sm:px-4 sm:max-w-4xl sm:mx-auto py-4 sm:py-6">
                     <!-- Paste Text section -->
-                    <div class="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+                    <div class="bg-white/80 border border-stone-200/80 rounded-2xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
                         <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{% trans "Paste Schedule Text" %}</h2>
                         <form action="{% url 'p2c:process_pasted_text' %}" method="post" class="space-y-4">
                             {% csrf_token %}
                             <div>
-                                <label for="schedule_text" class="block text-sm font-medium text-gray-700">{% trans "Paste text here" %}</label>
+                                <label for="schedule_text" class="block text-sm font-medium text-stone-700">{% trans "Paste text here" %}</label>
                                 <textarea id="schedule_text" name="schedule_text" rows="6" required
-                                          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                          class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-xl shadow-sm focus:outline-none focus:ring-primary focus:border-primary"></textarea>
                             </div>
                             <button type="submit"
-                                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                                 {% trans "Process Text" %}
                             </button>
                         </form>
                     </div>
 
                     <!-- Upload section -->
-                    <div class="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+                    <div class="bg-white/80 border border-stone-200/80 rounded-2xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
                         <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">
                             {% trans "Import PDF Schedule" %}
                             {% if uploaded_filename %}
@@ -70,14 +74,14 @@
                         <form action="{% url 'p2c:upload_pdf' %}" method="post" enctype="multipart/form-data" class="space-y-4" id="upload-form">
                             {% csrf_token %}
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Choose a PDF file" %}</label>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">{% trans "Choose a PDF file" %}</label>
                                 <div class="mt-1 flex items-center space-x-2">
                                     <div class="relative flex-grow">
                                         <input type="text" id="file-name-display" readonly 
                                                placeholder="{% trans 'No file chosen' %}"
-                                               class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-50 cursor-default">
+                                               class="block w-full px-3 py-2 border border-stone-300 rounded-xl shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-stone-50 cursor-default">
                                     </div>
-                                    <label for="pdf_file" class="flex-shrink-0 cursor-pointer py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <label for="pdf_file" class="flex-shrink-0 cursor-pointer py-2 px-4 border border-stone-300 rounded-xl shadow-sm text-sm font-medium text-stone-700 bg-white hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                                         {% trans "Browse..." %}
                                     </label>
                                     <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" required class="sr-only">
@@ -90,7 +94,7 @@
                                 });
                             </script>
                             <button type="submit"
-                                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                                 {% trans "Import and Process" %}
                             </button>
                         </form>
@@ -98,18 +102,18 @@
 
                     <!-- Calendar selection -->
                     <div class="mb-4">
-                        <label for="calendar-select" class="block text-sm font-medium text-gray-700">{% trans "Select Calendar" %}</label>
+                        <label for="calendar-select" class="block text-sm font-medium text-stone-700">{% trans "Select Calendar" %}</label>
                         <div class="mt-1 relative">
                             <select id="calendar-select" name="calendar_id"
                                     data-fetch-url="{% url 'p2c:get_calendars' %}"
                                     data-create-url="{% url 'p2c:create_calendar' %}"
                                     data-save-url="{% url 'p2c:save_selected_calendar' %}"
-                                    class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                    class="block w-full pl-3 pr-10 py-2 text-base border border-stone-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-xl"
                                     onchange="updateCalendarIds(this.value)">
                                 <option value="">{% trans "Select a calendar..." %}</option>
                             </select>
                         </div>
-                        <p class="mt-1 text-sm text-gray-500">{% trans "Choose the calendar where events will be created or deleted" %}</p>
+                        <p class="mt-1 text-sm text-stone-500">{% trans "Choose the calendar where events will be created or deleted" %}</p>
                     </div>
 
                     <script>
@@ -138,7 +142,7 @@
                                 <input type="hidden" name="calendar_id" id="flush-calendar-id">
                                 <button type="button"
                                         onclick="handleCalendarOperation('flush', event)"
-                                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                     {% blocktrans %}Flush {{ current_month_name }} Events{% endblocktrans %}
                                 </button>
                             </form>
@@ -149,7 +153,7 @@
                                 <input type="hidden" name="calendar_id" id="create-calendar-id">
                                 <button type="button"
                                         onclick="handleCalendarOperation('create', event)"
-                                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
                                     <span class="create-button-text">{% blocktrans %}Create {{ current_month_name }} Calendar Events{% endblocktrans %}</span>
                                 </button>
                             </form>
@@ -157,14 +161,14 @@
                             <div class="flex-1">
                                 <button type="button"
                                         onclick="alert('{% trans "Please upload a PDF or paste text first" %}')"
-                                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-400 cursor-not-allowed">
+                                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-stone-400 cursor-not-allowed">
                                     {% trans "Flush Events" %}
                                 </button>
                             </div>
                             <div class="flex-1">
                                 <button type="button"
                                         onclick="alert('{% trans "Please upload a PDF or paste text first" %}')"
-                                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-400 cursor-not-allowed">
+                                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-stone-400 cursor-not-allowed">
                                     {% blocktrans %}Create {{ current_month_name }} Calendar Events{% endblocktrans %}
                                 </button>
                             </div>
@@ -178,17 +182,17 @@
             </div>
 
             <!-- Scrollable appointments section -->
-            <div class="flex-1 overflow-auto bg-gray-50">
+            <div class="flex-1 overflow-auto bg-stone-50">
                 <div class="w-full px-3 sm:px-4 sm:max-w-6xl sm:mx-auto py-4 sm:py-6 scrollable-content">
-                    <div class="bg-white shadow-lg rounded-lg p-4 sm:p-6">
+                    <div class="bg-white/80 border border-stone-200/80 rounded-2xl shadow-sm p-4 sm:p-6">
                         <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-2xl font-bold text-gray-900" id="appointments-title">
+                            <h2 class="text-2xl font-bold text-stone-900" id="appointments-title">
                                 <span class="font-bold">
                                     {% trans "Pending Appointments" %}
                                 </span> 
                                 {% if current_month_name and current_year %}({{ current_month_name }} {{ current_year }}){% endif %}
                             </h2>
-                            <button id="show-all-events" class="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors hidden">{% trans "Show All" %}</button>
+                            <button id="show-all-events" class="text-sm px-3 py-1 bg-stone-100/60 hover:bg-stone-200 rounded-full transition-colors hidden">{% trans "Show All" %}</button>
                         </div>
 
                         {% if appointments and appointments|length > 0 %}
@@ -243,7 +247,7 @@
                                 {% for appointment in appointments %}
                                     {% with description=appointment.description|split:"\n"|first|trim %}
                                         {% if not "temps de pause repas"|lower in description|lower and not "pause"|lower in description|lower and not "repas"|lower in description|lower %}
-                                            <div class="border-l-4 {% if appointment.has_gap_warning %}border-yellow-500{% else %}border-indigo-500{% endif %} pl-3 sm:pl-4 {% if appointment.day|is_weekend:current_month_year %}bg-gray-100{% else %}bg-white{% endif %} rounded-lg shadow-sm p-2 sm:p-3"
+                                            <div class="border-l-4 {% if appointment.has_gap_warning %}border-yellow-500{% else %}border-primary{% endif %} pl-3 sm:pl-4 {% if appointment.day|is_weekend:current_month_year %}bg-stone-100/60{% else %}bg-white{% endif %} rounded-lg shadow-sm p-2 sm:p-3"
                                                  data-day="{{ appointment.day }}"
                                                  data-start="{{ appointment.start_time }}"
                                                  data-end="{{ appointment.end_time }}">
@@ -256,7 +260,7 @@
                                                         </svg>
                                                     {% endif %}
                                                 </p>
-                                                <p class="text-xs sm:text-sm text-gray-600">
+                                                <p class="text-xs sm:text-sm text-stone-600">
                                                     {% blocktrans with day=appointment.day start=appointment.start_time end=appointment.end_time %}Day {{ day }} from {{ start }} to {{ end }}{% endblocktrans %}
                                                     {% if appointment.duration_minutes %} • {{ appointment.duration_minutes|minutes_to_hhmm }}{% endif %}
                                                 </p>
@@ -343,7 +347,7 @@
                                                 const card = desc.closest('.border-l-4');
                                                 if (card && !card.classList.contains('border-yellow-500')) {
                                                     // Remove default border color classes
-                                                    card.classList.remove('border-indigo-500', 'border-gray-200');
+                                                    card.classList.remove('border-primary', 'border-stone-200');
                                                     card.style.borderLeftColor = color;
                                                 }
                                             }
@@ -406,7 +410,7 @@
                                     const title = document.getElementById('appointments-title');
                                     // Use Django template tags to generate localized strings for JS
                                     const pendingText = "{% trans 'Pending Appointments' %}";
-                                    title.innerHTML = `<span class="font-bold">${pendingText}</span> <span class="text-sm text-gray-600">({{ current_month_name }} {{ current_year }} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')})</span>`;
+                                    title.innerHTML = `<span class="font-bold">${pendingText}</span> <span class="text-sm text-stone-600">({{ current_month_name }} {{ current_year }} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')})</span>`;
                                 }
 
                                 // Function to initialize event filters
@@ -485,7 +489,7 @@
                                         const avgDuration = `${avgHours.toString().padStart(2, '0')}:${avgMins.toString().padStart(2, '0')}`;
 
                                         const button = document.createElement('button');
-                                        button.className = 'flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors';
+                                        button.className = 'flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 bg-stone-100/60 hover:bg-stone-200 rounded-full transition-colors';
 
                                         const colorSquare = document.createElement('span');
                                         colorSquare.className = 'inline-block w-3 h-3 rounded';
@@ -564,11 +568,11 @@
                                         const buttonText = button.querySelector('span:last-child').textContent;
                                         const buttonName = buttonText.split(' (')[0];  // Get name part before first parenthesis
                                         if (buttonName === filterName) {
-                                            button.classList.add('bg-gray-300');
-                                            button.classList.remove('bg-gray-100');
+                                            button.classList.add('bg-stone-300');
+                                            button.classList.remove('bg-stone-100/60');
                                         } else {
-                                            button.classList.remove('bg-gray-300');
-                                            button.classList.add('bg-gray-100');
+                                            button.classList.remove('bg-stone-300');
+                                            button.classList.add('bg-stone-100/60');
                                         }
                                     });
                                 }
@@ -626,10 +630,10 @@
                                     // Helper to create placeholder
                                     function createPlaceholder(day, slot) {
                                         const placeholder = document.createElement('div');
-                                        placeholder.className = 'border-l-4 border-gray-200 bg-gray-50 rounded-lg shadow-sm p-3 opacity-50';
+                                        placeholder.className = 'border-l-4 border-stone-200 bg-stone-50 rounded-lg shadow-sm p-3 opacity-50';
                                         placeholder.innerHTML = `
                                             <div class="flex items-center justify-center h-full min-h-[60px]">
-                                                <p class="text-sm text-gray-400"></p>
+                                                <p class="text-sm text-stone-400"></p>
                                             </div>
                                         `;
                                         return placeholder;
@@ -671,7 +675,7 @@
                                 });
                             </script>
                         {% else %}
-                            <div class="text-center text-gray-600 py-8">
+                            <div class="text-center text-stone-600 py-8">
                                 <p>{% trans "No appointments to display yet. Upload a PDF or paste schedule text above." %}</p>
                             </div>
                         {% endif %}

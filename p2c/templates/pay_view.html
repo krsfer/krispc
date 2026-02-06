@@ -10,28 +10,28 @@
         {% csrf_token %}
         <div class="max-w-4xl mx-auto px-4 py-6">
             {% if appointments %}
-                <div class="bg-white shadow-lg rounded-lg p-6">
-                    <h1 class="text-2xl font-bold text-gray-900 mb-6">{% trans "Pay Calculator" %}</h1>
+                <div class="bg-white/80 border border-stone-200/80 rounded-2xl shadow-sm p-6">
+                    <h1 class="text-2xl font-bold text-stone-900 mb-6">{% trans "Pay Calculator" %}</h1>
                     
                     <!-- Rate Configuration -->
                     <div class="mb-8">
-                        <h2 class="text-lg font-semibold text-gray-700 mb-4">{% trans "Rate Configuration" %}</h2>
+                        <h2 class="text-lg font-semibold text-stone-700 mb-4">{% trans "Rate Configuration" %}</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="weekday-rate" class="block text-sm font-medium text-gray-700">{% trans "Weekday Rate (€/hour)" %}</label>
+                                <label for="weekday-rate" class="block text-sm font-medium text-stone-700">{% trans "Weekday Rate (€/hour)" %}</label>
                                 <input type="number" id="weekday-rate" step="0.01" min="0" 
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                       class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary"
                                        value="{{ weekday_rate|default:'25.00' }}">
                             </div>
                             <div>
-                                <label for="sunday-rate" class="block text-sm font-medium text-gray-700">{% trans "Sunday Rate (€/hour)" %}</label>
+                                <label for="sunday-rate" class="block text-sm font-medium text-stone-700">{% trans "Sunday Rate (€/hour)" %}</label>
                                 <input type="number" id="sunday-rate" step="0.01" min="0"
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                       class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary"
                                        value="{{ sunday_rate|default:'35.00' }}">
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end">
-                            <button id="save-rates" type="button" class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <button id="save-rates" type="button" class="px-4 py-2 bg-primary text-white font-medium rounded-xl hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                                 {% trans "Save Rates" %}
                             </button>
                         </div>
@@ -40,24 +40,24 @@
                     <!-- Time Summary -->
                     <div class="mb-8">
                         <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-semibold text-gray-700">{% trans "Time Summary" %}</h2>
-                            <span class="text-sm text-gray-500">{{ current_month_name }} {{ current_year }}</span>
+                            <h2 class="text-lg font-semibold text-stone-700">{% trans "Time Summary" %}</h2>
+                            <span class="text-sm text-stone-500">{{ current_month_name }} {{ current_year }}</span>
                         </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="bg-stone-50 rounded-lg p-4">
                             <div class="flex justify-between items-center">
                                 <div>
-                                    <p class="text-sm text-gray-500">{% trans "Weekday Hours" %}</p>
-                                    <p class="text-xl font-bold text-gray-900" id="weekday-hours">0:00</p>
+                                    <p class="text-sm text-stone-500">{% trans "Weekday Hours" %}</p>
+                                    <p class="text-xl font-bold text-stone-900" id="weekday-hours">0:00</p>
                                 </div>
                                 <div class="h-8 w-px bg-gray-300"></div>
                                 <div>
-                                    <p class="text-sm text-gray-500">{% trans "Sunday Hours" %}</p>
-                                    <p class="text-xl font-bold text-gray-900" id="sunday-hours">0:00</p>
+                                    <p class="text-sm text-stone-500">{% trans "Sunday Hours" %}</p>
+                                    <p class="text-xl font-bold text-stone-900" id="sunday-hours">0:00</p>
                                 </div>
                                 <div class="h-8 w-px bg-gray-300"></div>
                                 <div>
-                                    <p class="text-sm text-gray-500">{% trans "Total Hours" %}</p>
-                                    <p class="text-xl font-bold text-indigo-600" id="total-hours">0:00</p>
+                                    <p class="text-sm text-stone-500">{% trans "Total Hours" %}</p>
+                                    <p class="text-xl font-bold text-primary" id="total-hours">0:00</p>
                                 </div>
                             </div>
                         </div>
@@ -65,36 +65,36 @@
 
                     <!-- Pay Calculation -->
                     <div>
-                        <h2 class="text-lg font-semibold text-gray-700 mb-4">{% trans "Pay Calculation" %}</h2>
-                        <div class="bg-gray-50 rounded-lg p-4">
+                        <h2 class="text-lg font-semibold text-stone-700 mb-4">{% trans "Pay Calculation" %}</h2>
+                        <div class="bg-stone-50 rounded-lg p-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <h3 class="text-md font-medium text-gray-700 mb-3">{% trans "Differential Rate Method" %}</h3>
+                                    <h3 class="text-md font-medium text-stone-700 mb-3">{% trans "Differential Rate Method" %}</h3>
                                     <div class="space-y-3">
                                         <div class="flex items-center">
-                                            <span class="text-gray-600 w-32">{% trans "Weekday Pay" %}:</span>
+                                            <span class="text-stone-600 w-32">{% trans "Weekday Pay" %}:</span>
                                             <span id="weekday-pay" class="font-medium">€0.00</span>
                                         </div>
                                         <div class="flex items-center">
-                                            <span class="text-gray-600 w-32">{% trans "Sunday Pay" %}:</span>
+                                            <span class="text-stone-600 w-32">{% trans "Sunday Pay" %}:</span>
                                             <span id="sunday-pay" class="font-medium">€0.00</span>
                                         </div>
                                         <div class="flex items-center pt-3 border-t">
-                                            <span class="text-gray-800 font-medium w-32">{% trans "Total Pay" %}:</span>
-                                            <span id="total-differential-pay" class="font-bold text-lg text-indigo-600">€0.00</span>
+                                            <span class="text-stone-800 font-medium w-32">{% trans "Total Pay" %}:</span>
+                                            <span id="total-differential-pay" class="font-bold text-lg text-primary">€0.00</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 class="text-md font-medium text-gray-700 mb-3">{% trans "Flat Rate Method" %}</h3>
+                                    <h3 class="text-md font-medium text-stone-700 mb-3">{% trans "Flat Rate Method" %}</h3>
                                     <div class="space-y-3">
                                         <div class="flex items-center">
-                                            <span class="text-gray-600 w-48">{% trans "Total Hours × Weekday Rate" %}:</span>
+                                            <span class="text-stone-600 w-48">{% trans "Total Hours × Weekday Rate" %}:</span>
                                             <span id="flat-rate-pay" class="font-medium">€0.00</span>
                                         </div>
                                         <div class="flex items-center pt-3 border-t">
-                                            <span class="text-gray-800 font-medium w-48">{% trans "Difference" %}:</span>
-                                            <span id="pay-difference" class="font-bold text-lg text-indigo-600">€0.00</span>
+                                            <span class="text-stone-800 font-medium w-48">{% trans "Difference" %}:</span>
+                                            <span id="pay-difference" class="font-bold text-lg text-primary">€0.00</span>
                                         </div>
                                     </div>
                                 </div>
@@ -266,8 +266,8 @@
         </div>
     {% else %}
         <div class="text-center py-12">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">{% trans "Access Denied" %}</h1>
-            <p class="text-xl text-gray-600">{% trans "Please sign in to view pay calculations." %}</p>
+            <h1 class="text-4xl font-bold text-stone-900 mb-4">{% trans "Access Denied" %}</h1>
+            <p class="text-xl text-stone-600">{% trans "Please sign in to view pay calculations." %}</p>
         </div>
     {% endif %}
 {% endblock content %} 
