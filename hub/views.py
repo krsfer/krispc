@@ -82,7 +82,7 @@ class IndexView(TemplateView):
         context['apps'] = [
             {
                 'name': 'KrisPC',
-                'icon': '🖥️',
+                'icon_name': 'monitor',
                 'description': (
                     'Réparations informatiques professionnelles' if is_french
                     else 'Professional computer repairs'
@@ -92,7 +92,7 @@ class IndexView(TemplateView):
             },
             {
                 'name': 'Pdf2Cal',
-                'icon': '📅',
+                'icon_name': 'calendar',
                 'description': (
                     'Convertissez vos PDF en calendriers' if is_french
                     else 'Convert your PDFs to calendars'
@@ -102,7 +102,7 @@ class IndexView(TemplateView):
             },
             {
                 'name': 'Plexus',
-                'icon': '🪞',
+                'icon_name': 'layers',
                 'description': (
                     'Système de déchargement cognitif' if is_french
                     else 'Cognitive offloading system'
@@ -112,7 +112,7 @@ class IndexView(TemplateView):
             },
             {
                 'name': 'Emoty',
-                'icon': '🎨',
+                'icon_name': 'sparkles',
                 'description': (
                     'Créateur de motifs Emoji' if is_french
                     else 'Emoji Pattern Creator'
@@ -129,14 +129,14 @@ class IndexView(TemplateView):
             context['admin_apps'] = [
                 {
                     'name': 'Admin Panel',
-                    'icon': '⚙️',
+                    'icon_name': 'sliders',
                     'description': 'Django Administration',
                     'url': '/admin/',
                     'button_text': 'Manage',
                 },
                 {
                     'name': 'Analytics',
-                    'icon': '📊',
+                    'icon_name': 'bar-chart',
                     'description': 'Traffic & Performance',
                     'url': '/analytics/dashboard/',
                     'button_text': 'View',

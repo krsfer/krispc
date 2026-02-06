@@ -12,7 +12,12 @@
                 <a href="{{ hub_base_url }}" class="text-slate-400 hover:text-white transition-colors text-sm">↩
                     Hub</a>
                 <a href="{% url 'plexus:index' %}" class="font-bold text-lg flex items-center space-x-2">
-                    <span>🪞</span>
+                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5 text-white" fill="none"
+                        stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3l9 5-9 5-9-5 9-5z" />
+                        <path d="M3 13l9 5 9-5" />
+                        <path d="M3 17l9 5 9-5" />
+                    </svg>
                     <span class="hidden sm:inline">{% trans "Second Brain" %}</span>
                 </a>
                 {% if user.is_authenticated %}
@@ -21,7 +26,15 @@
                         class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Capture" %}</a>
                     <a href="{% url 'plexus:capture' %}?mode=voice"
                         class="text-slate-300 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">
-                        <span>🎙️</span><span>{% trans "Voice" %}</span>
+                        <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none"
+                            stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <rect x="9" y="3" width="6" height="11" rx="3" />
+                            <path d="M5 11v1a7 7 0 0 0 14 0v-1" />
+                            <path d="M12 18v3" />
+                            <path d="M9 21h6" />
+                        </svg>
+                        <span>{% trans "Voice" %}</span>
                     </a>
                     <a href="{% url 'plexus:dashboard' %}"
                         class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{% trans "Dashboard" %}</a>
