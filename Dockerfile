@@ -87,9 +87,7 @@ COPY . .
 # Collect static files (includes Vite assets)
 # Use dummy values for build stage (real values set via Fly.io secrets)
 ENV SECRET_KEY="build-stage-dummy-key-not-used-in-production" \
-    MAPBOX_TOKEN="build-dummy" \
-    GOOGLE_MAPS_API_KEY="build-dummy" \
-    SENDGRID_API_KEY="build-dummy"
+    MAPBOX_TOKEN="build-dummy"
 RUN python manage.py collectstatic --noinput
 
 # Create non-root user for security

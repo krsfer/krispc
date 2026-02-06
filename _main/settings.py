@@ -87,7 +87,6 @@ CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
 ])
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
-GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY", "")
 
 
 
@@ -96,10 +95,12 @@ DEBUG = False
 if not IS_PRODUCTION:
     DEBUG = True
 
-if not IS_PRODUCTION:
-    SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
-else:
-    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "localhost")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "25"))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "false").lower() in ("1", "true", "yes")
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "false").lower() in ("1", "true", "yes")
 
 # On fly.io, it's safe to use a wildcard for `ALLOWED_HOSTS`, since the proxy performs
 # validation of the Host header in the incoming HTTP request. On other platforms you may need
@@ -209,11 +210,7 @@ REDIS_CA_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem')
 REDIS_CLIENT_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt')
 REDIS_CLIENT_KEY_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key')
 
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey'  # this is exactly the value 'apikey'
-EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "hello@krispc.fr")
 
 
 if DEBUG:
@@ -612,5 +609,3 @@ if __name__ == "__main__":
 
     print(f"STATIC_ROOT: {STATIC_ROOT}")
 
-
-    print(f"SENDGRID_API_KEY: {SENDGRID_API_KEY}")

@@ -1,10 +1,9 @@
 import logging
-import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-from _main.settings import DEBUG, SENDGRID_API_KEY
+
+from django.core.mail import EmailMultiAlternatives
+from _main.settings import DEBUG
 
 LG = logging.getLogger(__name__)
 
@@ -43,16 +42,16 @@ def send_contact_email(firstname, surname, client_email, msg):
 </html>
 """
 
-    message_1 = Mail(
-        from_email="archer.chris@gmx.com",
-        to_emails='hello.krispc@gmail.com',
+    message_1 = EmailMultiAlternatives(
         subject=suj,
-        plain_text_content=text,
-        html_content=html
+        body=text,
+        from_email="archer.chris@gmx.com",
+        to=["hello.krispc@gmail.com"],
     )
+    message_1.attach_alternative(html, "text/html")
 
     if DEBUG:
-        LG.warning(f"from:{message_1.from_email.email}")
+        LG.warning(f"from:{message_1.from_email}")
 
     status = "ok"
 
@@ -64,16 +63,11 @@ def send_contact_email(firstname, surname, client_email, msg):
             # We will follow the original logic: try to send if key exists, else simulate.
             pass
 
-        # send_mail replacement using SendGrid directly as per original code
-        if SENDGRID_API_KEY:
-            sg = SendGridAPIClient(SENDGRID_API_KEY)
-            response = sg.send(message_1)
-            
-            if DEBUG:
-                LG.warning(f'response status: {response.status_code}')
-                LG.debug("message sent via SendGrid")
-        else:
-            LG.warning("SENDGRID_API_KEY not set, skipping email send")
+        response_count = message_1.send()
+
+        if DEBUG:
+            LG.warning(f"emails sent: {response_count}")
+            LG.debug("message sent via Django email backend")
 
     except Exception as e:
         LG.error(f"Failed to send email: {e}")

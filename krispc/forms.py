@@ -1,23 +1,14 @@
 # signup form
 import logging
-import os
-from datetime import datetime
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from pprint import pprint
-from zoneinfo import ZoneInfo
 
 import coloredlogs
 from django import forms
 from django.conf import settings
-from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
 
-from sendgrid import SendGridAPIClient
-from sendgrid import Mail
-
 from _main import settings
-from _main.settings import DEBUG, SENDGRID_API_KEY
+from _main.settings import DEBUG
 from krispc.models import Contact
 
 LG = logging.getLogger(__name__)
