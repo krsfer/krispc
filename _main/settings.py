@@ -87,7 +87,7 @@ CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
 ])
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
-GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
+GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY", "")
 
 
 
@@ -97,9 +97,9 @@ if not IS_PRODUCTION:
     DEBUG = True
 
 if not IS_PRODUCTION:
-    SENDGRID_API_KEY = env('SENDGRID_API_KEY')
+    SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
 else:
-    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
+    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "")
 
 # On fly.io, it's safe to use a wildcard for `ALLOWED_HOSTS`, since the proxy performs
 # validation of the Host header in the incoming HTTP request. On other platforms you may need
