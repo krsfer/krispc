@@ -5,19 +5,41 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <!-- Hero Section -->
-    <div class="text-center mb-16">
-        <h2 class="text-4xl font-brand text-primary sm:text-5xl mb-4">{{ page_title }}</h2>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ tagline }}</p>
-    </div>
+    <section
+        class="relative overflow-hidden rounded-3xl border border-stone-200/80 bg-white/80 backdrop-blur p-8 sm:p-12 mb-16">
+        <div
+            class="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl"></div>
+        <div class="relative">
+            <p class="text-xs uppercase tracking-[0.35em] text-stone-400 font-semibold">KrisPC Suite</p>
+            <h2 class="mt-4 text-4xl sm:text-5xl font-brand text-stone-900 leading-tight">{{ page_title }}</h2>
+            <p class="mt-4 text-lg text-stone-600 max-w-2xl">{{ tagline }}</p>
+            <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                <a data-ui="hub-hero-cta" href="#apps"
+                    class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors shadow-sm">
+                    {% trans "Explore the apps" %}
+                </a>
+                <a href="{% url 'hub:developer-index' %}"
+                    class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-stone-700 bg-white/60 border border-stone-200 hover:border-stone-300 hover:text-stone-900 transition-colors">
+                    {% trans "For Developers" %}
+                </a>
+            </div>
+            <div class="mt-8 flex flex-wrap gap-4 text-sm text-stone-500">
+                <span class="inline-flex items-center gap-2"><span
+                        class="h-2 w-2 rounded-full bg-primary"></span>{% trans "Single sign-on" %}</span>
+                <span class="inline-flex items-center gap-2"><span
+                        class="h-2 w-2 rounded-full bg-primary"></span>{% trans "Premium support" %}</span>
+                <span class="inline-flex items-center gap-2"><span
+                        class="h-2 w-2 rounded-full bg-primary"></span>{% trans "Unified suite updates" %}</span>
+            </div>
+        </div>
+    </section>
 
-    <!-- Apps Grid -->
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <div id="apps" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {% for app in apps %}
         <div
-            class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 flex flex-col items-center text-center border border-gray-100">
+            class="group bg-white/80 rounded-2xl shadow-sm hover:shadow-md transition-all p-8 flex flex-col items-center text-center border border-stone-200/80">
             <div
-                class="text-stone-700 mb-6 bg-stone-100/80 w-16 h-16 flex items-center justify-center rounded-xl">
+                class="text-stone-700 mb-6 bg-stone-100/80 w-16 h-16 flex items-center justify-center rounded-xl group-hover:bg-stone-100 transition-colors">
                 {% if app.icon_name == 'monitor' %}
                 <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
                     stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -46,10 +68,10 @@
                 </svg>
                 {% endif %}
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">{{ app.name }}</h3>
-            <p class="text-gray-500 mb-8 flex-grow leading-relaxed">{{ app.description }}</p>
+            <h3 class="text-xl font-semibold text-stone-900 mb-3">{{ app.name }}</h3>
+            <p class="text-stone-500 mb-8 flex-grow leading-relaxed">{{ app.description }}</p>
             <a href="{{ app.url }}"
-                class="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-semibold rounded-xl text-black bg-primary hover:bg-primary-dark transition-colors">
+                class="w-full inline-flex justify-center items-center h-11 px-6 border border-transparent text-base font-semibold rounded-xl text-black bg-primary hover:bg-primary-dark transition-colors">
                 {{ app.button_text }}
             </a>
         </div>
@@ -57,10 +79,10 @@
     </div>
 
     {% if not is_authenticated %}
-    <div class="mt-20 text-center bg-white rounded-2xl p-12 shadow-sm border border-gray-100 max-w-2xl mx-auto">
-        <p class="text-gray-600 mb-6 font-medium">{% trans "Already have an account?" %}</p>
+    <div class="mt-20 text-center bg-white/80 rounded-2xl p-12 shadow-sm border border-stone-200/80 max-w-2xl mx-auto">
+        <p class="text-stone-600 mb-6 font-medium">{% trans "Already have an account?" %}</p>
         <a href="{% url 'login' %}"
-            class="inline-flex items-center px-8 py-3 border border-gray-300 shadow-sm text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+            class="inline-flex items-center h-11 px-8 border border-stone-300 shadow-sm text-base font-semibold rounded-xl text-stone-700 bg-white hover:bg-stone-50 transition-colors">
             {% trans "Login" %}
         </a>
     </div>
@@ -68,20 +90,21 @@
 
     <div class="mt-8 text-center">
         <a href="{% url 'hub:developer-index' %}"
-            class="text-sm text-gray-400 hover:text-gray-600 transition-colors font-mono">
+            class="text-sm text-stone-400 hover:text-stone-600 transition-colors font-mono">
             <i class="fas fa-code me-1"></i> {% trans "For Developers" %}
         </a>
     </div>
 
 
     {% if admin_apps %}
-    <div class="mt-32 pt-16 border-t border-gray-200">
-        <h3 class="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-12">Admin Dashboard</h3>
+    <div class="mt-32 pt-16 border-t border-stone-200">
+        <h3 class="text-center text-xs font-bold text-stone-400 uppercase tracking-widest mb-12">Admin Dashboard</h3>
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
             {% for app in admin_apps %}
             <div
-                class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 flex flex-col items-center text-center border border-gray-100">
-                <div class="text-stone-700 mb-4 bg-stone-100/80 w-14 h-14 flex items-center justify-center rounded-xl">
+                class="bg-white/80 rounded-2xl shadow-sm hover:shadow-md transition-all p-8 flex flex-col items-center text-center border border-stone-200/80">
+                <div
+                    class="text-stone-700 mb-4 bg-stone-100/80 w-14 h-14 flex items-center justify-center rounded-xl">
                     {% if app.icon_name == 'sliders' %}
                     <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor"
                         stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -102,10 +125,10 @@
                     </svg>
                     {% endif %}
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ app.name }}</h3>
-                <p class="text-sm text-gray-500 mb-6">{{ app.description }}</p>
+                <h3 class="text-lg font-semibold text-stone-900 mb-2">{{ app.name }}</h3>
+                <p class="text-sm text-stone-500 mb-6">{{ app.description }}</p>
                 <a href="{{ app.url }}"
-                    class="inline-flex items-center px-6 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-accent hover:bg-accent-dark transition-colors">
+                    class="inline-flex items-center h-10 px-6 border border-transparent text-sm font-semibold rounded-xl text-black bg-primary hover:bg-primary-dark transition-colors">
                     {{ app.button_text }}
                 </a>
             </div>

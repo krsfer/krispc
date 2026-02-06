@@ -30,3 +30,11 @@ class TestUIRefresh:
         content = hub.content.decode('utf-8') + plexus.content.decode('utf-8')
         for emoji in ['🖥️', '📅', '🪞', '🎨', '⚙️', '📊', '🎙️']:
             assert emoji not in content
+
+    def test_hub_hero_cta(self):
+        response = self.client.get(reverse('hub:index'), follow=True)
+        assert response.status_code == 200
+        content = response.content.decode('utf-8')
+        assert 'data-ui="hub-hero-cta"' in content
+        assert 'bg-primary' in content
+        assert 'rounded-xl' in content
