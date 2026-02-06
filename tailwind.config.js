@@ -13,19 +13,19 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#ffc451',
-          dark: '#e6a821',
-          light: '#ffd584',
+          DEFAULT: '#CA8A04',
+          dark: '#A16207',
+          light: '#FDE68A',
         },
         accent: {
-          DEFAULT: '#00d4aa',
-          dark: '#00a888',
-          light: '#33e0bf',
+          DEFAULT: '#44403C',
+          dark: '#292524',
+          light: '#78716C',
         },
       },
       fontFamily: {
-        brand: ['Lobster', 'cursive'],
-        sans: ['Inter', 'sans-serif'],
+        brand: ['Playfair Display', 'serif'],
+        sans: ['Source Sans 3', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',
@@ -43,4 +43,3 @@ export default {
     require('@tailwindcss/typography'),
   ],
 }
-
