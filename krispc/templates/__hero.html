@@ -1,58 +1,63 @@
 {% load i18n %}
 
-<section id="hero" class="d-flex align-items-center justify-content-left" style="height: 150%; top: 3px !important">
-    <div class="container" data-aos="fade-up" style="background-color:white; opacity: 0.9">
+<section id="hero" class="py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white/80 border border-stone-200/80 rounded-3xl p-8 sm:p-12 shadow-sm">
+            <div class="grid gap-10 lg:grid-cols-[1.1fr,0.9fr]">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.35em] text-stone-400 font-semibold">KrisPC</p>
+                    <h1 class="mt-4 text-4xl sm:text-5xl font-brand text-stone-900">{% trans 'PTR_0120' %}<span class="text-primary">.</span></h1>
+                    <p class="mt-3 text-lg text-stone-600">{% trans 'PTR_0040' %}</p>
+                    <p class="mt-2 text-stone-500">{% trans 'PTR_0220' %}</p>
+                    <div class="mt-6 flex flex-wrap gap-4 text-sm text-stone-500">
+                        <span class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-primary"></span>{% trans 'PTR_2055' %}</span>
+                        <span class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-primary"></span>{% trans 'PTR_2057' %}</span>
+                    </div>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                        <a href="#contact"
+                            class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors shadow-sm">
+                            {% trans "Contact" %}
+                        </a>
+                        <a href="#services"
+                            class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-stone-700 bg-white border border-stone-200 hover:border-stone-300 transition-colors">
+                            {% trans "Services" %}
+                        </a>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    {% with prod=prods.0 %}
+                    <div class="rounded-2xl border border-stone-200/80 bg-stone-50 p-6">
+                        <div class="flex items-center gap-3 text-stone-700">
+                            <i class="{{ prod.Prd_Icon }} text-xl"></i>
+                            <h3 class="text-lg font-semibold text-stone-900">{{ prod.Prd_Name|safe }}</h3>
+                        </div>
+                        <p class="mt-4 text-sm text-stone-500">
+                            Quel que soit le probl&egrave;me de votre t&eacute;l&eacute;phone, &eacute;cran cass&eacute; ou batterie d&eacute;fectueuse,
+                            je dispose des comp&eacute;tences et des outils n&eacute;cessaires pour le r&eacute;parer.
+                            iPhone, Samsung, Huawei...
+                        </p>
+                        <p class="mt-4 text-sm text-stone-500">
+                            R&eacute;parer un vieux smartphone co&ucirc;te souvent moins cher que les nouveaux mod&egrave;les.
+                            Le tarif de la r&eacute;paration est de 50&nbsp;&euro; par heure, avec un minimum d'une heure factur&eacute;e.
+                        </p>
+                    </div>
+                    {% endwith %}
 
-        <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150" style="margin-bottom: 0 !important">
-            <div class="col-xl-6 col-lg-8">
-                <h1 class="neon-text1">{% trans 'PTR_0120' %}<span>.</span></h1>
-                <h6 class="nota">{% trans 'French English' %}</h6>
-                <h2 class="neon-text">{% trans 'PTR_0040' %}</h2>
-                <h4>{% trans 'PTR_0220' %}</h4>
-            </div>
-            <div class="col-12" data-aos="fade-up" data-aos-delay="4000">
-                <h6 class="nota">{% trans 'PTR_2055' %}</h6>
-                <h6 class="nota">{% trans 'PTR_2057' %}</h6>
-            </div>
-        </div>
-
-
-        <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
-            {% with prod=prods.0 %}
-            <div class="col-12" style="margin-top: -70px">
-                <div class="icon-box">
-                    <i class="glow {{ prod.Prd_Icon }}"></i>
-                    {% comment %} <h3>
-                        <a href="#prod_0">{{ prod.Prd_Name|safe }}</a>
-                    </h3> {% endcomment %}
-                    <br>
-                    <span style="color: #888">
-                        Quel que soit le problème de votre téléphone, écran cassé ou batterie défectueuse,
-                        je dispose des compétences et des outils nécessaires pour le réparer.
-                        iPhone, Samsung, Huawei…
-                    </span>
-                    <hr>
-                    <span style="color: #888">
-                        Réparer un vieux smartphone coûte souvent moins cher que les nouveaux modèles.
-                        Le tarif de la réparation est de 50 € par heure, avec un minimum d’une heure facturée.
-                    </span>
+                    <div class="grid grid-cols-2 gap-4">
+                        {% for prod in prods %}
+                        {% if forloop.counter > 1 %}
+                        <a href="#prod_{{ forloop.counter0 }}"
+                            class="group rounded-2xl border border-stone-200/80 bg-white/80 p-4 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-3 text-stone-700">
+                                <i class="{{ prod.Prd_Icon }}"></i>
+                                <span class="text-sm font-semibold text-stone-900">{{ prod.Prd_Name|safe }}</span>
+                            </div>
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-            {% endwith %}
-
-            {% for prod in prods %}
-            {% if forloop.counter > 1 %}
-            <div class="col-6">
-                <div class="icon-box">
-                    <i class="glow {{ prod.Prd_Icon }}"></i>
-                    <h3>
-                        <a href="#prod_{{ forloop.counter0 }}">{{ prod.Prd_Name|safe }}</a>
-                    </h3>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
         </div>
-
     </div>
 </section>

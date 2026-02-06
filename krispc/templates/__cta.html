@@ -2,13 +2,15 @@
 
 {# cta = call to action #}
 
-<section id="cta" class="cta">
-    <div class="container glow" data-aos="zoom-in">
-
-        <div class="text-center">
-            <h3>{% trans "PTR_7000" %}</h3>
-            <p>{% trans "PTR_7010" %}</p>
+<section id="cta" class="py-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-stone-900 text-white rounded-3xl p-8 sm:p-12 text-center">
+            <h3 class="text-2xl sm:text-3xl font-brand">{% trans "PTR_7000" %}</h3>
+            <p class="mt-3 text-stone-200">{% trans "PTR_7010" %}</p>
+            <a href="#contact"
+                class="mt-6 inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors shadow-sm">
+                {% trans "Contact" %}
+            </a>
         </div>
-
     </div>
 </section>

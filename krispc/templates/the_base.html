@@ -11,12 +11,18 @@
 {% endblock %}
 
 {% block sub_nav %}
-<div class="bg-white border-b border-slate-200">
+<div class="bg-white/80 border-b border-stone-200/80">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center h-14 space-x-4">
-      <a href="{{ hub_base_url }}" class="text-slate-400 hover:text-primary transition-colors text-sm">↩ Hub</a>
-      <span class="text-slate-300">|</span>
-      <span class="font-bold text-slate-500">KrisPC</span>
+    <div class="flex items-center justify-between h-14">
+      <div class="flex items-center space-x-4">
+        <a href="{{ hub_base_url }}" class="text-stone-400 hover:text-primary transition-colors text-sm font-medium">↩ Hub</a>
+        <span class="text-stone-300">|</span>
+        <span class="font-semibold text-stone-600">KrisPC</span>
+      </div>
+      <a data-ui="krispc-primary-cta" href="#contact"
+        class="inline-flex items-center h-9 px-4 rounded-xl text-sm font-semibold text-black bg-primary hover:bg-primary-dark transition-colors shadow-sm">
+        {% trans "Contact" %}
+      </a>
     </div>
   </div>
 </div>

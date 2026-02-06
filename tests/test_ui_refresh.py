@@ -38,3 +38,9 @@ class TestUIRefresh:
         assert 'data-ui="hub-hero-cta"' in content
         assert 'bg-primary' in content
         assert 'rounded-xl' in content
+
+    def test_krispc_home_premium_elements(self):
+        response = self.client.get(reverse('krispc:index'), follow=True)
+        assert response.status_code == 200
+        content = response.content.decode('utf-8')
+        assert 'data-ui="krispc-primary-cta"' in content
