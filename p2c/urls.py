@@ -22,6 +22,7 @@ api_urls = [
     path("", views.home, name="home"),
     path("google-login/", views.google_login, name="google_login"),
     path("login/google/", views.google_login, name="google_login"),
+    path("switch-lang/", views.switch_lang, name="switch_lang"),
     path("upload-pdf/", views.upload_pdf, name="upload_pdf"),
     path("process-text/", views.process_text, name="process_pasted_text"),
     path(

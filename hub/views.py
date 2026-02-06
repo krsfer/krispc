@@ -18,6 +18,7 @@ def switch_language(request):
     Custom view to switch language and update session explicitly.
     This replaces the standard set_language to ensure session persistence works with our custom middleware.
     """
+    from urllib.parse import urlparse
     language = request.POST.get('language')
     next_url = request.POST.get('next', '/')
     
@@ -28,11 +29,32 @@ def switch_language(request):
             logger.info(f"Language switched to {language} (Session updated)")
         
         # Rewrite URL to new language
-        from django.urls import translate_url
-        if next_url:
-            translated_url = translate_url(next_url, language)
-            if translated_url:
-                next_url = translated_url
+        # Normalize: strip scheme/host and drop leading language prefix
+        parsed = urlparse(next_url)
+        path = parsed.path or "/"
+        
+        # Remove existing language prefix if present
+        lang_codes = [code for code, _ in settings.LANGUAGES]
+        parts = path.lstrip("/").split("/", 1)
+        if parts and parts[0] in lang_codes:
+            path = "/" + (parts[1] if len(parts) > 1 else "")
+        if not path:
+            path = "/"
+            
+        # Reattach query string if present
+        if parsed.query:
+            path = f"{path}?{parsed.query}"
+
+        # If target language is not default, prepend it
+        # We use settings.LANGUAGE_CODE as the default (prefix-less) language
+        if language != settings.LANGUAGE_CODE:
+            # Ensure we don't double slash
+            if path == "/":
+                next_url = f"/{language}/"
+            else:
+                next_url = f"/{language}{path}"
+        else:
+            next_url = path
 
         # Also set cookie for redundancy
         response = HttpResponseRedirect(next_url)

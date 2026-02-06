@@ -7,6 +7,7 @@ import os
 import tempfile
 import traceback
 from datetime import datetime
+from urllib.parse import urlparse
 
 import pytz
 import requests
@@ -20,6 +21,8 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views.i18n import set_language as django_set_language
 from django.utils import timezone
 from django.utils.translation import gettext as _, get_language
 from django.views.decorators.csrf import csrf_exempt
@@ -101,6 +104,93 @@ def get_localized_month_name(month_number):
     return months.get(month_number, '')
 
 
+def get_oauth_redirect_uri(request):
+    """Resolve the redirect URI Google will accept for this environment."""
+    explicit = getattr(settings, "GOOGLE_OAUTH2_REDIRECT_URI", None)
+    if explicit:
+        parsed = urlparse(explicit)
+        request_host = request.get_host().split(":")[0]
+        # If the explicit host does not match the request host, prefer the request host to keep the session cookie.
+        if parsed.hostname and parsed.hostname != request_host:
+            pass
+        else:
+            return explicit
+
+    redirect_uri = request.build_absolute_uri('/login/google/')
+    if 'localhost' not in redirect_uri and '127.0.0.1' not in redirect_uri:
+        redirect_uri = redirect_uri.replace('http://', 'https://')
+    return redirect_uri
+
+
+def get_p2c_home_url():
+    """Return the correct home URL for p2c under current URLconf."""
+    return reverse("p2c:home")
+
+
+def switch_lang(request):
+    """
+    Robust language switcher that always redirects back to the current page
+    (or p2c home as a fallback) even when the incoming form omits `next`.
+    Explicitly handles session and cookie updates to ensure persistence.
+    """
+    from urllib.parse import urlparse
+    from django.http import HttpResponseRedirect
+    from django.utils.translation import check_for_language
+
+    # Priority: POST next -> GET next -> p2c home fallback
+    next_url = request.POST.get('next') or request.GET.get('next') or get_p2c_home_url()
+    
+    # Get target language
+    if request.method == "POST":
+        target_lang = request.POST.get("language")
+    else:
+        target_lang = request.GET.get("language")
+
+    if target_lang and check_for_language(target_lang):
+        if hasattr(request, 'session'):
+            request.session['_language'] = target_lang
+            request.session.save() # Explicitly save
+            logger.info(f"Language switched to {target_lang} (Session updated)")
+
+        # Normalize: strip scheme/host and drop leading language prefix
+        parsed = urlparse(next_url)
+        path = parsed.path or "/"
+        
+        lang_codes = [code for code, _ in settings.LANGUAGES]
+        parts = path.lstrip("/").split("/", 1)
+        if parts and parts[0] in lang_codes:
+            path = "/" + (parts[1] if len(parts) > 1 else "")
+        if not path:
+            path = "/"
+        
+        # Reattach query string if present
+        if parsed.query:
+            path = f"{path}?{parsed.query}"
+
+        # If target language is not default, prepend it
+        # We use settings.LANGUAGE_CODE as the default (prefix-less) language
+        if target_lang != settings.LANGUAGE_CODE:
+            # Ensure we don't double slash
+            if path == "/":
+                path = f"/{target_lang}/"
+            else:
+                path = f"/{target_lang}{path}"
+
+        # Also set cookie for redundancy
+        response = HttpResponseRedirect(path)
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            target_lang,
+            max_age=settings.LANGUAGE_COOKIE_AGE,
+            samesite=getattr(settings, 'LANGUAGE_COOKIE_SAMESITE', 'Lax'),
+            httponly=getattr(settings, 'LANGUAGE_COOKIE_HTTPONLY', False),
+            secure=request.is_secure(),
+        )
+        return response
+
+    return HttpResponseRedirect(next_url)
+
+
 def home(request):
     """Home page view."""
     if not hasattr(settings, "GOOGLE_OAUTH2_CLIENT_ID"):
@@ -119,9 +209,7 @@ def home(request):
 
     # Construct redirect URI dynamically based on request domain
     # Force HTTPS since fly.io terminates SSL at proxy level (but not for localhost)
-    redirect_uri = request.build_absolute_uri('/login/google/')
-    if 'localhost' not in redirect_uri and '127.0.0.1' not in redirect_uri:
-        redirect_uri = redirect_uri.replace('http://', 'https://')
+    redirect_uri = get_oauth_redirect_uri(request)
 
     # Get current active language (set by middleware)
     current_lang = get_language()
@@ -432,7 +520,7 @@ def google_login(request):
                 login(request, user)
 
                 # Redirect to p2c home page after successful login
-                return JsonResponse({"success": True, "redirect": "/"})
+                return JsonResponse({"success": True, "redirect": get_p2c_home_url()})
 
             except ValueError as e:
                 error_msg = str(e)
@@ -468,9 +556,7 @@ def google_login(request):
             # Exchange code for tokens
             # Construct redirect URI dynamically to match the one used in authorization
             # Force HTTPS since fly.io terminates SSL at proxy level (but not for localhost)
-            redirect_uri = request.build_absolute_uri('/login/google/')
-            if 'localhost' not in redirect_uri and '127.0.0.1' not in redirect_uri:
-                redirect_uri = redirect_uri.replace('http://', 'https://')
+            redirect_uri = get_oauth_redirect_uri(request)
 
             token_url = "https://oauth2.googleapis.com/token"
             token_data = {
@@ -554,7 +640,7 @@ def google_login(request):
                 login(request, user)
 
                 # Redirect to p2c home page after successful login
-                return redirect('/')
+                return redirect(get_p2c_home_url())
 
             except requests.RequestException as e:
                 return JsonResponse(

@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { PatternState } from '@/types/pattern';
+import Tooltip from '@/components/Tooltip';
 
 interface SequenceEditorProps {
   sequence: string[];
@@ -157,6 +158,10 @@ const SequenceEditor: React.FC<SequenceEditorProps> = ({
     }
   }, [sequence.length, handleRemoveEmoji, handleInsertionPointClick]);
 
+  const helpText = language === 'en' 
+    ? 'Click | to set insertion point • Drag emojis to reorder • Click × to remove'
+    : 'Cliquez | pour définir le point d\'insertion • Glissez les emojis pour réorganiser • Cliquez × pour supprimer';
+
   if (sequence.length === 0) {
     return (
       <div className={`sequence-editor empty ${className}`}>
@@ -188,87 +193,78 @@ const SequenceEditor: React.FC<SequenceEditorProps> = ({
   }
 
   return (
-    <div 
-      ref={sequenceRef}
-      className={`sequence-editor ${className}`}
-      role="toolbar"
-      aria-label={language === 'en' ? 'Emoji sequence editor' : 'Éditeur de séquence d\'emojis'}
-    >
-      <div className="sequence-container">
-        {/* Leading insertion point */}
-        <div
-          className={`insertion-point ${insertionIndex === 0 ? 'active' : ''}`}
-          onClick={() => handleInsertionPointClick(0)}
-          role="button"
-          tabIndex={0}
-          aria-label={language === 'en' ? 'Insert at beginning' : 'Insérer au début'}
-          onKeyDown={(e) => handleKeyDown(e, 0, 'insertion')}
-        >
-          |
-        </div>
+    <Tooltip text={helpText} position="top">
+      <div 
+        ref={sequenceRef}
+        className={`sequence-editor ${className}`}
+        role="toolbar"
+        aria-label={language === 'en' ? 'Emoji sequence editor' : 'Éditeur de séquence d\'emojis'}
+      >
+        <div className="sequence-container">
+          {/* Leading insertion point */}
+          <div
+            className={`insertion-point ${insertionIndex === 0 ? 'active' : ''}`}
+            onClick={() => handleInsertionPointClick(0)}
+            role="button"
+            tabIndex={0}
+            aria-label={language === 'en' ? 'Insert at beginning' : 'Insérer au début'}
+            onKeyDown={(e) => handleKeyDown(e, 0, 'insertion')}
+          >
+            |
+          </div>
 
-        {sequence.map((emoji, index) => (
-          <React.Fragment key={`emoji-${index}-${emoji}`}>
-            {/* Emoji item */}
-            <div
-              className={`emoji-item ${draggedIndex === index ? 'dragging' : ''}`}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => handleDrop(e, index)}
-              role="button"
-              tabIndex={0}
-              aria-label={language === 'en' 
-                ? `Emoji ${emoji} at position ${index + 1}. Press Delete to remove, drag to reorder.`
-                : `Emoji ${emoji} à la position ${index + 1}. Appuyez sur Supprimer pour retirer, glissez pour réorganiser.`
-              }
-              onKeyDown={(e) => handleKeyDown(e, index, 'emoji')}
-            >
-              <span className="emoji-display" role="img" aria-hidden="true">
-                {emoji}
-              </span>
-              
-              <button
-                className="remove-button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRemoveEmoji(index);
-                }}
-                aria-label={language === 'en' ? `Remove ${emoji}` : `Supprimer ${emoji}`}
-                type="button"
+          {sequence.map((emoji, index) => (
+            <React.Fragment key={`emoji-${index}-${emoji}`}>
+              {/* Emoji item */}
+              <div
+                className={`emoji-item ${draggedIndex === index ? 'dragging' : ''}`}
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragEnd={handleDragEnd}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => handleDrop(e, index)}
+                role="button"
+                tabIndex={0}
+                aria-label={language === 'en' 
+                  ? `Emoji ${emoji} at position ${index + 1}. Press Delete to remove, drag to reorder.`
+                  : `Emoji ${emoji} à la position ${index + 1}. Appuyez sur Supprimer pour retirer, glissez pour réorganiser.`
+                }
+                onKeyDown={(e) => handleKeyDown(e, index, 'emoji')}
               >
-                <i className="fas fa-times" aria-hidden="true"></i>
-              </button>
-            </div>
+                <span className="emoji-display" role="img" aria-hidden="true">
+                  {emoji}
+                </span>
+                
+                <button
+                  className="remove-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveEmoji(index);
+                  }}
+                  aria-label={language === 'en' ? `Remove ${emoji}` : `Supprimer ${emoji}`}
+                  type="button"
+                >
+                  <i className="fas fa-times" aria-hidden="true"></i>
+                </button>
+              </div>
 
-            {/* Trailing insertion point */}
-            <div
-              className={`insertion-point ${insertionIndex === index + 1 ? 'active' : ''}`}
-              onClick={() => handleInsertionPointClick(index + 1)}
-              role="button"
-              tabIndex={0}
-              aria-label={language === 'en' 
-                ? `Insert after position ${index + 1}`
-                : `Insérer après la position ${index + 1}`
-              }
-              onKeyDown={(e) => handleKeyDown(e, index + 1, 'insertion')}
-            >
-              |
-            </div>
-          </React.Fragment>
-        ))}
-      </div>
-
-      {/* Help text */}
-      <div className="sequence-help">
-        <small className="text-muted">
-          {language === 'en' 
-            ? 'Click | to set insertion point • Drag emojis to reorder • Click × to remove'
-            : 'Cliquez | pour définir le point d\'insertion • Glissez les emojis pour réorganiser • Cliquez × pour supprimer'
-          }
-        </small>
-      </div>
+              {/* Trailing insertion point */}
+              <div
+                className={`insertion-point ${insertionIndex === index + 1 ? 'active' : ''}`}
+                onClick={() => handleInsertionPointClick(index + 1)}
+                role="button"
+                tabIndex={0}
+                aria-label={language === 'en' 
+                  ? `Insert after position ${index + 1}`
+                  : `Insérer après la position ${index + 1}`
+                }
+                onKeyDown={(e) => handleKeyDown(e, index + 1, 'insertion')}
+              >
+                |
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
 
       <style jsx>{`
         .sequence-editor {
@@ -458,7 +454,8 @@ const SequenceEditor: React.FC<SequenceEditorProps> = ({
           }
         }
       `}</style>
-    </div>
+      </div>
+    </Tooltip>
   );
 };
 

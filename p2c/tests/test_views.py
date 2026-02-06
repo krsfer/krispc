@@ -1,8 +1,11 @@
 import pytest
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import RequestFactory, override_settings
+from urllib.parse import urlparse
 from p2c.models import Document
 from p2c.tests.factories import UserFactory, DocumentFactory
+from p2c.views import get_oauth_redirect_uri
 
 @pytest.mark.django_db
 class TestViews:
@@ -76,3 +79,31 @@ class TestViews:
         assert response.status_code == 200
         assert response.json()['task_id'] == "task-123"
         mock_task.assert_called_once()
+
+    @override_settings(GOOGLE_OAUTH2_REDIRECT_URI="http://localhost:8000/login/google/")
+    def test_redirect_uri_prefers_setting(self):
+        from django.conf import settings as dj_settings
+        dj_settings.ALLOWED_HOSTS = ["p2c.localhost"]
+        factory = RequestFactory()
+        request = factory.get("/", HTTP_HOST="p2c.localhost:8000")
+        uri = get_oauth_redirect_uri(request)
+        assert uri == "http://p2c.localhost:8000/login/google/"
+
+    def test_redirect_uri_falls_back_to_https_for_non_localhost(self, settings):
+        settings.GOOGLE_OAUTH2_REDIRECT_URI = None
+        settings.ALLOWED_HOSTS = ["p2c.krispc.fr"]
+        factory = RequestFactory()
+        request = factory.get("/", HTTP_HOST="p2c.krispc.fr")
+        uri = get_oauth_redirect_uri(request)
+        assert uri == "https://p2c.krispc.fr/login/google/"
+
+    @override_settings(GOOGLE_OAUTH2_REDIRECT_URI="http://localhost:8000/login/google/")
+    def test_redirect_uri_falls_back_when_env_host_differs(self):
+        from django.conf import settings as dj_settings
+        dj_settings.ALLOWED_HOSTS = ["p2c.localhost"]
+        factory = RequestFactory()
+        request = factory.get("/", HTTP_HOST="p2c.localhost:8000")
+        uri = get_oauth_redirect_uri(request)
+        parsed = urlparse(uri)
+        assert parsed.hostname == "p2c.localhost"
+        assert parsed.scheme == "http"

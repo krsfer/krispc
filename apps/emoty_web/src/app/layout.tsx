@@ -4,7 +4,6 @@ import './globals.css';
 import { ClientProviders } from '@/components/ClientProviders';
 import { ToastProvider } from '@/contexts/ToastContext';
 import ToastContainer from '@/components/ToastContainer';
-import SubNavHeader from '@/components/SubNavHeader';
 
 export const metadata: Metadata = {
   title: 'Emoty - Emoji Pattern Creator',
@@ -65,7 +64,6 @@ export default function RootLayout({
 
         <ToastProvider>
           <ClientProviders>
-            <SubNavHeader />
             <main id="main-content">
               {children}
             </main>

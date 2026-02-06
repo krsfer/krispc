@@ -315,6 +315,17 @@ export default function HomePage() {
       {/* Top Navigation Bar */}
       <nav className="top-nav" role="navigation" aria-label="Main navigation">
         <div className="nav-left">
+          <Tooltip text="Back to Hub" position="bottom">
+            <a 
+              href={process.env.NEXT_PUBLIC_HUB_BASE_URL ?? 'http://hub.localhost:8000'}
+              className="nav-button"
+              aria-label="Back to Hub"
+              style={{ textDecoration: 'none' }}
+            >
+              ↩
+            </a>
+          </Tooltip>
+
           <Tooltip text={language === 'en' ? 'Passer en Français' : 'Switch to English'} position="bottom">
             <button 
               className="nav-button"

@@ -5,35 +5,6 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <section
-        class="relative overflow-hidden rounded-3xl border border-stone-200/80 bg-white/80 backdrop-blur p-8 sm:p-12 mb-16">
-        <div
-            class="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl"></div>
-        <div class="relative">
-            <p class="text-xs uppercase tracking-[0.35em] text-stone-400 font-semibold">KrisPC Suite</p>
-            <h2 class="mt-4 text-4xl sm:text-5xl font-brand text-stone-900 leading-tight">{{ page_title }}</h2>
-            <p class="mt-4 text-lg text-stone-600 max-w-2xl">{{ tagline }}</p>
-            <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                <a data-ui="hub-hero-cta" href="#apps"
-                    class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors shadow-sm">
-                    {% trans "Explore the apps" %}
-                </a>
-                <a href="{% url 'hub:developer-index' %}"
-                    class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-stone-700 bg-white/60 border border-stone-200 hover:border-stone-300 hover:text-stone-900 transition-colors">
-                    {% trans "For Developers" %}
-                </a>
-            </div>
-            <div class="mt-8 flex flex-wrap gap-4 text-sm text-stone-500">
-                <span class="inline-flex items-center gap-2"><span
-                        class="h-2 w-2 rounded-full bg-primary"></span>{% trans "Single sign-on" %}</span>
-                <span class="inline-flex items-center gap-2"><span
-                        class="h-2 w-2 rounded-full bg-primary"></span>{% trans "Premium support" %}</span>
-                <span class="inline-flex items-center gap-2"><span
-                        class="h-2 w-2 rounded-full bg-primary"></span>{% trans "Unified suite updates" %}</span>
-            </div>
-        </div>
-    </section>
-
     <div id="apps" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {% for app in apps %}
         <div

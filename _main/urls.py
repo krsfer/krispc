@@ -74,6 +74,7 @@ urlpatterns += i18n_patterns(
     re_path(r"^emo(?:/(?P<path>.*))?$", proxy_to_emoty),
     path("login/", auth_views.LoginView.as_view(template_name="plexus/registration/login.html"), name="login"),
     path("login/google/", p2c.views.google_login, name="google_login_i18n"),
+    path("switch-lang/", p2c.views.switch_lang, name="switch_lang"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     
     # PDF2Cal app

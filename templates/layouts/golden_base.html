@@ -112,25 +112,72 @@
                     <span>&copy; 2026</span>
                 </nav>
                 <div class="flex space-x-4">
-                    <form action="{% url 'hub:switch_language' %}" method="post">
-                        {% csrf_token %}
-                        <input name="next" type="hidden"
-                            value="{% if request.resolver_match.app_name and request.resolver_match.app_name != 'hub' and request.resolver_match.app_name not in request.path %}/{{ request.resolver_match.app_name }}{% endif %}{{ request.path }}">
-                        <button type="submit" name="language" value="fr"
-                            class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
-                            FR
-                        </button>
-                    </form>
-                    <span class="text-stone-300">|</span>
-                    <form action="{% url 'hub:switch_language' %}" method="post">
-                        {% csrf_token %}
-                        <input name="next" type="hidden"
-                            value="{% if request.resolver_match.app_name and request.resolver_match.app_name != 'hub' and request.resolver_match.app_name not in request.path %}/{{ request.resolver_match.app_name }}{% endif %}{{ request.path }}">
-                        <button type="submit" name="language" value="en"
-                            class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
-                            EN
-                        </button>
-                    </form>
+                    {% with request.path|cut:'/en'|cut:'/fr' as next_path %}
+                        {% if 'importpdf' in request.path %}
+                            {% url 'p2c:switch_lang' as lang_action %}
+                            {% with '/importpdf/' as forced_next %}
+                                <form action="{{ lang_action }}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ forced_next }}">
+                                    <button type="submit" name="language" value="fr"
+                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        FR
+                                    </button>
+                                </form>
+                                <span class="text-stone-300">|</span>
+                                <form action="{{ lang_action }}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ forced_next }}">
+                                    <button type="submit" name="language" value="en"
+                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        EN
+                                    </button>
+                                </form>
+                            {% endwith %}
+                        {% elif request.resolver_match.app_name == 'p2c' %}
+                            {% url 'p2c:switch_lang' as lang_action %}
+                            {% with next_path|default:'/' as forced_next %}
+                                <form action="{{ lang_action }}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ forced_next }}">
+                                    <button type="submit" name="language" value="fr"
+                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        FR
+                                    </button>
+                                </form>
+                                <span class="text-stone-300">|</span>
+                                <form action="{{ lang_action }}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ forced_next }}">
+                                    <button type="submit" name="language" value="en"
+                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        EN
+                                    </button>
+                                </form>
+                            {% endwith %}
+                        {% else %}
+                            {% url 'hub:switch_language' as lang_action %}
+                            {% with next_path|default:'/' as forced_next %}
+                                <form action="{{ lang_action }}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ forced_next }}">
+                                    <button type="submit" name="language" value="fr"
+                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        FR
+                                    </button>
+                                </form>
+                                <span class="text-stone-300">|</span>
+                                <form action="{{ lang_action }}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ forced_next }}">
+                                    <button type="submit" name="language" value="en"
+                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        EN
+                                    </button>
+                                </form>
+                            {% endwith %}
+                        {% endif %}
+                    {% endwith %}
                 </div>
             </div>
         </div>

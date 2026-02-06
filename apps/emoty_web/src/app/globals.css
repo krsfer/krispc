@@ -235,9 +235,9 @@ body {
   box-shadow: var(--shadow-lg);
   position: relative;
   width: calc(100vw - 40px);
-  max-width: 350px;
+  max-width: 300px;
   height: calc(100vw - 40px);
-  max-height: 350px;
+  max-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -387,11 +387,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  min-height: 48px;
+  min-height: 40px;
 }
 
 .emoji-button:hover {
@@ -549,7 +549,7 @@ body {
   }
   
   .canvas-wrapper {
-    max-width: 360px;
+    max-width: 340px;
   }
 }
 

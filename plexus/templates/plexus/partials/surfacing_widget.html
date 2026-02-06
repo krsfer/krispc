@@ -23,8 +23,7 @@
                             class="badge {% if thought.type == 'task' %}bg-danger{% elif thought.type == 'ideation' %}bg-info{% else %}bg-secondary{% endif %} small">
                             {{ thought.get_type_display }}
                         </span>
-                        <small class="text-muted local-time" data-utc="{{ thought.input.timestamp|date:'c' }}">{{
-                            thought.input.timestamp|date:"M d, Y" }}</small>
+                        <small class="text-muted local-time" data-utc="{{ thought.input.timestamp|date:'c' }}">{{ thought.input.timestamp|date:"M d, Y" }}</small>
                     </div>
                     <h6 class="mb-1">{{ thought.content }}</h6>
                     <a href="{% url 'plexus:thought_edit' thought.pk %}"
@@ -50,8 +49,7 @@
                         class="badge {% if random_thought.type == 'task' %}bg-danger{% elif random_thought.type == 'ideation' %}bg-info{% else %}bg-secondary{% endif %}">
                         {{ random_thought.get_type_display }}
                     </span>
-                    <small class="text-muted local-time" data-utc="{{ random_thought.input.timestamp|date:'c' }}">{{
-                        random_thought.input.timestamp|date:"M d, Y" }}</small>
+                    <small class="text-muted local-time" data-utc="{{ random_thought.input.timestamp|date:'c' }}">{{ random_thought.input.timestamp|date:"M d, Y" }}</small>
                 </div>
                 <h5 class="card-title">{{ random_thought.content }}</h5>
                 <p class="card-text text-muted small italic">"{{ random_thought.input.content|truncatechars:150 }}"</p>
