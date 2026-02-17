@@ -18,7 +18,14 @@ import sys
 from typing import Any, Dict, List, Optional
 
 # Add the project directory to the path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# If we are in a subdirectory (like 'mcp/'), we need the parent directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if os.path.exists(os.path.join(current_dir, '..', 'manage.py')):
+    project_root = os.path.abspath(os.path.join(current_dir, '..'))
+else:
+    project_root = current_dir
+
+sys.path.insert(0, project_root)
 
 # Set up Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', '_main.settings')

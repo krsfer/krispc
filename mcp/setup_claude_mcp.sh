@@ -28,7 +28,15 @@ echo
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 MCP_SERVER_PATH="$SCRIPT_DIR/mcp_server.py"
 
+# If we are in the 'mcp' directory, the project root is one level up
+if [[ "$(basename "$SCRIPT_DIR")" == "mcp" ]]; then
+    PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+else
+    PROJECT_ROOT="$SCRIPT_DIR"
+fi
+
 echo "🔍 MCP Server location: $MCP_SERVER_PATH"
+echo "🔍 Project Root: $PROJECT_ROOT"
 
 # Check if mcp_server.py exists
 if [ ! -f "$MCP_SERVER_PATH" ]; then
@@ -61,7 +69,7 @@ cat > /tmp/krispc_mcp_config.json <<EOF
       ],
       "env": {
         "DJANGO_SETTINGS_MODULE": "_main.settings",
-        "PYTHONPATH": "$SCRIPT_DIR"
+        "PYTHONPATH": "$PROJECT_ROOT"
       }
     }
   }
