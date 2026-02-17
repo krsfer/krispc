@@ -1,7 +1,10 @@
 from celery import shared_task
 from django.utils import timezone
-from .models import Input
+import logging
+from .models import Input, Thought
 from .services.processor import InputProcessor
+
+logger = logging.getLogger(__name__)
 
 @shared_task
 def process_input(input_id):
@@ -14,7 +17,22 @@ def process_input(input_id):
         return f"Input {input_id} not found"
 
     processor = InputProcessor(input_obj)
-    result = processor.process()
+    try:
+        result = processor.process()
+    except Exception as exc:
+        logger.exception("Input processing failed for input_id=%s", input_id)
+        Thought.objects.update_or_create(
+            input=input_obj,
+            defaults={
+                "content": input_obj.content or "(Processing failed)",
+                "type": "ideation",
+                "confidence_score": 0.0,
+                "ai_model": f"processor-error: {exc.__class__.__name__}",
+            },
+        )
+        input_obj.processed = True
+        input_obj.save(update_fields=["processed"])
+        return f"Processing failed for Input {input_id}: {exc.__class__.__name__}"
     
     if isinstance(result, str):
         return result

@@ -2,6 +2,7 @@ from django.urls import include, path
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+import p2c.views
 
 # Plexus Subdomain (plexus.krispc.fr)
 
@@ -22,6 +23,7 @@ urlpatterns += i18n_patterns(
     
     # Shared
     path("login/", auth_views.LoginView.as_view(template_name="plexus/registration/login.html"), name="login"),
+    path("login/google/", p2c.views.google_login, name="google_login_i18n"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     path("admin/", admin.site.urls),
 

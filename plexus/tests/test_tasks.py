@@ -177,3 +177,22 @@ class InputTaskTest(TestCase):
         self.assertEqual(Thought.objects.count(), 1)
         self.assertEqual(Thought.objects.first().content, "Refined Version A")
 
+    @patch("plexus.signals.process_input.delay")
+    @patch("plexus.services.processor.classify_input")
+    def test_process_input_handles_invalid_classifier_payload(self, mock_classify, mock_signal_delay):
+        """
+        If the classifier returns an invalid payload, processing should not leave
+        the input stuck forever in "processed=False".
+        """
+        mock_classify.return_value = None
+        input_obj = Input.objects.create(content="Broken payload")
+
+        result = process_input(input_obj.id)
+
+        input_obj.refresh_from_db()
+        self.assertTrue(input_obj.processed)
+        self.assertIn("Processing failed", result)
+        thought = Thought.objects.get(input=input_obj)
+        self.assertEqual(thought.type, "ideation")
+        self.assertEqual(thought.confidence_score, 0.0)
+        self.assertIn("processor-error", thought.ai_model)

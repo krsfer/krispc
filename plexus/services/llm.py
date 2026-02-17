@@ -196,11 +196,75 @@ def _classify_openai_text_only(text):
     return _classify_openai(text)
 
 def _classify_anthropic(text, image_file=None):
-    # Similar fallback for Anthropic
-    return _classify_anthropic_text_only(text)
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        return _fallback_result(text, "anthropic-fallback (no key)")
+
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        model_name = getattr(settings, "ANTHROPIC_MODEL", "claude-3-5-haiku-latest")
+
+        system_prompt = _get_system_prompt(text, has_image=bool(image_file))
+        user_content = []
+
+        if text:
+            user_content.append({"type": "text", "text": text})
+
+        if image_file:
+            image_file.seek(0)
+            image_bytes = image_file.read()
+
+            media_type = "image/jpeg"
+            try:
+                img = Image.open(io.BytesIO(image_bytes))
+                image_format = (img.format or "JPEG").lower()
+                if image_format == "jpg":
+                    image_format = "jpeg"
+                media_type = f"image/{image_format}"
+            except Exception:
+                media_type = "image/jpeg"
+
+            user_content.append(
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": media_type,
+                        "data": base64.b64encode(image_bytes).decode("utf-8"),
+                    },
+                }
+            )
+
+        if not user_content:
+            return _fallback_result(text, "anthropic-error: No content provided")
+
+        response = client.messages.create(
+            model=model_name,
+            max_tokens=1024,
+            temperature=0,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_content}],
+        )
+
+        response_blocks = getattr(response, "content", []) or []
+        response_texts = []
+        for block in response_blocks:
+            if isinstance(block, dict):
+                block_text = block.get("text")
+            else:
+                block_text = getattr(block, "text", None)
+            if isinstance(block_text, str):
+                response_texts.append(block_text)
+
+        raw_text = "\n".join(response_texts).replace("```json", "").replace("```", "").strip()
+        data = json.loads(raw_text)
+        return _format_result(data, text, model_name)
+    except Exception as e:
+        print(f"Anthropic Error: {e}")
+        return _fallback_result(text, f"anthropic-error: {str(e)[:50]}")
 
 def _classify_anthropic_text_only(text):
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    return _classify_anthropic(text)
 
 def _get_system_prompt(text, has_image=False):
     """
