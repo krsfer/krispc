@@ -160,6 +160,84 @@ class DashboardViewTest(APITestCase):
             response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE="en")
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "Pending thought")
-            # The heading might be translated or capitalized differently
-            content = response.content.decode().lower()
-            self.assertTrue("process" in content)
+            self.assertContains(response, "AI is processing your thought...")
+            self.assertNotContains(response, "AI is transmuting your thought...")
+            self.assertContains(response, "animate-pulse")
+            self.assertContains(response, "processing-card")
+            self.assertContains(response, "data-input-id=")
+            self.assertContains(response, "checkProcessingStatus")
+            self.assertContains(response, "showTimeoutState")
+            self.assertContains(response, "Still processing. Refresh manually.")
+
+
+class InputStatusViewTest(APITestCase):
+    def setUp(self):
+        self.url = reverse("plexus:input_status")
+        self.user = User.objects.create_user(username="status-user", password="password")
+        self.client.force_login(self.user)
+
+    def test_processed_input_with_thought_returns_processed_id(self):
+        input_obj = Input.objects.create(content="Done input", user=self.user, processed=True)
+        Thought.objects.create(
+            input=input_obj,
+            content="Done thought",
+            type="ideation",
+            confidence_score=0.9,
+            ai_model="test-model",
+        )
+
+        response = self.client.post(self.url, {"input_ids": [input_obj.id]}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["processed_ids"], [input_obj.id])
+        self.assertEqual(response.data["failed_ids"], [])
+
+    def test_processed_duplicate_without_thought_is_treated_as_processed(self):
+        duplicate_input = Input.objects.create(content="Duplicate input", user=self.user, processed=True)
+
+        response = self.client.post(self.url, {"input_ids": [duplicate_input.id]}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["processed_ids"], [duplicate_input.id])
+        self.assertEqual(response.data["failed_ids"], [])
+
+    def test_processor_error_thought_returns_failed_id(self):
+        failed_input = Input.objects.create(content="Failed input", user=self.user, processed=True)
+        Thought.objects.create(
+            input=failed_input,
+            content="(Processing failed)",
+            type="ideation",
+            confidence_score=0.0,
+            ai_model="processor-error: ValueError",
+        )
+
+        response = self.client.post(self.url, {"input_ids": [failed_input.id]}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["processed_ids"], [])
+        self.assertEqual(response.data["failed_ids"], [failed_input.id])
+
+    def test_unprocessed_input_is_not_returned(self):
+        pending_input = Input.objects.create(content="Pending input", user=self.user, processed=False)
+
+        response = self.client.post(self.url, {"input_ids": [pending_input.id]}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["processed_ids"], [])
+        self.assertEqual(response.data["failed_ids"], [])
+
+    def test_missing_or_foreign_ids_return_failed(self):
+        other_user = User.objects.create_user(username="other-user", password="password")
+        foreign_input = Input.objects.create(content="Other input", user=other_user, processed=True)
+        missing_id = foreign_input.id + 999
+
+        response = self.client.post(self.url, {"input_ids": [foreign_input.id, missing_id]}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["processed_ids"], [])
+        self.assertCountEqual(response.data["failed_ids"], [foreign_input.id, missing_id])
+
+    def test_requires_authentication(self):
+        self.client.logout()
+        response = self.client.post(self.url, {"input_ids": []}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

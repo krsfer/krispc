@@ -18,7 +18,7 @@ from .config.caregiver_settings import (
     load_caregiver_settings,
     normalize_caregiver_name,
 )
-from .config.event_settings import load_event_settings
+from .config.event_settings import load_event_settings, get_event_settings_for_name
 from .tasks import create_events_task, sync_calendar_task
 
 logger = logging.getLogger(__name__)
@@ -147,9 +147,7 @@ def process_json_events(request):
                     rrule = f"RRULE:FREQ=WEEKLY;UNTIL={ends_on_date.strftime('%Y%m%dT235959Z')}"
                     recurrence.append(rrule)
 
-                beneficiary_settings = all_settings.get(
-                    staff_name, all_settings.get("DEFAULT", {})
-                )
+                beneficiary_settings = get_event_settings_for_name(staff_name, all_settings)
 
                 events_data.append(
                     {
@@ -488,9 +486,7 @@ def sync_pdf_to_calendar(request):
                 staff_names.append(staff_name)
 
                 # Get beneficiary settings for description/location
-                beneficiary_settings = all_settings.get(
-                    staff_name, all_settings.get("DEFAULT", {})
-                )
+                beneficiary_settings = get_event_settings_for_name(staff_name, all_settings)
 
                 # Format expected by sync_calendar_task: start_time/end_time as ISO strings
                 events_data.append(

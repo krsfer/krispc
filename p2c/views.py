@@ -42,7 +42,12 @@ from rest_framework.response import Response
 from django.http import JsonResponse, HttpResponse
 
 from .calendar_integration.google_calendar import GoogleCalendarService
-from .config.event_settings import EVENT_SETTINGS, load_event_settings, save_event_settings
+from .config.event_settings import (
+    EVENT_SETTINGS,
+    get_event_settings_for_name,
+    load_event_settings,
+    save_event_settings,
+)
 from .config.caregiver_settings import (
     load_caregiver_settings,
     NAME_CORRECTIONS,
@@ -1024,8 +1029,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
                                 # Only process each name once
                                 if name and name not in processed_names:
                                     processed_names.add(name)
-                                    event_settings = EVENT_SETTINGS.get(
-                                        name, EVENT_SETTINGS.get("DEFAULT", {})
+                                    event_settings = get_event_settings_for_name(
+                                        name, EVENT_SETTINGS
                                     )
                                     pending_appointments[name] = {
                                         "colorId": event_settings.get("colorId"),
@@ -1194,7 +1199,7 @@ def create_events(request, document_id):
 
                 # Use the normalized name from the appointment
                 name = appointment.get('normalized_name', '')
-                settings = event_settings.get(name, event_settings.get("DEFAULT", {}))
+                settings = get_event_settings_for_name(name, event_settings)
 
                 # Format the datetime strings
                 start_time = f"{appointment.get('year')}-{appointment.get('month'):02d}-{appointment.get('day'):02d}T{appointment.get('start_time')}:00"
@@ -1614,7 +1619,7 @@ def get_latest_event_settings(request, document_id):
         for appointment in appointments:
             name = appointment.get('normalized_name', '')
             if name and name not in settings_by_beneficiary:
-                settings = event_settings.get(name, event_settings['DEFAULT'])
+                settings = get_event_settings_for_name(name, event_settings)
                 settings_by_beneficiary[name] = {
                     'colorId': settings.get('colorId', '1'),
                     'description': settings.get('description', ''),

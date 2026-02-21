@@ -13,7 +13,7 @@ from googleapiclient.discovery import build
 from googleapiclient.discovery_cache.base import Cache
 from googleapiclient.errors import HttpError
 
-from p2c.config import event_settings_data
+from p2c.config.event_settings import get_event_settings_for_name
 
 from ..models.beneficiary_event import BeneficiaryEvent
 
@@ -69,27 +69,12 @@ class CalendarService:
 
         name = event.get("name")
         logging.info(f"Looking up event settings for name: '{name}'")
-        event_settings = self.event_settings.get(name)
+        event_settings = get_event_settings_for_name(name, self.event_settings)
         logging.info(event_settings)
         logging.info("Available event settings: %s", self.event_settings)
 
-        # Try to find exact match first
         settings = event_settings
-        logging.info("Found settings for '%s': %s", name, settings)
-
-        # If no exact match, try to find a case-insensitive match
-        if not settings:
-            logging.info("No exact match found, trying case-insensitive match")
-            for key in self.event_settings:
-                if key.lower() == name.lower():
-                    settings = self.event_settings[key]
-                    logging.info("Found case-insensitive match: %s -> %s", name, key)
-                    break
-
-        # If still no match, use DEFAULT settings
-        if not settings:
-            logging.info("No match found, using DEFAULT settings")
-            settings = self.event_settings.get("DEFAULT", {})
+        logging.info("Resolved settings for '%s': %s", name, settings)
 
         return {
             "colorId": settings.get("colorId"),

@@ -9,6 +9,11 @@ from typing import Dict, List, Optional, Tuple
 import pandas as pd
 import pdfplumber
 
+from p2c.config.event_settings import (
+    get_event_settings_for_name,
+    resolve_event_settings_key,
+)
+
 
 class PDFParser(ABC):
     """Abstract base class for PDF parsers."""
@@ -230,16 +235,15 @@ class AuxiliadomPDFParser(PDFParser):
                             normalized_name = self._normalize_text(name_text)
 
                         # Look up event settings for this beneficiary
-                        settings = self.event_settings.get(
-                            normalized_name, self.event_settings.get("DEFAULT", {})
+                        matched_settings_key = resolve_event_settings_key(
+                            self.event_settings, normalized_name
+                        )
+                        settings = get_event_settings_for_name(
+                            normalized_name, self.event_settings
                         )
 
                         # Check if this is an unknown beneficiary
-                        if (
-                            normalized_name
-                            and normalized_name not in self.event_settings
-                            and normalized_name != ""
-                        ):
+                        if normalized_name and matched_settings_key is None:
                             # Check if we have details for this beneficiary from page 2
                             if normalized_name in beneficiary_details:
                                 details = beneficiary_details[normalized_name]

@@ -57,8 +57,8 @@
             <h2 class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-4">
                 {% trans "Processing..." %} </h2>
             {% for input in unprocessed_inputs %}
-            <div
-                class="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl p-4 flex items-center justify-between animate-pulse">
+            <div data-input-id="{{ input.id }}"
+                class="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl p-4 flex items-center justify-between animate-pulse processing-card">
                 <div class="flex items-center">
                     <div class="mr-4">
                         <span class="text-2xl">🧠</span>
@@ -68,7 +68,7 @@
                             {{ input.content|default:"(Image Input)"|truncatechars:80 }}
                         </p>
                         <p class="text-xs text-blue-600 dark:text-blue-400">
-                            {% trans "AI is transmuting your thought..." %} </p>
+                            {% trans "AI is processing your thought..." %} </p>
                     </div>
                 </div>
                 <div class="text-xs text-blue-400 dark:text-blue-500 local-time"
@@ -324,5 +324,182 @@
             el.textContent = date.toLocaleDateString(undefined, options);
         }
     });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i += 1) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === `${name}=`) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function showSuccess(inputId) {
+        const card = document.querySelector(`.processing-card[data-input-id="${inputId}"]`);
+        if (!card) {
+            return;
+        }
+
+        card.classList.remove('processing-card', 'animate-pulse');
+        card.innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/40 rounded-xl p-4 flex items-center">
+                <span class="text-2xl mr-4">✅</span>
+                <div>
+                    <p class="text-green-800 dark:text-green-300 font-medium">{% trans "Thought processed successfully!" %}</p>
+                    <p class="text-green-600 dark:text-green-400 text-sm">{% trans "Refreshing dashboard..." %}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    function showError(inputId) {
+        const card = document.querySelector(`.processing-card[data-input-id="${inputId}"]`);
+        if (!card) {
+            return;
+        }
+
+        card.classList.remove('processing-card', 'animate-pulse');
+        card.innerHTML = `
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/40 rounded-xl p-4 flex items-center">
+                <span class="text-2xl mr-4">❌</span>
+                <div>
+                    <p class="text-red-800 dark:text-red-300 font-medium">{% trans "Processing failed" %}</p>
+                    <p class="text-red-600 dark:text-red-400 text-sm">{% trans "Please try again" %}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    function showTimeoutState(inputId) {
+        const card = document.querySelector(`.processing-card[data-input-id="${inputId}"]`);
+        if (!card) {
+            return;
+        }
+
+        card.classList.remove('processing-card', 'animate-pulse');
+        card.innerHTML = `
+            <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/40 rounded-xl p-4 flex items-center">
+                <span class="text-2xl mr-4">⏳</span>
+                <div>
+                    <p class="text-amber-800 dark:text-amber-300 font-medium">{% trans "Still processing" %}</p>
+                    <p class="text-amber-700 dark:text-amber-400 text-sm">{% trans "Still processing. Refresh manually." %}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    const POLL_INTERVAL_MS = 3000;
+    const POLL_TIMEOUT_MS = 180000;
+
+    let pollInterval = null;
+    let pollInFlight = false;
+    let refreshScheduled = false;
+    let pollingExpired = false;
+    let pollStartedAt = null;
+    let pollTimeoutTimer = null;
+
+    function stopPolling() {
+        if (pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+        }
+        if (pollTimeoutTimer) {
+            clearTimeout(pollTimeoutTimer);
+            pollTimeoutTimer = null;
+        }
+    }
+
+    function expirePollingWithTimeoutState() {
+        if (pollingExpired || refreshScheduled) {
+            return;
+        }
+        pollingExpired = true;
+        stopPolling();
+
+        document.querySelectorAll('.processing-card[data-input-id]').forEach((card) => {
+            const inputId = Number(card.getAttribute('data-input-id'));
+            if (Number.isInteger(inputId)) {
+                showTimeoutState(inputId);
+            }
+        });
+    }
+
+    function checkProcessingStatus() {
+        if (pollingExpired) {
+            return;
+        }
+
+        const cards = document.querySelectorAll('.processing-card[data-input-id]');
+        if (cards.length === 0) {
+            stopPolling();
+            return;
+        }
+
+        if (pollStartedAt && Date.now() - pollStartedAt >= POLL_TIMEOUT_MS) {
+            expirePollingWithTimeoutState();
+            return;
+        }
+
+        if (pollInFlight) {
+            return;
+        }
+        pollInFlight = true;
+
+        const inputIds = Array.from(cards).map((card) => Number(card.getAttribute('data-input-id')))
+            .filter((value) => Number.isInteger(value));
+        const csrfToken = getCookie('csrftoken');
+
+        fetch('{% url "plexus:input_status" %}', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken || '',
+            },
+            body: JSON.stringify({ input_ids: inputIds }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Status check failed: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (pollingExpired) {
+                    return;
+                }
+
+                const processedIds = data.processed_ids || [];
+                const failedIds = data.failed_ids || [];
+
+                processedIds.forEach((inputId) => showSuccess(inputId));
+                failedIds.forEach((inputId) => showError(inputId));
+
+                if (!refreshScheduled && (processedIds.length > 0 || failedIds.length > 0)) {
+                    refreshScheduled = true;
+                    stopPolling();
+                    setTimeout(() => window.location.reload(), 2000);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                pollInFlight = false;
+            });
+    }
+
+    if (document.querySelectorAll('.processing-card[data-input-id]').length > 0) {
+        pollStartedAt = Date.now();
+        checkProcessingStatus();
+        pollInterval = setInterval(checkProcessingStatus, POLL_INTERVAL_MS);
+        pollTimeoutTimer = setTimeout(expirePollingWithTimeoutState, POLL_TIMEOUT_MS);
+    }
 </script>
 {% endblock %}

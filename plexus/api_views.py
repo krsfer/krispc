@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
 from plexus.models import Input, Thought, Action, ThoughtLink, Pattern, Reminder, Notification
@@ -116,6 +116,61 @@ class SyncView(APIView):
             # In a real app, we might return these errors in the response
             print(f"Sync Validation Error: {serializer.errors}")
 
+
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def input_status(request):
+    """
+    Check processing state for a list of Input IDs owned by the current user.
+    """
+    input_ids = request.data.get("input_ids", [])
+    if not isinstance(input_ids, list):
+        return Response(
+            {"processed_ids": [], "failed_ids": []},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    normalized_ids = []
+    failed_ids = []
+    for input_id in input_ids:
+        try:
+            normalized_ids.append(int(input_id))
+        except (TypeError, ValueError):
+            failed_ids.append(input_id)
+
+    inputs = Input.objects.filter(
+        id__in=normalized_ids,
+        user=request.user,
+    ).prefetch_related("thoughts")
+    inputs_by_id = {input_obj.id: input_obj for input_obj in inputs}
+
+    processed_ids = []
+    for input_id in normalized_ids:
+        input_obj = inputs_by_id.get(input_id)
+        if not input_obj:
+            failed_ids.append(input_id)
+            continue
+
+        if not input_obj.processed:
+            continue
+
+        thoughts = list(input_obj.thoughts.all())
+        has_processor_error = any(
+            "processor-error" in (thought.ai_model or "").lower()
+            for thought in thoughts
+        )
+        if has_processor_error:
+            failed_ids.append(input_id)
+        else:
+            processed_ids.append(input_id)
+
+    return Response(
+        {
+            "processed_ids": processed_ids,
+            "failed_ids": failed_ids,
+        }
+    )
+
 class PatternViewSet(viewsets.ModelViewSet):
     """
     ViewSet for interacting with Pattern data.
@@ -191,4 +246,3 @@ class MCPView(APIView):
             "description": "SecondBrain tools for thoughts and actions.",
             "documentation": f"{request.scheme}://{request.get_host()}/docs/mcp/"
         })
-

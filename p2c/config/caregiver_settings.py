@@ -1,6 +1,7 @@
 """Configuration for caregiver settings - persistent settings for caregivers."""
 import json
 import os
+import unicodedata
 from typing import Any, Dict
 
 # Path to the caregiver settings JSON file
@@ -20,6 +21,13 @@ AVAILABLE_COLOR_IDS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
 # Keys should be uppercase for matching
 NAME_CORRECTIONS = {
     "BASZCZOWSKI, STEPHANI": "BASZCZOWSKI, Stephanie",
+}
+
+# Canonical forms used when names differ only by accents.
+# Keys are accent-folded uppercase lookup keys.
+CANONICAL_NAME_EQUIVALENTS = {
+    "BASZCZOWSKI, STEPHANIE": "BASZCZOWSKI, Stephanie",
+    "MACINTOSH, THEO": "MACINTOSH, Theo",
 }
 
 
@@ -96,6 +104,43 @@ def get_all_caregiver_renames() -> Dict[str, str]:
     return load_caregiver_renames()
 
 
+def _strip_accents(value: str) -> str:
+    """Fold accented characters to ASCII equivalents for name matching."""
+    if not value:
+        return value
+    return "".join(
+        char
+        for char in unicodedata.normalize("NFD", value)
+        if unicodedata.category(char) != "Mn"
+    )
+
+
+def _name_lookup_key(name: str) -> str:
+    """Build accent-insensitive, case-insensitive key for caregiver name lookup."""
+    if not name:
+        return ""
+    clean_name = strip_duration_from_name(name).strip()
+    return _strip_accents(clean_name).upper()
+
+
+def _find_equivalent_key(
+    mapping: Dict[str, Any],
+    name: str,
+    ignored_keys: set | None = None,
+) -> str | None:
+    """Find a key in mapping matching name by accent-insensitive lookup."""
+    lookup_key = _name_lookup_key(name)
+    if not lookup_key:
+        return None
+    ignored = ignored_keys or set()
+    for key in mapping.keys():
+        if key in ignored:
+            continue
+        if _name_lookup_key(key) == lookup_key:
+            return key
+    return None
+
+
 def strip_duration_from_name(name: str) -> str:
     """Strip duration/numeric suffix from caregiver name.
 
@@ -134,19 +179,30 @@ def normalize_caregiver_name(name: str) -> str:
         return name
 
     # First strip any duration suffix
-    name = strip_duration_from_name(name)
-    name_upper = name.strip().upper()
+    name = strip_duration_from_name(name).strip()
+    name_upper = name.upper()
+    name_lookup_key = _name_lookup_key(name)
 
     # Check user-configured renames first (highest priority)
     renames = load_caregiver_renames()
     if name_upper in renames:
         return renames[name_upper]
+    equivalent_rename_key = _find_equivalent_key(renames, name)
+    if equivalent_rename_key:
+        return renames[equivalent_rename_key]
 
     # Check hardcoded corrections
     if name_upper in NAME_CORRECTIONS:
         return NAME_CORRECTIONS[name_upper]
+    equivalent_correction_key = _find_equivalent_key(NAME_CORRECTIONS, name)
+    if equivalent_correction_key:
+        return NAME_CORRECTIONS[equivalent_correction_key]
 
-    return name.strip()
+    # Canonicalize known accent-equivalent names
+    if name_lookup_key in CANONICAL_NAME_EQUIVALENTS:
+        return CANONICAL_NAME_EQUIVALENTS[name_lookup_key]
+
+    return name
 
 
 def load_caregiver_settings() -> Dict[str, Dict[str, Any]]:
@@ -227,15 +283,16 @@ def get_or_assign_caregiver_setting(caregiver_name: str) -> Dict[str, Any]:
     if not caregiver_name:
         return {}
 
-    # Strip duration and normalize name to title case for consistent matching
-    clean_name = strip_duration_from_name(caregiver_name)
-    normalized_name = clean_name.strip().title()
+    normalized_name = normalize_caregiver_name(caregiver_name)
+    if not normalized_name:
+        return {}
 
     settings = load_caregiver_settings()
 
     # Check if caregiver already has a setting
-    if normalized_name in settings:
-        return settings[normalized_name]
+    existing_key = _find_equivalent_key(settings, normalized_name)
+    if existing_key:
+        return settings[existing_key]
 
     # Assign a new setting
     new_color = get_next_available_color(settings)
@@ -280,24 +337,21 @@ def get_caregiver_settings_for_names(
         if not name:
             continue
 
-        # Strip duration and normalize for consistent color lookup
-        clean_name = strip_duration_from_name(name)
-        normalized_name = clean_name.strip().title()
+        normalized_name = normalize_caregiver_name(name)
+        if not normalized_name:
+            continue
 
         # Check event_settings (Beneficiary Settings) for colorId first
         event_color_id = None
-        # Try exact match
-        if clean_name in event_settings:
-            event_color_id = event_settings[clean_name].get("colorId")
-        else:
-            # Try case-insensitive match
-            for key, evt_setting in event_settings.items():
-                if key.title() == normalized_name:
-                    event_color_id = evt_setting.get("colorId")
-                    break
+        event_key = _find_equivalent_key(
+            event_settings, normalized_name, ignored_keys={"DEFAULT"}
+        )
+        if event_key:
+            event_color_id = event_settings[event_key].get("colorId")
 
-        if normalized_name in settings:
-            setting_copy = dict(settings[normalized_name])
+        settings_key = _find_equivalent_key(settings, normalized_name)
+        if settings_key:
+            setting_copy = dict(settings[settings_key])
             # Override colorId from event_settings if available
             if event_color_id:
                 setting_copy["colorId"] = event_color_id
@@ -345,24 +399,13 @@ def get_caregiver_colors_for_names(caregiver_names: list) -> Dict[str, str]:
         if not name:
             continue
 
-        # Strip duration and normalize for lookup
-        clean_name = strip_duration_from_name(name)
-
-        # Try exact match first in event_settings
-        if clean_name in event_settings:
-            result[name] = event_settings[clean_name].get("colorId", "1")
-            continue
-
-        # Try uppercase match
-        name_upper = clean_name.strip().title()
-        found = False
-        for key, settings in event_settings.items():
-            if key.title() == name_upper:
-                result[name] = settings.get("colorId", "1")
-                found = True
-                break
-
-        if not found:
+        normalized_name = normalize_caregiver_name(name)
+        event_key = _find_equivalent_key(
+            event_settings, normalized_name, ignored_keys={"DEFAULT"}
+        )
+        if event_key:
+            result[name] = event_settings[event_key].get("colorId", "1")
+        else:
             names_needing_fallback.append(name)
 
     # Fallback to caregiver_settings for names not found in event_settings

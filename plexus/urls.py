@@ -9,7 +9,8 @@ from .views import (
 )
 from .api_views import (
     InputViewSet, ThoughtViewSet, ActionViewSet, SyncView, PatternViewSet, 
-    ReminderViewSet, NotificationViewSet, ServicesView, PricelistView, MCPView
+    ReminderViewSet, NotificationViewSet, ServicesView, PricelistView, MCPView,
+    input_status,
 )
 from .api_views_experimental import DynamicViewGenerator
 from .guest_views import GuestLoginView
@@ -46,6 +47,7 @@ api_urls = [
     path("api/v1/ingest/", IngestAPIView.as_view(), name="ingest"),
     path("api/v1/capture/voice/", VoiceCaptureView.as_view(), name="voice_capture"),
     path("api/v1/sync/", SyncView.as_view(), name="sync"),
+    path("api/inputs/status/", input_status, name="input_status"),
     
     # Experimental (2026 Trends)
     path("api/v1/generate-view/", DynamicViewGenerator.as_view(), name="generate_view"),
