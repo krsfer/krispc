@@ -66,6 +66,8 @@ Plexus is integrated into this base, providing:
    - `DATABASE_URL`
    - `REDIS_URL`
    - `GEMINI_API_KEY` (for Plexus)
+   - `TURNSTILE_SITEKEY` / `TURNSTILE_SECRET` (required in production for SAS)
+   - `SAS_IPINFO_TOKEN` (required in production for SAS access analytics)
    - `FLY_APP` (if deploying to Fly.io)
 
 5. **Run Migrations:**

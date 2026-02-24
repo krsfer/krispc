@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SAS File Download</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            background: #f6f7fb;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 760px;
+            margin: 40px auto;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+        }
+        h1, h2 {
+            margin-top: 0;
+        }
+        .card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .muted {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+        .btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #0f766e;
+            color: #fff;
+        }
+        .btn-secondary {
+            background: #374151;
+            color: #fff;
+        }
+        .messages {
+            margin-bottom: 14px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #ecfeff;
+            border: 1px solid #99f6e4;
+        }
+    </style>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+<main class="container">
+    <h1>SAS download</h1>
+    <p class="muted">Public file access is limited to two successful downloads.</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <section class="card">
+        <h2>Download</h2>
+        {% if active_share %}
+            <p><strong>Filename:</strong> {{ active_share.file.name }}</p>
+            <p><strong>Caption:</strong> {{ active_share.caption|default:"-" }}</p>
+            <p><strong>Remaining downloads:</strong> {{ active_share.remaining_downloads }}</p>
+
+            {% if active_share.can_download %}
+                <form method="post" action="{% url 'sas:download' active_share.pk %}">
+                    {% csrf_token %}
+                    {{ download_form.turnstile }}
+                    {% if download_form.errors %}
+                        <p class="muted">{{ download_form.errors }}</p>
+                    {% endif %}
+                    <button class="btn btn-primary" type="submit">Download file</button>
+                </form>
+            {% else %}
+                <p><strong>Download limit reached.</strong></p>
+            {% endif %}
+        {% else %}
+            <p>No file available right now.</p>
+        {% endif %}
+    </section>
+
+    {% if upload_form %}
+        <section class="card">
+            <h2>Upload (admin)</h2>
+            <form method="post" enctype="multipart/form-data" action="{% url 'sas:upload' %}">
+                {% csrf_token %}
+                <div>
+                    <label for="{{ upload_form.file.id_for_label }}">File</label>
+                    {{ upload_form.file }}
+                </div>
+                <div style="margin-top: 12px;">
+                    <label for="{{ upload_form.caption.id_for_label }}">Caption</label>
+                    {{ upload_form.caption }}
+                </div>
+                {% if upload_form.errors %}
+                    <p class="muted">{{ upload_form.errors }}</p>
+                {% endif %}
+                <button class="btn btn-secondary" style="margin-top: 12px;" type="submit">Upload</button>
+            </form>
+        </section>
+    {% endif %}
+</main>
+</body>
+</html>

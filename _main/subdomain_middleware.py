@@ -9,7 +9,8 @@ class SubdomainRoutingMiddleware:
             'krispc': 'com', # App 'krispc' -> Subdomain 'com'
             'p2c': 'p2c',
             'plexus': 'plexus',
-            'emo': 'emo'
+            'emo': 'emo',
+            'sas': 'sas',
         }
 
     def __call__(self, request):
@@ -61,12 +62,14 @@ class SubdomainRoutingMiddleware:
             request.urlconf = '_main.subdomains.plexus'
         elif current_subdomain == 'emo':
             request.urlconf = '_main.subdomains.emo'
+        elif current_subdomain == 'sas':
+            request.urlconf = '_main.subdomains.sas'
         
         # 2. Cross-Domain Redirect Logic
         # Detect if we are accessing a "Shadow App" path (e.g., /p2c/ on Hub subdomain)
         # Regex matches: /hub/, /en/hub/, /fr/p2c/, etc.
         path = request.path_info
-        match = re.match(r'^/(?:[a-z]{2}/)?(hub|krispc|p2c|plexus|emo)/', path)
+        match = re.match(r'^/(?:[a-z]{2}/)?(hub|krispc|p2c|plexus|emo|sas)/', path)
         
         if match:
             target_app = match.group(1)

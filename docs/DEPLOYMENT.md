@@ -81,6 +81,9 @@ npm ci  # Use 'ci' instead of 'install' for deterministic builds
 DEBUG=False
 SECRET_KEY=your-secure-secret-key-here
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+TURNSTILE_SITEKEY=your-turnstile-sitekey
+TURNSTILE_SECRET=your-turnstile-secret
+SAS_IPINFO_TOKEN=your-ipinfo-token
 
 # Database (SQLite by default, no configuration needed)
 # Optional: Override with DATABASE_URL if needed
@@ -100,6 +103,11 @@ SECURE_HSTS_PRELOAD=True
 
 # Vite/Django integration
 DJANGO_VITE_DEV_MODE=False
+
+# Optional Redis mTLS files (if your Redis provider requires client certs)
+# REDIS_CA_CERT_PATH=/path/to/redis_ca.pem
+# REDIS_CLIENT_CERT_PATH=/path/to/client.crt
+# REDIS_CLIENT_KEY_PATH=/path/to/client.key
 ```
 
 **Update `_main/settings.py` for production:**

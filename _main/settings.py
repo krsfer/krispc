@@ -19,12 +19,14 @@ import dj_database_url
 import semver
 
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ImproperlyConfigured
 import environ
+from _main.secret_utils import require_secret, validate_redis_mtls_env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'), override=True)
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"), override=False)
 
 # Log the loaded Redis URL (masked) for debugging
 redis_url = os.environ.get('REDIS_URL', 'Not Set')
@@ -63,12 +65,14 @@ DEFAULT_KRISPC_BASE_URL = "https://com.krispc.fr" if IS_PRODUCTION else "http://
 DEFAULT_P2C_BASE_URL = "https://p2c.krispc.fr" if IS_PRODUCTION else "http://p2c.localhost:8000"
 DEFAULT_PLEXUS_BASE_URL = "https://plexus.krispc.fr" if IS_PRODUCTION else "http://plexus.localhost:8000"
 DEFAULT_EMO_BASE_URL = "https://emo.krispc.fr" if IS_PRODUCTION else "http://emo.localhost:8000"
+DEFAULT_SAS_BASE_URL = "https://sas.krispc.fr" if IS_PRODUCTION else "http://sas.localhost:8000"
 
 HUB_BASE_URL = env("HUB_BASE_URL", default=DEFAULT_HUB_BASE_URL).rstrip("/")
 KRISPC_BASE_URL = env("KRISPC_BASE_URL", default=DEFAULT_KRISPC_BASE_URL).rstrip("/")
 P2C_BASE_URL = env("P2C_BASE_URL", default=DEFAULT_P2C_BASE_URL).rstrip("/")
 PLEXUS_BASE_URL = env("PLEXUS_BASE_URL", default=DEFAULT_PLEXUS_BASE_URL).rstrip("/")
 EMO_BASE_URL = env("EMO_BASE_URL", default=DEFAULT_EMO_BASE_URL).rstrip("/")
+SAS_BASE_URL = env("SAS_BASE_URL", default=DEFAULT_SAS_BASE_URL).rstrip("/")
 
 CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "https://krispc.fr",
@@ -78,12 +82,14 @@ CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "https://p2c.krispc.fr",
     "https://plexus.krispc.fr",
     "https://emo.krispc.fr",
+    "https://sas.krispc.fr",
     "https://pdf2cal.fly.dev",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://plexus.localhost:8000",
     "http://hub.localhost:8000",
     "http://www.localhost:8000",
+    "http://sas.localhost:8000",
 ])
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
@@ -133,6 +139,7 @@ CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
     "https://p2c.krispc.fr",
     "https://plexus.krispc.fr",
     "https://emo.krispc.fr",
+    "https://sas.krispc.fr",
     "http://localhost:3000",
     "http://localhost:5173",
 ])
@@ -184,12 +191,20 @@ INSTALLED_APPS = [
     "analytics",
     "plexus.apps.PlexusConfig",
     "emoty",
+    "sas",
 
     "rest_framework",
     "drf_spectacular",
     "django_filters",
     "corsheaders",
 ]
+
+try:
+    import turnstile  # noqa: F401
+except Exception:
+    pass
+else:
+    INSTALLED_APPS.append("turnstile")
 
 ASGI_APPLICATION = '_main.asgi.application'
 WSGI_APPLICATION = '_main.wsgi.application'
@@ -206,11 +221,25 @@ DJANGO_VITE = {
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 
-REDIS_CA_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis_ca.pem')
-REDIS_CLIENT_CERT_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.crt')
-REDIS_CLIENT_KEY_PATH = os.path.join(BASE_DIR, 'redis_remote_cert', 'redis-db-12916440-client-certificate', 'redis-db-12916440.key')
+REDIS_CA_CERT_PATH, REDIS_CLIENT_CERT_PATH, REDIS_CLIENT_KEY_PATH = validate_redis_mtls_env()
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "hello@krispc.fr")
+SAS_ACCESS_EMAIL = os.environ.get("SAS_ACCESS_EMAIL", "archer.chris@gmail.com")
+SAS_IPINFO_TOKEN = require_secret(
+    "SAS_IPINFO_TOKEN",
+    is_production=IS_PRODUCTION,
+    dev_default="",
+)
+TURNSTILE_SITEKEY = require_secret(
+    "TURNSTILE_SITEKEY",
+    is_production=IS_PRODUCTION,
+    dev_default="1x00000000000000000000AA",
+)
+TURNSTILE_SECRET = require_secret(
+    "TURNSTILE_SECRET",
+    is_production=IS_PRODUCTION,
+    dev_default="1x0000000000000000000000000000000AA",
+)
 
 
 if DEBUG:
@@ -229,29 +258,30 @@ else:
     
     if REDIS_URL.startswith("rediss://"):
         try:
-            print(f"Configuring Redis SSL with certs at: {REDIS_CA_CERT_PATH}")
-            if os.path.exists(REDIS_CA_CERT_PATH):
-                print(f"CA Cert found.")
-            else:
-                print(f"ERROR: CA Cert NOT found at {REDIS_CA_CERT_PATH}")
+            if REDIS_CA_CERT_PATH and REDIS_CLIENT_CERT_PATH and REDIS_CLIENT_KEY_PATH:
+                for path in (REDIS_CA_CERT_PATH, REDIS_CLIENT_CERT_PATH, REDIS_CLIENT_KEY_PATH):
+                    if not os.path.exists(path):
+                        raise ImproperlyConfigured(
+                            f"Redis mTLS file does not exist: {path}. "
+                            "Set REDIS_*_PATH env vars to valid file paths."
+                        )
 
-            # Create SSL Context manually to ensure it's valid
-            ssl_context = ssl.create_default_context(cafile=REDIS_CA_CERT_PATH)
-            ssl_context.load_cert_chain(certfile=REDIS_CLIENT_CERT_PATH, keyfile=REDIS_CLIENT_KEY_PATH)
-            ssl_context.check_hostname = False # Relax check for Redis Cloud if needed
-            ssl_context.verify_mode = ssl.CERT_REQUIRED
-            
-            # Pass the context. Note: redis-py uses 'ssl' or 'ssl_context' depending on version/path
-            # For channels_redis (redis-py), passing ssl_context via kwargs to from_url works
-            channel_layer_config['hosts'] = [{
-                'address': REDIS_URL,
-                'ssl_context': ssl_context
-            }]
-            print("Redis SSL Context created successfully.")
+                ssl_context = ssl.create_default_context(cafile=REDIS_CA_CERT_PATH)
+                ssl_context.load_cert_chain(certfile=REDIS_CLIENT_CERT_PATH, keyfile=REDIS_CLIENT_KEY_PATH)
+                ssl_context.check_hostname = False
+                ssl_context.verify_mode = ssl.CERT_REQUIRED
+
+                channel_layer_config['hosts'] = [{
+                    'address': REDIS_URL,
+                    'ssl_context': ssl_context
+                }]
+                print("Redis SSL Context created successfully with mTLS certs.")
+            else:
+                print("Redis SSL enabled without mTLS client certs (REDIS_*_PATH not configured).")
         except Exception as e:
+            if IS_PRODUCTION:
+                raise
             print(f"Error creating Redis SSL Context: {e}")
-            # Fallback to default (might fail connection but won't crash startup immediately)
-            pass
 
     CHANNEL_LAYERS = {
         'default': {
@@ -473,10 +503,13 @@ if DEBUG:
 if REDIS_URL and REDIS_URL.startswith("rediss://"):
     CELERY_BROKER_USE_SSL = {
         'ssl_cert_reqs': ssl.CERT_REQUIRED,
-        'ssl_ca_certs': REDIS_CA_CERT_PATH,
-        'ssl_certfile': REDIS_CLIENT_CERT_PATH,
-        'ssl_keyfile': REDIS_CLIENT_KEY_PATH,
     }
+    if REDIS_CA_CERT_PATH and REDIS_CLIENT_CERT_PATH and REDIS_CLIENT_KEY_PATH:
+        CELERY_BROKER_USE_SSL.update({
+            'ssl_ca_certs': REDIS_CA_CERT_PATH,
+            'ssl_certfile': REDIS_CLIENT_CERT_PATH,
+            'ssl_keyfile': REDIS_CLIENT_KEY_PATH,
+        })
     CELERY_REDIS_BACKEND_USE_SSL = CELERY_BROKER_USE_SSL
 
 # Celery Beat Schedule for periodic tasks

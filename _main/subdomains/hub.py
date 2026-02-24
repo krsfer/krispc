@@ -22,6 +22,7 @@ urlpatterns += i18n_patterns(
     path('krispc/', include('krispc.urls')),
     path('p2c/', include('p2c.urls')),
     path('plexus/', include('plexus.urls')),
+    path('sas/', include('sas.urls')),
     path('emo/developers/', include('emoty.urls')),
     
     # Shared

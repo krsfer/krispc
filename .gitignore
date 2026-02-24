@@ -16,6 +16,7 @@ db.sqlite3
 
 # Media files (user uploads)
 media/
+redis_remote_cert/
 
 # macOS files
 .DS_Store

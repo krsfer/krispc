@@ -20,6 +20,7 @@ urlpatterns += i18n_patterns(
     path('hub/', include(('hub.urls', 'hub'), namespace='hub')),
     path('krispc/', include(('krispc.urls', 'krispc'), namespace='krispc')),
     path('plexus/', include(('plexus.urls', 'plexus'), namespace='plexus')),
+    path('sas/', include(('sas.urls', 'sas'), namespace='sas')),
     path("docs/mcp/", krispc.views.MCPDocsView.as_view(), name="mcp-docs"),
     
     # Shared
