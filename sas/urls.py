@@ -7,5 +7,5 @@ app_name = "sas"
 urlpatterns = [
     path("", views.index, name="index"),
     path("upload/", views.upload, name="upload"),
-    path("download/<int:share_id>/", views.download, name="download"),
+    path("download/<uuid:share_uuid>/", views.download, name="download"),
 ]

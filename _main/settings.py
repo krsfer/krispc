@@ -17,6 +17,7 @@ import ssl
 
 import dj_database_url
 import semver
+from celery.schedules import crontab
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
@@ -230,6 +231,21 @@ SAS_IPINFO_TOKEN = require_secret(
     is_production=IS_PRODUCTION,
     dev_default="",
 )
+SAS_IPINFO_TIMEOUT_SECONDS = int(os.environ.get("SAS_IPINFO_TIMEOUT_SECONDS", "2"))
+SAS_TURNSTILE_EXPECTED_ACTION = os.environ.get("SAS_TURNSTILE_EXPECTED_ACTION", "sas_download")
+SAS_TURNSTILE_EXPECTED_HOSTNAMES = env.list(
+    "SAS_TURNSTILE_EXPECTED_HOSTNAMES",
+    default=["sas.krispc.fr", "sas.localhost"],
+)
+SAS_TRUST_CF_CONNECTING_IP = os.environ.get("SAS_TRUST_CF_CONNECTING_IP", "false").lower() in (
+    "1",
+    "true",
+    "yes",
+)
+SAS_TRUSTED_PROXY_IPS = env.list("SAS_TRUSTED_PROXY_IPS", default=[])
+SAS_RATE_LIMIT_REQUESTS = int(os.environ.get("SAS_RATE_LIMIT_REQUESTS", "5"))
+SAS_RATE_LIMIT_WINDOW_SECONDS = int(os.environ.get("SAS_RATE_LIMIT_WINDOW_SECONDS", "60"))
+SAS_RATE_LIMIT_CACHE_ALIAS = os.environ.get("SAS_RATE_LIMIT_CACHE_ALIAS", "default")
 TURNSTILE_SITEKEY = require_secret(
     "TURNSTILE_SITEKEY",
     is_production=IS_PRODUCTION,
@@ -458,14 +474,11 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 
 WHITENOISE_MANIFEST_STRICT = False
 
-# Configure caching - use in-memory cache for all environments
-# Note: Redis Cloud requires mTLS (client certificates) which django_redis doesn't support well.
-# Celery uses redis-py directly which does support mTLS.
-# For caching, we use in-memory cache which is sufficient for single-instance deployments.
+# Configure caching - Redis-backed to support shared state (SAS rate limiting).
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "unique-snowflake",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
     }
 }
 
@@ -517,6 +530,14 @@ CELERY_BEAT_SCHEDULE = {
     'check-due-reminders': {
         'task': 'plexus.tasks.check_due_reminders',
         'schedule': 60.0,  # every 60 seconds
+    },
+    "sas-purge-old-access-logs": {
+        "task": "sas.tasks.purge_old_access_logs",
+        "schedule": crontab(minute=15, hour=3),
+    },
+    "sas-vacuum-sqlite-database": {
+        "task": "sas.tasks.vacuum_sqlite_database",
+        "schedule": crontab(minute=0, hour=4, day_of_week="sun"),
     },
 }
 

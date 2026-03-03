@@ -5,10 +5,10 @@ from sas.models import SasAccessLog, SasFile
 
 @admin.register(SasFile)
 class SasFileAdmin(admin.ModelAdmin):
-    list_display = ("id", "caption", "download_count", "is_active", "created_at")
+    list_display = ("id", "download_uuid", "caption", "download_count", "is_active", "created_at")
     list_filter = ("is_active", "created_at")
     search_fields = ("caption", "file")
-    readonly_fields = ("download_count", "created_at", "updated_at")
+    readonly_fields = ("download_uuid", "download_count", "created_at", "updated_at")
 
     def save_model(self, request, obj, form, change):
         if not obj.pk:
@@ -34,7 +34,14 @@ class SasAccessLogAdmin(admin.ModelAdmin):
         "path",
         "was_allowed",
         "reason",
+        "turnstile_success",
+        "turnstile_error_codes",
+        "turnstile_hostname",
+        "turnstile_action",
         "geo_latitude",
         "geo_longitude",
         "geo_payload",
+        "ipinfo_error",
+        "email_sent",
+        "email_error",
     )

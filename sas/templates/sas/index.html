@@ -89,12 +89,20 @@
             <p><strong>Remaining downloads:</strong> {{ active_share.remaining_downloads }}</p>
 
             {% if active_share.can_download %}
-                <form method="post" action="{% url 'sas:download' active_share.pk %}">
+                <form method="post" action="{% url 'sas:download' active_share.download_uuid %}">
                     {% csrf_token %}
-                    {{ download_form.turnstile }}
+                    <div
+                        class="cf-turnstile"
+                        data-sitekey="{{ turnstile_sitekey }}"
+                        data-action="{{ turnstile_action }}"
+                    ></div>
                     {% if download_form.errors %}
                         <p class="muted">{{ download_form.errors }}</p>
                     {% endif %}
+                    <p class="muted">
+                        Cloudflare Turnstile is used for anti-abuse checks. We process your IP and approximate location
+                        (via IPinfo) for access control and admin alerting.
+                    </p>
                     <button class="btn btn-primary" type="submit">Download file</button>
                 </form>
             {% else %}
