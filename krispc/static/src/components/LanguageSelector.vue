@@ -3,7 +3,7 @@
     <!-- Current Language Button -->
     <button
       @click="isOpen = !isOpen"
-      class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+      class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 hover:border-primary hover:bg-gray-50 transition-colors"
       :aria-expanded="isOpen"
       aria-label="Select language"
     >
@@ -13,7 +13,7 @@
         class="w-8 h-6 object-contain"
       />
       <svg
-        class="w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform"
+        class="w-4 h-4 text-gray-500 transition-transform"
         :class="{ 'rotate-180': isOpen }"
         fill="none"
         stroke="currentColor"
@@ -27,14 +27,14 @@
     <transition name="dropdown">
       <div
         v-if="isOpen"
-        class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+        class="absolute right-0 mt-2 w-48 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden z-50"
         @click.stop
       >
         <a
           v-for="lang in availableLanguages"
           :key="lang.code"
           :href="getLanguageUrl(lang.code)"
-          class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
           :class="{ 'bg-primary/10': lang.code === currentLanguage.code }"
           @click="isOpen = false"
         >
@@ -43,7 +43,7 @@
             :alt="`${lang.name} flag`"
             class="w-8 h-6 object-contain"
           />
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span class="text-sm font-medium text-gray-700">
             {{ lang.name }}
           </span>
           <svg

@@ -1,21 +1,22 @@
 <template>
-  <section id="contact" class="py-20 bg-white dark:bg-gray-900">
+  <section id="contact" class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Section Header -->
       <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          {{ contactTitle }}
+        <p class="text-xs uppercase tracking-[0.35em] text-gray-500 font-semibold">KrisPC</p>
+        <h2 class="mt-3 text-4xl md:text-5xl font-brand text-gray-900 mb-4">
+          {{ contactTitle }}<span class="text-primary">.</span>
         </h2>
-        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
           {{ contactSubtitle }}
         </p>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="max-w-2xl mx-auto space-y-6">
+      <form @submit.prevent="handleSubmit" class="max-w-3xl mx-auto space-y-6 rounded-3xl border border-gray-200 bg-white p-6 sm:p-8">
         <!-- Name Fields -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label for="firstname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label for="firstname" class="block text-sm font-medium text-gray-700 mb-2">
               {{ firstNameLabel }} <span class="text-red-500">{{ requiredLabel }}</span>
             </label>
             <input
@@ -23,7 +24,7 @@
               v-model="form.firstname"
               type="text"
               required
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
               :class="{ 'border-red-500': errors.firstname }"
             />
             <span v-if="errors.firstname" class="text-red-500 text-sm mt-1 block">
@@ -32,21 +33,21 @@
           </div>
 
           <div>
-            <label for="surname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label for="surname" class="block text-sm font-medium text-gray-700 mb-2">
               {{ lastNameLabel }}
             </label>
             <input
               id="surname"
               v-model="form.surname"
               type="text"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
             />
           </div>
         </div>
 
         <!-- Email Field -->
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
             {{ emailLabel }} <span class="text-red-500">{{ requiredLabel }}</span>
           </label>
           <input
@@ -54,7 +55,7 @@
             v-model="form.email"
             type="email"
             required
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
             :class="{ 'border-red-500': errors.email }"
           />
           <span v-if="errors.email" class="text-red-500 text-sm mt-1 block">
@@ -64,7 +65,7 @@
 
         <!-- Message Field -->
         <div>
-          <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
             {{ messageLabel }} <span class="text-red-500">{{ requiredLabel }}</span>
           </label>
           <textarea
@@ -72,7 +73,7 @@
             v-model="form.message"
             rows="5"
             required
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+            class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors resize-none"
             :class="{ 'border-red-500': errors.message }"
           ></textarea>
           <span v-if="errors.message" class="text-red-500 text-sm mt-1 block">
@@ -84,7 +85,7 @@
         <button
           type="submit"
           :disabled="loading"
-          class="w-full px-8 py-4 bg-primary text-white rounded-lg hover:bg-primary-dark transform hover:scale-105 transition-all shadow-lg hover:shadow-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          class="w-full inline-flex justify-center items-center h-12 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span v-if="!loading">{{ sendLabel }}</span>
           <span v-else class="flex items-center justify-center gap-2">
@@ -101,7 +102,7 @@
         <transition name="fade">
           <div
             v-if="success"
-            class="p-4 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg border border-green-200 dark:border-green-700"
+            class="p-4 rounded-xl border border-green-200 bg-green-50 text-green-700"
           >
             {{ success }}
           </div>
@@ -111,7 +112,7 @@
         <transition name="fade">
           <div
             v-if="errors.general"
-            class="p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-700"
+            class="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700"
           >
             {{ errors.general }}
           </div>

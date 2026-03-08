@@ -141,16 +141,16 @@
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="fr"
-                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
                                         FR
                                     </button>
                                 </form>
-                                <span class="text-stone-300">|</span>
+                                <span class="text-gray-300">|</span>
                                 <form action="{{ lang_action }}" method="post">
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="en"
-                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
                                         EN
                                     </button>
                                 </form>
@@ -162,16 +162,16 @@
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="fr"
-                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
                                         FR
                                     </button>
                                 </form>
-                                <span class="text-stone-300">|</span>
+                                <span class="text-gray-300">|</span>
                                 <form action="{{ lang_action }}" method="post">
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="en"
-                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
+                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
                                         EN
                                     </button>
                                 </form>

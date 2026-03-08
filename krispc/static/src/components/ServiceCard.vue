@@ -1,27 +1,24 @@
 <template>
   <div
-    class="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer"
+    class="group h-full rounded-2xl border border-gray-200 bg-white transition-colors duration-200 cursor-pointer hover:border-primary"
     @click="$emit('click', service)"
   >
     <div class="p-6">
       <!-- Icon Circle -->
-      <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-        <component :is="service.icon" class="w-8 h-8 text-white" />
+      <div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+        <component :is="service.icon" class="w-8 h-8 text-primary" />
       </div>
 
       <!-- Service Name -->
-      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+      <h3 class="text-xl font-semibold text-gray-900 mb-3">
         {{ service.name }}
       </h3>
 
       <!-- Service Description -->
-      <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
+      <p class="text-sm leading-6 text-gray-600 line-clamp-3">
         {{ service.description }}
       </p>
     </div>
-
-    <!-- Hover Gradient Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
   </div>
 </template>
 

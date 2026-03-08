@@ -1,28 +1,30 @@
 <template>
-  <section class="relative min-h-[60vh] md:min-h-screen flex items-start md:items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-    <!-- Animated background shapes -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-      <div class="absolute -bottom-1/2 -left-1/2 w-full h-full bg-gradient-to-tr from-accent/20 to-transparent rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
-    </div>
-
-    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center pt-12 md:pt-16">
-      <h1 class="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-primary to-accent bg-clip-text text-transparent dark:from-gray-100 dark:via-primary dark:to-accent">
-        {{ heroTitle }}
-      </h1>
-      <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto" v-html="heroSubtitle">
-      </p>
-      <div class="text-sm text-gray-600 dark:text-gray-400 mb-8 space-y-1">
-        <p>{{ heroNote1 }}</p>
-        <p>{{ heroNote2 }}</p>
-      </div>
-      <div class="flex flex-wrap gap-4 justify-center">
-        <a href="#contact" class="px-8 py-4 bg-primary text-white rounded-full hover:bg-primary-dark transform hover:scale-105 transition-all shadow-lg hover:shadow-xl font-medium">
-          Contact
-        </a>
-        <a href="#services" class="px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-full hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors font-medium">
-          {{ servicesButtonLabel }}
-        </a>
+  <section id="home" class="bg-gray-50 pt-28 pb-16 md:pt-32 md:pb-24">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="rounded-3xl border border-gray-200 bg-white p-8 sm:p-12 text-center">
+        <p class="text-xs uppercase tracking-[0.35em] text-gray-500 font-semibold">KrisPC</p>
+        <h1 class="mt-4 text-4xl sm:text-5xl md:text-6xl font-brand text-gray-900">
+          {{ heroTitle }}<span class="text-primary">.</span>
+        </h1>
+        <p class="mt-4 text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto" v-html="heroSubtitle"></p>
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-600">
+          <span class="inline-flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-primary"></span>
+            {{ heroNote1 }}
+          </span>
+          <span class="inline-flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-primary"></span>
+            {{ heroNote2 }}
+          </span>
+        </div>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="#contact" class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors">
+            Contact
+          </a>
+          <a href="#services" class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-gray-700 bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors">
+            {{ servicesButtonLabel }}
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -40,18 +42,3 @@ const heroNote1 = computed(() => translations.value.hero?.note1 || '')
 const heroNote2 = computed(() => translations.value.hero?.note2 || '')
 const servicesButtonLabel = computed(() => translations.value.sections?.services_title || 'Our Services')
 </script>
-
-<style scoped>
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 6s ease-in-out infinite;
-}
-</style>

@@ -1,12 +1,13 @@
 <template>
-  <section id="services" class="py-20 bg-gray-50 dark:bg-gray-800">
+  <section id="services" class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Section Header -->
       <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          {{ sectionTitle }}
+        <p class="text-xs uppercase tracking-[0.35em] text-gray-500 font-semibold">KrisPC</p>
+        <h2 class="mt-3 text-4xl md:text-5xl font-brand text-gray-900 mb-4">
+          {{ sectionTitle }}<span class="text-primary">.</span>
         </h2>
-        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
           <!-- Subtitle can be added to translations if needed -->
         </p>
       </div>

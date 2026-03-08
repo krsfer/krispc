@@ -3,13 +3,13 @@
     <transition name="modal">
       <div
         v-if="modelValue"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40"
         @click.self="close"
         @keydown.esc="close"
         tabindex="0"
       >
         <div
-          class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl"
+          class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-gray-200 bg-white shadow-sm"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="modalTitleId"
@@ -17,30 +17,30 @@
           <!-- Close Button -->
           <button
             @click="close"
-            class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10"
+            class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors z-10"
             aria-label="Close modal"
           >
-            <XMarkIcon class="w-6 h-6 text-gray-500 dark:text-gray-400" />
+            <XMarkIcon class="w-6 h-6 text-gray-500" />
           </button>
 
           <!-- Modal Content -->
           <div class="p-8">
             <!-- Icon -->
-            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-6">
-              <component :is="service?.icon" class="w-10 h-10 text-white" />
+            <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+              <component :is="service?.icon" class="w-10 h-10 text-primary" />
             </div>
 
             <!-- Title -->
             <h2
               :id="modalTitleId"
-              class="text-3xl font-bold text-gray-900 dark:text-white mb-4"
+              class="text-3xl font-brand text-gray-900 mb-4"
             >
               {{ service?.name }}
             </h2>
 
             <!-- Full Description -->
-            <div class="prose dark:prose-invert max-w-none">
-              <p class="text-gray-600 dark:text-gray-300 text-lg mb-6">
+            <div class="prose max-w-none">
+              <p class="text-lg leading-8 text-gray-600 mb-6">
                 {{ service?.description }}
               </p>
 
@@ -49,7 +49,7 @@
                    which is sanitized on the backend. Do not use with user-generated content. -->
               <div
                 v-if="service?.details"
-                class="text-gray-700 dark:text-gray-300"
+                class="text-gray-700"
                 v-html="service.details"
               ></div>
             </div>
@@ -59,9 +59,9 @@
               <a
                 href="#contact"
                 @click="close"
-                class="inline-block px-8 py-4 bg-primary text-white rounded-full hover:bg-primary-dark transform hover:scale-105 transition-all shadow-lg hover:shadow-xl font-medium"
+                class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors"
               >
-                Get Started
+                {{ contactLabel }}
               </a>
             </div>
           </div>
@@ -90,6 +90,7 @@ const emit = defineEmits(['update:modelValue'])
 
 // Generate stable ID for aria-labelledby
 const modalTitleId = computed(() => `service-modal-title-${props.service?.id || 'default'}`)
+const contactLabel = computed(() => window.DJANGO_DATA?.translations?.nav?.contact || 'Contact')
 
 const close = () => {
   emit('update:modelValue', false)

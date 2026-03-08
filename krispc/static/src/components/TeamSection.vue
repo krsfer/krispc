@@ -1,37 +1,38 @@
 <template>
-  <section id="team" class="py-20 bg-gray-50 dark:bg-gray-800">
+  <section id="team" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Section Header -->
       <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4" v-html="teamTitle">
+        <p class="text-xs uppercase tracking-[0.35em] text-gray-500 font-semibold">KrisPC</p>
+        <h2 class="mt-3 text-4xl md:text-5xl font-brand text-gray-900 mb-4" v-html="teamTitle">
         </h2>
-        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto" v-html="teamSubtitle">
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto" v-html="teamSubtitle">
         </p>
       </div>
 
       <!-- Team Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="max-w-3xl mx-auto">
         <div
           v-for="member in team"
           :key="member.name"
-          class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300"
+          class="rounded-2xl border border-gray-200 bg-gray-50 overflow-hidden"
         >
           <!-- Image Placeholder -->
-          <div class="relative h-64 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
-            <div class="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 transition-transform">
-              <UserIcon class="w-20 h-20 text-white" />
+          <div class="h-64 bg-white flex items-center justify-center border-b border-gray-200">
+            <div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center">
+              <UserIcon class="w-20 h-20 text-primary" />
             </div>
           </div>
 
           <!-- Member Info -->
           <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+            <h3 class="text-2xl font-semibold text-gray-900 mb-1">
               {{ member.name }}
             </h3>
             <p class="text-primary font-medium mb-3">
               {{ member.role }}
             </p>
-            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+            <p class="text-sm leading-6 text-gray-600 mb-4">
               {{ member.bio }}
             </p>
 
@@ -42,7 +43,7 @@
                 :key="platform"
                 :href="link"
                 :aria-label="`${member.name} on ${platform}`"
-                class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-primary hover:text-white transition-colors text-sm font-medium"
+                class="px-3 py-1 rounded-full bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors text-sm font-medium"
               >
                 {{ platform }}
               </a>

@@ -1,18 +1,18 @@
 <template>
-  <footer class="bg-gray-900 text-gray-300">
+  <footer class="bg-white border-t border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Brand -->
         <div>
           <h3 class="font-brand text-2xl text-primary mb-4">KrisPC</h3>
-          <p class="text-sm text-gray-400">
+          <p class="text-sm text-gray-600">
             {{ tagline }}
           </p>
         </div>
 
         <!-- Links -->
         <div>
-          <h4 class="font-semibold text-white mb-4">{{ servicesTitle }}</h4>
+          <h4 class="text-sm uppercase tracking-[0.25em] text-gray-500 font-semibold mb-4">{{ servicesTitle }}</h4>
           <ul class="space-y-2 text-sm">
             <li><a href="#services" class="hover:text-primary transition-colors">{{ servicesTitle }}</a></li>
           </ul>
@@ -20,7 +20,7 @@
 
         <!-- Contact -->
         <div>
-          <h4 class="font-semibold text-white mb-4">{{ contactTitle }}</h4>
+          <h4 class="text-sm uppercase tracking-[0.25em] text-gray-500 font-semibold mb-4">{{ contactTitle }}</h4>
           <ul class="space-y-2 text-sm">
             <li><a href="#contact" class="hover:text-primary transition-colors">{{ contactTitle }}</a></li>
             <li><a href="#team" class="hover:text-primary transition-colors">{{ teamTitle }}</a></li>
@@ -29,7 +29,7 @@
 
         <!-- For Developers -->
         <div>
-          <h4 class="font-semibold text-white mb-4">{{ developersTitle }}</h4>
+          <h4 class="text-sm uppercase tracking-[0.25em] text-gray-500 font-semibold mb-4">{{ developersTitle }}</h4>
           <ul class="space-y-2 text-sm">
             <li><a href="/api/krispc/swagger/" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors" aria-label="Open API Swagger documentation in new tab">API Docs (Swagger)</a></li>
             <li><a href="/api/krispc/redoc/" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors" aria-label="Open API ReDoc documentation in new tab">API Docs (ReDoc)</a></li>
@@ -42,11 +42,11 @@
       </div>
 
       <!-- Copyright -->
-      <div class="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
+      <div class="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
         <p>
           {{ copyright }}
-          - <a :href="privacyUrl" class="hover:text-primary transition-colors underline decoration-gray-600">{{ privacyLabel }}</a>
-          - <a :href="termsUrl" class="hover:text-primary transition-colors underline decoration-gray-600">{{ termsLabel }}</a>
+          - <a :href="privacyUrl" class="hover:text-primary transition-colors underline decoration-gray-400">{{ privacyLabel }}</a>
+          - <a :href="termsUrl" class="hover:text-primary transition-colors underline decoration-gray-400">{{ termsLabel }}</a>
         </p>
       </div>
     </div>
