@@ -100,11 +100,11 @@ class IndexPageView(TemplateView):
                 'commitment': 'Mon engagement envers l\'excellence et la satisfaction client a fait de moi un partenaire de confiance pour les entreprises et les particuliers dans toute la région.' if is_french else 'My commitment to excellence and customer satisfaction has made me a trusted partner for businesses and individuals throughout the region.',
                 'features': [
                     {'title': 'Rapidité' if is_french else 'Fast Turnaround', 'desc': 'Diagnostics et réparations rapides pour vous remettre en marche' if is_french else 'Quick diagnostics and repairs to get you back up and running'},
-                    {'title': 'Qualité Garantie' if is_french else 'Quality Guaranteed', 'desc': 'Tous mes travaux sont couverts par des garanties complètes' if is_french else 'All my work is backed by comprehensive warranties'},
-                    {'title': 'Expertise' if is_french else 'Expertise', 'desc': 'Technicien certifié avec des années d\'expérience pratique' if is_french else 'Certified technician with years of hands-on experience'},
+                    {'title': 'Suivi Après Intervention' if is_french else 'After-Service Support', 'desc': 'J\'assure mes réparations avec un suivi clair après intervention' if is_french else 'I stand behind my repairs with clear follow-up support'},
+                    {'title': '15+ Ans d\'Expérience' if is_french else '15+ Years Experience', 'desc': '15+ ans d\'expérience pratique en programmation, réparation d\'ordinateurs et support informatique' if is_french else '15+ years of hands-on experience in programming, computer repair, and IT support'},
                 ],
                 'stats': [
-                    {'value': '', 'label': 'Plus de 20 Ans d\'Expérience' if is_french else 'Over 20 Years Experience'},
+                    {'value': '', 'label': '15+ Ans d\'Expérience' if is_french else '15+ Years Experience'},
                     {'value': '', 'label': 'Rejoignez Nos Clients Satisfaits' if is_french else 'Join Our Happy Clients'},
                     {'value': '', 'label': 'Expertise Qui Fait Ses Preuves' if is_french else 'Proven Expertise'},
                     {'value': '', 'label': 'Assistance Quand Vous en Avez Besoin' if is_french else 'Help When You Need It'},
@@ -117,7 +117,7 @@ class IndexPageView(TemplateView):
                     {
                         'name': 'Christopher',
                         'role': 'Technicien & Gérant' if is_french else 'Technician & Manager',
-                        'bio': 'Plus de 20 ans d\'expérience en programmation, réparation d\'ordinateurs et support informatique' if is_french else 'Over 20 years of experience in programming, computer repair, and IT support',
+                        'bio': '15+ ans d\'expérience pratique en programmation, réparation d\'ordinateurs et support informatique, avec des outils modernes, y compris l\'assistance IA, pour diagnostiquer les problèmes et apporter des solutions concrètes' if is_french else '15+ years of hands-on experience in programming, computer repair, and IT support, using modern tools, including AI assistance, to diagnose issues and deliver practical solutions',
                     }
                 ]
             },

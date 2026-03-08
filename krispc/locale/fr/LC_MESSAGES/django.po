@@ -338,9 +338,10 @@ msgstr "À propos"
 #: krispc/templates/__about.html:23
 msgid "PTR_1990"
 msgstr ""
-"Je suis passionné d'informatique dans tous ses aspects (programmation, "
-"systèmes). Avec plus de 20 ans d'expérience, je maintiens une vision de "
-"précision et d'excellence."
+"Je suis passionné d'informatique dans tous ses aspects, de la programmation "
+"aux systèmes. Avec 15+ ans d'expérience pratique et des outils modernes, y "
+"compris l'assistance IA, je privilégie un travail précis et des solutions "
+"concrètes."
 
 #: krispc/templates/__about.html:31
 msgid "PTR_1995"

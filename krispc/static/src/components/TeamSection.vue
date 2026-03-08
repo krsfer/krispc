@@ -68,7 +68,7 @@ const team = computed(() => t.value.members || [
   {
     name: 'Christopher',
     role: 'Technician & Manager',
-    bio: 'Over 20 years of experience in programming, computer repair, and IT support'
+    bio: '15+ years of hands-on experience in programming, computer repair, and IT support, using modern tools, including AI assistance, to diagnose issues and deliver practical solutions'
   }
 ])
 </script>
