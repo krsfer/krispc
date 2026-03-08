@@ -1,0 +1,54 @@
+# Git
+.git
+.github
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+.venv
+venv
+.env
+
+# Django
+db.sqlite3
+staticfiles
+*.log
+
+# Node
+**/node_modules
+package-lock.json
+npm-debug.log*
+krispc/static/dist/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+
+# Documentation
+DEPLOYMENT.md
+PROJECT_SUMMARY.md
+README.md
+
+# Process files
+Procfile
+Procfile.windows
+
+# fly.io plans
+.claude
