@@ -13,19 +13,19 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#CA8A04',
-          dark: '#A16207',
-          light: '#FDE68A',
+          DEFAULT: '#ffc451',
+          dark: '#e6a821',
+          light: '#ffd584',
         },
         accent: {
-          DEFAULT: '#44403C',
-          dark: '#292524',
-          light: '#78716C',
+          DEFAULT: '#00d4aa',
+          dark: '#00a888',
+          light: '#33e0bf',
         },
       },
       fontFamily: {
-        brand: ['Playfair Display', 'serif'],
-        sans: ['Source Sans 3', 'sans-serif'],
+        brand: ['Lobster', 'cursive'],
+        sans: ['Inter', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',
