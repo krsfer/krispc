@@ -208,7 +208,8 @@ class ServicesView(views.APIView):
                         'Prd_Icon': 'bi-laptop',
                         'Prd_Name': 'Computer Repair',
                         'Prd_Desc': 'Professional computer repair services for all brands',
-                        'Prd_More': 'Learn more'
+                        'Prd_More': 'Learn more',
+                        'Prd_Featured': True,
                     }
                 ],
                 response_only=True,

@@ -217,6 +217,7 @@ DJANGO_VITE = {
         'dev_server_host': 'localhost',
         'dev_server_port': 5173,
         'manifest_path': BASE_DIR / 'krispc' / 'static' / 'dist' / '.vite' / 'manifest.json',
+        'app_client_class': 'krispc.vite.ReloadingDjangoViteAppClient',
     }
 }
 

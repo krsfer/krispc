@@ -79,13 +79,16 @@ const sectionTitle = computed(() => {
 // Load Django data (with pricing and translations)
 const services = computed(() => {
   const djangoData = window.DJANGO_DATA?.prods || []
-  return djangoData.map((prod, index) => ({
-    id: index + 1,
-    name: prod.Prd_Name,
-    icon: iconMap[prod.Prd_Icon] || markRaw(ComputerDesktopIcon),
-    description: prod.Prd_Desc,
-    details: prod.Prd_More  // Contains pricing and full translated description
-  }))
+  return djangoData
+    .map((prod, index) => ({
+      id: index + 1,
+      name: prod.Prd_Name,
+      icon: iconMap[prod.Prd_Icon] || markRaw(ComputerDesktopIcon),
+      description: prod.Prd_Desc,
+      details: prod.Prd_More, // Contains pricing and full translated description
+      featured: prod.Prd_Featured || false
+    }))
+    .sort((a, b) => Number(b.featured) - Number(a.featured))
 })
 
 const openModal = (service) => {

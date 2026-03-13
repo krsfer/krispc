@@ -161,9 +161,24 @@ class ServiceSerializerTest(TestCase):
             'Prd_Desc': 'Professional repair services',
             'Prd_More': 'Learn more'
         }
-        
+
         serializer = ServiceSerializer(data=data)
         self.assertTrue(serializer.is_valid(), serializer.errors)
+
+    def test_service_serializer_accepts_featured_flag(self):
+        """Test service serializer validates the featured service flag."""
+        data = {
+            'Prd_Icon': 'bi-laptop',
+            'Prd_Name': 'Computer Repair',
+            'Prd_Desc': 'Professional repair services',
+            'Prd_More': 'Learn more',
+            'Prd_Featured': True,
+        }
+
+        serializer = ServiceSerializer(data=data)
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertTrue(serializer.validated_data['Prd_Featured'])
 
 
 class ColophonSerializerTest(TestCase):

@@ -47,6 +47,12 @@ class IndexViewTests(TestCase):
         self.assertEqual(context['apps'][2]['url'], 'http://plexus.localhost:8000/en/')
         self.assertEqual(context['apps'][3]['url'], 'http://emo.localhost:8000/')
 
+    def test_index_page_renders_featured_krispc_card(self):
+        response = self.client.get('/en/')
+
+        self.assertContains(response, 'data-featured-card="true"', count=1)
+        self.assertContains(response, 'Most Popular')
+
 class HubURLTests(TestCase):
     def test_index_url_resolves(self):
         url = reverse('hub:index')

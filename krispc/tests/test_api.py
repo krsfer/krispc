@@ -31,16 +31,24 @@ class KrisPCAPIBasicTests(APITestCase):
         cache.clear()
         
         # URLs
-        self.services_url = reverse('api-services')
-        self.colophon_url = reverse('api-colophon')
-        self.marques_url = reverse('api-marques')
-        self.villes_url = reverse('api-villes')
+        self.services_url = reverse('krispc_api:api-services')
+        self.colophon_url = reverse('krispc_api:api-colophon')
+        self.marques_url = reverse('krispc_api:api-marques')
+        self.villes_url = reverse('krispc_api:api-villes')
         
     def test_get_services(self):
         """Test services endpoint returns successfully."""
         response = self.client.get(self.services_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(isinstance(response.data, list))
+
+    def test_get_services_exposes_featured_repairs_service_first(self):
+        """Test services endpoint exposes the featured repairs service first."""
+        response = self.client.get(self.services_url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data[0]['Prd_Featured'])
+        self.assertEqual(response.data[0]['Prd_Icon'], 'ri-computer-line')
 
 
     def test_get_colophon(self):
@@ -67,8 +75,8 @@ class ContactAPITests(APITestCase):
     
     def setUp(self):
         """Set up test data and users."""
-        self.contact_url = reverse('contact-list')
-        self.contact_create_url = reverse('contact-list')
+        self.contact_url = reverse('krispc_api:contact-list')
+        self.contact_create_url = reverse('krispc_api:contact-list')
         
         # Create an admin user
         self.admin_user = User.objects.create_superuser(
@@ -178,7 +186,7 @@ class PaginationTests(APITestCase):
                 message=f'Test message number {i} with enough characters'
             )
         
-        self.contact_url = reverse('contact-list')
+        self.contact_url = reverse('krispc_api:contact-list')
 
     def test_pagination_returns_page(self):
         """Test that pagination works correctly."""
@@ -226,7 +234,7 @@ class FilteringSearchingTests(APITestCase):
             message='Question about desktop computer'
         )
         
-        self.contact_url = reverse('contact-list')
+        self.contact_url = reverse('krispc_api:contact-list')
 
     def test_filter_by_firstname(self):
         """Test filtering contacts by firstname."""
@@ -260,7 +268,7 @@ class InternationalizationTests(APITestCase):
     
     def setUp(self):
         """Set up test URLs."""
-        self.services_url = reverse('api-services')
+        self.services_url = reverse('krispc_api:api-services')
 
     def test_french_language_header(self):
         """Test Accept-Language header sets French."""
@@ -296,7 +304,7 @@ class CachingTests(APITestCase):
     def setUp(self):
         """Clear cache and set up URLs."""
         cache.clear()
-        self.services_url = reverse('api-services')
+        self.services_url = reverse('krispc_api:api-services')
 
     def test_response_is_cached(self):
         """Test that responses are cached."""
@@ -317,7 +325,7 @@ class RateLimitingTests(APITestCase):
     
     def setUp(self):
         """Set up contact URL."""
-        self.contact_url = reverse('contact-list')
+        self.contact_url = reverse('krispc_api:contact-list')
     
     # NOTE: Rate limiting tests are disabled because DRF disables throttling in test mode by default
     # To enable, you would need to override REST_FRAMEWORK settings in the test
@@ -332,7 +340,7 @@ class ErrorHandlingTests(APITestCase):
     
     def setUp(self):
         """Set up contact URL."""
-        self.contact_url = reverse('contact-list')
+        self.contact_url = reverse('krispc_api:contact-list')
 
     def test_validation_error_format(self):
         """Test that validation errors follow standard format."""

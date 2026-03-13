@@ -105,6 +105,8 @@ class IndexView(TemplateView):
             {
                 'name': 'KrisPC',
                 'icon_name': 'monitor',
+                'featured': True,
+                'badge_text': 'Service vedette' if is_french else 'Most Popular',
                 'description': (
                     'Réparations informatiques professionnelles' if is_french
                     else 'Professional computer repairs'
@@ -115,6 +117,7 @@ class IndexView(TemplateView):
             {
                 'name': 'Pdf2Cal',
                 'icon_name': 'calendar',
+                'featured': False,
                 'description': (
                     'Convertissez vos PDF en calendriers' if is_french
                     else 'Convert your PDFs to calendars'
@@ -125,6 +128,7 @@ class IndexView(TemplateView):
             {
                 'name': 'Plexus',
                 'icon_name': 'layers',
+                'featured': False,
                 'description': (
                     'Système de déchargement cognitif' if is_french
                     else 'Cognitive offloading system'
@@ -135,6 +139,7 @@ class IndexView(TemplateView):
             {
                 'name': 'Emoty',
                 'icon_name': 'sparkles',
+                'featured': False,
                 'description': (
                     'Créateur de motifs Emoji' if is_french
                     else 'Emoji Pattern Creator'

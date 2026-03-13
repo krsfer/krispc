@@ -1,6 +1,9 @@
 """
 URL configuration for _main project.
 """
+import os
+from pathlib import Path
+
 from django.conf import settings
 from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
@@ -17,6 +20,10 @@ import hub.views
 
 def health_check(request):
     """Health check endpoint for fly.io"""
+    ready_file = os.environ.get("KRISPC_READY_FILE")
+    if ready_file and not Path(ready_file).exists():
+        return JsonResponse({"status": "starting"}, status=503)
+
     return JsonResponse({"status": "healthy"}, status=200)
 
 urlpatterns = [

@@ -12,13 +12,10 @@ primary_region = "cdg"
   PORT = "8080"
   PYTHONUNBUFFERED = "1"
   FLY_APP = "true"
+  KRISPC_READY_FILE = "/tmp/krispc-ready"
 
 [processes]
-  # Note: runworker is temporarily disabled because channels_redis doesn't support Redis mTLS
-  # To re-enable, you need to either:
-  # 1. Reconfigure Redis Cloud to allow password-only auth (no client certs)
-  # 2. Use a different Redis provider (Upstash, Fly Redis, etc.)
-  app = "bash -c 'python manage.py migrate && python manage.py enable_wal && celery -A _main worker -l info & celery -A _main beat -l info & (echo \"[DEBUG] STARTING NEXTJS...\" && cd apps/emoty_web && npm run start) & daphne _main.asgi:application --port 8080 --bind 0.0.0.0'"
+  app = "./start-fly-app.sh"
 
 [[services]]
   internal_port = 8080

@@ -83,6 +83,7 @@ COPY --from=node-builder /app/apps/emoty_web ./apps/emoty_web
 
 # Copy application code
 COPY . .
+RUN chmod +x /app/start-fly-app.sh
 
 # Entrypoint: writes Redis mTLS certs from env vars to temp files at runtime
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

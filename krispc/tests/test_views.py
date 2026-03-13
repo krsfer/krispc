@@ -42,6 +42,21 @@ class IndexPageViewTest(TestCase):
         response = self.client.get(reverse('krispc:index'))
         self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
+    def test_index_view_prioritizes_featured_repairs_service(self):
+        """Test that the featured repairs service is first in the homepage payload."""
+        response = self.client.get(reverse('krispc:index'))
+
+        services = response.context['prods']
+
+        self.assertTrue(services[0]['Prd_Featured'])
+        self.assertEqual(services[0]['Prd_Icon'], 'ri-computer-line')
+
+    def test_index_view_embeds_featured_flag_in_django_data(self):
+        """Test that the homepage embeds featured service flags for Vue."""
+        response = self.client.get(reverse('krispc:index'))
+
+        self.assertContains(response, '"Prd_Featured": true')
+
 
 class PrivacyViewTest(TestCase):
     """Test cases for PrivacyView."""

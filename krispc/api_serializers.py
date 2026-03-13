@@ -72,6 +72,11 @@ class ServiceSerializer(serializers.Serializer):
         max_length=500,
         help_text="Additional information or link text"
     )
+    Prd_Featured = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="Whether the service should be highlighted and prioritized in listings"
+    )
 
     class Meta:
         examples = [
@@ -79,7 +84,8 @@ class ServiceSerializer(serializers.Serializer):
                 'Prd_Icon': 'bi-laptop',
                 'Prd_Name': 'Computer Repair',
                 'Prd_Desc': 'Professional computer repair services for all brands',
-                'Prd_More': 'Learn more about our repair services'
+                'Prd_More': 'Learn more about our repair services',
+                'Prd_Featured': True,
             }
         ]
 
@@ -147,4 +153,3 @@ class VilleSerializer(serializers.Serializer):
         max_length=200,
         help_text="City name"
     )
-

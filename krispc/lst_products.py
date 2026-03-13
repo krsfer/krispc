@@ -34,16 +34,17 @@ def data():
 
     var = [
         {
-            "Prd_Icon": "ri-phone-line",
-            "Prd_Name": _("PTR_0370"),
-            "Prd_Desc": _("PTR_0380"),
-            "Prd_More": crypto_price(price_converted("PTR_3330", _("PTR_3330"))),
-        },
-        {
             "Prd_Icon": "ri-computer-line",
             "Prd_Name": _("PTR_0230"),
             "Prd_Desc": _("PTR_0240"),
             "Prd_More": crypto_price(price_converted("PTR_3000", _("PTR_3000"))),
+            "Prd_Featured": True,
+        },
+        {
+            "Prd_Icon": "ri-phone-line",
+            "Prd_Name": _("PTR_0370"),
+            "Prd_Desc": _("PTR_0380"),
+            "Prd_More": crypto_price(price_converted("PTR_3330", _("PTR_3330"))),
         },
         {
             "Prd_Icon": "ri-file-copy-line",
@@ -91,4 +92,4 @@ def data():
         },
     ]
 
-    return var
+    return sorted(var, key=lambda service: service.get("Prd_Featured", False), reverse=True)
