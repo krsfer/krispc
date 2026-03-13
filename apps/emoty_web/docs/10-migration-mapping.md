@@ -1062,9 +1062,9 @@ dependencies {
   "name": "emoty-web",
   "version": "1.9.3",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "next dev --webpack -p 3000 -H 0.0.0.0",
+    "build": "next build --webpack",
+    "start": "next start -p 3000 -H 0.0.0.0",
     "lint": "next lint",
     "test": "jest",
     "test:e2e": "playwright test",

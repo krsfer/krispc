@@ -475,10 +475,21 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 WHITENOISE_MANIFEST_STRICT = False
 
 # Configure caching - Redis-backed to support shared state (SAS rate limiting).
+_cache_options = {}
+if REDIS_URL and REDIS_URL.startswith("rediss://"):
+    _cache_options["ssl_cert_reqs"] = ssl.CERT_REQUIRED
+    if REDIS_CA_CERT_PATH and REDIS_CLIENT_CERT_PATH and REDIS_CLIENT_KEY_PATH:
+        _cache_options.update({
+            "ssl_ca_certs": REDIS_CA_CERT_PATH,
+            "ssl_certfile": REDIS_CLIENT_CERT_PATH,
+            "ssl_keyfile": REDIS_CLIENT_KEY_PATH,
+        })
+
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": REDIS_URL,
+        **({"OPTIONS": _cache_options} if _cache_options else {}),
     }
 }
 

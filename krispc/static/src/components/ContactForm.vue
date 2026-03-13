@@ -162,13 +162,21 @@ const handleSubmit = async () => {
                      document.querySelector('meta[name="csrf-token"]')?.content ||
                      getCookie('csrftoken')
 
-    const response = await fetch('/create/', {
+    const locale = window.DJANGO_DATA?.locale || 'en'
+    const body = new URLSearchParams({
+      firstname: form.value.firstname,
+      surname: form.value.surname,
+      from_email: form.value.email,
+      message: form.value.message,
+    })
+
+    const response = await fetch(`/${locale}/create/`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
         'X-CSRFToken': csrftoken,
       },
-      body: JSON.stringify(form.value)
+      body: body.toString()
     })
 
     if (response.ok) {

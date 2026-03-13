@@ -5,6 +5,8 @@ primary_region = "cdg"
 
 [build]
   dockerfile = "Dockerfile"
+  [build.args]
+    NEXT_PUBLIC_HUB_BASE_URL = "https://hub.krispc.fr"
 
 [http_service]
   internal_port = 8000
@@ -21,3 +23,4 @@ primary_region = "cdg"
 [env]
   PORT = "8000"
   NODE_ENV = "production"
+  NEXT_PUBLIC_HUB_BASE_URL = "https://hub.krispc.fr"

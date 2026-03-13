@@ -1908,8 +1908,8 @@ npm run test:a11y-setup
 // package.json scripts addition
 {
   "scripts": {
-    "dev": "next dev",
-    "build": "next build", 
+    "dev": "next dev --webpack -p 3000 -H 0.0.0.0",
+    "build": "next build --webpack",
     "test": "jest",
     "test:a11y": "jest --testNamePattern=\"accessibility\"",
     "test:e2e": "playwright test",

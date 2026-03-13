@@ -112,6 +112,18 @@ class CreateContactViewTest(TestCase):
         
         # Should not create contact
         self.assertEqual(Contact.objects.count(), 0)
+
+    def test_create_contact_blank_submission_renders_validation_errors(self):
+        """Test that a blank submission re-renders the form instead of crashing."""
+        response = self.client.post(
+            reverse('krispc:create'),
+            data={},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Contact.objects.count(), 0)
+        self.assertContains(response, 'Ce champ est obligatoire')
     
     @patch('krispc.forms.send_contact_email')
     def test_create_contact_sends_email(self, mock_send_email):

@@ -25,6 +25,7 @@ export default defineConfig({
   base: '/static/',
   build: {
     manifest: true,
+    emptyOutDir: true,
     outDir: resolve(__dirname, './krispc/static/dist'),
     rollupOptions: {
       input: {

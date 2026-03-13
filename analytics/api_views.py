@@ -46,8 +46,11 @@ class TrackVisitView(APIView):
             network_type=data.get('network_type')
         )
         
-        # Trigger async GeoIP resolution
-        resolve_geoip.delay(visit.id)
+        # Trigger async GeoIP resolution (best-effort; Celery may not be running)
+        try:
+            resolve_geoip.delay(visit.id)
+        except Exception:
+            pass
         
         return Response({'visit_id': visit.id})
 

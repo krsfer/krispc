@@ -250,12 +250,13 @@ def create_contact(request: HtmxHttpRequest) -> HttpResponse:
 
     # res = render_crispy_form(form, request)
 
+    cleaned = getattr(form, 'cleaned_data', {})
     return render(
         request,
         "____contact_form_checker.html", {
             "form":      form,
-            "firstname": f"{form.cleaned_data['firstname']}",
-            "surname":   f"{form.cleaned_data['surname']}",
+            "firstname": cleaned.get('firstname', ''),
+            "surname":   cleaned.get('surname', ''),
             "timestamp": timestamp, "status": status
         },
     )

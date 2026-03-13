@@ -84,6 +84,10 @@ COPY --from=node-builder /app/apps/emoty_web ./apps/emoty_web
 # Copy application code
 COPY . .
 
+# Entrypoint: writes Redis mTLS certs from env vars to temp files at runtime
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Collect static files (includes Vite assets)
 # Use dummy values for build stage (real values set via Fly.io secrets)
 ENV SECRET_KEY="build-stage-dummy-key-not-used-in-production" \
@@ -98,6 +102,8 @@ USER django
 
 # Expose port 8080 (fly.io standard)
 EXPOSE 8080
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \

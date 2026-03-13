@@ -1,5 +1,3 @@
-const path = require('path');
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: '/emo',
@@ -22,9 +20,6 @@ const nextConfig = {
     ],
     formats: ['image/webp', 'image/avif'],
     unoptimized: true
-  },
-  turbopack: {
-    root: __dirname
   },
   output: 'standalone',
   headers: async () => [

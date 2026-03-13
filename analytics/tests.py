@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.test import TestCase, Client
 from django.urls import reverse
 from .models import PageVisit, UserInteraction
@@ -48,3 +50,17 @@ class AnalyticsApiTests(TestCase):
         interaction = UserInteraction.objects.first()
         self.assertEqual(interaction.interaction_type, 'rage_click')
         self.assertEqual(interaction.visit, visit)
+
+    @patch('analytics.api_views.resolve_geoip.delay', side_effect=RuntimeError('celery unavailable'))
+    def test_track_visit_succeeds_when_geoip_dispatch_fails(self, mock_delay):
+        response = self.client.post(self.init_url, {
+            'url': 'http://example.com/fallback',
+            'path': '/fallback',
+            'browser': 'TestBrowser',
+            'os': 'TestOS',
+        }, content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+        visit_id = response.json()['visit_id']
+        self.assertTrue(PageVisit.objects.filter(id=visit_id).exists())
+        mock_delay.assert_called_once_with(visit_id)

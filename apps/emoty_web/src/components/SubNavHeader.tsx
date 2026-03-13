@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
+import { getHubBaseUrl } from '@/lib/hub-url';
 
 export default function SubNavHeader() {
-    const hubBaseUrl = process.env.NEXT_PUBLIC_HUB_BASE_URL ?? 'http://hub.localhost:8000';
+    const hubBaseUrl = getHubBaseUrl();
 
     return (
         <div className="bg-white border-b border-gray-200">

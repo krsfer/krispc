@@ -445,9 +445,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Turbopack for faster builds
+  // Use webpack-backed builds in this repo for stability
   experimental: {
-    turbopack: true,
+    optimizePackageImports: ['bootstrap'],
     optimizeCss: true,
     optimizeServerReact: true,
   },

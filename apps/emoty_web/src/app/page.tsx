@@ -14,6 +14,7 @@ import Tooltip from '@/components/Tooltip';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PatternGenerator } from '@/lib/utils/pattern-generator';
 import { PatternPrinter } from '@/lib/utils/pattern-printer';
+import { getHubBaseUrl } from '@/lib/hub-url';
 import { EMOJI_PALETTES, getDefaultPalette } from '@/lib/constants/emoji-palettes';
 import { PatternState, GridCell, PatternMode } from '@/types/pattern';
 import { usePatternStore } from '@/store';
@@ -22,6 +23,7 @@ import { useToast } from '@/contexts/ToastContext';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
+  const hubBaseUrl = getHubBaseUrl();
   const { 
     autoSave, 
     savePattern, 
@@ -317,7 +319,7 @@ export default function HomePage() {
         <div className="nav-left">
           <Tooltip text="Back to Hub" position="bottom">
             <a 
-              href={process.env.NEXT_PUBLIC_HUB_BASE_URL ?? 'http://hub.localhost:8000'}
+              href={hubBaseUrl}
               className="nav-button"
               aria-label="Back to Hub"
               style={{ textDecoration: 'none' }}

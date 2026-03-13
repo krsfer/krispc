@@ -342,9 +342,9 @@ Update `package.json`:
 ```json
 {
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "next dev --webpack -p 3000 -H 0.0.0.0",
+    "build": "next build --webpack",
+    "start": "next start -p 3000 -H 0.0.0.0",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "migrate": "node scripts/migrate.js",
