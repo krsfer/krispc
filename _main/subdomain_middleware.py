@@ -16,6 +16,14 @@ class SubdomainRoutingMiddleware:
     def __call__(self, request):
         host = request.get_host().split(':')[0]
         port = request.get_host().split(':')[1] if ':' in request.get_host() else None
+
+        if host == "www.krispc.fr":
+            new_url = f"{request.scheme}://com.krispc.fr{request.get_full_path()}"
+            return HttpResponsePermanentRedirect(new_url)
+
+        if host == "krispc.fr" and re.match(r"^/(?:[a-z]{2}/)?(?:\?.*)?$", request.get_full_path()):
+            new_url = f"{request.scheme}://com.krispc.fr{request.get_full_path()}"
+            return HttpResponsePermanentRedirect(new_url)
         
         # Check if host is an IP address or the Django test server
         is_ip = bool(re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', host)) or host == 'testserver'

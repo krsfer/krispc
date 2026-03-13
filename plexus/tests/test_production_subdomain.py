@@ -23,15 +23,36 @@ class ProductionSubdomainTest(TestCase):
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response['Location'], 'http://plexus.krispc.fr/')
 
+    def test_root_domain_redirects_home_to_com_root(self):
+        request = self.factory.get('/', HTTP_HOST='krispc.fr', secure=True)
+        response = self.middleware(request)
+
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://com.krispc.fr/')
+
+    def test_root_domain_redirects_localized_path_to_com(self):
+        request = self.factory.get('/en/', HTTP_HOST='krispc.fr', secure=True)
+        response = self.middleware(request)
+
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://com.krispc.fr/en/')
+
     def test_base_domain_calculation_three_parts(self):
         """
-        Test that host 'www.krispc.fr' is correctly handled.
+        Test that the canonical www host redirects to the KrisPC app domain first.
         """
         request = self.factory.get('/plexus/', HTTP_HOST='www.krispc.fr')
         response = self.middleware(request)
         
         self.assertEqual(response.status_code, 301)
-        self.assertEqual(response['Location'], 'http://plexus.krispc.fr/')
+        self.assertEqual(response['Location'], 'http://com.krispc.fr/plexus/')
+
+    def test_www_host_redirects_to_com_domain(self):
+        request = self.factory.get('/en/', HTTP_HOST='www.krispc.fr', secure=True)
+        response = self.middleware(request)
+
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://com.krispc.fr/en/')
 
     def test_no_redirect_if_already_on_subdomain(self):
         """
