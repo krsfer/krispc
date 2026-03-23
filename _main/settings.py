@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import secrets
 from pathlib import Path
-import ssl
+
 
 import dj_database_url
 import semver
@@ -22,22 +22,17 @@ from celery.schedules import crontab
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 import environ
-from _main.secret_utils import require_secret, validate_redis_mtls_env
+from _main.secret_utils import require_secret
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"), override=False)
 
-# Log the loaded Redis URL (masked) for debugging
+# Log the loaded Redis/Valkey URL for debugging
 redis_url = os.environ.get('REDIS_URL', 'Not Set')
-if redis_url.startswith('rediss://'):
-    masked_url = redis_url.replace(redis_url.split('@')[0], 'rediss://***')
-    if os.environ.get("RUN_MAIN"):
-        print(f"Loading settings with REDIS_URL: {masked_url}")
-else:
-    if os.environ.get("RUN_MAIN"):
-        print(f"Loading settings with REDIS_URL: {redis_url}")
+if os.environ.get("RUN_MAIN"):
+    print(f"Loading settings with REDIS_URL: {redis_url}")
 
 # Before using your app in production, make sure to review Django's deployment checklist:
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -223,8 +218,6 @@ DJANGO_VITE = {
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 
-REDIS_CA_CERT_PATH, REDIS_CLIENT_CERT_PATH, REDIS_CLIENT_KEY_PATH = validate_redis_mtls_env()
-
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "hello@krispc.fr")
 SAS_ACCESS_EMAIL = os.environ.get("SAS_ACCESS_EMAIL", "archer.chris@gmail.com")
 SAS_IPINFO_TOKEN = require_secret(
@@ -267,43 +260,13 @@ if DEBUG:
         },
     }
 else:
-    # Use Redis for production
-    # Configure channels_redis with mTLS support
-    channel_layer_config = {
-        'hosts': [REDIS_URL],
-    }
-    
-    if REDIS_URL.startswith("rediss://"):
-        try:
-            if REDIS_CA_CERT_PATH and REDIS_CLIENT_CERT_PATH and REDIS_CLIENT_KEY_PATH:
-                for path in (REDIS_CA_CERT_PATH, REDIS_CLIENT_CERT_PATH, REDIS_CLIENT_KEY_PATH):
-                    if not os.path.exists(path):
-                        raise ImproperlyConfigured(
-                            f"Redis mTLS file does not exist: {path}. "
-                            "Set REDIS_*_PATH env vars to valid file paths."
-                        )
-
-                ssl_context = ssl.create_default_context(cafile=REDIS_CA_CERT_PATH)
-                ssl_context.load_cert_chain(certfile=REDIS_CLIENT_CERT_PATH, keyfile=REDIS_CLIENT_KEY_PATH)
-                ssl_context.check_hostname = False
-                ssl_context.verify_mode = ssl.CERT_REQUIRED
-
-                channel_layer_config['hosts'] = [{
-                    'address': REDIS_URL,
-                    'ssl_context': ssl_context
-                }]
-                print("Redis SSL Context created successfully with mTLS certs.")
-            else:
-                print("Redis SSL enabled without mTLS client certs (REDIS_*_PATH not configured).")
-        except Exception as e:
-            if IS_PRODUCTION:
-                raise
-            print(f"Error creating Redis SSL Context: {e}")
-
+    # Use Valkey/Redis for production (plain redis:// via Fly private networking)
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': channel_layer_config,
+            'CONFIG': {
+                'hosts': [REDIS_URL],
+            },
         },
     }
 
@@ -475,22 +438,11 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 
 WHITENOISE_MANIFEST_STRICT = False
 
-# Configure caching - Redis-backed to support shared state (SAS rate limiting).
-_cache_options = {}
-if REDIS_URL and REDIS_URL.startswith("rediss://"):
-    _cache_options["ssl_cert_reqs"] = ssl.CERT_REQUIRED
-    if REDIS_CA_CERT_PATH and REDIS_CLIENT_CERT_PATH and REDIS_CLIENT_KEY_PATH:
-        _cache_options.update({
-            "ssl_ca_certs": REDIS_CA_CERT_PATH,
-            "ssl_certfile": REDIS_CLIENT_CERT_PATH,
-            "ssl_keyfile": REDIS_CLIENT_KEY_PATH,
-        })
-
+# Configure caching - Valkey/Redis-backed to support shared state (SAS rate limiting).
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": REDIS_URL,
-        **({"OPTIONS": _cache_options} if _cache_options else {}),
     }
 }
 
@@ -525,17 +477,7 @@ if DEBUG:
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True
 
-if REDIS_URL and REDIS_URL.startswith("rediss://"):
-    CELERY_BROKER_USE_SSL = {
-        'ssl_cert_reqs': ssl.CERT_REQUIRED,
-    }
-    if REDIS_CA_CERT_PATH and REDIS_CLIENT_CERT_PATH and REDIS_CLIENT_KEY_PATH:
-        CELERY_BROKER_USE_SSL.update({
-            'ssl_ca_certs': REDIS_CA_CERT_PATH,
-            'ssl_certfile': REDIS_CLIENT_CERT_PATH,
-            'ssl_keyfile': REDIS_CLIENT_KEY_PATH,
-        })
-    CELERY_REDIS_BACKEND_USE_SSL = CELERY_BROKER_USE_SSL
+# No SSL needed — Valkey runs on Fly private networking (plain redis://)
 
 # Celery Beat Schedule for periodic tasks
 CELERY_BEAT_SCHEDULE = {
