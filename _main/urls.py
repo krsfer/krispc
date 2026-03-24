@@ -37,6 +37,9 @@ urlpatterns = [
     # KrisPC API
     path("api/krispc/", include(("krispc.api_urls", "krispc_api"), namespace="krispc_api")),
 
+    # Streams API (MediaMTX)
+    path("api/streams/", include(("streams.api_urls", "streams_api"), namespace="streams_api")),
+
     # Analytics API (Non-i18n)
     path("analytics/api/", include("analytics.api_urls")),
 

@@ -50,5 +50,17 @@ README.md
 Procfile
 Procfile.windows
 
+# Local build artifacts (large — must not enter build context)
+apps/emoty_web/.next/
+apps/emoty_web/.turbo/
+media/
+data/
+.worktrees/
+
+# Pipenv lockfile (Docker uses requirements.txt)
+Pipfile
+Pipfile.lock
+
 # fly.io plans
 .claude
+docs/

@@ -1,6 +1,6 @@
 import logging
 
-import redis
+import valkey
 from django.conf import settings
 
 # Cache for already established connections to prevent recursion
@@ -21,6 +21,6 @@ def get_redis_connection():
     logger = logging.getLogger("p2c")
 
     logger.info("Connecting to Redis/Valkey at %s", redis_url)
-    conn = redis.Redis.from_url(redis_url)
+    conn = valkey.Valkey.from_url(redis_url)
     _redis_connection_cache[cache_key] = conn
     return conn

@@ -69,12 +69,12 @@ export KRISPC_READY_FILE="$READY_FILE"
 
 start_background daphne _main.asgi:application --port "$APP_PORT" --bind 0.0.0.0
 
-wait_for_port 127.0.0.1 "$APP_PORT" 30 "Daphne"
+wait_for_port 127.0.0.1 "$APP_PORT" 60 "Daphne"
 
 python manage.py migrate --noinput
 python manage.py enable_wal
 
-start_background_shell "cd /app/apps/emoty_web && npm run start"
+start_background_shell "PORT=$NEXT_PORT HOSTNAME=127.0.0.1 node /app/apps/emoty_web/.next/standalone/apps/emoty_web/server.js"
 
 wait_for_port 127.0.0.1 "$NEXT_PORT" 30 "Emoty"
 

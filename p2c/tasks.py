@@ -4,7 +4,6 @@ import time
 from datetime import datetime
 from django.utils.translation import gettext as _
 
-import redis
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 from django.conf import settings

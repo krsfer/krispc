@@ -44,32 +44,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pipenv
-RUN pip install --no-cache-dir pipenv
-
-# Copy Pipfile and Pipfile.lock
-COPY Pipfile Pipfile.lock ./
-
-# Install Python dependencies into system Python
-RUN pipenv install --system --deploy --ignore-pipfile
+# Copy requirements and install Python dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Stage 3: Production runtime
 FROM python:3.13-slim
 
 WORKDIR /app
 
-# Install runtime dependencies including Node.js 20 for Next.js
+# Install runtime dependencies (no NodeSource — we copy the node binary directly)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     tesseract-ocr-fra \
-    curl \
-    gnupg \
-    ca-certificates \
-    && mkdir -p /etc/apt/keyrings \
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
-    && apt-get update && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
+
+# Copy node binary from node-builder (same Debian bookworm-slim base, compatible libs)
+COPY --from=node-builder /usr/local/bin/node /usr/local/bin/node
 
 # Copy Python packages from builder stage
 COPY --from=python-builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
@@ -78,8 +69,10 @@ COPY --from=python-builder /usr/local/bin /usr/local/bin
 # Copy Vite build artifacts from node builder
 COPY --from=node-builder /app/krispc/static/dist ./krispc/static/dist
 
-# Copy Next.js build artifacts from node builder
-COPY --from=node-builder /app/apps/emoty_web ./apps/emoty_web
+# Copy Next.js standalone bundle (output: 'standalone' — no node_modules needed at runtime)
+COPY --from=node-builder /app/apps/emoty_web/.next/standalone ./apps/emoty_web/.next/standalone
+COPY --from=node-builder /app/apps/emoty_web/.next/static     ./apps/emoty_web/.next/standalone/apps/emoty_web/.next/static
+COPY --from=node-builder /app/apps/emoty_web/public           ./apps/emoty_web/.next/standalone/apps/emoty_web/public
 
 # Copy application code
 COPY . .

@@ -193,6 +193,9 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_filters",
     "corsheaders",
+
+    # Stream management (MediaMTX integration)
+    "streams",
 ]
 
 try:
@@ -217,6 +220,11 @@ DJANGO_VITE = {
 }
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+
+# MediaMTX stream server (Fly private networking)
+MEDIAMTX_URL = os.environ.get('MEDIAMTX_URL', 'http://mediamtx-krispc.internal:9997')
+# TTL in seconds for the Valkey stream-status cache
+MEDIAMTX_STREAM_CACHE_TTL = int(os.environ.get('MEDIAMTX_STREAM_CACHE_TTL', '10'))
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "hello@krispc.fr")
 SAS_ACCESS_EMAIL = os.environ.get("SAS_ACCESS_EMAIL", "archer.chris@gmail.com")
@@ -492,6 +500,10 @@ CELERY_BEAT_SCHEDULE = {
     "sas-vacuum-sqlite-database": {
         "task": "sas.tasks.vacuum_sqlite_database",
         "schedule": crontab(minute=0, hour=4, day_of_week="sun"),
+    },
+    "refresh-stream-cache": {
+        "task": "streams.tasks.refresh_stream_cache",
+        "schedule": MEDIAMTX_STREAM_CACHE_TTL,  # keep cache warm
     },
 }
 

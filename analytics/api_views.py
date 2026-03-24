@@ -17,6 +17,7 @@ class DashboardDataView(APIView):
         return Response(data)
 
 class TrackVisitView(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -64,6 +65,7 @@ class TrackVisitView(APIView):
 
 
 class UpdateVisitView(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request, visit_id):
@@ -98,6 +100,7 @@ class UpdateVisitView(APIView):
 
 
 class TrackInteractionView(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request, visit_id):
@@ -122,6 +125,7 @@ class TrackInteractionView(APIView):
         return Response({'status': 'recorded'})
 
 class TrackErrorView(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):

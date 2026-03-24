@@ -1,4 +1,3 @@
-import redis
 from celery_progress.backend import Progress, ProgressRecorder
 
 

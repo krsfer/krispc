@@ -1,5 +1,5 @@
 import os
-import redis
+import valkey
 from django.conf import settings
 from django.db import connection
 from django.core.cache import cache
@@ -44,7 +44,7 @@ def _get_redis_stats():
         return {"primary": stats}
 
     try:
-        client = redis.from_url(url, socket_connect_timeout=2)
+        client = valkey.Valkey.from_url(url, socket_connect_timeout=2)
         info = client.info()
         stats["status"] = "Online"
         stats["memory_human"] = info.get("used_memory_human", "0B")
