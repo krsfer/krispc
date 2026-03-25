@@ -16,6 +16,7 @@ from django.core.asgi import get_asgi_application
 
 from django.urls import re_path
 from .consumers import WebSocketProxyConsumer
+from emoty.ws_consumers import PatternConsumer
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "_main.settings")
 
@@ -24,6 +25,7 @@ application = ProtocolTypeRouter({
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter([
+                re_path(r"^ws/emoty/pattern/$", PatternConsumer.as_asgi()),
                 re_path(r"^emo/_next/webpack-hmr$", WebSocketProxyConsumer.as_asgi()),
             ])
         )
