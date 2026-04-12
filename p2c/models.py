@@ -7,6 +7,10 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+DEFAULT_HOME_LOCATION = "63 Chemin du Claus, 06110 Le Cannet"
+DEFAULT_PAST_PRESENCE_COLOR = "#16a34a"
+DEFAULT_FUTURE_PRESENCE_COLOR = "#14532d"
+
 
 class P2CUserProfile(models.Model):
     """Profile model to extend the default User with P2C specific fields."""
@@ -14,6 +18,21 @@ class P2CUserProfile(models.Model):
     google_credentials = models.TextField(blank=True, null=True)
     profile_picture = models.URLField(blank=True, null=True)
     last_calendar_id = models.CharField(max_length=255, blank=True, null=True)
+    home_location = models.CharField(
+        max_length=255,
+        blank=True,
+        default=DEFAULT_HOME_LOCATION,
+    )
+    past_presence_color = models.CharField(
+        max_length=7,
+        blank=True,
+        default=DEFAULT_PAST_PRESENCE_COLOR,
+    )
+    future_presence_color = models.CharField(
+        max_length=7,
+        blank=True,
+        default=DEFAULT_FUTURE_PRESENCE_COLOR,
+    )
 
     class Meta:
         db_table = "p2c_user_profile"

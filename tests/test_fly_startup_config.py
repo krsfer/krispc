@@ -30,9 +30,10 @@ def test_fly_env_configures_readiness_file():
 def test_startup_script_waits_for_daphne_before_other_services():
     script = Path("start-fly-app.sh").read_text()
 
-    daphne_start = script.index('start_background daphne')
-    daphne_wait = script.index('wait_for_port 127.0.0.1 "$APP_PORT" 30 "Daphne"')
-    next_start = script.index('start_background_shell "cd /app/apps/emoty_web && npm run start"')
+    web_start = script.index("start_background \\")
+    web_command = script.index("gunicorn", web_start)
+    web_wait = script.index('wait_for_port 127.0.0.1 "$APP_PORT" 60 "Gunicorn"')
+    next_start = script.index('start_background_shell "PORT=$NEXT_PORT HOSTNAME=127.0.0.1 node /app/apps/emoty_web/.next/standalone/apps/emoty_web/server.js"')
     worker_start = script.index('start_background celery -A _main worker -l info')
 
-    assert daphne_start < daphne_wait < next_start < worker_start
+    assert web_start < web_command < web_wait < next_start < worker_start

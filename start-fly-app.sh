@@ -67,9 +67,14 @@ trap cleanup EXIT INT TERM
 rm -f "$READY_FILE"
 export KRISPC_READY_FILE="$READY_FILE"
 
-start_background daphne _main.asgi:application --port "$APP_PORT" --bind 0.0.0.0
+start_background \
+    gunicorn \
+    -k uvicorn.workers.UvicornWorker \
+    _main.asgi:application \
+    --bind "0.0.0.0:$APP_PORT" \
+    --workers "${WEB_CONCURRENCY:-1}"
 
-wait_for_port 127.0.0.1 "$APP_PORT" 60 "Daphne"
+wait_for_port 127.0.0.1 "$APP_PORT" 60 "Gunicorn"
 
 python manage.py migrate --noinput
 python manage.py enable_wal

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 from .models import PageVisit, UserInteraction, ErrorEvent
 
 class UserInteractionInline(admin.TabularInline):
@@ -19,6 +19,20 @@ class ErrorEventInline(admin.TabularInline):
 class PageVisitAdmin(admin.ModelAdmin):
     change_list_template = "analytics/admin/pagevisit_change_list.html"
     list_display = ('url', 'timestamp', 'user', 'browser', 'os', 'device_type', 'network_type', 'ttfb', 'lcp', 'scroll_depth')
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context.setdefault("dashboard_url", self._get_dashboard_url())
+        return super().changelist_view(request, extra_context=extra_context)
+
+    @staticmethod
+    def _get_dashboard_url():
+        for view_name in ("analytics_dashboard", "analytics:analytics_dashboard"):
+            try:
+                return reverse(view_name)
+            except NoReverseMatch:
+                continue
+        return None
     list_filter = ('method', 'device_type', 'browser', 'os', 'timestamp', 'network_type')
     search_fields = ('url', 'path', 'user__email', 'ip_address')
     readonly_fields = ('timestamp', 'session_key', 'ip_address', 'user_agent')

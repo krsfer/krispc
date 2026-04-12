@@ -239,6 +239,45 @@
                                 </div>
                             {% endif %}
 
+                            {% if travel_summary and travel_summary.appointment_count %}
+                                <div class="mb-4 rounded-2xl border border-stone-200 bg-stone-50/80 p-4">
+                                    <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                                        <div>
+                                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-stone-400">{% trans "Monthly travel distance" %}</p>
+                                            {% if travel_summary.has_distance %}
+                                                <p class="mt-1 text-2xl font-bold text-stone-900">{{ travel_summary.total_distance_km|floatformat:1 }} km</p>
+                                            {% else %}
+                                                <p class="mt-1 text-lg font-semibold text-stone-700">{% trans "Unavailable" %}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-sm text-stone-500">
+                                            {% if travel_summary.has_distance %}
+                                                <p>
+                                                    {% if travel_summary.used_base_location %}
+                                                        {% blocktrans with source=travel_summary.distance_source %}Algorithm: home → intervention → home for each appointment using {{ source }} routing.{% endblocktrans %}
+                                                    {% else %}
+                                                        {% trans "Add your home location in Settings to calculate a round-trip distance for each appointment." %}
+                                                    {% endif %}
+                                                </p>
+                                                {% if travel_summary.base_location %}
+                                                    <p>{% blocktrans with home=travel_summary.base_location %}Home location used: {{ home }}{% endblocktrans %}</p>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if travel_summary.missing_location_count %}
+                                                <p>
+                                                    {% blocktrans with count=travel_summary.missing_location_count %}{{ count }} appointments were skipped because no location was available.{% endblocktrans %}
+                                                </p>
+                                            {% endif %}
+                                            {% if travel_summary.fallback_used %}
+                                                <p class="text-amber-700">{% trans "Fallback was used for at least one trip." %}</p>
+                                            {% elif not travel_summary.has_distance %}
+                                                <p>{% trans "Add beneficiary locations to calculate this estimate." %}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+
                             <div class="mb-4 flex flex-col items-center">
                                 <div id="event-filters" class="flex flex-wrap gap-1.5 sm:gap-2 mb-2 justify-center"></div>
                             </div>
@@ -248,6 +287,7 @@
                                     {% with description=appointment.description|split:"\n"|first|trim %}
                                         {% if not "temps de pause repas"|lower in description|lower and not "pause"|lower in description|lower and not "repas"|lower in description|lower %}
                                             <div class="border-l-4 {% if appointment.has_gap_warning %}border-yellow-500{% else %}border-primary{% endif %} pl-3 sm:pl-4 {% if appointment.day|is_weekend:current_month_year %}bg-stone-100/60{% else %}bg-white{% endif %} rounded-lg shadow-sm p-2 sm:p-3"
+                                                 style="color: {% if appointment.is_today_or_future %}{{ presence_colors.future }}{% else %}{{ presence_colors.past }}{% endif %};"
                                                  data-day="{{ appointment.day }}"
                                                  data-start="{{ appointment.start_time }}"
                                                  data-end="{{ appointment.end_time }}">
@@ -260,7 +300,7 @@
                                                         </svg>
                                                     {% endif %}
                                                 </p>
-                                                <p class="text-xs sm:text-sm text-stone-600">
+                                                <p class="text-xs sm:text-sm" style="color: {% if appointment.is_today_or_future %}{{ presence_colors.future }}{% else %}{{ presence_colors.past }}{% endif %}; opacity: 0.82;">
                                                     {% blocktrans with day=appointment.day start=appointment.start_time end=appointment.end_time %}Day {{ day }} from {{ start }} to {{ end }}{% endblocktrans %}
                                                     {% if appointment.duration_minutes %} • {{ appointment.duration_minutes|minutes_to_hhmm }}{% endif %}
                                                 </p>
@@ -269,6 +309,58 @@
                                     {% endwith %}
                                 {% endfor %}
                             </div>
+
+                            {% if travel_summary.trip_details %}
+                                <div class="mt-8 border-t border-stone-200 pt-6">
+                                    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-4">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-stone-900">{% trans "Trip distance details" %}</h3>
+                                            <p class="text-sm text-stone-500">
+                                                {% trans "Each line represents one round trip: home → appointment → home." %}
+                                            </p>
+                                        </div>
+                                        <div class="text-sm text-stone-600">
+                                            {% if travel_summary.total_distance_km %}
+                                                <span class="font-semibold">{% trans "Total" %}:</span> {{ travel_summary.total_distance_km|floatformat:1 }} km
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        {% for trip in travel_summary.trip_details %}
+                                            <div class="rounded-xl border border-stone-200 bg-stone-50/70 p-4"
+                                                 style="color: {% if trip.is_today_or_future %}{{ presence_colors.future }}{% else %}{{ presence_colors.past }}{% endif %};">
+                                                <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                                    <div>
+                                                        <p class="font-medium">{{ trip.description }}</p>
+                                                        <p class="text-sm" style="color: {% if trip.is_today_or_future %}{{ presence_colors.future }}{% else %}{{ presence_colors.past }}{% endif %}; opacity: 0.82;">
+                                                            {% blocktrans with day=trip.day start=trip.start_time end=trip.end_time %}Day {{ day }} · {{ start }}–{{ end }}{% endblocktrans %}
+                                                        </p>
+                                                        {% if trip.destination %}
+                                                            <p class="text-sm" style="color: {% if trip.is_today_or_future %}{{ presence_colors.future }}{% else %}{{ presence_colors.past }}{% endif %}; opacity: 0.82;">{{ trip.destination }}</p>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="text-sm sm:text-right">
+                                                        {% if trip.total_km %}
+                                                            <p>{% trans "Outbound" %}: {{ trip.outbound_km|floatformat:1 }} km</p>
+                                                            <p>{% trans "Return" %}: {{ trip.return_km|floatformat:1 }} km</p>
+                                                            <p class="font-semibold">{% trans "Trip total" %}: {{ trip.total_km|floatformat:1 }} km</p>
+                                                        {% else %}
+                                                            <p class="text-amber-700">{% trans "Trip unavailable" %}</p>
+                                                        {% endif %}
+                                                        <p class="{% if trip.fallback_used %}text-amber-700{% else %}text-emerald-700{% endif %}">
+                                                            {% if trip.fallback_used %}
+                                                                {% blocktrans with source=trip.route_source %}Fallback used ({{ source }}){% endblocktrans %}
+                                                            {% else %}
+                                                                {% blocktrans with source=trip.route_source %}Mapbox route used ({{ source }}){% endblocktrans %}
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
 
                             {{ event_settings|json_script:"event-settings-data" }}
 

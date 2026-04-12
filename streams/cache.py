@@ -7,10 +7,14 @@ consumers via Valkey pub/sub.
 """
 import json
 import logging
-from typing import Optional
+from typing import Any, Optional
 
-import valkey
 from django.conf import settings
+
+try:
+    import valkey as redis_client
+except ImportError:  # pragma: no cover - exercised in environments without valkey
+    import redis as redis_client
 
 logger = logging.getLogger(__name__)
 
@@ -18,13 +22,16 @@ _REDIS_URL = getattr(settings, "REDIS_URL", "redis://localhost:6379")
 _TTL = getattr(settings, "MEDIAMTX_STREAM_CACHE_TTL", 10)
 _PREFIX = "krispc:streams"
 
-_client: Optional[valkey.Valkey] = None
+_client: Optional[Any] = None
 
 
-def _get_client() -> valkey.Valkey:
+def _get_client():
     global _client
     if _client is None:
-        _client = valkey.Valkey.from_url(_REDIS_URL, decode_responses=True)
+        if hasattr(redis_client, "Valkey"):
+            _client = redis_client.Valkey.from_url(_REDIS_URL, decode_responses=True)
+        else:
+            _client = redis_client.Redis.from_url(_REDIS_URL, decode_responses=True)
     return _client
 
 

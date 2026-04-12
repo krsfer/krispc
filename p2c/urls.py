@@ -42,6 +42,7 @@ api_urls = [
     path("api/", include(router.urls)),
     # Event Settings URLs
     path("event-settings/", views.event_settings_view, name="event_settings"),
+    path("travel-settings/update/", views.travel_settings_update, name="travel_settings_update"),
     path("event-settings/add/", views.event_settings_add, name="event_settings_add"),
     path("event-settings/edit/", views.event_settings_edit, name="event_settings_edit"),
     path(

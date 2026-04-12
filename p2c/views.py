@@ -6,6 +6,7 @@ import logging
 import os
 import tempfile
 import traceback
+import re
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -53,7 +54,15 @@ from .config.caregiver_settings import (
     NAME_CORRECTIONS,
 )
 from .config.rate_config import load_rate_config, save_rate_config
-from .models import CalendarBackup, Document, PlanningSnapshot, P2CUserProfile
+from .models import (
+    CalendarBackup,
+    DEFAULT_FUTURE_PRESENCE_COLOR,
+    DEFAULT_HOME_LOCATION,
+    DEFAULT_PAST_PRESENCE_COLOR,
+    Document,
+    PlanningSnapshot,
+    P2CUserProfile,
+)
 from .pdf_processing.auxiliadom_parser import AuxiliadomPDFParser
 from .pdf_processing.schedule_parser import SchedulePDFParser
 from .serializers import DocumentSerializer
@@ -63,6 +72,7 @@ from .text_processing.auxiliadom_parser import AuxiliadomParser
 from .utils.oauth_utils import get_oauth_scopes_string
 from .pdf_processing.parser_factory import PDFParserFactory
 from .utils.time_gaps import add_gap_warnings_to_appointments
+from .utils.travel_distance import compute_monthly_travel_summary
 from .utils.diff import diff_snapshots
 from .encryption_utils import encrypt_credentials, decrypt_credentials
 
@@ -70,6 +80,36 @@ from .encryption_utils import encrypt_credentials, decrypt_credentials
 logger = logging.getLogger(__name__)
 
 # Event settings
+
+
+HEX_COLOR_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
+
+
+def normalize_hex_color(value, default):
+    """Normalize a hex color string or fall back to the provided default."""
+    normalized = (value or "").strip()
+    if HEX_COLOR_RE.fullmatch(normalized):
+        return normalized.lower()
+    return default
+
+
+def get_user_presence_colors(user):
+    """Return the configured colors for past and today/future presences."""
+    if not getattr(user, "is_authenticated", False):
+        return {
+            "past": DEFAULT_PAST_PRESENCE_COLOR,
+            "future": DEFAULT_FUTURE_PRESENCE_COLOR,
+        }
+
+    try:
+        profile = user.p2c_profile
+    except (AttributeError, P2CUserProfile.DoesNotExist):
+        profile = P2CUserProfile.objects.create(user=user)
+
+    return {
+        "past": normalize_hex_color(getattr(profile, "past_presence_color", ""), DEFAULT_PAST_PRESENCE_COLOR),
+        "future": normalize_hex_color(getattr(profile, "future_presence_color", ""), DEFAULT_FUTURE_PRESENCE_COLOR),
+    }
 
 
 def get_ordinal_suffix(day):
@@ -130,6 +170,65 @@ def get_oauth_redirect_uri(request):
 def get_p2c_home_url():
     """Return the correct home URL for p2c under current URLconf."""
     return reverse("p2c:home")
+
+
+def get_user_home_location(user) -> str:
+    """Return the configured home location for the current user."""
+    if not getattr(user, "is_authenticated", False):
+        return getattr(settings, "P2C_TRAVEL_BASE_LOCATION", "") or DEFAULT_HOME_LOCATION
+
+    try:
+        profile = user.p2c_profile
+    except (AttributeError, P2CUserProfile.DoesNotExist):
+        profile = P2CUserProfile.objects.create(user=user)
+
+    return (
+        (profile.home_location or "").strip()
+        or getattr(settings, "P2C_TRAVEL_BASE_LOCATION", "").strip()
+        or DEFAULT_HOME_LOCATION
+    )
+
+
+def add_travel_summary_to_context(context, appointments):
+    """Add an estimated monthly travel summary to the home-page context."""
+    try:
+        context["travel_summary"] = compute_monthly_travel_summary(
+            appointments,
+            event_settings=context.get("event_settings"),
+            base_location=context.get("travel_home_location", ""),
+            mapbox_access_token=getattr(settings, "MAPBOX_ACCESS_TOKEN", ""),
+        )
+    except Exception:
+        logger.exception("Failed to compute Pdf2Cal travel summary")
+        context["travel_summary"] = {
+            "has_distance": False,
+            "total_distance_km": None,
+            "leg_count": 0,
+            "appointment_count": 0,
+            "missing_location_count": 0,
+            "skipped_leg_count": 0,
+            "used_base_location": False,
+            "base_location": "",
+            "algorithm": "round_trip_per_appointment",
+        }
+
+
+def annotate_items_with_temporal_state(items, *, today=None):
+    """Annotate schedule-like items with past vs today/future state."""
+    if not items:
+        return items
+
+    current_day = today or timezone.localdate()
+    for item in items:
+        try:
+            year = int(item.get("year"))
+            month = int(item.get("month"))
+            day = int(item.get("day"))
+            item_date = datetime(year, month, day).date()
+            item["is_today_or_future"] = item_date >= current_day
+        except Exception:
+            item["is_today_or_future"] = False
+    return items
 
 
 def switch_lang(request):
@@ -228,6 +327,8 @@ def home(request):
         "gap_warnings": [],
         "oauth_state": state,
         "current_language": current_lang[:2],  # Pass 2-char language code
+        "travel_home_location": get_user_home_location(request.user),
+        "presence_colors": get_user_presence_colors(request.user),
     }
     # Prefill textarea with last submitted text (if any)
     context["schedule_text"] = request.session.get("text_content")
@@ -244,8 +345,11 @@ def home(request):
                 if isinstance(session_appts, list) and session_appts:
                     # Populate context from session appointments
                     appointments, gap_warnings = add_gap_warnings_to_appointments(session_appts)
+                    annotate_items_with_temporal_state(appointments)
                     context["appointments"] = appointments
                     context["gap_warnings"] = gap_warnings
+                    add_travel_summary_to_context(context, session_appts)
+                    annotate_items_with_temporal_state(context["travel_summary"].get("trip_details", []))
                     if source_type == 'pdf':
                         context['document_id'] = request.session.get('document_id')
                         context["uploaded_filename"] = request.session.get("uploaded_filename")
@@ -383,8 +487,11 @@ def home(request):
                     total_duration = f"{total_hours:02d}:{total_mins:02d}"
 
                     appointments, gap_warnings = add_gap_warnings_to_appointments(appointments)
+                    annotate_items_with_temporal_state(appointments)
                     context["appointments"] = appointments
                     context["gap_warnings"] = gap_warnings
+                    add_travel_summary_to_context(context, appointments)
+                    annotate_items_with_temporal_state(context["travel_summary"].get("trip_details", []))
                     context["total_duration"] = total_duration
                     context["document_id"] = latest_document.id if documents else None
                     context["current_month"] = parser._current_month
@@ -415,8 +522,11 @@ def home(request):
                             appts = json.loads(appts)
                         if isinstance(appts, list) and appts:
                             appointments, gap_warnings = add_gap_warnings_to_appointments(appts)
+                            annotate_items_with_temporal_state(appointments)
                             context["appointments"] = appointments
                             context["gap_warnings"] = gap_warnings
+                            add_travel_summary_to_context(context, appts)
+                            annotate_items_with_temporal_state(context["travel_summary"].get("trip_details", []))
 
                             # Compute total duration
                             total_minutes = 0
@@ -1373,6 +1483,8 @@ def event_settings_view(request):
                     "event_settings": EVENT_SETTINGS,
                     "caregiver_settings": caregiver_settings,
                     "name_corrections": NAME_CORRECTIONS,
+                    "home_location": get_user_home_location(request.user),
+                    "presence_colors": get_user_presence_colors(request.user),
                 }
             )
         return render(
@@ -1382,9 +1494,48 @@ def event_settings_view(request):
                 "event_settings": EVENT_SETTINGS,
                 "caregiver_settings": caregiver_settings,
                 "name_corrections": NAME_CORRECTIONS,
+                "home_location": get_user_home_location(request.user),
+                "presence_colors": get_user_presence_colors(request.user),
+                "travel_algorithm": {
+                    "mode": "round_trip_per_appointment",
+                    "source": "mapbox" if getattr(settings, "MAPBOX_ACCESS_TOKEN", "") else "geodesic",
+                },
             },
         )
     return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@login_required
+@require_http_methods(["POST"])
+def travel_settings_update(request):
+    """Update the current user's travel settings."""
+    try:
+        home_location = request.POST.get("home_location", "").strip()
+        if not home_location:
+            messages.error(request, _("Home location is required."))
+            return redirect("p2c:event_settings")
+
+        past_presence_color = normalize_hex_color(
+            request.POST.get("past_presence_color", ""),
+            DEFAULT_PAST_PRESENCE_COLOR,
+        )
+        future_presence_color = normalize_hex_color(
+            request.POST.get("future_presence_color", ""),
+            DEFAULT_FUTURE_PRESENCE_COLOR,
+        )
+
+        profile, created = P2CUserProfile.objects.get_or_create(user=request.user)
+        profile.home_location = home_location
+        profile.past_presence_color = past_presence_color
+        profile.future_presence_color = future_presence_color
+        profile.save(update_fields=["home_location", "past_presence_color", "future_presence_color"])
+
+        messages.success(request, _("Travel settings updated successfully."))
+        return redirect("p2c:event_settings")
+    except Exception as exc:
+        logger.error("Failed to update travel settings: %s", exc)
+        messages.error(request, _("Could not update the travel settings."))
+        return redirect("p2c:event_settings")
 
 
 @login_required
@@ -1509,7 +1660,7 @@ def event_settings_edit(request):
                 if request.headers.get("Accept") == "application/json":
                     return JsonResponse({"error": error_msg}, status=400)
                 messages.error(request, error_msg)
-                return redirect("event_settings")
+                return redirect("p2c:event_settings")
 
             # Check if setting exists
             if name not in EVENT_SETTINGS:
@@ -1517,7 +1668,7 @@ def event_settings_edit(request):
                 if request.headers.get("Accept") == "application/json":
                     return JsonResponse({"error": error_msg}, status=400)
                 messages.error(request, error_msg)
-                return redirect("event_settings")
+                return redirect("p2c:event_settings")
 
             # Update setting
             EVENT_SETTINGS[name] = {
@@ -1531,7 +1682,7 @@ def event_settings_edit(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"message": success_msg})
             messages.success(request, success_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
@@ -1540,7 +1691,7 @@ def event_settings_edit(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"error": error_msg}, status=400)
             messages.error(request, error_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
@@ -1563,7 +1714,7 @@ def event_settings_delete(request):
                 if request.headers.get("Accept") == "application/json":
                     return JsonResponse({"error": error_msg}, status=400)
                 messages.error(request, error_msg)
-                return redirect("event_settings")
+                return redirect("p2c:event_settings")
 
             # Check if setting exists
             if name not in EVENT_SETTINGS:
@@ -1571,7 +1722,7 @@ def event_settings_delete(request):
                 if request.headers.get("Accept") == "application/json":
                     return JsonResponse({"error": error_msg}, status=400)
                 messages.error(request, error_msg)
-                return redirect("event_settings")
+                return redirect("p2c:event_settings")
 
             # Don't allow deleting the DEFAULT setting
             if name == "DEFAULT":
@@ -1579,7 +1730,7 @@ def event_settings_delete(request):
                 if request.headers.get("Accept") == "application/json":
                     return JsonResponse({"error": error_msg}, status=400)
                 messages.error(request, error_msg)
-                return redirect("event_settings")
+                return redirect("p2c:event_settings")
 
             # Delete the setting
             del EVENT_SETTINGS[name]
@@ -1589,7 +1740,7 @@ def event_settings_delete(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"message": success_msg})
             messages.success(request, success_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
@@ -1598,7 +1749,7 @@ def event_settings_delete(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"error": error_msg}, status=400)
             messages.error(request, error_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
@@ -1653,7 +1804,7 @@ def event_settings_add(request):
                 if request.headers.get("Accept") == "application/json":
                     return JsonResponse({"error": error_msg}, status=400)
                 messages.error(request, error_msg)
-                return redirect("event_settings")
+                return redirect("p2c:event_settings")
 
             # Check if setting with this name already exists
             if name in EVENT_SETTINGS:
@@ -1661,7 +1812,7 @@ def event_settings_add(request):
                 if request.headers.get("Accept") == "application/json":
                     return JsonResponse({"error": error_msg}, status=400)
                 messages.error(request, error_msg)
-                return redirect("event_settings")
+                return redirect("p2c:event_settings")
 
             # Store settings with original case but match on uppercase
             name = data.get("name").strip()
@@ -1679,7 +1830,7 @@ def event_settings_add(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"message": success_msg})
             messages.success(request, success_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
@@ -1705,7 +1856,7 @@ def caregiver_rename_add(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"error": error_msg}, status=400)
             messages.error(request, error_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
 
         add_caregiver_rename(original_name, new_name)
 
@@ -1713,7 +1864,7 @@ def caregiver_rename_add(request):
         if request.headers.get("Accept") == "application/json":
             return JsonResponse({"message": success_msg})
         messages.success(request, success_msg)
-        return redirect("event_settings")
+        return redirect("p2c:event_settings")
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
@@ -1738,7 +1889,7 @@ def caregiver_rename_delete(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"error": error_msg}, status=400)
             messages.error(request, error_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
 
         remove_caregiver_rename(original_name)
 
@@ -1746,7 +1897,7 @@ def caregiver_rename_delete(request):
         if request.headers.get("Accept") == "application/json":
             return JsonResponse({"message": success_msg})
         messages.success(request, success_msg)
-        return redirect("event_settings")
+        return redirect("p2c:event_settings")
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
@@ -1773,7 +1924,7 @@ def caregiver_setting_edit(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"error": error_msg}, status=400)
             messages.error(request, error_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
 
         settings = load_caregiver_settings()
         setting = settings.get(caregiver_name, {})
@@ -1791,7 +1942,7 @@ def caregiver_setting_edit(request):
         if request.headers.get("Accept") == "application/json":
             return JsonResponse({"message": success_msg})
         messages.success(request, success_msg)
-        return redirect("event_settings")
+        return redirect("p2c:event_settings")
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
@@ -1819,7 +1970,7 @@ def caregiver_setting_delete(request):
             if request.headers.get("Accept") == "application/json":
                 return JsonResponse({"error": error_msg}, status=400)
             messages.error(request, error_msg)
-            return redirect("event_settings")
+            return redirect("p2c:event_settings")
 
         settings = load_caregiver_settings()
         if caregiver_name in settings:
@@ -1832,7 +1983,7 @@ def caregiver_setting_delete(request):
         if request.headers.get("Accept") == "application/json":
             return JsonResponse({"message": success_msg})
         messages.success(request, success_msg)
-        return redirect("event_settings")
+        return redirect("p2c:event_settings")
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON data"}, status=400)
 

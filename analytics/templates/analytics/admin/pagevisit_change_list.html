@@ -3,11 +3,13 @@
 
 {% block object-tools %}
     <ul class="object-tools">
-        <li>
-            <a href="{% url 'analytics_dashboard' %}" class="btn btn-high" style="background: #6366f1; color: white;">
-                {% trans "View Dashboard" %}
-            </a>
-        </li>
+        {% if dashboard_url %}
+            <li>
+                <a href="{{ dashboard_url }}" class="btn btn-high" style="background: #6366f1; color: white;">
+                    {% trans "View Dashboard" %}
+                </a>
+            </li>
+        {% endif %}
         {{ block.super }}
     </ul>
 {% endblock %}

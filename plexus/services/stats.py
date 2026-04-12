@@ -1,9 +1,13 @@
 import os
-import valkey
 from django.conf import settings
 from django.db import connection
 from django.core.cache import cache
 from plexus.models import Thought, Input, Action
+
+try:
+    import valkey as redis_client
+except ImportError:  # pragma: no cover - exercised in environments without valkey
+    import redis as redis_client
 
 def get_system_stats():
     """
@@ -44,7 +48,10 @@ def _get_redis_stats():
         return {"primary": stats}
 
     try:
-        client = valkey.Valkey.from_url(url, socket_connect_timeout=2)
+        if hasattr(redis_client, "Valkey"):
+            client = redis_client.Valkey.from_url(url, socket_connect_timeout=2)
+        else:
+            client = redis_client.Redis.from_url(url, socket_connect_timeout=2)
         info = client.info()
         stats["status"] = "Online"
         stats["memory_human"] = info.get("used_memory_human", "0B")

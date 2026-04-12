@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
-from django.test import TestCase, Client
+from django.contrib.auth import get_user_model
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from .models import PageVisit, UserInteraction
 
@@ -64,3 +65,25 @@ class AnalyticsApiTests(TestCase):
         visit_id = response.json()['visit_id']
         self.assertTrue(PageVisit.objects.filter(id=visit_id).exists())
         mock_delay.assert_called_once_with(visit_id)
+
+
+@override_settings(ALLOWED_HOSTS=["p2c.localhost", "testserver", "localhost"])
+class AnalyticsAdminTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = get_user_model().objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="password123",
+        )
+        self.client.force_login(self.user)
+
+    def test_pagevisit_admin_changelist_renders_without_dashboard_url_on_p2c_subdomain(self):
+        response = self.client.get(
+            "/admin/analytics/pagevisit/",
+            HTTP_HOST="p2c.localhost:8000",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Page Visit")
+        self.assertNotContains(response, "View Dashboard")
