@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+import re
 import secrets
 from pathlib import Path
 
@@ -589,6 +590,31 @@ SPECTACULAR_SETTINGS = {
 # AI Configuration (Plexus)
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-pro-latest")
 
+# Matches "Not Found: /<path>" entries from botnet vulnerability scans
+# (PHP shells, .env leaks, .git exposure, framework probes, SQL dumps, etc.)
+_SCAN_404_RE = re.compile(
+    r"Not Found: /[^\s]*(?:"
+    r"\.php"
+    r"|\.env"
+    r"|wp-"
+    r"|\.git"
+    r"|\.htpasswd|\.npmrc|\.netrc|\.gitconfig|\.dockerenv"
+    r"|\.aws/|\.kube/|\.docker/|\.composer/"
+    r"|actuator/"
+    r"|\.sql"
+    r"|secrets\.|credentials\."
+    r"|appsettings|[Ww]eb\.config|Web\.[A-Z]"
+    r"|swagger|openapi|api-docs"
+    r"|terraform\.tf"
+    r"|composer\.(?:json|lock)"
+    r"|parameters\.yml|local\.settings\.json"
+    r"|_profiler|server-(?:status|info)|nginx_status"
+    r"|global\.asax|connectionstrings\.config|ecosystem\.config\.js"
+    r"|\.runtimeconfig\.json|auth\.json"
+    r"|%67%69%74|%65%6Ev|%77%70%2D"
+    r")"
+)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -597,6 +623,10 @@ LOGGING = {
             "()": "django.utils.log.CallbackFilter",
             "callback": lambda record: "/analytics/api/track/" not in record.getMessage(),
         },
+        "suppress_404_scans": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": lambda record: not _SCAN_404_RE.search(record.getMessage()),
+        },
     },
     "handlers": {
         "console": {"class": "logging.StreamHandler"},
@@ -604,9 +634,14 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "filters": ["suppress_analytics_tracking"],
         },
+        "console_no_scans": {
+            "class": "logging.StreamHandler",
+            "filters": ["suppress_404_scans"],
+        },
     },
     "loggers": {
         "django": {"handlers": ["console"], "level": "INFO"},
+        "django.request": {"handlers": ["console_no_scans"], "level": "WARNING", "propagate": False},
         "p2c": {"handlers": ["console"], "level": "INFO", "propagate": True},
         "plexus": {"handlers": ["console"], "level": "INFO", "propagate": True},
         "daphne.server": {"handlers": ["console_filtered"], "level": "INFO", "propagate": False},
