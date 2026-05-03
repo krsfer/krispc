@@ -35,8 +35,6 @@ class EnsureDefaultLanguageMiddleware:
             'switch-lang' in request.path or
             host == 'emo' or host.startswith('emo.') or host.startswith('emo-')):
             return self.get_response(request)
-        
-        print(f"DEBUG MIDDLEWARE: NOT skipping for {host}")
 
         # Determine language from URL path
         path = request.path
