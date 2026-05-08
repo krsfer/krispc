@@ -1,0 +1,34 @@
+{% comment %}
+Modern v2 input / textarea. See docs/STANDARDS.md §3.2.
+
+Usage:
+    {% include "components/input.html" with name="email" type="email" label="Email" required=True %}
+    {% include "components/input.html" with name="bio" textarea=True label="About you" rows=4 %}
+
+Context:
+    name           str    Form field name (required).
+    type           str    text (default) | email | password | tel | url | search | number | date.
+    value          str    Pre-filled value.
+    placeholder    str    Placeholder text.
+    label          str    Visible label text. If omitted, no <label> rendered.
+    id             str    Element id (defaults to "id_<name>").
+    required       bool   Truthy adds the required attribute.
+    disabled       bool   Truthy adds disabled.
+    error          str    Validation error message; switches to error styling.
+    help_text      str    Hint text displayed below the input.
+    extra_classes  str    Extra Tailwind classes appended.
+    autocomplete   str    Value for autocomplete attribute.
+    textarea       bool   If truthy, renders <textarea> instead of <input>.
+    rows           int    Rows for textarea (default 4).
+{% endcomment %}
+{% spaceless %}
+<div class="w-full">
+{% if label %}<label for="{{ id|default:'id_'|add:name }}" class="block text-sm font-medium text-stone-900 mb-1.5">{{ label }}{% if required %} <span class="text-red-600" aria-hidden="true">*</span>{% endif %}</label>{% endif %}
+{% if textarea %}
+<textarea id="{{ id|default:'id_'|add:name }}" name="{{ name }}"{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}{% if required %} required{% endif %}{% if disabled %} disabled{% endif %}{% if autocomplete %} autocomplete="{{ autocomplete }}"{% endif %} rows="{{ rows|default:4 }}" class="w-full px-4 py-3 min-h-[8rem] rounded-md border bg-white text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed{% if error %} border-red-500 focus:ring-red-500/40 focus:border-red-500{% else %} border-stone-300 focus:ring-primary/40 focus:border-primary{% endif %}{% if extra_classes %} {{ extra_classes }}{% endif %}">{{ value|default_if_none:'' }}</textarea>
+{% else %}
+<input id="{{ id|default:'id_'|add:name }}" name="{{ name }}" type="{{ type|default:'text' }}"{% if value %} value="{{ value }}"{% endif %}{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}{% if required %} required{% endif %}{% if disabled %} disabled{% endif %}{% if autocomplete %} autocomplete="{{ autocomplete }}"{% endif %} class="h-11 w-full px-4 rounded-md border bg-white text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed{% if error %} border-red-500 focus:ring-red-500/40 focus:border-red-500{% else %} border-stone-300 focus:ring-primary/40 focus:border-primary{% endif %}{% if extra_classes %} {{ extra_classes }}{% endif %}">
+{% endif %}
+{% if error %}<p class="mt-1.5 text-sm text-red-600">{{ error }}</p>{% elif help_text %}<p class="mt-1.5 text-sm text-stone-500">{{ help_text }}</p>{% endif %}
+</div>
+{% endspaceless %}

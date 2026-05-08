@@ -1,0 +1,27 @@
+{% comment %}
+Modern v2 card. See docs/STANDARDS.md §2.6 and §3.3.
+
+Usage:
+    {% include "components/card.html" with title="Welcome" content="Hello world" %}
+    {% include "components/card.html" with title="Promo" content=html_blob|safe variant="hero" %}
+
+Context:
+    title          str    Card heading (optional). Renders as <h3>.
+    content        str    Card body. Pass already-rendered HTML and use |safe at
+                          the call site if it is trusted markup.
+    footer         str    Card footer (optional, same trust caveat as content).
+    variant        str    glass (default) | solid | soft | hero.
+    extra_classes  str    Extra Tailwind classes appended.
+    data_ui        str    Value for data-ui attribute marker.
+
+For rich, untrusted, or block-structured content, inline the card pattern in
+the parent template instead — Django's {% include %} contract does not give
+us a clean rich-content slot.
+{% endcomment %}
+{% spaceless %}
+<div{% if data_ui %} data-ui="{{ data_ui }}"{% endif %} class="{% if variant == 'solid' %}bg-white border border-stone-200 rounded-xl shadow-sm p-6{% elif variant == 'soft' %}bg-stone-50 border border-stone-200 rounded-xl p-6{% elif variant == 'hero' %}bg-white/80 backdrop-blur-md border border-stone-200 rounded-2xl shadow-sm p-8{% else %}bg-white/80 backdrop-blur-md border border-stone-200 rounded-xl shadow-sm p-6{% endif %}{% if extra_classes %} {{ extra_classes }}{% endif %}">
+{% if title %}<h3 class="text-xl font-semibold text-stone-900 mb-3">{{ title }}</h3>{% endif %}
+{% if content %}<div class="text-stone-600 leading-relaxed">{{ content }}</div>{% endif %}
+{% if footer %}<div class="mt-6 pt-4 border-t border-stone-200">{{ footer }}</div>{% endif %}
+</div>
+{% endspaceless %}

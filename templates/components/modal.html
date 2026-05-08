@@ -1,0 +1,36 @@
+{% comment %}
+Modern v2 modal frame. See docs/STANDARDS.md §3.4.
+
+Renders a closed-by-default modal whose visibility is toggled by the caller
+(HTMX swap, Alpine x-show, vanilla JS, etc.). The partial only ships the
+visual frame and a close button; opening/closing wiring is intentionally
+out of scope so each app can use its preferred state mechanism.
+
+Usage (HTMX target pattern):
+    {% include "components/modal.html" with id="confirm-delete" title="Delete?" content=html_blob|safe footer=footer_blob|safe %}
+
+Context:
+    id             str   DOM id, used as data-modal=<id>. Required.
+    title          str   Heading at the top of the modal.
+    content        str   Body HTML (caller is responsible for |safe).
+    footer         str   Footer HTML, typically a row of buttons.
+    open           bool  If truthy, renders without the 'hidden' class.
+    extra_classes  str   Extra Tailwind classes appended to the inner panel.
+    close_label    str   aria-label for the close button (default: "Close").
+{% endcomment %}
+{% spaceless %}
+<div data-modal="{{ id }}" role="dialog" aria-modal="true"{% if title %} aria-labelledby="{{ id }}-title"{% endif %} class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm{% if not open %} hidden{% endif %}">
+<div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-lg{% if extra_classes %} {{ extra_classes }}{% endif %}">
+{% if title %}
+<div class="flex items-start justify-between mb-4">
+<h2 id="{{ id }}-title" class="text-xl font-semibold text-stone-900">{{ title }}</h2>
+<button type="button" data-modal-close="{{ id }}" aria-label="{{ close_label|default:'Close' }}" class="ml-4 text-stone-500 hover:text-stone-900 transition-colors rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-stone-400">
+<svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+</div>
+{% endif %}
+{% if content %}<div class="text-stone-700 leading-relaxed">{{ content }}</div>{% endif %}
+{% if footer %}<div class="mt-6 flex justify-end gap-3">{{ footer }}</div>{% endif %}
+</div>
+</div>
+{% endspaceless %}
