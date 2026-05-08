@@ -20,9 +20,9 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#ffc451',
-          dark: '#e6a821',
-          light: '#ffd584',
+          DEFAULT: '#CA8A04',
+          dark: '#A16207',
+          light: '#EAB308',
         },
         accent: {
           DEFAULT: '#00d4aa',
@@ -31,8 +31,8 @@ export default {
         },
       },
       fontFamily: {
-        brand: ['Lobster', 'cursive'],
-        sans: ['Inter', 'sans-serif'],
+        brand: ['"Playfair Display"', 'serif'],
+        sans: ['"Source Sans 3"', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

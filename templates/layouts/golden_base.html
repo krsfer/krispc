@@ -12,10 +12,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}KrisPC{% endblock %}</title>
 
-    <!-- Google Fonts: Inter & Lobster -->
+    <!-- Google Fonts: Playfair Display (brand/headings) + Source Sans 3 (body/UI) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Vite Assets (Tailwind & JS) -->
@@ -29,11 +29,11 @@
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="bg-gray-50 text-gray-900 font-sans antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+<body class="bg-stone-50 text-stone-900 font-sans antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     data-theme-version="v2">
 
     <!-- Global Header -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header class="bg-white/80 backdrop-blur-md border-b border-stone-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <!-- Brand -->
@@ -48,24 +48,24 @@
                 <nav class="hidden md:flex space-x-8">
                     {% if request.resolver_match.app_name == 'hub' %}
                     <a href="{{ hub_base_url }}"
-                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Hub</a>
+                        class="text-sm font-medium text-stone-700 hover:text-primary transition-colors">Hub</a>
                     {% endif %}
                     <a href="{{ krispc_base_url }}"
-                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">KrisPC</a>
+                        class="text-sm font-medium text-stone-700 hover:text-primary transition-colors">KrisPC</a>
                     <a href="{{ plexus_base_url }}"
-                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Plexus</a>
+                        class="text-sm font-medium text-stone-700 hover:text-primary transition-colors">Plexus</a>
                     <a href="{{ p2c_base_url }}"
-                        class="text-sm font-medium text-gray-700 hover:text-primary transition-colors">Pdf2Cal</a>
+                        class="text-sm font-medium text-stone-700 hover:text-primary transition-colors">Pdf2Cal</a>
                 </nav>
 
                 <!-- Right Side: User & Lang -->
                 <div class="flex items-center space-x-4">
                     {% if user.is_authenticated %}
-                    <span class="text-xs text-gray-500 hidden sm:inline">{{ user.username }}</span>
+                    <span class="text-xs text-stone-500 hidden sm:inline">{{ user.username }}</span>
                     <form action="{% url 'logout' %}" method="post" class="inline">
                         {% csrf_token %}
                         <button type="submit"
-                            class="text-xs font-semibold text-gray-600 hover:text-red-600 transition-colors">
+                            class="text-xs font-semibold text-stone-600 hover:text-red-600 transition-colors">
                             {% trans "Logout" %}
                         </button>
                     </form>
@@ -100,13 +100,13 @@
     </main>
 
     <!-- Global Footer -->
-    <footer class="bg-white border-t border-gray-200 py-12">
+    <footer class="bg-white border-t border-stone-200 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                <div class="font-brand text-2xl text-gray-400">
+                <div class="font-brand text-2xl text-stone-400">
                     KrisPC
                 </div>
-                <nav class="flex space-x-6 text-sm text-gray-500">
+                <nav class="flex space-x-6 text-sm text-stone-500">
                     <a href="{% url 'hub:privacy' %}" class="hover:text-primary transition-colors">{% trans "Privacy" %}</a>
                     <a href="{% url 'hub:terms' %}" class="hover:text-primary transition-colors">{% trans "Terms" %}</a>
                     <span>&copy; 2026</span>
@@ -120,16 +120,16 @@
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="fr"
-                            class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
+                            class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
                                         FR
                                     </button>
                                 </form>
-                    <span class="text-gray-300">|</span>
+                    <span class="text-stone-300">|</span>
                                 <form action="{{ lang_action }}" method="post">
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="en"
-                            class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
+                            class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
                                         EN
                                     </button>
                                 </form>
@@ -141,16 +141,16 @@
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="fr"
-                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
+                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
                                         FR
                                     </button>
                                 </form>
-                                <span class="text-gray-300">|</span>
+                                <span class="text-stone-300">|</span>
                                 <form action="{{ lang_action }}" method="post">
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="en"
-                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
+                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
                                         EN
                                     </button>
                                 </form>
@@ -162,16 +162,16 @@
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="fr"
-                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
+                                        class="text-xs {% if LANGUAGE_CODE == 'fr' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
                                         FR
                                     </button>
                                 </form>
-                                <span class="text-gray-300">|</span>
+                                <span class="text-stone-300">|</span>
                                 <form action="{{ lang_action }}" method="post">
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ forced_next }}">
                                     <button type="submit" name="language" value="en"
-                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-gray-400{% endif %} hover:text-primary transition-colors">
+                                        class="text-xs {% if LANGUAGE_CODE == 'en' %}font-bold text-primary{% else %}text-stone-400{% endif %} hover:text-primary transition-colors">
                                         EN
                                     </button>
                                 </form>
