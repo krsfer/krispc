@@ -20,7 +20,10 @@ PAGES = [
     ("KrisPC home", "krispc:index"),
     ("Plexus home", "plexus:index"),
     ("Pdf2Cal home", "p2c:home"),
+    ("Hub kitchen sink", "hub:kitchen_sink"),
 ]
+
+STAFF_ONLY = {"hub:kitchen_sink"}
 
 BOOTSTRAP_CLASS_NAMES = {
     "btn", "btn-primary", "btn-secondary", "btn-success", "btn-danger",
@@ -73,6 +76,21 @@ def _is_button_element(tag, attrs):
     return False
 
 
+ALLOWED_BUTTON_RADII = {"rounded-md", "rounded-xl", "rounded-full"}
+
+
+def _is_canonical_button_shape(classes):
+    """A button is canonical-shaped (and therefore must use a v2 radius) if it
+    has a full button height or any background-color class. Text-only inline
+    controls (e.g. footer language switcher, header logout link) intentionally
+    have no shape and are exempt from the radius rule."""
+    if "h-11" in classes:
+        return True
+    if any(c.startswith("bg-") for c in classes):
+        return True
+    return False
+
+
 def _is_text_input(tag, attrs):
     if tag == "textarea":
         return True
@@ -90,6 +108,17 @@ class TestDesignSystem:
         self.client = Client()
 
     def _fetch(self, target):
+        if target in STAFF_ONLY:
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            staff = User.objects.filter(username="ds-crawler-staff").first()
+            if staff is None:
+                staff = User.objects.create_user(
+                    username="ds-crawler-staff", password="x", is_staff=True,
+                )
+            self.client.force_login(staff)
+        else:
+            self.client.logout()
         url = reverse(target)
         response = self.client.get(url, follow=True)
         assert response.status_code == 200, (
@@ -103,13 +132,24 @@ class TestDesignSystem:
         for tag, attrs, lineno in _parse(self._fetch(target)):
             if not _is_button_element(tag, attrs):
                 continue
-            if "rounded-xl" not in _classes_of(attrs):
+            classes = _classes_of(attrs)
+            radii = {c for c in classes if c.startswith("rounded-")}
+            if radii & ALLOWED_BUTTON_RADII:
+                continue
+            if radii:
+                violations.append(
+                    f"line {lineno}: <{tag}> uses non-v2 radius {sorted(radii)}"
+                )
+                continue
+            if _is_canonical_button_shape(classes):
                 violations.append(
                     f"line {lineno}: <{tag} class={attrs.get('class', '')!r}>"
                 )
         assert not violations, (
-            f"{name}: {len(violations)} button(s) missing 'rounded-xl' "
-            f"(STANDARDS.md §3.1):\n"
+            f"{name}: {len(violations)} button(s) violate v2 radius rule "
+            f"(STANDARDS.md §2.4 / §3.1). Allowed: rounded-md (icon), "
+            f"rounded-xl (canonical), rounded-full (pill). Text-only inline "
+            f"buttons with no bg or h-11 are exempt.\n"
             + "\n".join(f"  - {v}" for v in violations[:10])
         )
 

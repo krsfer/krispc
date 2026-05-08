@@ -9,4 +9,5 @@ urlpatterns = [
     path('privacy/', views.PrivacyView.as_view(), name='privacy'),
     path('terms/', views.TermsView.as_view(), name='terms'),
     path('developers/', views.DeveloperIndexView.as_view(), name='developer-index'),
+    path('kitchen-sink/', views.kitchen_sink, name='kitchen_sink'),
 ]

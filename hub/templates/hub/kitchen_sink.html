@@ -1,0 +1,119 @@
+{% extends "layouts/golden_base.html" %}
+
+{% block title %}Kitchen Sink — Modern v2{% endblock %}
+
+{% block content %}
+{% with card_footer_html="<a href='#' class='text-sm font-semibold text-primary hover:text-primary-dark transition-colors'>Footer action →</a>" modal_body_html="<p>Are you sure you want to perform this action? It cannot be undone.</p>" modal_footer_html="<button type='button' data-modal-close='ks-modal-confirm' class='inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white text-stone-900 border border-stone-300 hover:bg-stone-50 focus:ring-stone-400'>Cancel</button><button type='button' class='inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/40'>Delete</button>" %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+    <header class="border-b border-stone-200 pb-8">
+        <h1 class="font-brand text-5xl font-bold text-stone-900 tracking-tight">Kitchen Sink</h1>
+        <p class="mt-3 text-stone-600 leading-relaxed">
+            Modern v2 component library — every variant on one page. See <code class="text-stone-900">docs/STANDARDS.md</code> §2–3.
+            Staff-only smoke test for visual regressions the automated <code class="text-stone-900">test_design_system.py</code> crawler cannot see.
+        </p>
+    </header>
+
+    <section class="space-y-6" data-section="buttons">
+        <h2 class="font-brand text-3xl text-stone-900">Buttons</h2>
+
+        <div class="space-y-3">
+            <p class="text-sm font-semibold text-stone-700">&lt;button&gt; — variants</p>
+            <div class="flex flex-wrap gap-3">
+                {% include "components/button.html" with text="Primary" variant="primary" %}
+                {% include "components/button.html" with text="Secondary" variant="secondary" %}
+                {% include "components/button.html" with text="Ghost" variant="ghost" %}
+                {% include "components/button.html" with text="Danger" variant="danger" %}
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <p class="text-sm font-semibold text-stone-700">&lt;a href&gt; — link variants</p>
+            <div class="flex flex-wrap gap-3">
+                {% include "components/button.html" with text="Primary link" variant="primary" href="#" %}
+                {% include "components/button.html" with text="Secondary link" variant="secondary" href="#" %}
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <p class="text-sm font-semibold text-stone-700">States &amp; markers</p>
+            <div class="flex flex-wrap gap-3">
+                {% include "components/button.html" with text="Submit" variant="primary" type="submit" %}
+                {% include "components/button.html" with text="Disabled" variant="primary" disabled=True %}
+                {% include "components/button.html" with text="With data-ui" variant="primary" data_ui="kitchen-sink-cta" %}
+                {% include "components/button.html" with text="Aria-labeled" variant="ghost" aria_label="Custom label" %}
+            </div>
+        </div>
+    </section>
+
+    <section class="space-y-6" data-section="cards">
+        <h2 class="font-brand text-3xl text-stone-900">Cards</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% include "components/card.html" with title="Glass (default)" content="Default Modern v2 card. STANDARDS §2.6." %}
+            {% include "components/card.html" with title="Solid" content="Opaque content card for dense data." variant="solid" %}
+            {% include "components/card.html" with title="Soft" content="Used to group inside a glass card." variant="soft" %}
+            {% include "components/card.html" with title="Hero" content="Feature card — larger radius, more padding." variant="hero" %}
+            {% include "components/card.html" with content="Body only — no title, no footer." %}
+            {% include "components/card.html" with title="With footer" content="Body content above the footer divider." footer=card_footer_html|safe %}
+        </div>
+    </section>
+
+    <section class="space-y-6" data-section="inputs">
+        <h2 class="font-brand text-3xl text-stone-900">Inputs</h2>
+
+        <form class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl" onsubmit="return false;">
+            {% include "components/input.html" with name="ks_name" type="text" label="Name" placeholder="Jane Doe" required=True %}
+            {% include "components/input.html" with name="ks_email" type="email" label="Email" required=True help_text="We will not spam you." %}
+            {% include "components/input.html" with name="ks_password" type="password" label="Password" required=True %}
+            {% include "components/input.html" with name="ks_age" type="number" label="Age" %}
+            {% include "components/input.html" with name="ks_dob" type="date" label="Date of birth" %}
+            {% include "components/input.html" with name="ks_url" type="url" label="Website" placeholder="https://example.com" %}
+            {% include "components/input.html" with name="ks_bad" type="text" label="With error" error="This field is required." %}
+            {% include "components/input.html" with name="ks_off" type="text" label="Disabled" disabled=True value="Cannot edit" %}
+            {% include "components/input.html" with name="ks_bio" textarea=True label="Bio" rows=4 help_text="A few sentences about yourself." %}
+            {% include "components/input.html" with name="ks_bad_bio" textarea=True label="Bio (with error)" rows=3 error="Too short." %}
+        </form>
+    </section>
+
+    <section class="space-y-6" data-section="modal">
+        <h2 class="font-brand text-3xl text-stone-900">Modal</h2>
+        <p class="text-stone-600 leading-relaxed">
+            The modal partial uses <code class="text-stone-900">fixed inset-0</code> by design — opening it covers the viewport.
+            Use the toggle below to verify open/close visuals; the second closed-only variant confirms <code class="text-stone-900">hidden</code> works.
+        </p>
+
+        <div class="flex flex-wrap gap-3">
+            {% include "components/button.html" with text="Open modal" variant="primary" data_ui="ks-modal-open" %}
+        </div>
+
+        {% include "components/modal.html" with id="ks-modal-confirm" title="Confirm action" content=modal_body_html|safe footer=modal_footer_html|safe %}
+        {% include "components/modal.html" with id="ks-modal-closed-only" title="Closed marker" content=modal_body_html|safe %}
+    </section>
+
+</div>
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Smallest possible driver for the modal partial's data-modal /
+    // data-modal-close markers. Real apps use HTMX or Alpine; this is just
+    // the kitchen-sink smoke-test toggle.
+    (function () {
+        document.querySelectorAll('[data-ui="ks-modal-open"]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var modal = document.querySelector('[data-modal="ks-modal-confirm"]');
+                if (modal) modal.classList.remove('hidden');
+            });
+        });
+        document.querySelectorAll('[data-modal-close]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var id = btn.getAttribute('data-modal-close');
+                var modal = document.querySelector('[data-modal="' + id + '"]');
+                if (modal) modal.classList.add('hidden');
+            });
+        });
+    })();
+</script>
+{% endblock %}

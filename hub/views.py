@@ -1,7 +1,8 @@
 from django.views.generic import TemplateView
 from django.utils.translation import get_language, check_for_language
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 from django.http import HttpResponseRedirect
 import logging
@@ -206,3 +207,8 @@ class DeveloperIndexView(TemplateView):
         current_lang = get_language()
         context['current_language'] = current_lang[:2]
         return context
+
+
+@staff_member_required
+def kitchen_sink(request):
+    return render(request, "hub/kitchen_sink.html")
