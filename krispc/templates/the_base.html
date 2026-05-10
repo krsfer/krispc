@@ -11,16 +11,17 @@
 {% endblock %}
 
 {% block sub_nav %}
-<div class="bg-white border-b border-gray-200">
+<div class="bg-white/80 backdrop-blur-md border-b border-stone-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-14">
       <div class="flex items-center space-x-4">
-        <a href="{{ hub_base_url }}" class="text-gray-500 hover:text-primary transition-colors text-sm font-medium">↩ Hub</a>
-        <span class="text-gray-300">|</span>
-        <span class="font-semibold text-gray-700">KrisPC</span>
+        <a href="{{ hub_base_url }}" class="text-stone-500 hover:text-primary transition-colors text-sm font-medium">↩ Hub</a>
+        <span class="text-stone-300">|</span>
+        <span class="font-semibold text-stone-700">KrisPC</span>
       </div>
+      {# Sub-nav CTA stays inline at h-9; the canonical h-11 button doesn't fit the h-14 sub-nav strip. #}
       <a data-ui="krispc-primary-cta" href="#contact"
-        class="inline-flex items-center h-9 px-4 rounded-xl text-sm font-semibold text-black bg-primary hover:bg-primary-dark transition-colors">
+        class="inline-flex items-center h-9 px-4 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2">
         {% trans "Contact" %}
       </a>
     </div>
