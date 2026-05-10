@@ -8,15 +8,15 @@
 {% block content %}
     {% if not user.is_authenticated %}
         <div class="max-w-3xl mx-auto py-8 px-4 sm:py-12">
-            <div data-ui="p2c-home-cta" class="bg-white/80 border border-stone-200/80 rounded-3xl p-8 sm:p-12 shadow-sm text-center">
+            <div data-ui="p2c-home-cta" class="bg-white/80 backdrop-blur-md border border-stone-200 rounded-2xl p-8 sm:p-12 shadow-sm text-center">
                 <p class="text-xs uppercase tracking-[0.35em] text-stone-400 font-semibold">PDF2Cal</p>
-                <h1 class="mt-4 text-3xl sm:text-5xl font-brand text-stone-900">{% trans "Welcome to PDF2Calendar" %}</h1>
-                <p class="mt-4 text-base sm:text-lg text-stone-600">{% trans "Please sign in with Google to get started." %}</p>
+                <h1 class="mt-4 text-3xl sm:text-5xl font-brand text-stone-900 tracking-tight">{% trans "Welcome to PDF2Calendar" %}</h1>
+                <p class="mt-4 text-base sm:text-lg text-stone-600 leading-relaxed">{% trans "Please sign in with Google to get started." %}</p>
                 {% if google_oauth2_client_id %}
                     <div id="google-signin-button" class="flex justify-center mt-6">
-                        <button data-ui="p2c-home-cta"
-                            class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-black bg-primary hover:bg-primary-dark transition-colors shadow-sm">
-                            <img src="https://www.google.com/favicon.ico" alt="Google" class="w-4 h-4 mr-2">
+                        <button type="button"
+                            class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-white bg-primary hover:bg-primary-dark transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2">
+                            <img src="https://www.google.com/favicon.ico" alt="" aria-hidden="true" class="w-4 h-4 mr-2">
                             {% trans "Sign in with Google" %}
                         </button>
                     </div>

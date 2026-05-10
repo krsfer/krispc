@@ -71,7 +71,10 @@ def _is_button_element(tag, attrs):
         return True
     if attrs.get("role") == "button":
         return True
-    if "cta" in (attrs.get("data-ui") or ""):
+    # data-ui="*-cta" on an anchor means it is a button-styled link;
+    # on any other element (e.g. a wrapping <div>) it just marks the
+    # CTA region and the radius rule does not apply.
+    if tag == "a" and "cta" in (attrs.get("data-ui") or ""):
         return True
     return False
 
