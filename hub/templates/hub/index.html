@@ -4,43 +4,50 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div id="apps" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <section class="py-16 md:py-24 text-center">
+        <h1 class="font-brand text-5xl md:text-6xl font-bold tracking-tight text-stone-900 leading-tight">
+            KrisPC
+        </h1>
+        <p class="mt-4 text-lg md:text-xl text-stone-600 leading-relaxed max-w-2xl mx-auto">
+            {{ tagline }}
+        </p>
+        <div class="mt-10 flex justify-center">
+            {% trans "Explore the suite" as hero_cta_text %}
+            {% include "components/button.html" with text=hero_cta_text variant="primary" href="#apps" data_ui="hub-hero-cta" %}
+        </div>
+    </section>
+
+    <div id="apps" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 scroll-mt-20">
         {% for app in apps %}
-        <div
-            data-featured-card="{% if app.featured %}true{% else %}false{% endif %}"
-            class="group relative overflow-hidden rounded-2xl border p-8 flex flex-col items-center text-center transition-all duration-200 {% if app.featured %}bg-gradient-to-br from-primary/15 via-primary/5 to-white border-primary/40 shadow-lg shadow-primary/10 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/15{% else %}bg-white/80 border-stone-200/80 shadow-sm hover:shadow-md{% endif %}">
+        <div data-featured-card="{% if app.featured %}true{% else %}false{% endif %}"
+            class="group relative overflow-hidden rounded-2xl border p-8 flex flex-col items-center text-center transition-all duration-200 hover:-translate-y-1 {% if app.featured %}bg-gradient-to-br from-primary/15 via-primary/5 to-white border-primary/40 shadow-lg shadow-primary/10 hover:shadow-xl hover:shadow-primary/15{% else %}bg-white/80 backdrop-blur-md border-stone-200 shadow-sm hover:shadow-md{% endif %}">
             {% if app.featured %}
-            <span
-                class="absolute right-4 top-4 inline-flex items-center rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-black shadow-sm sm:px-3 sm:text-xs">
+            <span class="absolute right-4 top-4 inline-flex items-center rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-sm sm:px-3 sm:text-xs">
                 {{ app.badge_text }}
             </span>
             {% endif %}
-            <div
-                class="mb-6 flex h-16 w-16 items-center justify-center rounded-xl transition-colors {% if app.featured %}bg-primary/20 text-stone-900{% else %}bg-stone-100/80 text-stone-700 group-hover:bg-stone-100{% endif %}">
+            <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-xl transition-colors {% if app.featured %}bg-primary/20 text-stone-900{% else %}bg-stone-100/80 text-stone-700 group-hover:bg-stone-100{% endif %}">
                 {% if app.icon_name == 'monitor' %}
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-                    stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="12" rx="2" />
                     <path d="M8 20h8" />
                     <path d="M12 16v4" />
                 </svg>
                 {% elif app.icon_name == 'calendar' %}
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-                    stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="5" width="18" height="16" rx="2" />
                     <path d="M8 3v4M16 3v4M3 9h18" />
                 </svg>
                 {% elif app.icon_name == 'layers' %}
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-                    stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 3l9 5-9 5-9-5 9-5z" />
                     <path d="M3 13l9 5 9-5" />
                     <path d="M3 17l9 5 9-5" />
                 </svg>
                 {% elif app.icon_name == 'sparkles' %}
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-                    stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4L12 3z" />
                     <path d="M19 3l.6 1.5L21 5l-1.4.5L19 7l-.6-1.5L17 5l1.4-.5L19 3z" />
                 </svg>
@@ -48,44 +55,44 @@
             </div>
             <h3 class="mb-3 text-xl font-semibold text-stone-900">{{ app.name }}</h3>
             <p class="mb-8 flex-grow leading-relaxed {% if app.featured %}text-stone-600{% else %}text-stone-500{% endif %}">{{ app.description }}</p>
-            <a href="{{ app.url }}"
-                class="inline-flex h-11 w-full items-center justify-center rounded-xl border border-transparent bg-primary px-6 text-base font-semibold text-black transition-colors hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2">
-                {{ app.button_text }}
-            </a>
+            {% include "components/button.html" with text=app.button_text variant="primary" href=app.url extra_classes="w-full" %}
         </div>
         {% endfor %}
     </div>
 
     {% if not is_authenticated %}
-    <div class="mt-20 text-center bg-white/80 rounded-2xl p-12 shadow-sm border border-stone-200/80 max-w-2xl mx-auto">
-        <p class="text-stone-600 mb-6 font-medium">{% trans "Already have an account?" %}</p>
-        <a href="{% url 'login' %}"
-            class="inline-flex items-center h-11 px-8 border border-stone-300 shadow-sm text-base font-semibold rounded-xl text-stone-700 bg-white hover:bg-stone-50 transition-colors">
-            {% trans "Login" %}
-        </a>
+    <div class="mt-20 max-w-2xl mx-auto">
+        <div class="bg-white/80 backdrop-blur-md border border-stone-200 rounded-2xl shadow-sm p-12 text-center">
+            <p class="text-stone-600 mb-6 font-medium">{% trans "Already have an account?" %}</p>
+            <div class="flex justify-center">
+                {% trans "Login" as login_text %}
+                {% url 'login' as login_url %}
+                {% include "components/button.html" with text=login_text variant="secondary" href=login_url %}
+            </div>
+        </div>
     </div>
     {% endif %}
 
-    <div class="mt-8 text-center">
+    <div class="mt-8 mb-16 text-center">
         <a href="{% url 'hub:developer-index' %}"
-            class="text-sm text-stone-400 hover:text-stone-600 transition-colors font-mono">
-            <i class="fas fa-code me-1"></i> {% trans "For Developers" %}
+            class="inline-flex items-center gap-2 text-sm text-stone-400 hover:text-stone-600 transition-colors font-mono">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 18l6-6-6-6" />
+                <path d="M8 6l-6 6 6 6" />
+            </svg>
+            {% trans "For Developers" %}
         </a>
     </div>
 
-
     {% if admin_apps %}
-    <div class="mt-32 pt-16 border-t border-stone-200">
+    <div class="pt-16 pb-24 border-t border-stone-200">
         <h3 class="text-center text-xs font-bold text-stone-400 uppercase tracking-widest mb-12">Admin Dashboard</h3>
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
             {% for app in admin_apps %}
-            <div
-                class="bg-white/80 rounded-2xl shadow-sm hover:shadow-md transition-all p-8 flex flex-col items-center text-center border border-stone-200/80">
-                <div
-                    class="text-stone-700 mb-4 bg-stone-100/80 w-14 h-14 flex items-center justify-center rounded-xl">
+            <div class="bg-white/80 backdrop-blur-md border border-stone-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 p-8 flex flex-col items-center text-center">
+                <div class="text-stone-700 mb-4 bg-stone-100/80 w-14 h-14 flex items-center justify-center rounded-xl">
                     {% if app.icon_name == 'sliders' %}
-                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor"
-                        stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 6h16" />
                         <path d="M4 12h16" />
                         <path d="M4 18h16" />
@@ -94,8 +101,7 @@
                         <circle cx="11" cy="18" r="2" />
                     </svg>
                     {% elif app.icon_name == 'bar-chart' %}
-                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor"
-                        stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 20h16" />
                         <rect x="6" y="10" width="3" height="8" rx="1" />
                         <rect x="11" y="6" width="3" height="12" rx="1" />
@@ -105,10 +111,7 @@
                 </div>
                 <h3 class="text-lg font-semibold text-stone-900 mb-2">{{ app.name }}</h3>
                 <p class="text-sm text-stone-500 mb-6">{{ app.description }}</p>
-                <a href="{{ app.url }}"
-                    class="inline-flex items-center h-10 px-6 border border-transparent text-sm font-semibold rounded-xl text-black bg-primary hover:bg-primary-dark transition-colors">
-                    {{ app.button_text }}
-                </a>
+                {% include "components/button.html" with text=app.button_text variant="primary" href=app.url extra_classes="w-full" %}
             </div>
             {% endfor %}
         </div>
