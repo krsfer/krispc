@@ -21,6 +21,7 @@ PAGES = [
     ("Plexus home", "plexus:index"),
     ("Pdf2Cal home", "p2c:home"),
     ("Hub kitchen sink", "hub:kitchen_sink"),
+    ("Emoty developers", "emoty:developer-index"),
 ]
 
 STAFF_ONLY = {"hub:kitchen_sink"}

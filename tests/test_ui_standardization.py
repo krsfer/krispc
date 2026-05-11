@@ -19,11 +19,12 @@ class TestUIStandardization:
             {'url': reverse('krispc:index'), 'name': 'KrisPC'},
             {'url': reverse('plexus:index'), 'name': 'Plexus'},
             {'url': reverse('p2c:home'), 'name': 'Pdf2Cal'},
+            {'url': reverse('emoty:developer-index'), 'name': 'Emoty'},
         ]
 
     def test_standards_file_exists(self):
         import os
-        assert os.path.exists('STANDARDS.md'), "STANDARDS.md is missing from root"
+        assert os.path.exists('docs/STANDARDS.md'), "docs/STANDARDS.md is missing"
 
     def test_golden_stack_presence(self):
         for app in self.app_configs:
