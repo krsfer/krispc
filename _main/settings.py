@@ -193,6 +193,7 @@ INSTALLED_APPS = [
     "sas",
 
     "rest_framework",
+    "rest_framework.authtoken",
     "drf_spectacular",
     "django_filters",
     "corsheaders",
@@ -530,8 +531,11 @@ REST_FRAMEWORK = {
     ],
     
     # Authentication
+    # SessionAuthentication for browser flows (CSRF-protected).
+    # TokenAuthentication for external API clients (Authorization: Token <key>).
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     
     # Permissions - Allow per-view control (views explicitly set their permissions)
@@ -568,7 +572,12 @@ REST_FRAMEWORK = {
     ],
     
     # Versioning
-    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    # AcceptHeaderVersioning engages with the existing /api/<app>/ URLs;
+    # URLPathVersioning would require /api/v1/<app>/ which is a breaking
+    # change for existing clients. Clients opt into version metadata via
+    #   Accept: application/json; version=v1
+    # New endpoints can branch on request.version when they need to.
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.AcceptHeaderVersioning",
     "DEFAULT_VERSION": "v1",
     "ALLOWED_VERSIONS": ["v1"],
     "VERSION_PARAM": "version",
@@ -581,10 +590,41 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'KrisPC, Plexus & Emoty API',
-    'DESCRIPTION': 'API for KrisPC IT services, Plexus SecondBrain, and Emoty emotion analysis.',
+    'TITLE': 'KrisPC Suite API',
+    'DESCRIPTION': (
+        'Unified REST API for the KrisPC suite — KrisPC IT services, '
+        'Pdf2Cal scheduling, Plexus SecondBrain, Emoty pattern engine, '
+        'Streams (MediaMTX), and Analytics.\n\n'
+        'Authentication: `SessionAuthentication` (browser/CSRF) or '
+        '`TokenAuthentication` (external clients, header `Authorization: Token <key>`).\n\n'
+        'Versioning: clients may pin via `Accept: application/json; version=v1`. '
+        'The current and only published version is **v1**.\n\n'
+        'Throttling: anonymous 1000/h, authenticated 5000/h. Scoped throttles '
+        '(`contacts`, `read_only`) apply on specific endpoints.\n\n'
+        'Errors: every error response follows the standard envelope '
+        '`{"success": false, "message": ..., "errors": ...}`. Success envelopes '
+        'follow `{"success": true, "data": ..., "message": ...}` when produced '
+        'via `krispc.api_utils`.'
+    ),
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {'name': 'KrisPC', 'email': 'hello@krispc.fr'},
+    'LICENSE': {'name': 'Proprietary'},
+    'TAGS': [
+        {'name': 'KrisPC', 'description': 'IT services: contacts, products, brands, cities.'},
+        {'name': 'Pdf2Cal', 'description': 'Schedule ingestion, calendar operations, beneficiaries.'},
+        {'name': 'Plexus', 'description': 'SecondBrain capture, classification, action extraction.'},
+        {'name': 'Emoty', 'description': 'Emoji pattern catalog and pricelist.'},
+        {'name': 'Streams', 'description': 'MediaMTX live-stream management.'},
+        {'name': 'Analytics', 'description': 'Visit tracking, dashboard data, performance metrics.'},
+    ],
+    'SERVERS': [
+        {'url': 'https://com.krispc.fr', 'description': 'Production (KrisPC subdomain)'},
+        {'url': 'http://localhost:8000', 'description': 'Local development'},
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX_TRIM': True,
+    'SORT_OPERATIONS': True,
 }
 
 # AI Configuration (Plexus)

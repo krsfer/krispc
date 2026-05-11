@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.contrib.auth import views as auth_views
 from django.views.static import serve
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from .proxy import proxy_to_emoty
 
 import krispc.views
@@ -46,7 +47,14 @@ urlpatterns = [
     # Emoty API (Non-i18n)
     path("api/emoty/", include(("emoty.api_urls", "emoty_api"), namespace="emoty_api")),
 
-    
+    # Unified suite-wide OpenAPI schema + browsable docs (drf-spectacular).
+    # Per-app schemas live under /api/{app}/schema/; this top-level trio
+    # aggregates the entire suite so external clients have a single entry
+    # point.
+    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="api-schema"), name="api-docs"),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="api-schema"), name="api-redoc"),
+
     # Documentation
     path("docs/mcp/", krispc.views.MCPDocsView.as_view(), name="mcp-docs"),
 
