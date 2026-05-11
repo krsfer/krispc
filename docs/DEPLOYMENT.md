@@ -710,6 +710,71 @@ For deployment issues or questions:
 
 ---
 
-**Last Updated:** 2025-12-25
-**Version:** 1.0 (Post-Modernization)
+**Last Updated:** 2026-05-11
+**Version:** 1.1 (Streams app documented; API hardening landed)
 **Maintainer:** Development Team
+
+---
+
+## Streams app (MediaMTX integration)
+
+The `streams` Django app provides REST endpoints for managing live camera/stream paths backed by a separate MediaMTX service.
+
+### Topology
+
+The streams app runs **inside the main Django process** — no separate Fly.io service. It does not host the media itself; it talks to a sibling **MediaMTX** Fly machine over the Fly private 6PN network.
+
+```
+┌─────────────────────┐         ┌──────────────────────────┐
+│ krispc (Django app) │ ───────▶│ mediamtx-krispc.internal │
+│  streams app        │  HTTP   │     :9997/v3/            │
+│  views + Celery     │  httpx  │  MediaMTX HTTP API       │
+└─────────────────────┘         └──────────────────────────┘
+            │
+            │ also publishes
+            │ Celery beat task: streams.tasks.refresh_stream_cache
+            ▼
+        Valkey (Redis-compatible, private 6PN)
+```
+
+The MediaMTX machine is deployed and updated independently of `krispc`. The Django app is a **client**, not an owner, of the streaming infrastructure.
+
+### Required environment variables
+
+| Variable | Default | Where set |
+|---|---|---|
+| `MEDIAMTX_URL` | `http://mediamtx-krispc.internal:9997` | Fly app secrets / `_main/settings.py:229` |
+| `MEDIAMTX_STREAM_CACHE_TTL` | `10` (seconds) | Fly app secrets / `_main/settings.py:231` |
+| `REDIS_URL` | (no default) | Fly app secrets — required for Celery + stream cache. The streams app shares the suite's Valkey instance over private networking. |
+| `CELERY_BROKER_URL` | falls back to `REDIS_URL` | Fly app secrets |
+
+No new env vars are introduced for the streams app — it piggybacks on the suite's existing Valkey and Celery setup. The Valkey private-networking work landed in `39aa2c6` ("Merge PR #12: Replace Redis mTLS with Valkey on Fly private networking") and covers stream cache reads/writes the same way Plexus and Pdf2Cal use it.
+
+### Endpoints
+
+All live under `/api/streams/`:
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/streams/streams/` | List configured streams (DB + MediaMTX state merge) |
+| GET | `/api/streams/streams/<name>/` | Single stream detail |
+| GET | `/api/streams/recordings/` | List recordings |
+| POST | `/api/streams/recordings/delete/` | Delete a recording |
+| POST | `/api/streams/sessions/<session_id>/kick/` | Forcibly close a viewer session |
+
+OpenAPI schema is part of the unified suite schema at `/api/schema/`.
+
+### Smoke test after deploy
+
+After any deploy that touches the `streams` app or the MediaMTX private DNS name, verify:
+
+1. `flyctl ssh console -a krispc` → `python manage.py shell -c "from streams.mediamtx import list_paths; print(list_paths())"`. Should return a `dict` with `pageCount`/`items`, no exception.
+2. `flyctl logs -a krispc` should be free of `httpx.ConnectError` / `httpx.ReadTimeout` from `streams.mediamtx`. The 5 s timeout in `streams/mediamtx.py:_TIMEOUT` is the boundary; persistent failures here indicate a network or MediaMTX issue, not Django.
+3. Open the suite docs at `https://com.krispc.fr/api/docs/`. The "Streams" section should list the five endpoints above and resolve example responses.
+4. `flyctl logs -a krispc` should show the Celery beat task `streams.tasks.refresh_stream_cache` firing every `MEDIAMTX_STREAM_CACHE_TTL` seconds.
+
+### Failure modes
+
+- **MediaMTX machine down** → API endpoints return 502/503 propagated by the exception handler. The cache layer (`streams/cache.py`) softens this for `GET /api/streams/streams/` but writes still fail.
+- **DNS not resolving `mediamtx-krispc.internal`** → only happens when the Fly 6PN private network is misconfigured. Run `flyctl networking dig -a krispc mediamtx-krispc.internal` to verify.
+- **Valkey unreachable** → cache misses fall through to direct MediaMTX calls; latency increases but no functional failure.
