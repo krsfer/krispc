@@ -21,11 +21,11 @@
 {% block content %}
 <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
     <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{% trans "Action Kanban" %}</h1>
-        <p class="text-gray-600 dark:text-slate-400 mt-1">{% trans "Manage and organize your tasks visually." %}</p>
+        <h1 class="text-3xl font-bold text-stone-900 dark:text-white">{% trans "Action Kanban" %}</h1>
+        <p class="text-stone-600 dark:text-stone-400 mt-1">{% trans "Manage and organize your tasks visually." %}</p>
     </div>
     <a href="{% url 'plexus:action_center' %}"
-        class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+        class="inline-flex items-center px-4 py-2 border border-stone-300 dark:border-stone-600 rounded-lg shadow-sm text-sm font-medium text-stone-700 dark:text-stone-200 bg-white dark:bg-stone-800 hover:bg-stone-50 dark:hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
         <span class="mr-2">📋</span> {% trans "List View" %}
     </a>
 </div>
@@ -38,7 +38,7 @@
                 {{ columns.pending.count }}
             </span>
         </div>
-        <div id="pending" class="kanban-col flex-1 bg-gray-100 dark:bg-slate-800/50 rounded-xl p-4 min-h-[500px] border border-gray-200 dark:border-slate-700" data-status="pending">
+        <div id="pending" class="kanban-col flex-1 bg-stone-100 dark:bg-stone-800/50 rounded-xl p-4 min-h-[500px] border border-stone-200 dark:border-stone-700" data-status="pending">
             {% for action in columns.pending %}
                 {% include "plexus/partials/kanban_card.html" with action=action %}
             {% endfor %}
@@ -52,7 +52,7 @@
                 {{ columns.done.count }}
             </span>
         </div>
-        <div id="done" class="kanban-col flex-1 bg-gray-100 dark:bg-slate-800/50 rounded-xl p-4 min-h-[500px] border border-gray-200 dark:border-slate-700" data-status="done">
+        <div id="done" class="kanban-col flex-1 bg-stone-100 dark:bg-stone-800/50 rounded-xl p-4 min-h-[500px] border border-stone-200 dark:border-stone-700" data-status="done">
             {% for action in columns.done %}
                 {% include "plexus/partials/kanban_card.html" with action=action %}
             {% endfor %}
@@ -60,13 +60,13 @@
     </div>
 
     <div class="flex flex-col h-full">
-        <div class="flex justify-between items-center mb-4 pb-2 border-b-2 border-gray-500">
-            <h3 class="font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-sm">{% trans "Discarded" %}</h3>
-            <span class="bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-300 text-xs font-medium px-2.5 py-0.5 rounded-full">
+        <div class="flex justify-between items-center mb-4 pb-2 border-b-2 border-stone-500">
+            <h3 class="font-semibold text-stone-600 dark:text-stone-400 uppercase tracking-wider text-sm">{% trans "Discarded" %}</h3>
+            <span class="bg-stone-100 dark:bg-stone-700 text-stone-800 dark:text-stone-300 text-xs font-medium px-2.5 py-0.5 rounded-full">
                 {{ columns.dismissed.count }}
             </span>
         </div>
-        <div id="dismissed" class="kanban-col flex-1 bg-gray-100 dark:bg-slate-800/50 rounded-xl p-4 min-h-[500px] border border-gray-200 dark:border-slate-700" data-status="dismissed">
+        <div id="dismissed" class="kanban-col flex-1 bg-stone-100 dark:bg-stone-800/50 rounded-xl p-4 min-h-[500px] border border-stone-200 dark:border-stone-700" data-status="dismissed">
             {% for action in columns.dismissed %}
                 {% include "plexus/partials/kanban_card.html" with action=action %}
             {% endfor %}

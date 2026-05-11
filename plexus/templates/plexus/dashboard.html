@@ -7,7 +7,7 @@
 <div id="imageModal" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4"
     onclick="closeImageModal()">
     <div class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center">
-        <button type="button" class="absolute top-0 right-0 m-4 text-white hover:text-gray-300 text-3xl font-bold"
+        <button type="button" class="absolute top-0 right-0 m-4 text-white hover:text-stone-300 text-3xl font-bold"
             onclick="closeImageModal()">&times;</button>
         <img src="" id="modalImage" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl" alt="Full size"
             onclick="event.stopPropagation()">
@@ -15,24 +15,24 @@
 </div>
 
 <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{% trans "Dashboard" %}</h1> <a
+    <h1 class="text-3xl font-bold text-stone-900 dark:text-white">{% trans "Dashboard" %}</h1> <a
         href="{% url 'plexus:capture' %}"
         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200">
         {% trans "New Thought" %} </a>
 </div>
 
 <!-- Search and Filter Bar -->
-<div class="mb-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-4">
+<div class="mb-8 bg-white dark:bg-stone-800 rounded-xl shadow-sm border border-stone-200 dark:border-stone-700 p-4">
     <form method="get" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
         <div class="md:col-span-6 relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">🔍</span>
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-500">🔍</span>
             <input type="text" name="q"
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-400"
+                class="w-full pl-10 pr-4 py-2 border border-stone-300 dark:border-stone-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-stone-50 dark:bg-stone-700 text-stone-900 dark:text-white placeholder-stone-400"
                 placeholder="{% trans 'Search thoughts...' %}" value="{{ request.GET.q }}">
         </div>
         <div class="md:col-span-4">
             <select name="type"
-                class="w-full py-2 px-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white">
+                class="w-full py-2 px-3 border border-stone-300 dark:border-stone-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-stone-50 dark:bg-stone-700 text-stone-900 dark:text-white">
                 <option value="">{% trans "All Types" %}</option>
                 <option value="ideation" {% if request.GET.type == 'ideation' %}selected{% endif %}>{% trans "Ideation" %}
                 </option>
@@ -43,7 +43,7 @@
         </div>
         <div class="md:col-span-2">
             <button type="submit"
-                class="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                class="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-700 dark:hover:bg-stone-600 text-stone-800 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
                 {% trans "Filter" %} </button>
         </div>
     </form>
@@ -54,7 +54,7 @@
     <div class="{% if on_this_day or random_thought %}lg:col-span-2{% endif %}">
         {% if unprocessed_inputs %}
         <div class="mb-8 space-y-4">
-            <h2 class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-4">
+            <h2 class="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-4">
                 {% trans "Processing..." %} </h2>
             {% for input in unprocessed_inputs %}
             <div data-input-id="{{ input.id }}"
@@ -85,37 +85,37 @@
             class="grid grid-cols-1 md:grid-cols-2 {% if not on_this_day and not random_thought %}lg:grid-cols-3{% endif %} gap-6">
             {% for thought in thoughts %}
             <div
-                class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-md transition-shadow duration-200 h-full flex flex-col">
+                class="bg-white dark:bg-stone-800 rounded-xl shadow-sm border border-stone-200 dark:border-stone-700 overflow-hidden hover:shadow-md transition-shadow duration-200 h-full flex flex-col">
                 <!-- Card Header -->
                 <div
-                    class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-800/50">
+                    class="px-6 py-4 border-b border-stone-100 dark:border-stone-700 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                 {% if thought.type == 'task' %}bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400
                                 {% elif thought.type == 'ideation' %}bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400
-                                {% else %}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300{% endif %}">
+                                {% else %}bg-stone-100 text-stone-800 dark:bg-stone-700 dark:text-stone-300{% endif %}">
                         {{ thought.get_type_display }}
                     </span>
                     <div class="flex items-center space-x-3">
-                        <span class="text-xs text-gray-500 dark:text-slate-400 local-time"
+                        <span class="text-xs text-stone-500 dark:text-stone-400 local-time"
                             data-utc="{{ thought.input.timestamp|date:'c' }}">{{ thought.input.timestamp|date:"M d, Y
                             H:i" }}</span>
                         <a href="{% url 'plexus:thought_edit' thought.pk %}"
-                            class="text-gray-400 hover:text-blue-500 transition-colors"
+                            class="text-stone-400 hover:text-blue-500 transition-colors"
                             title="{% trans 'Edit Thought' %}">✏️</a> <a
                             href="{% url 'plexus:thought_delete' thought.pk %}"
-                            class="text-gray-400 hover:text-red-500 transition-colors"
+                            class="text-stone-400 hover:text-red-500 transition-colors"
                             title="{% trans 'Delete Thought' %}">🗑️</a>
                     </div>
                 </div>
 
                 <!-- Card Body -->
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ thought.content }}</h3>
+                    <h3 class="text-lg font-semibold text-stone-900 dark:text-white mb-3">{{ thought.content }}</h3>
 
                     <div class="flex items-start mb-4">
                         {% if thought.input.image %}
                         <div class="mr-4 flex-shrink-0">
-                            <div class="w-24 h-24 border border-gray-200 dark:border-slate-600 rounded-lg overflow-hidden bg-gray-100 dark:bg-black flex items-center justify-center cursor-pointer group"
+                            <div class="w-24 h-24 border border-stone-200 dark:border-stone-600 rounded-lg overflow-hidden bg-stone-100 dark:bg-black flex items-center justify-center cursor-pointer group"
                                 style="width: 96px; height: 96px; min-width: 96px;"
                                 onclick="showImageModal('/media/{{ thought.input.image.name }}')">
                                 <img src="/media/{{ thought.input.image.name }}"
@@ -131,11 +131,11 @@
                                     aria-expanded="false" data-accordion-target="#accordion-source-{{ thought.pk }}">
                                     <div class="flex-grow">
                                         <p
-                                            class="text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide font-semibold mb-1">
+                                            class="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide font-semibold mb-1">
                                             {% trans "Source Content" %}</p>
                                     </div>
                                     <span
-                                        class="text-gray-400 transition-transform duration-300 group-open:rotate-180 ml-2">
+                                        class="text-stone-400 transition-transform duration-300 group-open:rotate-180 ml-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -143,7 +143,7 @@
                                         </svg>
                                     </span>
                                 </summary>
-                                <p class="mt-2 text-sm text-gray-600 dark:text-slate-300 italic">
+                                <p class="mt-2 text-sm text-stone-600 dark:text-stone-300 italic">
                                     {{ thought.input.content|default:"(Image Input)"|linebreaksbr }}
                                 </p>
                             </details>
@@ -151,37 +151,37 @@
                     </div>
 
                     {% if thought.outgoing_links.all %}
-                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700">
-                        <h4 class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase mb-2">{% trans "Related Thoughts" %}</h4>
+                    <div class="mt-4 pt-4 border-t border-stone-100 dark:border-stone-700">
+                        <h4 class="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase mb-2">{% trans "Related Thoughts" %}</h4>
                         <ul class="space-y-1">
                             {% for link in thought.outgoing_links.all %}
                             <li class="text-sm">
-                                <span class="text-gray-400 mr-1">🔗</span>
-                                <span class="text-gray-700 dark:text-slate-300" title="{{ link.reason }}">{{ link.target.content|truncatechars:60 }}</span>
+                                <span class="text-stone-400 mr-1">🔗</span>
+                                <span class="text-stone-700 dark:text-stone-300" title="{{ link.reason }}">{{ link.target.content|truncatechars:60 }}</span>
                             </li>
                             {% endfor %}
                         </ul>
-                        <div class="mt-2 text-xs text-gray-500 dark:text-slate-400">
+                        <div class="mt-2 text-xs text-stone-500 dark:text-stone-400">
                             {% blocktrans with score=thought.confidence_score|floatformat:2 %}Confidence: {{ score }}{% endblocktrans %}
                         </div>
                     </div>
                     {% endif %}
 
                     {% if thought.actions.all %}
-                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700">
+                    <div class="mt-4 pt-4 border-t border-stone-100 dark:border-stone-700">
                         <details class="group" id="accordion-actions-{{ thought.pk }}" name="dashboard_thoughts">
                             <summary
                                 class="flex justify-between items-center cursor-pointer list-none focus:outline-none"
                                 aria-expanded="false" data-accordion-target="#accordion-actions-{{ thought.pk }}">
                                 <h4
-                                    class="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase flex items-center">
+                                    class="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase flex items-center">
                                     {% trans "Actions" %}
                                     <span
-                                        class="ml-2 px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-slate-700 text-[10px] font-bold group-open:bg-blue-100 group-open:text-blue-600 transition-colors">
+                                        class="ml-2 px-1.5 py-0.5 rounded-full bg-stone-100 dark:bg-stone-700 text-[10px] font-bold group-open:bg-blue-100 group-open:text-blue-600 transition-colors">
                                         {{ thought.actions.all|length }}
                                     </span>
                                 </h4>
-                                <span class="text-gray-400 transition-transform duration-300 group-open:rotate-180">
+                                <span class="text-stone-400 transition-transform duration-300 group-open:rotate-180">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -197,16 +197,16 @@
                                             class="mr-2">
                                             {% csrf_token %}
                                             <button type="submit"
-                                                class="text-gray-400 hover:text-green-500 focus:outline-none transition-colors transform hover:scale-110">
+                                                class="text-stone-400 hover:text-green-500 focus:outline-none transition-colors transform hover:scale-110">
                                                 {% if action.status == 'done' %}
                                                 <span class="text-green-500">✅</span>
                                                 {% else %}
-                                                <span class="text-gray-300 dark:text-slate-600">⬜</span>
+                                                <span class="text-stone-300 dark:text-stone-600">⬜</span>
                                                 {% endif %}
                                             </button>
                                         </form>
                                         <span
-                                            class="text-gray-700 dark:text-slate-300 transition-colors {% if action.status == 'done' %}line-through text-gray-400 dark:text-slate-500{% endif %}">
+                                            class="text-stone-700 dark:text-stone-300 transition-colors {% if action.status == 'done' %}line-through text-stone-400 dark:text-stone-500{% endif %}">
                                             {{ action.description }}
                                         </span>
                                     </li>
@@ -220,10 +220,10 @@
 
                 <!-- Card Footer -->
                 <div
-                    class="px-6 py-3 bg-gray-50 dark:bg-slate-800/50 border-t border-gray-100 dark:border-slate-700 flex justify-between items-center text-xs">
-                    <span class="text-gray-500 dark:text-slate-400">{% blocktrans with score=thought.confidence_score|floatformat:2 %}Confidence: {{ score }}{% endblocktrans %}</span>
+                    class="px-6 py-3 bg-stone-50 dark:bg-stone-800/50 border-t border-stone-100 dark:border-stone-700 flex justify-between items-center text-xs">
+                    <span class="text-stone-500 dark:text-stone-400">{% blocktrans with score=thought.confidence_score|floatformat:2 %}Confidence: {{ score }}{% endblocktrans %}</span>
                     {% if thought.ai_model %}
-                    <div class="flex items-center space-x-2"> <span class="text-gray-400 italic">via {{ thought.ai_model }}</span>
+                    <div class="flex items-center space-x-2"> <span class="text-stone-400 italic">via {{ thought.ai_model }}</span>
                         {% if "error" in thought.ai_model %}
                         <form action="{% url 'plexus:thought_retry' thought.pk %}" method="post" class="inline">
                             {% csrf_token %}
@@ -239,16 +239,16 @@
         </div>
         {% elif not unprocessed_inputs %}
         <div
-            class="text-center py-12 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-dashed border-gray-300 dark:border-slate-600">
+            class="text-center py-12 bg-white dark:bg-stone-800 rounded-xl shadow-sm border border-dashed border-stone-300 dark:border-stone-600">
             <div class="max-w-md mx-auto">
-                <p class="text-lg text-gray-600 dark:text-slate-300 mb-6">
+                <p class="text-lg text-stone-600 dark:text-stone-300 mb-6">
                     {% if request.GET.q or request.GET.type %}
                     {% trans "No thoughts match your search/filter criteria." %} {% else %}
                     {% trans "No thoughts captured yet. Start by capturing your first thought!" %} {% endif %}
                 </p>
                 {% if request.GET.q or request.GET.type %}
                 <a href="{% url 'plexus:dashboard' %}"
-                    class="inline-block px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                    class="inline-block px-4 py-2 border border-stone-300 dark:border-stone-600 rounded-lg text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">
                     {% trans "Clear All Filters" %} </a>
                 {% else %}
                 <a href="{% url 'plexus:capture' %}"

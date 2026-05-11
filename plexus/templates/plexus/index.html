@@ -4,33 +4,58 @@
 {% block title %}{% trans "Home" %} - {% trans "Second Brain" %}{% endblock %}
 
 {% block content %}
-<div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 mb-8 text-center shadow-xl relative overflow-hidden">
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-    <div class="relative z-10 py-10">
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-white mb-6 tracking-tight">{% trans "Welcome to your Second Brain" %}</h1>
-        <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">{% trans "A cognitive offloading system designed to autonomously transmute your chaotic thoughts into structured, actionable data." %}</p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="{% url 'plexus:capture' %}" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-primary hover:bg-primary-dark transition-all shadow-lg">{% trans "Capture Thought" %}</a>
-            <a href="{% url 'plexus:dashboard' %}" class="inline-flex items-center justify-center px-8 py-3 border border-slate-600 text-base font-medium rounded-xl text-slate-300 bg-transparent hover:bg-slate-800 transition-all">{% trans "View Dashboard" %}</a>
+<section class="relative overflow-hidden rounded-2xl border border-stone-800 bg-stone-900/95 backdrop-blur-md shadow-sm mb-8">
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary-light to-primary"></div>
+    <div class="relative z-10 px-8 py-16 sm:py-20 text-center">
+        <h1 class="font-brand text-4xl sm:text-5xl md:text-6xl font-bold text-stone-100 tracking-tight">
+            {% trans "Welcome to your Second Brain" %}
+        </h1>
+        <p class="mt-6 text-lg md:text-xl text-stone-400 leading-relaxed max-w-2xl mx-auto">
+            {% trans "A cognitive offloading system designed to autonomously transmute your chaotic thoughts into structured, actionable data." %}
+        </p>
+        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-3">
+            {% trans "Capture Thought" as capture_label %}
+            {% url 'plexus:capture' as capture_url %}
+            {% include "components/button.html" with text=capture_label variant="primary" href=capture_url %}
+            <a href="{% url 'plexus:dashboard' %}"
+                class="inline-flex items-center justify-center h-11 px-6 rounded-xl font-semibold text-stone-100 bg-transparent border border-stone-700 hover:bg-stone-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-stone-400 focus:ring-offset-2 focus:ring-offset-stone-900">
+                {% trans "View Dashboard" %}
+            </a>
         </div>
     </div>
-</div>
+</section>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-        <div class="text-4xl mb-4">⚡️</div>
-        <h2 class="text-xl font-bold text-slate-900 mb-2">{% trans "Frictionless" %}</h2>
-        <p class="text-slate-600">{% trans "Single stream ingestion. No tagging, no folders, just capture." %}</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-stone-900/80 backdrop-blur-md border border-stone-800 rounded-2xl shadow-sm p-8 text-center transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-stone-800 text-primary mb-4">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" />
+            </svg>
+        </span>
+        <h2 class="text-xl font-semibold text-stone-100 mb-2">{% trans "Frictionless" %}</h2>
+        <p class="text-stone-400 leading-relaxed">{% trans "Single stream ingestion. No tagging, no folders, just capture." %}</p>
     </div>
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-        <div class="text-4xl mb-4">🧠</div>
-        <h2 class="text-xl font-bold text-slate-900 mb-2">{% trans "Intelligent" %}</h2>
-        <p class="text-slate-600">{% trans "AI-powered classification and automated action extraction." %}</p>
+    <div class="bg-stone-900/80 backdrop-blur-md border border-stone-800 rounded-2xl shadow-sm p-8 text-center transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-stone-800 text-primary mb-4">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18a6 6 0 1 1 6 0v2H9z" />
+                <path d="M12 22v-2M10 12h4M11 9h2" />
+                <circle cx="12" cy="8" r="1" />
+            </svg>
+        </span>
+        <h2 class="text-xl font-semibold text-stone-100 mb-2">{% trans "Intelligent" %}</h2>
+        <p class="text-stone-400 leading-relaxed">{% trans "AI-powered classification and automated action extraction." %}</p>
     </div>
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-        <div class="text-4xl mb-4">🗄️</div>
-        <h2 class="text-xl font-bold text-slate-900 mb-2">{% trans "Structured" %}</h2>
-        <p class="text-slate-600">{% trans "Relational persistence with contextual filtering." %}</p>
+    <div class="bg-stone-900/80 backdrop-blur-md border border-stone-800 rounded-2xl shadow-sm p-8 text-center transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-stone-800 text-primary mb-4">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                <path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6" />
+            </svg>
+        </span>
+        <h2 class="text-xl font-semibold text-stone-100 mb-2">{% trans "Structured" %}</h2>
+        <p class="text-stone-400 leading-relaxed">{% trans "Relational persistence with contextual filtering." %}</p>
     </div>
 </div>
 {% endblock %}
