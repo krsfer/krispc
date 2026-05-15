@@ -5,7 +5,7 @@ from krispc.models import Contact
 
 class SecurityTests(APITestCase):
     def setUp(self):
-        self.url = reverse('contact-list')
+        self.url = reverse('krispc_api:contact-list')
         self.valid_data = {
             'firstname': 'Security',
             'surname': 'Tester',

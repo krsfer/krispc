@@ -14,7 +14,7 @@ import Tooltip from '@/components/Tooltip';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PatternGenerator } from '@/lib/utils/pattern-generator';
 import { PatternPrinter } from '@/lib/utils/pattern-printer';
-import { getHubBaseUrl } from '@/lib/hub-url';
+import { getBrowserHubBaseUrl, getInitialHubBaseUrl } from '@/lib/hub-url';
 import { EMOJI_PALETTES, getDefaultPalette } from '@/lib/constants/emoji-palettes';
 import { PatternState, GridCell, PatternMode } from '@/types/pattern';
 import { usePatternStore } from '@/store';
@@ -23,7 +23,6 @@ import { useToast } from '@/contexts/ToastContext';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
-  const hubBaseUrl = getHubBaseUrl();
   const { 
     autoSave, 
     savePattern, 
@@ -41,11 +40,16 @@ export default function HomePage() {
   const [redoStack, setRedoStack] = useState<PatternState[]>([]);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [hubBaseUrl, setHubBaseUrl] = useState(getInitialHubBaseUrl);
 
   // Pattern state
   const [patternState, setPatternState] = useState<PatternState>(() => 
     PatternGenerator.createPatternState([], PatternMode.CONCENTRIC)
   );
+
+  useEffect(() => {
+    setHubBaseUrl(getBrowserHubBaseUrl());
+  }, []);
 
   // Initial Load: Fetch patterns (Local or Remote)
   useEffect(() => {

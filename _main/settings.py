@@ -224,6 +224,10 @@ DJANGO_VITE = {
 }
 
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+# True only when REDIS_URL was explicitly provided by the environment. Used to
+# decide whether Redis-backed services should fall back to in-process equivalents
+# for local dev (no Redis/Valkey running).
+REDIS_CONFIGURED = 'REDIS_URL' in os.environ
 
 # MediaMTX stream server (Fly private networking)
 MEDIAMTX_URL = os.environ.get('MEDIAMTX_URL', 'http://mediamtx-krispc.internal:9997')
@@ -451,12 +455,22 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 WHITENOISE_MANIFEST_STRICT = False
 
 # Configure caching - Valkey/Redis-backed to support shared state (SAS rate limiting).
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": REDIS_URL,
+# Falls back to local-memory cache when REDIS_URL isn't set, so local dev works
+# without a running Redis/Valkey server. Note: rate limiting is per-process in that
+# mode, which is fine for dev but not for production.
+if REDIS_CONFIGURED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
 
 VER = semver.VersionInfo.parse("2.3.0")
 

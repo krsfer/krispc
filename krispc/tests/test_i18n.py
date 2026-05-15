@@ -10,7 +10,7 @@ MIDDLEWARE_WITHOUT_CUSTOM = [m for m in settings.MIDDLEWARE if 'EnsureDefaultLan
 class I18nTests(APITestCase):
     @override_settings(MIDDLEWARE=MIDDLEWARE_WITHOUT_CUSTOM)
     def test_services_localization(self):
-        url = reverse('api-services')
+        url = reverse('krispc_api:api-services')
 
         # Ensure clean state
         self.client.cookies.clear()

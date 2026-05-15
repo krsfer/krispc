@@ -29,7 +29,7 @@ class ThrottlingTests(APITestCase):
         self.assertEqual(ServicesView.throttle_scope, 'read_only')
         
         # Make a normal request to verify endpoint works
-        url = reverse('api-services')
+        url = reverse('krispc_api:api-services')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -44,7 +44,7 @@ class ThrottlingTests(APITestCase):
         self.assertEqual(ContactViewSet.throttle_scope, 'contacts')
         
         # Make a normal request to verify endpoint works
-        url = reverse('contact-list')
+        url = reverse('krispc_api:contact-list')
         data = {
             'firstname': 'Test',
             'surname': 'User',

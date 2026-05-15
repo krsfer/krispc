@@ -1,10 +1,14 @@
 'use client';
 
 import React from 'react';
-import { getHubBaseUrl } from '@/lib/hub-url';
+import { getBrowserHubBaseUrl, getInitialHubBaseUrl } from '@/lib/hub-url';
 
 export default function SubNavHeader() {
-    const hubBaseUrl = getHubBaseUrl();
+    const [hubBaseUrl, setHubBaseUrl] = React.useState(getInitialHubBaseUrl);
+
+    React.useEffect(() => {
+        setHubBaseUrl(getBrowserHubBaseUrl());
+    }, []);
 
     return (
         <div className="bg-white border-b border-gray-200">

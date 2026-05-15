@@ -4,7 +4,7 @@
 
 All applications in the KrisPC monorepo must adhere to the following technology stack.
 
-- **Backend:** Django 5.x (running on Python 3.13)
+- **Backend:** Django 6.x (running on Python 3.13)
 - **Frontend Styling:** Tailwind CSS 3.x
 - **Frontend Interactivity:** HTMX (preferred for server-driven interactions)
 - **Asset Bundling:** Vite (via `django-vite`)

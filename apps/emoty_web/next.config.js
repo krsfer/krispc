@@ -1,12 +1,17 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   basePath: '/emo',
   assetPrefix: '/emo',
+  outputFileTracingRoot: path.join(__dirname),
   experimental: {
     optimizePackageImports: ['bootstrap']
   },
-  // allowedDevOrigins is no longer a standard experimental key in Next.js 15
-  // and should be handled via headers or middleware if cross-origin dev is needed.
+  // Allow the Django proxy host to fetch Next.js dev-only resources (fonts, HMR).
+  // Needed because the suite is browsed via 127.0.0.1, which isn't allow-listed
+  // by default. Dev-only key — ignored by `next build` / production.
+  allowedDevOrigins: ['127.0.0.1'],
   images: {
     remotePatterns: [
       {
@@ -42,5 +47,4 @@ const nextConfig = {
     }
   ]
 }
-
 module.exports = nextConfig
