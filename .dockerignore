@@ -16,7 +16,12 @@ dist
 build
 .venv
 venv
+# Exclude all local env files (incl. nested apps/*/.env.local) so dev
+# config never leaks into a production image. Plain `.env` only matched
+# the repo root; `**/.env*` covers nested app env files too.
 .env
+**/.env
+**/.env.*
 
 # Django
 db.sqlite3

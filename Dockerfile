@@ -27,6 +27,12 @@ COPY apps/emoty_web/package*.json ./
 RUN npm install --legacy-peer-deps
 
 COPY apps/emoty_web ./
+# NEXT_PUBLIC_* vars are inlined into the client bundle at build time.
+# Set the production Hub URL here so it takes precedence over any dev
+# .env.local that leaks into the build context (Next checks process.env
+# before .env files). Overridable at build with --build-arg.
+ARG NEXT_PUBLIC_HUB_BASE_URL=https://hub.krispc.fr
+ENV NEXT_PUBLIC_HUB_BASE_URL=$NEXT_PUBLIC_HUB_BASE_URL
 RUN npm run build
 
 # Prepare for production run
