@@ -72,7 +72,9 @@ start_background \
     -k uvicorn.workers.UvicornWorker \
     _main.asgi:application \
     --bind "0.0.0.0:$APP_PORT" \
-    --workers "${WEB_CONCURRENCY:-1}"
+    --workers "${WEB_CONCURRENCY:-1}" \
+    --timeout 180 \
+    --graceful-timeout 30
 
 wait_for_port 127.0.0.1 "$APP_PORT" 60 "Gunicorn"
 

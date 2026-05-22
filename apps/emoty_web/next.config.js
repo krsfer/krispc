@@ -4,7 +4,7 @@ const path = require('path');
 const nextConfig = {
   basePath: '/emo',
   assetPrefix: '/emo',
-  outputFileTracingRoot: path.join(__dirname),
+  outputFileTracingRoot: path.resolve(__dirname, '..', '..'),
   experimental: {
     optimizePackageImports: ['bootstrap']
   },
