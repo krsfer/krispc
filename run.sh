@@ -51,6 +51,49 @@ ensure_node_modules() {
     fi
 }
 
+# Kill both dev servers (and their child processes) cleanly on Ctrl+C, then wait
+# for them to exit before returning so their shutdown output is flushed before
+# the shell prompt comes back (otherwise the terminal needs an extra Enter).
+# Relies on `set -m` so each background job is its own process group; the leading
+# `-` on the PID targets the whole group, killing npm's child node process too.
+cleanup() {
+    trap - INT TERM
+    kill -TERM -"$DJANGO_PID" -"$NEXT_PID" 2>/dev/null || true
+    wait 2>/dev/null || true
+    exit 0
+}
+
+ensure_redis() {
+    # Celery (delete events, calendar sync) uses Redis as its broker/result
+    # backend and for distributed locks. In DEBUG tasks run eagerly in this
+    # process, so a missing Redis fails at runtime with "Connection refused".
+    # Check up front and fail fast with a clear message. Honors REDIS_URL the
+    # same way settings.py does (default redis://localhost:6379).
+    local url="${REDIS_URL:-redis://localhost:6379}"
+    local hostport="${url#*://}"   # strip scheme
+    hostport="${hostport%%/*}"     # strip /path
+    hostport="${hostport##*@}"     # strip user:pass@
+    local host port
+    if [[ "$hostport" == *:* ]]; then
+        host="${hostport%%:*}"
+        port="${hostport##*:}"
+    else
+        host="$hostport"
+        port="6379"
+    fi
+    [[ -z "$host" ]] && host="localhost"
+
+    if (echo > "/dev/tcp/$host/$port") >/dev/null 2>&1; then
+        return 0
+    fi
+
+    echo "Error: Redis not reachable at $host:$port (REDIS_URL=${REDIS_URL:-unset, using default})." >&2
+    echo "Celery tasks (delete events, calendar sync) need Redis and will fail without it." >&2
+    echo "Start it with:  brew services start valkey" >&2
+    echo "Or set REDIS_URL to point at a running instance." >&2
+    exit 1
+}
+
 ensure_vite_build() {
     # django-vite aborts page render without the manifest, and Django's system
     # check warns (W001/W004) when krispc/static/dist is missing. Build it once.
@@ -66,6 +109,7 @@ ensure_vite_build() {
 
 run_django() {
     activate_venv
+    ensure_redis
     ensure_vite_build
     echo "Starting Django on port 8000..."
     cd "$SCRIPT_DIR"
@@ -74,6 +118,7 @@ run_django() {
 
 run_django_tls() {
     activate_venv
+    ensure_redis
     ensure_vite_build
     require_certs
     echo "Starting Django (HTTPS) on https://p2c.localtest.me:8000 ..."
@@ -99,33 +144,37 @@ run_next_dev() {
 
 run_both() {
     activate_venv
+    ensure_redis
     ensure_node_modules
     ensure_vite_build
     echo "Starting Django (8000) and Next.js dev (3000)..."
+    set -m
     cd "$SCRIPT_DIR"
     python manage.py runserver &
     DJANGO_PID=$!
     cd "$EMOTY_DIR"
     npm run dev &
     NEXT_PID=$!
-    trap 'kill $DJANGO_PID $NEXT_PID 2>/dev/null; exit' INT TERM
+    trap cleanup INT TERM
     echo "Press Ctrl+C to stop both servers"
     wait
 }
 
 run_both_tls() {
     activate_venv
+    ensure_redis
     ensure_node_modules
     ensure_vite_build
     require_certs
     echo "Starting Django (HTTPS 8000) and Next.js dev (3000)..."
+    set -m
     cd "$SCRIPT_DIR"
     daphne -e "ssl:8000:privateKey=$TLS_KEY:certKey=$TLS_CERT" _main.asgi:application &
     DJANGO_PID=$!
     cd "$EMOTY_DIR"
     npm run dev &
     NEXT_PID=$!
-    trap 'kill $DJANGO_PID $NEXT_PID 2>/dev/null; exit' INT TERM
+    trap cleanup INT TERM
     echo "Press Ctrl+C to stop both servers"
     wait
 }
