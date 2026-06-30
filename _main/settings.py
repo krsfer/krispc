@@ -87,6 +87,8 @@ CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[
     "http://hub.localhost:8000",
     "http://www.localhost:8000",
     "http://sas.localhost:8000",
+    # Loopback-resolving public-TLD host for local HTTPS OAuth (see run.sh both-tls).
+    "https://p2c.localtest.me:8000",
 ])
 
 MAPBOX_TOKEN = env('MAPBOX_TOKEN')
@@ -126,7 +128,9 @@ if IS_PRODUCTION:
     # Redirect non-www to www
     PREPEND_WWW = False
 else:
-    ALLOWED_HOSTS = []
+    # ".localtest.me" resolves to 127.0.0.1 and is used for local HTTPS OAuth testing
+    # (Google rejects *.localhost). ".localhost" preserves the normal subdomain dev flow.
+    ALLOWED_HOSTS = [".localhost", ".localtest.me", "127.0.0.1", "[::1]"]
 
 # CORS Configuration for API
 # Allow API access from specific origins
