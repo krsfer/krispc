@@ -52,6 +52,8 @@ from .config.event_settings import (
 from .config.caregiver_settings import (
     load_caregiver_settings,
     NAME_CORRECTIONS,
+    normalize_caregiver_name,
+    strip_duration_from_name,
 )
 from .config.rate_config import load_rate_config, save_rate_config
 from .models import (
@@ -843,6 +845,21 @@ def upload_pdf(request):
                 f"[{parser_name}] Could not extract any appointments from the PDF. Please check the file format.",
             )
             return redirect("p2c:home")
+
+        # Apply caregiver name corrections (e.g. "BASZCZOWSKI, Stephani" ->
+        # "BASZCZOWSKI, Stephanie") before storing in session, so the pending
+        # appointments list and any downstream actions use the corrected spelling.
+        # The description carries a duration suffix like " (04:00)" that the list
+        # displays, so correct only the name portion and keep the suffix.
+        for apt in appointments:
+            desc = apt.get("description")
+            if desc:
+                base = strip_duration_from_name(desc)
+                corrected = normalize_caregiver_name(base)
+                if corrected != base:
+                    apt["description"] = desc.replace(base, corrected, 1)
+            if apt.get("normalized_name"):
+                apt["normalized_name"] = normalize_caregiver_name(apt["normalized_name"])
 
         # Store in session immediately to ensure home view picks up this exact data
         request.session["appointments"] = appointments
