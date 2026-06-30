@@ -18,6 +18,16 @@ RUN npm install
 COPY krispc/static/src ./krispc/static/src
 COPY vite.config.js postcss.config.js tailwind.config.js ./
 
+# Copy every source Tailwind scans in its `content` globs, so utilities used
+# only in Django templates (e.g. space-x-*) are not purged from the production
+# CSS. Without these the build sees no templates and drops those classes.
+COPY krispc/templates ./krispc/templates
+COPY p2c/templates ./p2c/templates
+COPY p2c/static/js ./p2c/static/js
+COPY hub/templates ./hub/templates
+COPY plexus/templates ./plexus/templates
+COPY templates ./templates
+
 # Build Vite assets
 RUN npm run build
 
