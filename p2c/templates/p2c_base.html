@@ -19,17 +19,20 @@
             <div class="flex items-center space-x-4">
                 {% if user.is_authenticated %}
                 <!-- Desktop Nav -->
-                <nav class="hidden md:flex space-x-6">
+                <nav class="hidden md:flex items-center space-x-3">
                     <a href="{% url 'p2c:event_settings' %}"
                         class="text-sm font-medium text-stone-600 hover:text-primary transition-colors">{% trans "Settings" %}</a>
+                    <span class="text-stone-300">|</span>
                     <a href="{% url 'p2c:pay_view' %}"
                         class="text-sm font-medium text-stone-600 hover:text-primary transition-colors">{% trans "Pay" %}</a>
+                    <span class="text-stone-300">|</span>
                     <a href="{% url 'p2c:updates' %}"
                         class="text-sm font-medium text-stone-600 hover:text-primary transition-colors relative">
                         {% trans "Updates" %}
                         {% if has_unread_updates %}<span
                             class="absolute -top-1 -right-2 block h-2 w-2 rounded-full bg-red-500"></span>{% endif %}
                     </a>
+                    <span class="text-stone-300">|</span>
                     <a href="{% url 'p2c:calendar_editor' %}"
                         class="text-sm font-medium text-stone-600 hover:text-primary transition-colors">{% trans "Editor" %}</a>
                 </nav>
