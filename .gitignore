@@ -18,6 +18,10 @@ db.sqlite3
 media/
 redis_remote_cert/
 
+# Local HTTPS dev certs (mkcert)
+_wildcard.localtest.me*.pem
+*localtest.me*-key.pem
+
 # macOS files
 .DS_Store
 

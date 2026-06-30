@@ -13,7 +13,7 @@ each session.
 
 ## Stack
 
-- **Backend:** Django 5.x on Python 3.13 (Pipfile is the source of truth;
+- **Backend:** Django 6.x on Python 3.13 (Pipfile is the source of truth;
   `requirements.txt` mirrors it).
 - **Frontend styling:** Tailwind CSS 3.x. Custom CSS is forbidden — use
   Tailwind utilities. The one published exception is the `prose` plugin
